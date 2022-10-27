@@ -46,6 +46,7 @@ end;
 
 procedure TF_SpeedFood.bGPResize(Sender: TObject);
 begin
+  // comments
   With TButton(Sender) Do
   if Width > 50 then
     Text:= 'Grupo de Produtos'
