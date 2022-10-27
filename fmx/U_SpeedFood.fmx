@@ -32,9 +32,40 @@ object F_SpeedFood: TF_SpeedFood
         Size.Width = 40.000000000000000000
         Size.Height = 41.000000000000000000
         Size.PlatformDefault = False
-        TabOrder = 0
+        TabOrder = 2
         Text = 'PVs'
         OnResize = bPVsResize
+      end
+      object Prd: TButton
+        Align = Top
+        Margins.Left = 5.000000000000000000
+        Margins.Top = 5.000000000000000000
+        Margins.Right = 5.000000000000000000
+        Margins.Bottom = 5.000000000000000000
+        Position.X = 5.000000000000000000
+        Position.Y = 56.000000000000000000
+        Size.Width = 40.000000000000000000
+        Size.Height = 41.000000000000000000
+        Size.PlatformDefault = False
+        TabOrder = 1
+        Text = 'Prd'
+        OnResize = PrdResize
+      end
+      object bGP: TButton
+        Align = Top
+        Margins.Left = 5.000000000000000000
+        Margins.Top = 5.000000000000000000
+        Margins.Right = 5.000000000000000000
+        Margins.Bottom = 5.000000000000000000
+        Position.X = 5.000000000000000000
+        Position.Y = 107.000000000000000000
+        Size.Width = 40.000000000000000000
+        Size.Height = 41.000000000000000000
+        Size.PlatformDefault = False
+        TabOrder = 0
+        Text = 'GPrd'
+        OnClick = bGPClick
+        OnResize = bGPResize
       end
     end
     object Panel2: TPanel

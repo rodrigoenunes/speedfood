@@ -14,8 +14,13 @@ type
     bPVs: TButton;
     Panel2: TPanel;
     Button2: TButton;
+    Prd: TButton;
+    bGP: TButton;
     procedure Button1Click(Sender: TObject);
     procedure bPVsResize(Sender: TObject);
+    procedure PrdResize(Sender: TObject);
+    procedure bGPResize(Sender: TObject);
+    procedure bGPClick(Sender: TObject);
   private
     { Private declarations }
   public
@@ -28,6 +33,25 @@ var
 implementation
 
 {$R *.fmx}
+
+uses U_Grupoproduto;
+
+procedure TF_SpeedFood.bGPClick(Sender: TObject);
+begin
+  if FGrupoproduto = Nil then
+    Application.CreateForm(TFGrupoproduto, FGrupoproduto);
+  FGrupoproduto.Show;
+
+end;
+
+procedure TF_SpeedFood.bGPResize(Sender: TObject);
+begin
+  With TButton(Sender) Do
+  if Width > 50 then
+    Text:= 'Grupo de Produtos'
+  Else
+    Text:= 'GPrd';
+end;
 
 procedure TF_SpeedFood.bPVsResize(Sender: TObject);
 begin
@@ -44,6 +68,16 @@ begin
     pNav.Width:= 150
   Else
     pNav.Width:= 50;
+end;
+
+procedure TF_SpeedFood.PrdResize(Sender: TObject);
+begin
+  With TButton(Sender) Do
+  if Width > 50 then
+    Text:= 'Produtos'
+  Else
+    Text:= 'Prd';
+
 end;
 
 end.

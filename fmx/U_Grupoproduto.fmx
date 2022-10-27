@@ -1,0 +1,51 @@
+object FGrupoproduto: TFGrupoproduto
+  Left = 0
+  Top = 0
+  Caption = 'Grupo de produtos'
+  ClientHeight = 480
+  ClientWidth = 640
+  FormFactor.Width = 320
+  FormFactor.Height = 480
+  FormFactor.Devices = [Desktop]
+  DesignerMasterStyle = 0
+  object Grid1: TGrid
+    Align = Client
+    CanFocus = True
+    ClipChildren = True
+    Size.Width = 640.000000000000000000
+    Size.Height = 455.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 0
+    RowCount = 0
+    Viewport.Width = 636.000000000000000000
+    Viewport.Height = 430.000000000000000000
+  end
+  object NavigatorBindSourceDB1: TBindNavigator
+    Align = Top
+    Size.Width = 640.000000000000000000
+    Size.Height = 25.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 3
+    DataSource = BindSourceDB1
+    xRadius = 4.000000000000000000
+    yRadius = 4.000000000000000000
+  end
+  object BindSourceDB1: TBindSourceDB
+    DataSet = DM.grupoprodutos
+    ScopeMappings = <>
+    Left = 308
+    Top = 228
+  end
+  object BindingsList1: TBindingsList
+    Methods = <>
+    OutputConverters = <>
+    Left = 40
+    Top = 89
+    object LinkGridToDataSourceBindSourceDB1: TLinkGridToDataSource
+      Category = 'Quick Bindings'
+      DataSource = BindSourceDB1
+      GridControl = Grid1
+      Columns = <>
+    end
+  end
+end
