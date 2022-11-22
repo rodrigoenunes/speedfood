@@ -7,7 +7,9 @@ uses
   uItens in 'uItens.pas' {FuItens},
   uGenericas in '..\..\UsoGeral\uGenericas.pas' {FGen},
   uCaixa in 'uCaixa.pas' {FuCaixa},
-  uPedidos in 'uPedidos.pas' {FuPedidos};
+  uPedidos in 'uPedidos.pas' {FuPedidos},
+  uTrataLanche in 'uTrataLanche.pas' {FuTrataLanche},
+  uFinPedido in 'uFinPedido.pas' {FuFinPedido};
 
 {$R *.res}
 
@@ -17,6 +19,8 @@ begin
   Application.CreateForm(TFuPrincipal, FuPrincipal);
   Application.CreateForm(TFGen, FGen);
   Application.CreateForm(TFuPedidos, FuPedidos);
+  Application.CreateForm(TFuTrataLanche, FuTrataLanche);
+  Application.CreateForm(TFuFinPedido, FuFinPedido);
   //  Application.CreateForm(TFuCaixa, FuCaixa);
   //  Application.CreateForm(TuDM, uDM);
 

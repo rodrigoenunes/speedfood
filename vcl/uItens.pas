@@ -59,6 +59,10 @@ type
     SpeedButton1: TSpeedButton;
     ImgItem: TImage;
     OpenPictureDialog1: TOpenPictureDialog;
+    Label16: TLabel;
+    dbUnid: TDBEdit;
+    Label17: TLabel;
+    dbCodBarras: TDBEdit;
     procedure btSairClick(Sender: TObject);
     procedure btIncluirClick(Sender: TObject);
     procedure btOkClick(Sender: TObject);
@@ -126,9 +130,10 @@ end;
 
 procedure TFuItens.FormActivate(Sender: TObject);
 begin
+  uDM.Itens.First;
   wAcao := CtleProds(0,False);
   wMsgRegEmUso := 'Registro em usos por outro usuário' + #13 + 'Tente novamente mais tarde';
-  uDM.Itens.Refresh;
+  //uDM.Itens.Refresh;
   Form_Define(FuItens);
 
 end;
@@ -210,6 +215,13 @@ end;
 
 procedure TFuItens.btOkClick(Sender: TObject);
 begin
+  if (uDM.ItensGrupo.AsInteger = 2) and
+     ((uDM.ItensCodigo.AsInteger < 1) or (uDM.ItensCodigo.AsInteger > 24))
+  then begin
+    MessageDlg('Extras: código do ítem deve ser entre 1 e 24',mtError,[mbOk],0);
+    dbCodigo.SetFocus;
+    Exit;
+  end;
   case wAcao of
     1:begin
         Try
@@ -229,7 +241,21 @@ begin
 end;
 
 procedure TFuItens.btSairClick(Sender: TObject);
+var nVals: Integer;
 begin
+  nVals := 0;
+  uDM.Itens.FindNearest([2,1]);
+  while (uDM.ItensGrupo.AsInteger = 2) and (not uDM.Itens.Eof) do
+  begin
+    if uDM.ItensPreco.AsCurrency > 0 then nVals := nVals + 1;
+    uDM.Itens.Next;
+  end;
+  if nVals > 6 then
+  begin
+    MessageDlg('Há mais de 6 (seis) ítens "EXTRA" com valor' + #13 +
+               'Corrija as informações', mtError, [mbOk], 0);
+    Exit;
+  end;
   FuItens.Close;
 
 end;
@@ -287,17 +313,17 @@ end;
 
 procedure TFuItens.edZC_KeyChange(Sender: TObject);
 begin
-  if (uDM.ItensGrupo.AsString = '1')       // Lanches
-     or (uDM.ItensGrupo.AsString = '4')    // Bebidas
-     or (uDM.ItensGrupo.AsString = '5')    // Diversos
-  then gbFiscais.Visible := True
-  else gbFiscais.Visible := False;
+  gbFiscais.Visible := False;
+  imgItem.Visible := False;
+  if (uDM.ItensGrupo.AsInteger = 1)       // Lanches
+     or (uDM.ItensGrupo.AsInteger = 3)    // Bebidas
+     or (uDM.ItensGrupo.AsInteger = 4)    // Diversos
+  then gbFiscais.Visible := True;
   if FileExists(uDM.ItensImagem.AsString)
   then begin
-     imgItem.Picture.LoadFromFile(uDM.ItensImagem.AsString);
-     imgItem.Visible := True;
-  end
-  else imgItem.Visible := False;
+    imgItem.Picture.LoadFromFile(uDM.ItensImagem.AsString);
+    imgItem.Visible := True;
+  end;
 
 end;
 

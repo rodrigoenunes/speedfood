@@ -11,12 +11,8 @@ uses
 
 type
   TFuPedidos = class(TForm)
-    PanTopo: TPanel;
     PanWork: TPanel;
     PanGridPed: TPanel;
-    PanRodape: TPanel;
-    btDummy: TBitBtn;
-    btFinalizar: TBitBtn;
     pgControle: TPageControl;
     TSLanches: TTabSheet;
     TSBebidas: TTabSheet;
@@ -30,24 +26,25 @@ type
     PanAlteraBebida: TPanel;
     imgFundo: TImage;
     btSair: TBitBtn;
-    Panel1: TPanel;
     Panel2: TPanel;
     Panel3: TPanel;
     DBEdit1: TDBEdit;
     btMais: TBitBtn;
     btMenos: TBitBtn;
     btNada: TBitBtn;
-    btPedido: TBitBtn;
-    Label2: TLabel;
-    edNro: TEdit;
-    Label3: TLabel;
+    btAbrirPedido: TBitBtn;
+    PanTotalizacao: TPanel;
     edItens: TEdit;
-    Label4: TLabel;
-    edValor: TEdit;
-    btFinalTopo: TBitBtn;
+    edTotal: TEdit;
+    Label2: TLabel;
+    Label1: TLabel;
+    Label3: TLabel;
+    btFinalizar: TBitBtn;
+    btCancelar: TBitBtn;
+    btDummy: TBitBtn;
     LabAux1: TLabel;
     LabAux2: TLabel;
-    procedure btPedidoClick(Sender: TObject);
+    procedure btAbrirPedidoClick(Sender: TObject);
     procedure btFinalizarClick(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure GridLanchesDrawCell(Sender: TObject; ACol, ARow: Integer;
@@ -65,12 +62,15 @@ type
     procedure btNadaClick(Sender: TObject);
     procedure btMaisClick(Sender: TObject);
     procedure btMenosClick(Sender: TObject);
-    procedure GridPedidoCellClick(Column: TColumn);
     procedure GridPedidoDblClick(Sender: TObject);
+    procedure FormResize(Sender: TObject);
+    procedure btCancelarClick(Sender: TObject);
   private
     { Private declarations }
   public
     { Public declarations }
+    itensPedido: Integer;
+    totalPedido: Currency;
 
   end;
 
@@ -78,19 +78,13 @@ var
   FuPedidos: TFuPedidos;
   wCodLanche: array[0..19,0..19] of Integer;
   wCodBebida: array[0..19,0..19] of Integer;
-  nroPedido,itensPedido: Integer;
-  valorPedido: Currency;
   lrgLanche,altLanche,lrgBebida,altBebida: Integer;
-
-const
-  colGridPedido: array of Real = [0.09,0.33,0.05,0.25];
 
 implementation
 
 {$R *.dfm}
 
-uses uDados, uGenericas; //, HDProds, HDLanche, uGenericas, HDPrincipal, HDFinPedido;
-
+uses uDados, uGenericas, uFinPedido, uTrataLanche; //, HDProds, HDLanche, uGenericas, HDPrincipal, HDFinPedido;
 
 Procedure LancamentoPedidos;
 begin
@@ -103,10 +97,11 @@ end;
 
 Procedure MontaTelaPedidos;
 var i,j: Integer;
-    nCol,nLin,nColBeb,nLinBeb: Integer;
+    nCol,nRow,nColBeb,nRowBeb: Integer;
     nAltura,nLargura: Integer;
-    nLanches,nExtras,nExclus,nBebidas,nDiversos:Integer;
+    nLanches,nExtras,nBebidas,nDiversos:Integer;
 begin
+  // Monta tela de pedidos (FuPedidos) e tratativa de lanches (FuTrataLanche)
   with FuPedidos
   do begin
     for i := 0 to 19
@@ -115,12 +110,11 @@ begin
          wCodLanche[i,j] := 0;
          wCodBebida[i,j] := 0;
        end;
-
     FuPedidos.Align := alClient;
     //
-    imgFundo.Height  := FuPedidos.Height - FuPedidos.PanTopo.Height;
+    imgFundo.Height  := FuPedidos.ClientHeight - 60;
     imgFundo.Width   := imgFundo.Height;
-    imgFundo.Top     := PanTopo.Top + PanTopo.Height + 8;
+    imgFundo.Top     := (FuPedidos.ClientHeight - imgFundo.Height) div 2;
     imgFundo.Left    := (FuPedidos.ClientWidth - imgFundo.Width) div 2;
     imgFundo.Stretch := True;
     imgFundo.Picture.LoadFromFile(uDM.pathWork + '\HotDog1.bmp');
@@ -131,7 +125,6 @@ begin
     // Obtem quantidade de ítens de cada grupo
     nLanches  := 0;
     nExtras   := 0;
-    nExclus   := 0;
     nBebidas  := 0;
     nDiversos := 0;
     uDM.Itens.First;
@@ -140,66 +133,89 @@ begin
       case uDM.ItensGrupo.AsInteger of
         1:nLanches  := nLanches + 1;
         2:nExtras   := nExtras + 1;
-        3:nExclus   := nExclus + 1;
-        4:nBebidas  := nBebidas + 1;
-        5:nDiversos := nDiversos + 1;
+        3:nBebidas  := nBebidas + 1;
+        4:nDiversos := nDiversos + 1;
       end;
       uDM.Itens.Next;
     end;
 
+    // Celulas ... COL, ROW
     // Montagem dos grids
-    // Lanches..................................................................
-    nLargura := 196;                               // Largura da célula
-    nCol     := TSLanches.Width div nLargura;      // Qtd necessária de colunas
-    nLin     := nLanches div nCol;                 // Qtd necessária de linhas
-    if (nLanches mod nCol) > 0 then nLin := nLin + 1;
-    nAltura := (TSLanches.Height-8) div nLin;      // Altura da célula
-    if nAltura < 80 then nAltura := 80;
+    // Define largura das células, para LANCHES, de 2 a 4 COLUNAS ..............
+    if TSLanches.Width > 1000
+    then nCol := 4
+    else if TSLanches.Width > 800
+         then nCol := 3
+         else nCol := 2;
+    nLargura := (TSLanches.Width div nCol) - 8;      // Largura da célula
+    nRow := nLanches div nCol;                       // Qtd necessária de linhas
+    if nRow < 1
+    then nRow := 1
+    else if (nLanches mod nRow) > 0
+         then nRow := nRow + 1;
+    nAltura := ((TSLanches.Height-8) div nRow) - 4; // Altura da célula
+    if nAltura > 220
+    then nAltura := 220
+    else if nAltura < 80
+         then nAltura := 80;
     GridLanches.ColCount := nCol;
-    GridLanches.RowCount := nLin;
+    GridLanches.RowCount := nRow;
     for i := 0 to nCol-1 do GridLanches.ColWidths[i]  := nLargura;
-    for i := 0 to nLin-1 do GridLanches.RowHeights[i] := nAltura;
+    for i := 0 to nRow-1 do GridLanches.RowHeights[i] := nAltura;
     GridLanches.Align := alClient;
     lrgLanche := nLargura - 12;   // Para definir o tamanho do texto
     altLanche := nAltura - 6;     // Altura máxima para colocação do texto no grid
-    // Bebidas..................................................................
-    nLargura := 196;                               // Largura da célula
-    nCol     := TSBebidas.Width div nLargura;      // Qtd necessária de colunas
-    nLin     := nBebidas div nCol;                 // Qtd necessária de linhas
-    if (nBebidas mod nCol) > 0 then nLin := nLin + 1;
-    nAltura := TSBebidas.Height div nLin;          // Altura da célula
-    if nAltura < 80 then nAltura := 80;
+    //
+    // Define largura das células, para Bebidas, de 2 a 5 COLUNAS ..............
+    if TSBebidas.Width > 1000
+    then nCol := 5
+    else if TSBebidas.Width > 800
+         then nCol := 4
+         else if TSBebidas.Width > 600
+              then nCol := 3
+              else nCol := 2;
+    nLargura := TSBebidas.Width div nCol;          // Largura da célula
+    nRow := nBebidas div nCol;                     // Qtd necessária de linhas
+    if nRow < 1 
+    then nRow := 1
+    else if (nBebidas mod nRow) > 0 
+         then nRow := nRow + 1;
+    nAltura := (TSBebidas.Height-8) div nRow;      // Altura da célula
+    if nAltura > 220
+    then nAltura := 220
+    else if nAltura < 80
+         then nAltura := 80;
     GridBebidas.ColCount := nCol;
-    GridBebidas.RowCount := nLin;
+    GridBebidas.RowCount := nRow;
     for i := 0 to nCol-1 do GridBebidas.ColWidths[i]  := nLargura;
-    for i := 0 to nLin-1 do GridBebidas.RowHeights[i] := nAltura;
+    for i := 0 to nRow-1 do GridBebidas.RowHeights[i] := nAltura;
     GridBebidas.Align := alClient;
     lrgBebida := nLargura - 12;
     altBebida := nAltura - 6;
     //
-    nLin := 0;
+    nRow := 0;
     nCol := 0;
-    nLinBeb := 0;
+    nRowBeb := 0;
     nColBeb := 0;
     uDM.Itens.First;
     while not uDM.Itens.Eof do
     begin
       case uDM.ItensGrupo.AsInteger of
         1:begin    // Lanches
-            wCodLanche[nCol,nLin] := uDM.ItensCodigo.AsInteger;
+            wCodLanche[nCol,nRow] := uDM.ItensCodigo.AsInteger;
             nCol := nCol + 1;
             if nCol = GridLanches.ColCount
             then begin
-              nLin := nLin + 1;
+              nRow := nRow + 1;
               nCol := 0;
             end;
         end;
-        4:begin    // Bebidas
-            wCodBebida[nColBeb,nLinBeb] := uDM.ItensCodigo.AsInteger;
+        3:begin    // Bebidas
+            wCodBebida[nColBeb,nRowBeb] := uDM.ItensCodigo.AsInteger;
             nColBeb := nColBeb + 1;
             if nColBeb = GridBebidas.ColCount
             then begin
-              nLinBeb := nLinBeb + 1;
+              nRowBeb := nRowBeb + 1;
               nColBeb := 0;
             end;
         end;
@@ -212,158 +228,83 @@ begin
     NavPedido.Width   := 120;
     btEditar.Left     := NavPedido.Left + NavPedido.Width + 4;
     btEditar.Width    :=(PanPedCtle.Width - (btEditar.Left + 8)) div 2;
-    btEditar.Caption  := '&Alterar';
+    btEditar.Caption  := '&Alterar' + #13 + 'ítem';
     btExcluir.Left    := btEditar.Left + btEditar.Width + 4;
     btExcluir.Width   := btEditar.Width;
-    btExcluir.Caption := '&Excluir';
-    //
-    PanTopo.Visible  := False;
+    btExcluir.Caption := '&Excluir' + #13 + 'ítem';
+    btFinalizar.Left  := 4;
+    btFinalizar.Width := NavPedido.Width + btEditar.Width + btExcluir.Width + 8;
+    btCancelar.Left   := 4;
+    btCancelar.Width  := (btFinalizar.Width - btDummy.Width) - 16;
+    btDummy.Left      := btCancelar.Left + btCancelar.Width + 16;
+    btDummy.Top       := btCancelar.Top + 10;
     PanWork.Visible   := False;
-    edNro.Text        := '';
-    edItens.Text := '';
 
  end;
 
 end;
 
+Procedure TotalizaPedido;
+var nrLcto: Integer;
+begin
+  FuPedidos.totalPedido := 0;
+  FuPedidos.itensPedido := uDM.PedWrk.RecordCount;
+  nrLcto := uDM.PedWrkNrLcto.AsInteger;
+  uDM.PedWrk.First;
+  while not uDM.PedWrk.Eof do
+  begin
+    FuPedidos.totalPedido := FuPedidos.totalPedido + uDM.PedWrkVlrTotal.AsCurrency;
+    uDM.PedWrk.Next;
+  end;
+  uDM.PedWrk.FindKey([nrLcto]);
+  FuPedidos.edItens.Text := IntToStr(FuPedidos.itensPedido);
+  FuPedidos.edTotal.Text := FloatToStrF(FuPedidos.totalPedido,ffNumber,15,2);
+  FuPedidos.FormResize(nil);
+  FuPedidos.btDummy.SetFocus;
 
-Procedure InclueLanche(pNrLanche:Integer);
+end;
+
+Procedure InclueLanche(pCodLanche:Integer);
 var nLct: Integer;
 begin
-  if not uDM.Itens.FindKey([1,pNrLanche]) then Exit;
+  if not uDM.Itens.FindKey([1,pCodLanche]) then Exit;
   with uDM
   do begin
     PedWrk.Last;
     nLct := PedWrkNrLcto.AsInteger + 1;
     PedWrk.Append;
-    PedWrkNumero.AsInteger    := 0;
     PedWrkNrLcto.AsInteger    := nLct;
     PedWrkTpProd.AsInteger    := 1;
-    PedWrkCodProd.AsInteger   := pNrLanche;
+    PedWrkCodProd.AsInteger   := pCodLanche;
     PedWrkDescricao.AsString  := ItensDescricao.AsString;
     PedWrkQuant.AsInteger     := 1;
     PedWrkVlrUnit.AsCurrency  := ItensPreco.AsCurrency;
     PedWrkVlrTotal.AsCurrency := ItensPreco.AsCurrency;
-    PedWrkExtras.AsString     := '000000000000';
-    PedWrkExcluir.AsString    := '000000000000';
+    PedWrkExtras.AsString     := stringFiller('0',24);
     PedWrk.Post;
     PedWrk.Edit;
-    //TratativaLanche(pNrLanche,True); **************************
+    FuPedidos.FormResize(nil);
+    TratativaLanche(pCodLanche,True);
     if PedWrk.State = dsEdit
        then PedWrk.Post;
   end;
-  //TotalizaPedido(nSeq, itensPedido, valorPedido);    ************
-  FuPedidos.edItens.Text := IntToStr(itensPedido);
-  FuPedidos.edValor.Text := FloatToStrF(valorPedido,ffNumber,15,2);
-  FuPedidos.GridPedido := DefineGrid(FuPedidos.GridPedido,colGridPedido,1,0);
-  FuPedidos.btDummy.SetFocus;
+  TotalizaPedido;
 
 end;
+
 
 Procedure AlteraLanche;
 var nSeq,nProd: Integer;
 begin
-{
-  nSeq  := DM.PedWrkSequencia.AsInteger;
-  nProd := DM.PedWrkCodProd.AsInteger;
-  DM.PedWrk.Edit;
+  nSeq  := uDM.PedWrkNrLcto.AsInteger;
+  nProd := uDM.PedWrkCodProd.AsInteger;
+  uDM.PedWrk.Edit;
   TratativaLanche(nProd,False);
-  if DM.PedWrk.State = dsEdit
-     then DM.PedWrk.Post;
-  TotalizaPedido(nSeq, itensPedido, valorPedido);
-  FHDLanctos.edItens.Text := IntToStr(itensPedido);
-  FHDLanctos.edValor.Text := FloatToStrF(valorPedido,ffNumber,15,2);
-  FHDLanctos.GridPedido := DefineGrid(FHDLanctos.GridPedido,colGridPedido,1,0);
-  FHDLanctos.btDummy.SetFocus;
-}
-end;
+  if uDM.PedWrk.State = dsEdit
+     then uDM.PedWrk.Post;
+  TotalizaPedido;
 
-Procedure InclueBebida(pNrBebida:Integer);
-var nSeq,i: Integer;
-    lExiste,lProcura: Boolean;
-    wRect: TRect;
-begin
-{
-  if not DM.Prods.FindKey([4,pNrBebida]) then Exit;
-  lExiste := False;
-  lProcura := True;
-  DM.PedWrk.First;
-  while lProcura
-  do begin
-    if (DM.PedWrkTpProd.AsInteger = 4) and
-       (DM.PedWrkCodProd.AsInteger = pNrBebida)
-    then begin
-      lExiste := True;
-      lProcura := False;
-    end
-    else DM.PedWrk.Next;
-    if DM.PedWrk.Eof then lProcura := False;
-  end;
-  if lExiste then
-  begin
-    nSeq := DM.PedWrkSequencia.AsInteger;
-    DM.PedWrk.Edit;
-    DM.PedWrkQuant.AsInteger := DM.PedWrkQuant.AsInteger + 1;
-    DM.PedWrkVlrTotal.AsCurrency := DM.PedWrkVlrUnit.AsCurrency * DM.PedWrkQuant.AsInteger;
-    DM.PedWrk.Post;
-  end
-  else begin
-    DM.PedWrk.Last;
-    nSeq := DM.PedWrkSequencia.AsInteger + 1;
-    DM.PedWrk.Append;
-    DM.PedWrkNumero.AsInteger    := nroPedido;
-    DM.PedWrkSequencia.AsInteger := nSeq;
-    DM.PedWrkTpProd.AsInteger    := 4;
-    DM.PedWrkCodProd.AsInteger   := pNrBebida;
-    DM.PedWrkDescricao.AsString  := DM.ProdsDescricao.AsString;
-    DM.PedWrkQuant.AsInteger     := 1;
-    DM.PedWrkVlrUnit.AsCurrency  := DM.ProdsValor.AsCurrency;
-    DM.PedWrkVlrTotal.AsCurrency := DM.ProdsValor.AsCurrency;
-    DM.PedWrkExtras.AsString     := '000000000000';
-    DM.PedWrkExcluir.AsString    := '000000000000';
-    DM.PedWrk.Post;
-  end;
-  TotalizaPedido(nSeq, itensPedido, valorPedido);
-  FHDLanctos.edItens.Text := IntToStr(itensPedido);
-  FHDLanctos.edValor.Text := FloatToStrF(valorPedido,ffNumber,15,2);
-  FHDLanctos.GridPedido := DefineGrid(FHDLanctos.GridPedido,colGridPedido,1,0);
-  FHDLanctos.btDummy.SetFocus;
-}
 end;
-
-Procedure BebidaMaisMenos(pMais:Boolean);
-var wQtd: Integer;
-    lDeletou: Boolean;
-begin
-{
-  // pMais:  True: Mais    False: Menos
-  lDeletou := False;
-  if pMais
-     then wQtd := DM.PedWrkQuant.AsInteger + 1
-     else wQtd := DM.PedWrkQuant.AsInteger - 1;
-  if wQtd = 0
-  then begin
-    DM.PedWrk.Delete;
-    lDeletou := True;
-  end
-  else begin
-    DM.PedWrk.Edit;
-    DM.PedWrkQuant.AsInteger := wQtd;
-    DM.PedWrkVlrTotal.AsCurrency := DM.PedWrkQuant.AsInteger * DM.PedWrkVlrUnit.AsCurrency;
-    DM.PedWrk.Post;
-  end;
-  TotalizaPedido(DM.PedWrkSequencia.AsInteger, itensPedido, valorPedido);
-  FHDLanctos.edItens.Text := IntToStr(itensPedido);
-  FHDLanctos.edValor.Text := FloatToStrF(valorPedido,ffNumber,15,2);
-  FHDLanctos.GridPedido := DefineGrid(FHDLanctos.GridPedido,colGridPedido,1,0);
-  if lDeletou
-  then begin
-    FHDLanctos.PanAlteraBebida.Visible := False;
-    FHDLanctos.btDummy.SetFocus;
-  end;
-}
-end;
-
 
 Procedure AlteraBebida;
 begin
@@ -372,6 +313,89 @@ begin
     PanAlteraBebida.Visible := True;
     btNada.SetFocus;
   end;
+
+end;
+
+
+Procedure InclueBebida(pNrBebida:Integer);
+var nSeq: Integer;
+    lExiste,lProcura: Boolean;
+begin
+  if not uDM.Itens.FindKey([3,pNrBebida]) then Exit;
+  lExiste := False;
+  lProcura := True;
+  uDM.PedWrk.First;
+  while lProcura
+  do begin
+    if (uDM.PedWrkTpProd.AsInteger = 3) and
+       (uDM.PedWrkCodProd.AsInteger = pNrBebida)
+    then begin
+      lExiste := True;
+      lProcura := False;
+    end
+    else uDM.PedWrk.Next;
+    if uDM.PedWrk.Eof then lProcura := False;
+  end;
+  if lExiste then
+  begin
+    nSeq := uDM.PedWrkNrLcto.AsInteger;
+    uDM.PedWrk.Edit;
+    uDM.PedWrkQuant.AsInteger := uDM.PedWrkQuant.AsInteger + 1;
+    uDM.PedWrkVlrTotal.AsCurrency := uDM.PedWrkVlrUnit.AsCurrency * uDM.PedWrkQuant.AsInteger;
+    uDM.PedWrk.Post;
+    //AlteraBebida;
+  end
+  else begin
+    uDM.PedWrk.Last;
+    nSeq := uDM.PedWrkNrLcto.AsInteger + 1;
+    uDM.PedWrk.Append;
+    uDM.PedWrkNrLcto.AsInteger    := nSeq;
+    uDM.PedWrkTpProd.AsInteger    := 3;
+    uDM.PedWrkCodProd.AsInteger   := pNrBebida;
+    uDM.PedWrkDescricao.AsString  := uDM.ItensDescricao.AsString;
+    uDM.PedWrkQuant.AsInteger     := 1;
+    uDM.PedWrkVlrUnit.AsCurrency  := uDM.ItensPreco.AsCurrency;
+    uDM.PedWrkVlrTotal.AsCurrency := uDM.ItensPreco.AsCurrency;
+    uDM.PedWrkExtras.AsString     := stringFiller('0',24);
+    uDM.PedWrk.Post;
+  end;
+  TotalizaPedido;
+
+end;
+
+Procedure BebidaMaisMenos(pMais:Boolean);
+var wQtd: Integer;
+    lDeletou: Boolean;
+begin
+  // pMais:  True: Mais    False: Menos
+  lDeletou := False;
+  if pMais
+     then wQtd := uDM.PedWrkQuant.AsInteger + 1
+     else wQtd := uDM.PedWrkQuant.AsInteger - 1;
+  if wQtd = 0
+  then begin
+    uDM.PedWrk.Delete;
+    lDeletou := True;
+  end
+  else begin
+    uDM.PedWrk.Edit;
+    uDM.PedWrkQuant.AsInteger := wQtd;
+    uDM.PedWrkVlrTotal.AsCurrency := uDM.PedWrkQuant.AsInteger * uDM.PedWrkVlrUnit.AsCurrency;
+    uDM.PedWrk.Post;
+  end;
+  TotalizaPedido;
+  if lDeletou
+    then FuPedidos.PanAlteraBebida.Visible := False;
+
+end;
+
+
+
+procedure TFuPedidos.btCancelarClick(Sender: TObject);
+begin
+  PanAlteraBebida.Visible := False;
+  PanWork.Visible := False;
+  btAbrirPedido.SetFocus;
 
 end;
 
@@ -386,29 +410,33 @@ end;
 
 procedure TFuPedidos.btExcluirClick(Sender: TObject);
 begin
-{
-  if DM.PedWrk.RecordCount = 0 then Exit;
-  if MessageDlg('Excluir ' + DM.PedWrkDescricao.AsString + ' ?',
+  if uDM.PedWrk.RecordCount = 0 then Exit;
+  if MessageDlg('Excluir ' + uDM.PedWrkDescricao.AsString + ' ?',
                 mtConfirmation,[mbYes,mbNo],0,mbNo,['Sim','Não']) = mrYes
   then begin
-    DM.Pedwrk.Delete;
-    TotalizaPedido(DM.PedWrkSequencia.AsInteger, itensPedido, valorPedido);
-    FHDLanctos.edItens.Text := IntToStr(itensPedido);
-    FHDLanctos.edValor.Text := FloatToStrF(valorPedido,ffNumber,15,2);
-    FHDLanctos.GridPedido := DefineGrid(FHDLanctos.GridPedido,colGridPedido,1,0);
-    FHDLanctos.btDummy.SetFocus;
+    uDM.Pedwrk.Delete;
+    TotalizaPedido;
   end;
-}
+
 end;
 
 procedure TFuPedidos.btFinalizarClick(Sender: TObject);
+var nRet: Integer;
 begin
-{
-  if not FinalizaPedido(nroPedido,itensPedido,valorPedido) then Exit;
-  PanWork.Visible := False;
-  PanTopo.Visible := False;
-  btPedido.SetFocus;
-}
+  PanAlteraBebida.Visible := False;
+  if FuPedidos.totalPedido = 0 then nRet := 2
+     else nRet := FinalizaPedido;
+  if nRet = 0
+  then begin
+    ShowMessage('Gravou pedido, emite pedido, emite NFCe(se for o caso) e atualiza caixa');
+    nRet := 2;
+  end;
+  if nRet = 2 then       // Novo pedido ou pedido cancelado
+  begin
+    PanWork.Visible := False;
+    btAbrirPedido.SetFocus;
+  end;
+
 end;
 
 procedure TFuPedidos.btMaisClick(Sender: TObject);
@@ -431,18 +459,14 @@ begin
 
 end;
 
-procedure TFuPedidos.btPedidoClick(Sender: TObject);
+procedure TFuPedidos.btAbrirPedidoClick(Sender: TObject);
 begin
   pgControle.ActivePageIndex := 0;
-  nroPedido := 0;   // Obter o nr. do pedido somente na gravação
-  if CriaAbrePedidoWrk(NroPedido) <> 0 then Exit;
-  edNro.Text   := IntToStr(nroPedido);
-  edItens.Text := '';
-  edValor.Text := '';
-  PanTopo.Visible := True;
+  if CriaAbrePedidoWrk(0) <> 0 then Exit;
+  itensPedido := 0;
+  totalPedido := 0;
   PanWork.Visible := True;
-  GridPedido := DefineGrid(GridPedido,colGridPedido,1,0);
-  GridLanches.SetFocus;
+  FuPedidos.FormResize(nil);
   btDummy.SetFocus;
 
 end;
@@ -456,52 +480,64 @@ end;
 procedure TFuPedidos.FormCreate(Sender: TObject);
 begin
   PanWork.Align   := alClient;
-  btPedido.Left   := 20;
-  btPedido.Top    := 60;
-  btPedido.Width  := 180;
-  btPedido.Height := 80;
-  btSair.Left     := btPedido.Left;
-  btSair.Top      := btPedido.Top + btPedido.Height + 20;
-  btSair.Width    := btPedido.Width;
-  btSair.Height   := btPedido.Height;
+  btAbrirPedido.Left   := 20;
+  btAbrirPedido.Top    := 60;
+  btAbrirPedido.Width  := 180;
+  btAbrirPedido.Height := 80;
+  btSair.Left     := btAbrirPedido.Left;
+  btSair.Top      := btAbrirPedido.Top + btAbrirPedido.Height + 20;
+  btSair.Width    := btAbrirPedido.Width;
+  btSair.Height   := btAbrirPedido.Height;
+
+end;
+
+procedure TFuPedidos.FormResize(Sender: TObject);
+begin
+  GridPedido := DefineGrid(GridPedido, [0.06, 0.33, 0.05, 0.22], 1, 0);
 
 end;
 
 procedure TFuPedidos.FormShow(Sender: TObject);
 begin
+  edItens.Text := '0';
+  edTotal.Text := '0,00';
   MontaTelaPedidos;
 
 end;
+
 
 procedure TFuPedidos.GridBebidasDrawCell(Sender: TObject; ACol, ARow: Integer;
   Rect: TRect; State: TGridDrawState);
 var wTxt: String;
     wKey: Integer;
+    wImagem: TImage;
 begin
-  // Escreve o texto na célula
+  // Preenche a celula com código, descrição, preço e imagem
+  wImagem := TImage.Create(nil);
   GridBebidas.Canvas.Brush.Style := bsClear;
-  if (ACol = 0) and (ARow = 0)
-  then begin
-    GridBebidas.Canvas.Font.Size := 36;
-    wTxt := '...';
-    Gridbebidas.Canvas.TextOut(Rect.Left+12, Rect.Top+24, wTxt);
-    Exit;
-  end;
+  GridBebidas.Canvas.FillRect(Rect);
   wKey := wCodBebida[ACol,ARow];
   if wKey > 0 then
   begin
-    GridBebidas.Canvas.Font.Size := 28;
-    wTxt := IntToStr(wCodBebida[ACol,ARow]);
-    if Length(Trim(wTxt)) = 1 then wTxt := '0' + wTxt;
-    GridBebidas.Canvas.TextOut(Rect.Left, Rect.Top, wTxt);
-    if uDM.Itens.FindKey([4,wKey])
+    if uDM.Itens.FindKey([3,wKey])
     then begin
+      if uDM.ItensImagem.AsString <> '' then
+      begin
+        wImagem.Picture.LoadFromFile(uDM.ItensImagem.AsString);
+        GridBebidas.Canvas.StretchDraw(Rect,wImagem.Picture.Graphic);
+      end;
+      wTxt := IntToStr(wKey);
+      if Length(Trim(wTxt)) = 1 then wTxt := '0' + wTxt;
+      //wTxt := uDM.ItensGrupo.AsString + '.' + wTxt;
+      GridBebidas.Canvas.Font.Size := 28;
+      GridBebidas.Canvas.TextOut(Rect.Left+4, Rect.Top+4, wTxt);
+      GridBebidas.Canvas.Font.Size := 18;
       wTxt := uDM.ItensDescricao.AsString;
-      GridBebidas.Canvas.Font.Size := 12;
-      GridBebidas.Canvas.TextOut(Rect.Left+2, Rect.Top+38, wTxt);
+      GridBebidas.Canvas.TextOut(Rect.Left+4, Rect.Top+52, wTxt);
     end;
 
   end;
+  wImagem.Free;
 
 end;
 
@@ -510,6 +546,7 @@ procedure TFuPedidos.GridBebidasMouseDown(Sender: TObject;
 var nCol,nLin: Integer;
     wKey: Integer;
 begin
+  if PanAlteraBebida.Visible then PanAlteraBebida.Visible := False;  
   GridBebidas.MouseToCell(X,Y,nCol,nLin);
   wKey := wCodBebida[nCol,nLin];
   if wKey = 0 then Exit;
@@ -579,12 +616,6 @@ begin
   wKey := wCodLanche[nCol,nLin];
   if wKey = 0 then Exit;
   InclueLanche(wKey);
-
-end;
-
-procedure TFuPedidos.GridPedidoCellClick(Column: TColumn);
-begin
-//  btEditarClick(nil);
 
 end;
 

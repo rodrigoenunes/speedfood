@@ -6,7 +6,7 @@ uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, DateUtils, Vcl.DBCtrls, Vcl.StdCtrls,
   Vcl.Mask, Vcl.Buttons;
-  Function AberturaDeCaixa: Boolean;
+  Function AberturaDeCaixa(lExibe:Boolean=False): Boolean;
   Function FechamentoDeCaixa: Boolean;
 
 type
@@ -161,7 +161,7 @@ begin
 end;
 
 
-Function AberturaDeCaixa: Boolean;
+Function AberturaDeCaixa(lExibe:Boolean=False): Boolean;
 var nSeq: Integer;
 begin
   Result := False;
@@ -186,20 +186,24 @@ begin
     while (not uDM.RegCaixa.Eof) and (nSeq = 0) 
     do begin
       if (dhIni >= uDM.RegCaixaDtHrInicio.AsDateTime)
-          and (dhIni <= uDM.RegCaixaDtHrFim.AsDateTime) 
-      then nSeq := uDM.RegCaixaSequencia.AsInteger;       // Registro de caixa já existe
-      uDM.RegCaixa.Next;
+          and (dhIni <= uDM.RegCaixaDtHrFim.AsDateTime)
+      then nSeq := uDM.RegCaixaSequencia.AsInteger          // Registro de caixa já existe
+      else uDM.RegCaixa.Next;
     end;
-    if nSeq = 0 
+    if nSeq = 0
     then begin
       uDM.RegCaixa.Last;
       nSeq := uDM.RegCaixaSequencia.AsInteger + 1;
       AdicionaRegCaixa(nSeq);
+      lExibe := True;
     end;
-    uDM.RegCaixa.FindKey([nSeq]);
-    uDM.RegCaixa.Edit;
-    wrkOperacao := 1;      // Abertura do caixa ou correção de saldo inicial
-    ShowModal;
+    if lExibe
+    then begin
+      uDM.RegCaixa.FindKey([nSeq]);
+      uDM.RegCaixa.Edit;
+      wrkOperacao := 1;      // Abertura do caixa ou correção de saldo inicial
+      ShowModal;
+    end;
     Result := True;
   end;
   FuCaixa.Free;

@@ -9,6 +9,9 @@ uses
   FireDAC.Phys.MySQL, FireDAC.Phys.MySQLDef, FireDAC.FMXUI.Wait,
   FireDAC.Stan.Param, FireDAC.DatS, FireDAC.DApt.Intf, FireDAC.DApt,
   FireDAC.Comp.DataSet, FireDAC.Comp.Client, FireDAC.Comp.UI, Datasnap.DBClient;
+  Procedure ContaExtras;
+  Procedure CarregaExtras(pLins: Integer);
+
   Function CriaAbrePedidoWrk(pNro:Integer): Integer;
 
 type
@@ -39,22 +42,7 @@ type
     SisPessoaNSCertificado: TStringField;
     SisPessoaNrNFCe: TIntegerField;
     SisPessoaSerieNFCe: TStringField;
-    ItensDescricao: TStringField;
-    ItensDescrCompleta: TMemoField;
-    ItensTamanho: TStringField;
-    ItensPreco: TBCDField;
-    ItensNCM: TStringField;
-    ItensCFOP: TIntegerField;
-    ItensCSOSN: TIntegerField;
-    ItensCST: TIntegerField;
-    ItensCST_IPI: TIntegerField;
-    ItensCST_PIS: TIntegerField;
-    ItensCST_COFINS: TIntegerField;
-    ItensPcReduz: TFMTBCDField;
-    ItensAliqICMS: TBCDField;
     ItensZC_Grupo: TStringField;
-    ItensZC_Key: TStringField;
-    ItensImagem: TStringField;
     RegCaixa: TFDTable;
     DSRegCaixa: TDataSource;
     RegCaixaSequencia: TIntegerField;
@@ -91,7 +79,6 @@ type
     DSLctos: TDataSource;
     LctCaixaZC_MeioPgt: TStringField;
     PedWrk: TClientDataSet;
-    PedWrkNumero: TIntegerField;
     PedWrkNrLcto: TSmallintField;
     PedWrkTpProd: TSmallintField;
     PedWrkCodProd: TIntegerField;
@@ -100,41 +87,92 @@ type
     PedWrkQuant: TSmallintField;
     PedWrkVlrUnit: TCurrencyField;
     PedWrkExtras: TStringField;
-    PedWrkVlrExt1: TCurrencyField;
-    PedWrkVlrExt2: TCurrencyField;
-    PedWrkVlrExt3: TCurrencyField;
-    PedWrkVlrExt4: TCurrencyField;
-    PedWrkVlrExt5: TCurrencyField;
-    PedWrkVlrExt6: TCurrencyField;
-    PedWrkVlrExt7: TCurrencyField;
-    PedWrkVlrExt8: TCurrencyField;
-    PedWrkVlrExt9: TCurrencyField;
-    PedWrkVlrExt10: TCurrencyField;
-    PedWrkVlrExt11: TCurrencyField;
-    PedWrkVlrExt12: TCurrencyField;
     PedWrkVlrTotal: TCurrencyField;
-    PedWrkExcluir: TStringField;
     PedWrkTxtExtras: TMemoField;
-    PedWrkTxtExclus: TMemoField;
-    PedWrkFPagto: TSmallintField;
-    PedWrkReais: TCurrencyField;
-    PedWrkPIX: TCurrencyField;
-    PedWrkCCred: TCurrencyField;
-    PedWrkCDeb: TCurrencyField;
-    PedWrkOutros: TCurrencyField;
-    PedWrkZC_Extra: TStringField;
-    PedWrkZC_Exclus: TStringField;
-    PedWrkZC_Aviso: TStringField;
     SPedWrk: TDataSource;
-    ItensGrupo: TStringField;
+    Pedidos: TFDTable;
+    DSPedidos: TDataSource;
+    PedidosData: TDateTimeField;
+    PedidosCPF_CNPJ: TStringField;
+    PedidosValor: TBCDField;
+    PedidosMeioPagto: TIntegerField;
+    PedidosNrNFCe: TIntegerField;
+    PedidosSrNFCe: TIntegerField;
+    PedidosArqXML: TStringField;
+    DSPedItens: TDataSource;
+    PedItens: TFDTable;
+    ItensDescricao: TStringField;
+    ItensTamanho: TStringField;
+    ItensPreco: TBCDField;
+    ItensNCM: TStringField;
+    ItensCFOP: TIntegerField;
+    ItensCSOSN: TIntegerField;
+    ItensCST: TIntegerField;
+    ItensCST_IPI: TIntegerField;
+    ItensCST_PIS: TIntegerField;
+    ItensCST_COFINS: TIntegerField;
+    ItensPcReduz: TFMTBCDField;
+    ItensAliqICMS: TBCDField;
+    ItensImagem: TStringField;
+    ItensGrupo: TIntegerField;
     ItensCodigo: TIntegerField;
+    PedWrkVlr01: TCurrencyField;
+    PedWrkVlr02: TCurrencyField;
+    PedWrkVlr03: TCurrencyField;
+    ItensDescrCompleta: TStringField;
+    ItensUnidade: TStringField;
+    ItensCodBarras: TStringField;
+    ItensMinMax: TBooleanField;
+    ItensMaximo: TIntegerField;
+    ItensMinimo: TIntegerField;
+    PedItensNumero: TIntegerField;
+    PedItensNrLcto: TIntegerField;
+    PedItensTpProd: TIntegerField;
+    PedItensCodProd: TIntegerField;
+    PedItensObservacao: TStringField;
+    PedItensQuant: TIntegerField;
+    PedItensVlrUnitario: TBCDField;
+    PedItensVlrTotal: TBCDField;
+    PedItensExtras: TStringField;
+    PedWrkCod01: TSmallintField;
+    PedWrkCod02: TSmallintField;
+    PedWrkCod03: TSmallintField;
+    PedWrkTxtExclus: TMemoField;
+    PedWrkZC_Aviso: TStringField;
+    ItensZC_Key: TStringField;
+    PedidosLanctos: TIntegerField;
+    PedItensCod01: TIntegerField;
+    PedItensVlr01: TBCDField;
+    PedItensCod02: TIntegerField;
+    PedItensVlr02: TBCDField;
+    PedItensCod03: TIntegerField;
+    PedItensVlr03: TBCDField;
+    PedItensTxtExtras: TStringField;
+    PedItensTxtExclus: TStringField;
+    PedidosNumero: TLongWordField;
+    PedidosVlrReais: TBCDField;
+    PedidosVlrCDeb: TBCDField;
+    PedidosVlrCCred: TBCDField;
+    PedidosVlrPIX: TBCDField;
+    PedidosVlrVRef: TBCDField;
+    PedidosVlrCheque: TBCDField;
+    PedidosVlrOutros: TBCDField;
     procedure ItensCalcFields(DataSet: TDataSet);
     procedure LctCaixaCalcFields(DataSet: TDataSet);
+    procedure PedWrkCalcFields(DataSet: TDataSet);
   private
     { Private declarations }
   public
     { Public declarations }
     pathWork: String;
+    nExtras: Integer;
+    wNroPedido: Integer;
+    wCodExtra: array[1..2,1..12] of integer;
+    wTxtExtra: array[1..2,1..12] of String;
+    wVlrExtra: array[1..2,1..12] of Currency;
+    wCodExtraTab: array[1..24] of Integer;
+    wTxtExtraTab: array[1..24] of String;
+    wVlrExtraTab: array[1..24] of Currency;
 
   end;
 
@@ -142,7 +180,7 @@ var
   uDM: TuDM;
 
 const
-  xGrupos: array[1..5] of String = ('Lanches','Extras','Exceções','Bedidas','Diversos');
+  xGrupos: array[1..4] of String = ('Lanches','Extras','Bedidas','Diversos');
   xOperacao: array[1..5] of String = ('Saldo','Suprim','Receb','Pagto','Sangria');
   xMeioPgt: array[1..5] of String = ('R$', 'CCred','CDeb','PIX','Outros');
 
@@ -152,23 +190,67 @@ implementation
 
 {$R *.dfm}
 
+Procedure ContaExtras;
+begin
+  uDM.nExtras := 0;
+  uDM.Itens.FindNearest([2,0]);
+  while (uDM.ItensGrupo.AsInteger = 2) and (not uDM.Itens.Eof)
+  do begin
+    uDM.nExtras := uDM.nExtras + 1;
+    uDM.Itens.Next;
+  end;
+
+end;
+
+
+Procedure CarregaExtras(pLins: Integer);
+var i,j,k: Integer;
+begin
+  for i := 1 to 2 do
+    for j := 1 to 12 do
+      begin
+        uDM.wCodExtra[i,j] := 0;
+        uDM.wTxtExtra[i,j] := '';
+        uDM.wVlrExtra[i,j] := 0;
+      end;
+  for k := 1 to 24 do
+    begin
+      uDM.wCodExtraTab[k] := 0;
+      uDM.wTxtExtraTab[k] := '';
+      uDM.wVlrExtraTab[k] := 0;
+    end;
+  i := 1;
+  j := 1;
+  uDM.Itens.FindNearest([2,1]);
+  while uDM.ItensGrupo.AsInteger = 2
+  do begin
+    uDM.wCodExtra[i,j] := uDM.ItensCodigo.AsInteger;
+    uDM.wTxtExtra[i,j] := uDM.ItensDescricao.AsString;
+    uDM.wVlrExtra[i,j] := uDM.ItensPreco.AsCurrency;
+    j := j + 1;
+    if j > pLins
+    then begin
+      j := 1;
+      i := i + 1;
+    end;
+    k := uDM.ItensCodigo.AsInteger;
+    uDM.wCodExtraTab[k] := uDM.ItensCodigo.AsInteger;
+    uDM.wTxtExtraTab[k] := uDM.ItensDescricao.AsString;
+    uDM.wVlrExtraTab[k] := uDM.ItensPreco.AsCurrency;
+    k := k + 1;
+    uDM.Itens.Next;
+  end;
+
+end;
+
+
 Function CriaAbrePedidoWrk(pNro:Integer): Integer;
-var wTabWrk: String;
 begin
   Result  := 0;
-  wTabWrk := uDM.pathWork + '\PedidoWrk.XML';
-  if FileExists(wTabWrk) then
-  Try
-    DeleteFile(wTabWrk);
-  Except
-    Result := 1;
-    Exit;
-  End;
   with uDM
   do begin
     PedWrk.Active := False;
     PedWrk.FieldDefs.Clear;
-    PedWrk.FieldDefs.Add('Numero',    ftInteger);
     PedWrk.FieldDefs.Add('NrLcto',    ftSmallint);
     PedWrk.FieldDefs.Add('TpProd',    ftSmallint);
     PedWrk.FieldDefs.Add('CodProd',   ftInteger);
@@ -176,43 +258,28 @@ begin
     PedWrk.FieldDefs.Add('Observ',    ftMemo, 10);      // Comentários
     PedWrk.FieldDefs.Add('Quant',     ftSmallint);
     PedWrk.FieldDefs.Add('VlrUnit',   ftCurrency);
-    PedWrk.FieldDefs.Add('Extras',    ftString, 12);
-    PedWrk.FieldDefs.Add('VlrExt1',   ftCurrency);
-    PedWrk.FieldDefs.Add('VlrExt2',   ftCurrency);
-    PedWrk.FieldDefs.Add('VlrExt3',   ftCurrency);
-    PedWrk.FieldDefs.Add('VlrExt4',   ftCurrency);
-    PedWrk.FieldDefs.Add('VlrExt5',   ftCurrency);
-    PedWrk.FieldDefs.Add('VlrExt6',   ftCurrency);
-    PedWrk.FieldDefs.Add('VlrExt7',   ftCurrency);
-    PedWrk.FieldDefs.Add('VlrExt8',   ftCurrency);
-    PedWrk.FieldDefs.Add('VlrExt9',   ftCurrency);
-    PedWrk.FieldDefs.Add('VlrExt10',  ftCurrency);
-    PedWrk.FieldDefs.Add('VlrExt11',  ftCurrency);
-    PedWrk.FieldDefs.Add('VlrExt12',  ftCurrency);
+    PedWrk.FieldDefs.Add('Extras',    ftString, 24);
+    PedWrk.FieldDefs.Add('Cod01',     ftSmallint);
+    PedWrk.FieldDefs.Add('Vlr01',     ftCurrency);
+    PedWrk.FieldDefs.Add('Cod02',     ftSmallint);
+    PedWrk.FieldDefs.Add('Vlr02',     ftCurrency);
+    PedWrk.FieldDefs.Add('Cod03',     ftSmallint);
+    PedWrk.FieldDefs.Add('Vlr03',     ftCurrency);
     PedWrk.FieldDefs.Add('VlrTotal',  ftCurrency);
-    PedWrk.FieldDefs.Add('Excluir',   ftString, 12);
-    PedWrk.FieldDefs.Add('TxtExtras', ftMemo, 10);      // Extras - texto
-    PedWrk.FieldDefs.Add('TxtExclus', ftMemo, 10);      // Exckusoes - texto
-    PedWrk.FieldDefs.Add('FPagto',    ftSmallint);
-    PedWrk.FieldDefs.Add('Reais',     ftCurrency);
-    PedWrk.FieldDefs.Add('PIX',       ftCurrency);
-    PedWrk.FieldDefs.Add('CCRed',     ftCurrency);
-    PedWrk.FieldDefs.Add('CDeb',      ftCurrency);
-    PedWrk.FieldDefs.Add('Outros',    ftCurrency);
+    PedWrk.FieldDefs.Add('TxtExtras', ftMemo, 1024);      // Extras - texto
+    PedWrk.FieldDefs.Add('TxtExclus', ftMemo, 1024);      // Exclusoes - texto
     PedWrk.IndexDefs.Clear;
     PedWrk.IndexDefs.Add('','NrLcto',[ixPrimary,ixUnique]);
     PedWrk.CreateDataSet;
     Try
       PedWrk.Active := True;
-      PedWrk.Append;
-      PedWrk.SaveToFile(wTabWrk,dfXMLUTF8);
       PedWrk.Active := False;
     Except
       Result := 2;
       Exit;
     End;
     PedWrk.Active := True;
-    //
+    wNroPedido := pNro;
 
   end;
 
@@ -222,13 +289,11 @@ end;
 procedure TuDM.ItensCalcFields(DataSet: TDataSet);
 begin
   if uDM = Nil then Exit;
-
   if not uDM.Itens.Active then Exit;
-
-  uDM.ItensZC_Key.AsString := uDM.ItensGrupo.AsString + uDM.ItensCodigo.AsString;
-  if (uDM.ItensGrupo.AsInteger > 0) and (uDM.ItensGrupo.AsInteger < 6)
+  if (uDM.ItensGrupo.AsInteger > 0) and (uDM.ItensGrupo.AsInteger < 5)
      then uDM.ItensZC_Grupo.AsString := xGrupos[uDM.ItensGrupo.AsInteger]
      else uDM.ItensZC_Grupo.AsString := '(' + uDM.ItensGrupo.AsString + ')';
+  uDM.ItensZC_Key.AsString := uDM.ItensGrupo.AsString + uDM.ItensCodigo.AsString;
 
 end;
 
@@ -241,6 +306,15 @@ begin
   if (uDM.LctCaixaMeioPgt.AsInteger > 0) and (uDM.LctCaixaMeioPgt.AsInteger < 6)
      then uDM.LctCaixaZC_MeioPgt.AsString := xMeioPgt[uDM.LctCaixaMeioPgt.AsInteger]
      else uDM.LctCaixaZC_MeioPgt.AsString := '';
+
+end;
+
+procedure TuDM.PedWrkCalcFields(DataSet: TDataSet);
+begin
+  if not PedWrk.Active then Exit;
+  PedWrkZC_Aviso.AsString := '';
+  if (Pos('1',PedWrkExtras.AsString) > 0)
+     or (Pos('2',PedWrkExtras.AsString) > 0) then PedWrkZC_Aviso.AsString := 'P';
 
 end;
 

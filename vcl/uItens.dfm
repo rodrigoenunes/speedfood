@@ -26,9 +26,9 @@ object FuItens: TFuItens
     TabOrder = 0
     object PanManut: TPanel
       Left = 1
-      Top = 228
+      Top = 176
       Width = 828
-      Height = 205
+      Height = 257
       Align = alBottom
       Enabled = False
       TabOrder = 0
@@ -40,45 +40,45 @@ object FuItens: TFuItens
         Caption = 'Codigo'
       end
       object Label3: TLabel
-        Left = 141
+        Left = 140
         Top = 4
         Width = 55
         Height = 16
         Caption = 'Descri'#231#227'o'
       end
       object Label4: TLabel
-        Left = 595
-        Top = 4
+        Left = 192
+        Top = 44
         Width = 54
         Height = 16
         Caption = 'Tamanho'
       end
       object Label5: TLabel
-        Left = 510
+        Left = 512
         Top = 4
         Width = 32
         Height = 16
         Caption = 'Pre'#231'o'
       end
       object Label1: TLabel
-        Left = 96
-        Top = 48
+        Left = 95
+        Top = 88
         Width = 57
         Height = 32
         Caption = 'Descri'#231#227'o completa:'
         WordWrap = True
       end
       object Label15: TLabel
-        Left = 101
-        Top = 116
+        Left = 97
+        Top = 156
         Width = 52
         Height = 16
         Alignment = taRightJustify
         Caption = 'Imagem:'
       end
       object SpeedButton1: TSpeedButton
-        Left = 640
-        Top = 111
+        Left = 636
+        Top = 151
         Width = 44
         Height = 25
         Caption = '...'
@@ -100,16 +100,30 @@ object FuItens: TFuItens
       end
       object ImgItem: TImage
         Left = 686
-        Top = 2
+        Top = 26
         Width = 140
         Height = 140
         Stretch = True
+      end
+      object Label16: TLabel
+        Left = 140
+        Top = 44
+        Width = 46
+        Height = 16
+        Caption = 'Unidade'
+      end
+      object Label17: TLabel
+        Left = 276
+        Top = 44
+        Width = 98
+        Height = 16
+        Caption = 'C'#243'digo de barras'
       end
       object dbTipo: TDBRadioGroup
         Left = 1
         Top = 1
         Width = 88
-        Height = 203
+        Height = 255
         Align = alLeft
         Caption = 'Tipo'
         DataField = 'Grupo'
@@ -117,7 +131,6 @@ object FuItens: TFuItens
         Items.Strings = (
           '&Lanches'
           '&Extras'
-          'E&xce'#231#245'es'
           '&Bebidas'
           '&Diversos')
         TabOrder = 0
@@ -125,40 +138,40 @@ object FuItens: TFuItens
           '1'
           '2'
           '3'
-          '4'
-          '5')
+          '4')
         OnClick = dbTipoClick
         OnExit = edZC_KeyChange
+        ExplicitTop = -3
       end
       object dbCodigo: TDBEdit
         Left = 96
         Top = 18
-        Width = 41
+        Width = 40
         Height = 24
         DataField = 'Codigo'
         DataSource = uDM.DSItens
         TabOrder = 1
       end
       object dbDescricao: TDBEdit
-        Left = 141
+        Left = 140
         Top = 18
-        Width = 365
+        Width = 368
         Height = 24
         DataField = 'Descricao'
         DataSource = uDM.DSItens
         TabOrder = 2
       end
       object dbTamanho: TDBEdit
-        Left = 595
-        Top = 18
-        Width = 89
+        Left = 192
+        Top = 58
+        Width = 80
         Height = 24
         DataField = 'Tamanho'
         DataSource = uDM.DSItens
-        TabOrder = 4
+        TabOrder = 5
       end
       object dbPreco: TDBEdit
-        Left = 510
+        Left = 512
         Top = 18
         Width = 81
         Height = 24
@@ -167,8 +180,8 @@ object FuItens: TFuItens
         TabOrder = 3
       end
       object btOk: TBitBtn
-        Left = 690
-        Top = 144
+        Left = 694
+        Top = 180
         Width = 89
         Height = 25
         Caption = '&Ok'
@@ -186,13 +199,13 @@ object FuItens: TFuItens
           0055555555555577FF5555555555555220005555555555577FFF555555555555
           5220555555555555577F55555555555555555555555555555555}
         NumGlyphs = 2
-        TabOrder = 8
+        TabOrder = 10
         Visible = False
         OnClick = btOkClick
       end
       object btCancel: TBitBtn
-        Left = 690
-        Top = 171
+        Left = 694
+        Top = 207
         Width = 89
         Height = 25
         Caption = '&Cancelar'
@@ -210,26 +223,26 @@ object FuItens: TFuItens
           550666777F66666777F665550666666655066777F666666677F6655506666666
           65066777F666666667F666666666666666666666666666666666}
         NumGlyphs = 2
-        TabOrder = 9
+        TabOrder = 11
         Visible = False
         OnClick = btCancelClick
       end
       object dbDescrCompl: TDBMemo
-        Left = 156
-        Top = 48
+        Left = 152
+        Top = 88
         Width = 528
         Height = 57
         DataField = 'DescrCompleta'
         DataSource = uDM.DSItens
-        TabOrder = 5
+        TabOrder = 7
       end
       object gbFiscais: TGroupBox
         Left = 95
-        Top = 138
-        Width = 589
+        Top = 178
+        Width = 585
         Height = 60
         Caption = 'Dados fiscais'
-        TabOrder = 7
+        TabOrder = 9
         object Label6: TLabel
           Left = 8
           Top = 16
@@ -376,22 +389,40 @@ object FuItens: TFuItens
         end
       end
       object edZC_Key: TDBEdit
-        Left = 785
-        Top = 175
-        Width = 21
+        Left = 789
+        Top = 191
+        Width = 28
         Height = 24
         DataField = 'ZC_Key'
         DataSource = uDM.DSItens
-        TabOrder = 10
+        TabOrder = 12
         Visible = False
         OnChange = edZC_KeyChange
       end
       object dbImagem: TDBEdit
-        Left = 156
-        Top = 111
+        Left = 152
+        Top = 151
         Width = 478
         Height = 24
         DataField = 'Imagem'
+        DataSource = uDM.DSItens
+        TabOrder = 8
+      end
+      object dbUnid: TDBEdit
+        Left = 140
+        Top = 58
+        Width = 48
+        Height = 24
+        DataField = 'Unidade'
+        DataSource = uDM.DSItens
+        TabOrder = 4
+      end
+      object dbCodBarras: TDBEdit
+        Left = 276
+        Top = 58
+        Width = 153
+        Height = 24
+        DataField = 'CodBarras'
         DataSource = uDM.DSItens
         TabOrder = 6
       end
@@ -400,7 +431,7 @@ object FuItens: TFuItens
       Left = 1
       Top = 1
       Width = 828
-      Height = 227
+      Height = 175
       Align = alClient
       DataSource = uDM.DSItens
       DrawingStyle = gdsClassic
@@ -417,6 +448,7 @@ object FuItens: TFuItens
           Expanded = False
           FieldName = 'ZC_Grupo'
           Title.Caption = 'Grupo'
+          Width = 87
           Visible = True
         end
         item
@@ -425,7 +457,7 @@ object FuItens: TFuItens
           FieldName = 'Codigo'
           Title.Alignment = taCenter
           Title.Caption = 'C'#243'd'
-          Width = 39
+          Width = 112
           Visible = True
         end
         item

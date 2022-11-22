@@ -49,6 +49,8 @@ end;
 
 procedure TFuPrincipal.btSairClick(Sender: TObject);
 begin
+  uDM.PedItens.Active := False;
+  uDM.Pedidos.Active := False;
   uDM.LctCaixa.Active := False;
   uDM.RegCaixa.Active := False;
   uDM.Itens.Active := False;
@@ -61,6 +63,7 @@ end;
 procedure TFuPrincipal.btSuporteClick(Sender: TObject);
 begin
   ManutencaoProdutos;
+  ContaExtras;
 
 end;
 
@@ -73,9 +76,13 @@ begin
     uDM.Itens.Active := True;
     uDM.RegCaixa.Active := True;
     uDM.LctCaixa.Active := True;
+    uDM.Pedidos.Active := True;
+    uDM.PedItens.Active := True;
     FGen.lSalvaForm := True;
     FGen.pathSalvaForm := wPathWork;
     uDM.pathWork := wPathWork;
+    ContaExtras;                  // Obtem qtd de ítens 'extras'
+    AberturaDeCaixa(False);
 
   end;
 
