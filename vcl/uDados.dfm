@@ -28,7 +28,7 @@ object uDM: TuDM
     Connection = FDC
     TableName = 'com_itens'
     Left = 32
-    Top = 216
+    Top = 160
     object ItensGrupo: TIntegerField
       FieldName = 'Grupo'
       Origin = 'Grupo'
@@ -170,7 +170,7 @@ object uDM: TuDM
   object DSItens: TDataSource
     DataSet = Itens
     Left = 76
-    Top = 232
+    Top = 176
   end
   object SisPessoa: TFDTable
     IndexFieldNames = 'id'
@@ -296,16 +296,359 @@ object uDM: TuDM
       Size = 3
     end
   end
+  object PedWrk: TClientDataSet
+    Aggregates = <>
+    Params = <>
+    OnCalcFields = PedWrkCalcFields
+    Left = 540
+    Top = 16
+    object PedWrkNrLcto: TSmallintField
+      FieldName = 'NrLcto'
+    end
+    object PedWrkTpProd: TSmallintField
+      FieldName = 'TpProd'
+    end
+    object PedWrkCodProd: TIntegerField
+      FieldName = 'CodProd'
+    end
+    object PedWrkDescricao: TStringField
+      FieldName = 'Descricao'
+      Size = 30
+    end
+    object PedWrkObserv: TMemoField
+      FieldName = 'Observ'
+      BlobType = ftMemo
+      Size = 10
+    end
+    object PedWrkQuant: TSmallintField
+      FieldName = 'Quant'
+    end
+    object PedWrkVlrUnit: TCurrencyField
+      FieldName = 'VlrUnit'
+      DisplayFormat = ',0.00'
+      EditFormat = '0.00'
+    end
+    object PedWrkExtras: TStringField
+      FieldName = 'Extras'
+      Size = 24
+    end
+    object PedWrkCod01: TSmallintField
+      FieldName = 'Cod01'
+    end
+    object PedWrkVlr01: TCurrencyField
+      FieldName = 'Vlr01'
+    end
+    object PedWrkCod02: TSmallintField
+      FieldName = 'Cod02'
+    end
+    object PedWrkVlr02: TCurrencyField
+      FieldName = 'Vlr02'
+    end
+    object PedWrkCod03: TSmallintField
+      FieldName = 'Cod03'
+    end
+    object PedWrkVlr03: TCurrencyField
+      FieldName = 'Vlr03'
+    end
+    object PedWrkVlrTotal: TCurrencyField
+      FieldName = 'VlrTotal'
+      DisplayFormat = ',0.00'
+      EditFormat = '0.00'
+    end
+    object PedWrkTxtExtras: TMemoField
+      FieldName = 'TxtExtras'
+      BlobType = ftMemo
+      Size = 10
+    end
+    object PedWrkTxtExclus: TMemoField
+      FieldName = 'TxtExclus'
+      BlobType = ftMemo
+      Size = 10
+    end
+    object PedWrkZC_Aviso: TStringField
+      FieldKind = fkCalculated
+      FieldName = 'ZC_Aviso'
+      Size = 1
+      Calculated = True
+    end
+  end
+  object SPedWrk: TDataSource
+    DataSet = PedWrk
+    Left = 540
+    Top = 72
+  end
+  object Pedidos: TFDTable
+    IndexFieldNames = 'Numero'
+    Connection = FDC
+    TableName = 'speedfood.com_pedido'
+    Left = 212
+    Top = 144
+    object PedidosNumero: TLongWordField
+      FieldName = 'Numero'
+      Origin = 'Numero'
+      Required = True
+    end
+    object PedidosData: TDateTimeField
+      AutoGenerateValue = arDefault
+      FieldName = 'Data'
+      Origin = '`Data`'
+    end
+    object PedidosCPF_CNPJ: TStringField
+      AutoGenerateValue = arDefault
+      DisplayWidth = 14
+      FieldName = 'CPF_CNPJ'
+      Origin = 'CPF_CNPJ'
+      Size = 14
+    end
+    object PedidosLanctos: TIntegerField
+      AutoGenerateValue = arDefault
+      FieldName = 'Lanctos'
+      Origin = 'Lanctos'
+    end
+    object PedidosValor: TBCDField
+      AutoGenerateValue = arDefault
+      FieldName = 'Valor'
+      Origin = 'Valor'
+      DisplayFormat = ',0.00'
+      EditFormat = '0.00'
+      Precision = 15
+      Size = 2
+    end
+    object PedidosNrNFCe: TIntegerField
+      AutoGenerateValue = arDefault
+      FieldName = 'NrNFCe'
+      Origin = 'NrNFCe'
+    end
+    object PedidosSrNFCe: TIntegerField
+      AutoGenerateValue = arDefault
+      FieldName = 'SrNFCe'
+      Origin = 'SrNFCe'
+    end
+    object PedidosMeioPagto: TIntegerField
+      AutoGenerateValue = arDefault
+      FieldName = 'MeioPagto'
+      Origin = 'MeioPagto'
+    end
+    object PedidosVlrReais: TBCDField
+      AutoGenerateValue = arDefault
+      FieldName = 'VlrReais'
+      Origin = 'VlrReais'
+      DisplayFormat = ',0.00'
+      EditFormat = '0.00'
+      currency = True
+      Precision = 15
+      Size = 2
+    end
+    object PedidosVlrCDeb: TBCDField
+      AutoGenerateValue = arDefault
+      FieldName = 'VlrCDeb'
+      Origin = 'VlrCDeb'
+      DisplayFormat = ',0.00'
+      EditFormat = '0.00'
+      currency = True
+      Precision = 15
+      Size = 2
+    end
+    object PedidosVlrCCred: TBCDField
+      AutoGenerateValue = arDefault
+      FieldName = 'VlrCCred'
+      Origin = 'VlrCCred'
+      DisplayFormat = ',0.00'
+      EditFormat = '0.00'
+      currency = True
+      Precision = 15
+      Size = 2
+    end
+    object PedidosVlrPIX: TBCDField
+      AutoGenerateValue = arDefault
+      FieldName = 'VlrPIX'
+      Origin = 'VlrPIX'
+      DisplayFormat = ',0.00'
+      EditFormat = '0.00'
+      currency = True
+      Precision = 15
+      Size = 2
+    end
+    object PedidosVlrOutros: TBCDField
+      AutoGenerateValue = arDefault
+      FieldName = 'VlrOutros'
+      Origin = 'VlrOutros'
+      DisplayFormat = ',0.00'
+      EditFormat = '0.00'
+      currency = True
+      Precision = 15
+      Size = 2
+    end
+    object PedidosArqXML: TMemoField
+      AutoGenerateValue = arDefault
+      FieldName = 'ArqXML'
+      Origin = 'ArqXML'
+      BlobType = ftMemo
+    end
+    object PedidosEtqImpressas: TShortintField
+      AutoGenerateValue = arDefault
+      FieldName = 'EtqImpressas'
+      Origin = 'EtqImpressas'
+    end
+    object PedidosNomeCliente: TStringField
+      AutoGenerateValue = arDefault
+      FieldName = 'NomeCliente'
+      Origin = 'NomeCliente'
+      Size = 45
+    end
+    object PedidosVlrRecebido: TBCDField
+      AutoGenerateValue = arDefault
+      FieldName = 'VlrRecebido'
+      Origin = 'VlrRecebido'
+      DisplayFormat = ',0.00'
+      EditFormat = '0.00'
+      currency = True
+      Precision = 15
+      Size = 2
+    end
+    object PedidosVlrTroco: TBCDField
+      AutoGenerateValue = arDefault
+      FieldName = 'VlrTroco'
+      Origin = 'VlrTroco'
+      DisplayFormat = ',0.00'
+      EditFormat = '0.00'
+      currency = True
+      Precision = 15
+      Size = 2
+    end
+  end
+  object DSPedidos: TDataSource
+    DataSet = Pedidos
+    Left = 260
+    Top = 160
+  end
+  object DSPedItens: TDataSource
+    DataSet = PedItens
+    Left = 264
+    Top = 224
+  end
+  object PedItens: TFDTable
+    IndexFieldNames = 'Numero;NrLcto'
+    MasterSource = DSPedidos
+    MasterFields = 'Numero'
+    Connection = FDC
+    TableName = 'speedfood.com_pedidoitem'
+    Left = 212
+    Top = 216
+    object PedItensNumero: TIntegerField
+      FieldName = 'Numero'
+      Origin = 'Numero'
+      ProviderFlags = [pfInUpdate, pfInWhere, pfInKey]
+      Required = True
+    end
+    object PedItensNrLcto: TIntegerField
+      FieldName = 'NrLcto'
+      Origin = 'NrLcto'
+      ProviderFlags = [pfInUpdate, pfInWhere, pfInKey]
+      Required = True
+    end
+    object PedItensTpProd: TIntegerField
+      AutoGenerateValue = arDefault
+      FieldName = 'TpProd'
+      Origin = 'TpProd'
+    end
+    object PedItensCodProd: TIntegerField
+      AutoGenerateValue = arDefault
+      FieldName = 'CodProd'
+      Origin = 'CodProd'
+    end
+    object PedItensQuant: TIntegerField
+      AutoGenerateValue = arDefault
+      FieldName = 'Quant'
+      Origin = 'Quant'
+    end
+    object PedItensVlrUnitario: TBCDField
+      AutoGenerateValue = arDefault
+      FieldName = 'VlrUnitario'
+      Origin = 'VlrUnitario'
+      DisplayFormat = ',0.00'
+      EditFormat = '0.00'
+      currency = True
+      Precision = 15
+      Size = 2
+    end
+    object PedItensCod01: TIntegerField
+      FieldName = 'Cod01'
+    end
+    object PedItensVlr01: TBCDField
+      FieldName = 'Vlr01'
+      DisplayFormat = ',0.00'
+      EditFormat = '0.00'
+      Precision = 15
+      Size = 2
+    end
+    object PedItensCod02: TIntegerField
+      FieldName = 'Cod02'
+    end
+    object PedItensVlr02: TBCDField
+      FieldName = 'Vlr02'
+      DisplayFormat = ',0.00'
+      EditFormat = '0.00'
+      Precision = 15
+      Size = 2
+    end
+    object PedItensCod03: TIntegerField
+      FieldName = 'Cod03'
+    end
+    object PedItensVlr03: TBCDField
+      FieldName = 'Vlr03'
+      DisplayFormat = ',0.00'
+      EditFormat = '0.00'
+      Precision = 15
+      Size = 2
+    end
+    object PedItensVlrTotal: TBCDField
+      AutoGenerateValue = arDefault
+      FieldName = 'VlrTotal'
+      Origin = 'VlrTotal'
+      DisplayFormat = ',0.00'
+      EditFormat = '0.00'
+      currency = True
+      Precision = 15
+      Size = 2
+    end
+    object PedItensExtras: TStringField
+      AutoGenerateValue = arDefault
+      FieldName = 'Extras'
+      Origin = 'Extras'
+      FixedChar = True
+      Size = 24
+    end
+    object PedItensTxtExtras: TStringField
+      FieldName = 'TxtExtras'
+      Size = 1024
+    end
+    object PedItensTxtExclus: TStringField
+      FieldName = 'TxtExclus'
+      Size = 1024
+    end
+    object PedItensObservacao: TStringField
+      AutoGenerateValue = arDefault
+      FieldName = 'Observacao'
+      Origin = 'Observacao'
+      Size = 1024
+    end
+    object PedItensEtqImpressa: TShortintField
+      AutoGenerateValue = arDefault
+      FieldName = 'EtqImpressa'
+      Origin = 'EtqImpressa'
+    end
+  end
   object RegCaixa: TFDTable
-    IndexFieldNames = 'Sequencia'
-    MasterSource = DSItens
+    IndexFieldNames = 'Turno'
     Connection = FDC
     TableName = 'speedfood.com_regcaixa'
-    Left = 32
-    Top = 280
-    object RegCaixaSequencia: TIntegerField
-      FieldName = 'Sequencia'
-      Origin = 'Sequencia'
+    Left = 28
+    Top = 252
+    object RegCaixaTurno: TIntegerField
+      FieldName = 'Turno'
+      Origin = 'Turno'
+      ProviderFlags = [pfInUpdate, pfInWhere, pfInKey]
       Required = True
     end
     object RegCaixaDtHrInicio: TDateTimeField
@@ -458,28 +801,29 @@ object uDM: TuDM
       FieldName = 'Qtd_Sangria'
       Origin = 'Qtd_Sangria'
     end
-  end
-  object DSRegCaixa: TDataSource
-    DataSet = RegCaixa
-    Left = 76
-    Top = 294
+    object RegCaixaQtd_Misto: TIntegerField
+      AutoGenerateValue = arDefault
+      FieldName = 'Qtd_Misto'
+      Origin = 'Qtd_Misto'
+    end
   end
   object LctCaixa: TFDTable
-    OnCalcFields = LctCaixaCalcFields
-    IndexFieldNames = 'SeqCaixa;DtHrLcto'
+    IndexFieldNames = 'Turno;Sequencia'
+    MasterSource = DSRegCaixa
+    MasterFields = 'Turno'
     Connection = FDC
     TableName = 'speedfood.com_lctcaixa'
-    Left = 32
-    Top = 344
-    object LctCaixaSeqCaixa: TIntegerField
-      FieldName = 'SeqCaixa'
-      Origin = 'SeqCaixa'
+    Left = 28
+    Top = 304
+    object LctCaixaTurno: TIntegerField
+      FieldName = 'Turno'
+      Origin = 'Turno'
       ProviderFlags = [pfInUpdate, pfInWhere, pfInKey]
       Required = True
     end
-    object LctCaixaDtHrLcto: TDateTimeField
-      FieldName = 'DtHrLcto'
-      Origin = 'DtHrLcto'
+    object LctCaixaSequencia: TIntegerField
+      FieldName = 'Sequencia'
+      Origin = 'Sequencia'
       ProviderFlags = [pfInUpdate, pfInWhere, pfInKey]
       Required = True
     end
@@ -503,12 +847,6 @@ object uDM: TuDM
       FieldName = 'MeioPgt'
       Origin = 'MeioPgt'
     end
-    object LctCaixaNrCartao: TStringField
-      AutoGenerateValue = arDefault
-      FieldName = 'NrCartao'
-      Origin = 'NrCartao'
-      Size = 45
-    end
     object LctCaixaSaldo: TBCDField
       AutoGenerateValue = arDefault
       FieldName = 'Saldo'
@@ -525,6 +863,67 @@ object uDM: TuDM
       Origin = 'Historico'
       Size = 120
     end
+    object LctCaixaPgtReais: TBCDField
+      AutoGenerateValue = arDefault
+      FieldName = 'PgtReais'
+      Origin = 'PgtReais'
+      DisplayFormat = ',0.00'
+      EditFormat = '0.00'
+      currency = True
+      Precision = 15
+      Size = 2
+    end
+    object LctCaixaPgtCDeb: TBCDField
+      AutoGenerateValue = arDefault
+      FieldName = 'PgtCDeb'
+      Origin = 'PgtCDeb'
+      DisplayFormat = ',0.00'
+      EditFormat = '0.00'
+      currency = True
+      Precision = 15
+      Size = 2
+    end
+    object LctCaixaPgtCCred: TBCDField
+      AutoGenerateValue = arDefault
+      FieldName = 'PgtCCred'
+      Origin = 'PgtCCred'
+      DisplayFormat = ',0.00'
+      EditFormat = '0.00'
+      currency = True
+      Precision = 15
+      Size = 2
+    end
+    object LctCaixaPgtPIX: TBCDField
+      AutoGenerateValue = arDefault
+      FieldName = 'PgtPIX'
+      Origin = 'PgtPIX'
+      DisplayFormat = ',0.00'
+      EditFormat = '0.00'
+      currency = True
+      Precision = 15
+      Size = 2
+    end
+    object LctCaixaPgtOutros: TBCDField
+      AutoGenerateValue = arDefault
+      FieldName = 'PgtOutros'
+      Origin = 'PgtOutros'
+      DisplayFormat = ',0.00'
+      EditFormat = '0.00'
+      currency = True
+      Precision = 15
+      Size = 2
+    end
+    object LctCaixaNroPedido: TIntegerField
+      AutoGenerateValue = arDefault
+      FieldName = 'NroPedido'
+      Origin = 'NroPedido'
+    end
+    object LctCaixaDtHrLcto: TStringField
+      AutoGenerateValue = arDefault
+      FieldName = 'DtHrLcto'
+      Origin = 'DtHrLcto'
+      Size = 45
+    end
     object LctCaixaZC_Operacao: TStringField
       FieldKind = fkCalculated
       FieldName = 'ZC_Operacao'
@@ -538,329 +937,14 @@ object uDM: TuDM
       Calculated = True
     end
   end
-  object DSLctos: TDataSource
+  object DSRegCaixa: TDataSource
+    DataSet = RegCaixa
+    Left = 80
+    Top = 256
+  end
+  object DSLctCaixa: TDataSource
     DataSet = LctCaixa
-    Left = 76
-    Top = 360
-  end
-  object PedWrk: TClientDataSet
-    Aggregates = <>
-    Params = <>
-    OnCalcFields = PedWrkCalcFields
-    Left = 388
-    Top = 20
-    object PedWrkNrLcto: TSmallintField
-      FieldName = 'NrLcto'
-    end
-    object PedWrkTpProd: TSmallintField
-      FieldName = 'TpProd'
-    end
-    object PedWrkCodProd: TIntegerField
-      FieldName = 'CodProd'
-    end
-    object PedWrkDescricao: TStringField
-      FieldName = 'Descricao'
-      Size = 30
-    end
-    object PedWrkObserv: TMemoField
-      FieldName = 'Observ'
-      BlobType = ftMemo
-      Size = 10
-    end
-    object PedWrkQuant: TSmallintField
-      FieldName = 'Quant'
-    end
-    object PedWrkVlrUnit: TCurrencyField
-      FieldName = 'VlrUnit'
-      DisplayFormat = ',0.00'
-      EditFormat = '0.00'
-    end
-    object PedWrkExtras: TStringField
-      FieldName = 'Extras'
-      Size = 24
-    end
-    object PedWrkCod01: TSmallintField
-      FieldName = 'Cod01'
-    end
-    object PedWrkVlr01: TCurrencyField
-      FieldName = 'Vlr01'
-    end
-    object PedWrkCod02: TSmallintField
-      FieldName = 'Cod02'
-    end
-    object PedWrkVlr02: TCurrencyField
-      FieldName = 'Vlr02'
-    end
-    object PedWrkCod03: TSmallintField
-      FieldName = 'Cod03'
-    end
-    object PedWrkVlr03: TCurrencyField
-      FieldName = 'Vlr03'
-    end
-    object PedWrkVlrTotal: TCurrencyField
-      FieldName = 'VlrTotal'
-      DisplayFormat = ',0.00'
-      EditFormat = '0.00'
-    end
-    object PedWrkTxtExtras: TMemoField
-      FieldName = 'TxtExtras'
-      BlobType = ftMemo
-      Size = 10
-    end
-    object PedWrkTxtExclus: TMemoField
-      FieldName = 'TxtExclus'
-      BlobType = ftMemo
-      Size = 10
-    end
-    object PedWrkZC_Aviso: TStringField
-      FieldKind = fkCalculated
-      FieldName = 'ZC_Aviso'
-      Size = 1
-      Calculated = True
-    end
-  end
-  object SPedWrk: TDataSource
-    DataSet = PedWrk
-    Left = 448
-    Top = 20
-  end
-  object Pedidos: TFDTable
-    IndexFieldNames = 'Numero'
-    Connection = FDC
-    TableName = 'speedfood.com_pedido'
-    Left = 212
-    Top = 144
-    object PedidosNumero: TLongWordField
-      FieldName = 'Numero'
-      Origin = 'Numero'
-      Required = True
-    end
-    object PedidosData: TDateTimeField
-      AutoGenerateValue = arDefault
-      FieldName = 'Data'
-      Origin = '`Data`'
-    end
-    object PedidosCPF_CNPJ: TStringField
-      AutoGenerateValue = arDefault
-      DisplayWidth = 14
-      FieldName = 'CPF_CNPJ'
-      Origin = 'CPF_CNPJ'
-      Size = 14
-    end
-    object PedidosLanctos: TIntegerField
-      AutoGenerateValue = arDefault
-      FieldName = 'Lanctos'
-      Origin = 'Lanctos'
-    end
-    object PedidosValor: TBCDField
-      AutoGenerateValue = arDefault
-      FieldName = 'Valor'
-      Origin = 'Valor'
-      DisplayFormat = ',0.00'
-      EditFormat = '0.00'
-      Precision = 15
-      Size = 2
-    end
-    object PedidosNrNFCe: TIntegerField
-      AutoGenerateValue = arDefault
-      FieldName = 'NrNFCe'
-      Origin = 'NrNFCe'
-    end
-    object PedidosSrNFCe: TIntegerField
-      AutoGenerateValue = arDefault
-      FieldName = 'SrNFCe'
-      Origin = 'SrNFCe'
-    end
-    object PedidosMeioPagto: TIntegerField
-      AutoGenerateValue = arDefault
-      FieldName = 'MeioPagto'
-      Origin = 'MeioPagto'
-    end
-    object PedidosVlrReais: TBCDField
-      AutoGenerateValue = arDefault
-      FieldName = 'VlrReais'
-      Origin = 'VlrReais'
-      DisplayFormat = ',0.00'
-      EditFormat = '0.00'
-      Precision = 15
-      Size = 2
-    end
-    object PedidosVlrCDeb: TBCDField
-      AutoGenerateValue = arDefault
-      FieldName = 'VlrCDeb'
-      Origin = 'VlrCDeb'
-      DisplayFormat = ',0.00'
-      EditFormat = '0.00'
-      Precision = 15
-      Size = 2
-    end
-    object PedidosVlrCCred: TBCDField
-      AutoGenerateValue = arDefault
-      FieldName = 'VlrCCred'
-      Origin = 'VlrCCred'
-      DisplayFormat = ',0.00'
-      EditFormat = '0.00'
-      Precision = 15
-      Size = 2
-    end
-    object PedidosVlrPIX: TBCDField
-      AutoGenerateValue = arDefault
-      FieldName = 'VlrPIX'
-      Origin = 'VlrPIX'
-      DisplayFormat = ',0.00'
-      EditFormat = '0.00'
-      Precision = 15
-      Size = 2
-    end
-    object PedidosVlrVRef: TBCDField
-      AutoGenerateValue = arDefault
-      FieldName = 'VlrVRef'
-      Origin = 'VlrVRef'
-      DisplayFormat = ',0.00'
-      EditFormat = '0.00'
-      Precision = 15
-      Size = 2
-    end
-    object PedidosVlrCheque: TBCDField
-      AutoGenerateValue = arDefault
-      FieldName = 'VlrCheque'
-      Origin = 'VlrCheque'
-      DisplayFormat = ',0.00'
-      EditFormat = '0.00'
-      Precision = 15
-      Size = 2
-    end
-    object PedidosVlrOutros: TBCDField
-      AutoGenerateValue = arDefault
-      FieldName = 'VlrOutros'
-      Origin = 'VlrOutros'
-      DisplayFormat = ',0.00'
-      EditFormat = '0.00'
-      Precision = 15
-      Size = 2
-    end
-    object PedidosArqXML: TStringField
-      AutoGenerateValue = arDefault
-      FieldName = 'ArqXML'
-      Origin = 'ArqXML'
-      Size = 240
-    end
-  end
-  object DSPedidos: TDataSource
-    DataSet = Pedidos
-    Left = 260
-    Top = 160
-  end
-  object DSPedItens: TDataSource
-    DataSet = PedItens
-    Left = 264
-    Top = 224
-  end
-  object PedItens: TFDTable
-    IndexFieldNames = 'Numero;NrLcto'
-    MasterSource = DSPedidos
-    MasterFields = 'Numero'
-    Connection = FDC
-    TableName = 'speedfood.com_pedidoitem'
-    Left = 212
-    Top = 216
-    object PedItensNumero: TIntegerField
-      FieldName = 'Numero'
-      Origin = 'Numero'
-      ProviderFlags = [pfInUpdate, pfInWhere, pfInKey]
-      Required = True
-    end
-    object PedItensNrLcto: TIntegerField
-      FieldName = 'NrLcto'
-      Origin = 'NrLcto'
-      ProviderFlags = [pfInUpdate, pfInWhere, pfInKey]
-      Required = True
-    end
-    object PedItensTpProd: TIntegerField
-      AutoGenerateValue = arDefault
-      FieldName = 'TpProd'
-      Origin = 'TpProd'
-    end
-    object PedItensCodProd: TIntegerField
-      AutoGenerateValue = arDefault
-      FieldName = 'CodProd'
-      Origin = 'CodProd'
-    end
-    object PedItensQuant: TIntegerField
-      AutoGenerateValue = arDefault
-      FieldName = 'Quant'
-      Origin = 'Quant'
-    end
-    object PedItensVlrUnitario: TBCDField
-      AutoGenerateValue = arDefault
-      FieldName = 'VlrUnitario'
-      Origin = 'VlrUnitario'
-      DisplayFormat = ',0.00'
-      EditFormat = '0.00'
-      currency = True
-      Precision = 15
-      Size = 2
-    end
-    object PedItensCod01: TIntegerField
-      FieldName = 'Cod01'
-    end
-    object PedItensVlr01: TBCDField
-      FieldName = 'Vlr01'
-      DisplayFormat = ',0.00'
-      EditFormat = '0.00'
-      Precision = 15
-      Size = 2
-    end
-    object PedItensCod02: TIntegerField
-      FieldName = 'Cod02'
-    end
-    object PedItensVlr02: TBCDField
-      FieldName = 'Vlr02'
-      DisplayFormat = ',0.00'
-      EditFormat = '0.00'
-      Precision = 15
-      Size = 2
-    end
-    object PedItensCod03: TIntegerField
-      FieldName = 'Cod03'
-    end
-    object PedItensVlr03: TBCDField
-      FieldName = 'Vlr03'
-      DisplayFormat = ',0.00'
-      EditFormat = '0.00'
-      Precision = 15
-      Size = 2
-    end
-    object PedItensVlrTotal: TBCDField
-      AutoGenerateValue = arDefault
-      FieldName = 'VlrTotal'
-      Origin = 'VlrTotal'
-      DisplayFormat = ',0.00'
-      EditFormat = '0.00'
-      currency = True
-      Precision = 15
-      Size = 2
-    end
-    object PedItensExtras: TStringField
-      AutoGenerateValue = arDefault
-      FieldName = 'Extras'
-      Origin = 'Extras'
-      FixedChar = True
-      Size = 24
-    end
-    object PedItensTxtExtras: TStringField
-      FieldName = 'TxtExtras'
-      Size = 1024
-    end
-    object PedItensTxtExclus: TStringField
-      FieldName = 'TxtExclus'
-      Size = 1024
-    end
-    object PedItensObservacao: TStringField
-      AutoGenerateValue = arDefault
-      FieldName = 'Observacao'
-      Origin = 'Observacao'
-      Size = 1024
-    end
+    Left = 84
+    Top = 312
   end
 end

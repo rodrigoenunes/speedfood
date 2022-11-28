@@ -41,214 +41,230 @@ object FuFinPedido: TFuFinPedido
     Font.Style = []
     ParentFont = False
     TabOrder = 0
-    object Label4: TLabel
-      Left = 11
-      Top = 7
-      Width = 86
-      Height = 19
-      Caption = 'CPF / CNPJ:'
-    end
-    object dbMeioPagto: TDBRadioGroup
-      Left = 5
-      Top = 37
-      Width = 164
-      Height = 244
-      BiDiMode = bdLeftToRight
-      Caption = 'Meio de pagamento'
-      Color = clGradientActiveCaption
-      DataField = 'MeioPagto'
-      DataSource = uDM.DSPedidos
-      Items.Strings = (
-        'Dinheiro R$'
-        'Cart'#227'o D'#233'bito'
-        'Cart'#227'o Cr'#233'dito'
-        'PIX'
-        'Cheque'
-        'Vale-refei'#231#227'o'
-        'Outros'
-        '<<  Misto  >>')
-      ParentBackground = False
-      ParentBiDiMode = False
-      ParentColor = False
+    ExplicitLeft = 450
+    object PanCliente: TPanel
+      Left = 1
+      Top = 1
+      Width = 387
+      Height = 68
+      Align = alTop
       TabOrder = 0
-      Values.Strings = (
-        '0'
-        '1'
-        '2'
-        '3'
-        '4'
-        '5'
-        '6'
-        '9')
-      OnEnter = dbMeioPagtoEnter
-      OnExit = dbMeioPagtoExit
-    end
-    object dbCPF: TDBEdit
-      Left = 99
-      Top = 4
-      Width = 169
-      Height = 27
-      DataField = 'CPF_CNPJ'
-      DataSource = uDM.DSPedidos
-      TabOrder = 1
-      OnEnter = dbCPFEnter
-      OnExit = dbCPFExit
-    end
-    object btGravar: TBitBtn
-      Left = 6
-      Top = 287
-      Width = 375
-      Height = 56
-      Caption = 'Gravar/Imprimir'
-      TabOrder = 2
-      OnClick = btGravarClick
-    end
-    object btCancelar: TBitBtn
-      Left = 6
-      Top = 349
-      Width = 182
-      Height = 56
-      Caption = '&Cancelar pedido'
-      TabOrder = 3
-      OnClick = btCancelarClick
-    end
-    object btRetornar: TBitBtn
-      Left = 199
-      Top = 349
-      Width = 182
-      Height = 56
-      Caption = '&Retornar '#224' tela anterior'
-      TabOrder = 4
-      OnClick = btRetornarClick
-    end
-    object gbEspecif: TGroupBox
-      Left = 175
-      Top = 37
-      Width = 206
-      Height = 244
-      Caption = 'Detalhamento do pagto'
-      Color = clGradientActiveCaption
-      ParentBackground = False
-      ParentColor = False
-      TabOrder = 5
-      object Label5: TLabel
-        Left = 43
-        Top = 31
-        Width = 25
+      object Label4: TLabel
+        Left = 4
+        Top = 39
+        Width = 86
         Height = 19
         Alignment = taRightJustify
-        Caption = 'R$:'
-      end
-      object Label6: TLabel
-        Left = 19
-        Top = 60
-        Width = 49
-        Height = 19
-        Alignment = taRightJustify
-        Caption = 'C.D'#233'b:'
-      end
-      object Label7: TLabel
-        Left = 14
-        Top = 89
-        Width = 54
-        Height = 19
-        Alignment = taRightJustify
-        Caption = 'C.Cr'#233'd:'
-      end
-      object Label8: TLabel
-        Left = 38
-        Top = 118
-        Width = 30
-        Height = 19
-        Alignment = taRightJustify
-        Caption = 'PIX:'
+        Caption = 'CPF / CNPJ:'
       end
       object Label9: TLabel
-        Left = 9
-        Top = 147
-        Width = 59
+        Left = 42
+        Top = 9
+        Width = 48
         Height = 19
         Alignment = taRightJustify
-        Caption = 'Cheque:'
+        Caption = 'Nome:'
       end
-      object Label10: TLabel
-        Left = 4
-        Top = 176
-        Width = 64
-        Height = 19
-        Alignment = taRightJustify
-        Caption = 'Vale Ref:'
-      end
-      object Label11: TLabel
-        Left = 14
-        Top = 205
-        Width = 54
-        Height = 19
-        Alignment = taRightJustify
-        Caption = 'Outros:'
-      end
-      object edReais: TDBEdit
-        Left = 68
-        Top = 26
-        Width = 129
+      object dbCPF: TDBEdit
+        Left = 91
+        Top = 34
+        Width = 169
         Height = 27
-        DataField = 'VlrReais'
-        DataSource = uDM.DSPedidos
-        TabOrder = 0
-      end
-      object edCDeb: TDBEdit
-        Left = 68
-        Top = 55
-        Width = 129
-        Height = 27
-        DataField = 'VlrCDeb'
+        DataField = 'CPF_CNPJ'
         DataSource = uDM.DSPedidos
         TabOrder = 1
+        OnEnter = dbCPFEnter
+        OnExit = dbCPFExit
       end
-      object edCCred: TDBEdit
-        Left = 68
-        Top = 84
-        Width = 129
+      object dbNome: TDBEdit
+        Left = 91
+        Top = 4
+        Width = 290
         Height = 27
-        DataField = 'VlrCCred'
+        CharCase = ecUpperCase
+        DataField = 'NomeCliente'
         DataSource = uDM.DSPedidos
+        TabOrder = 0
+        OnEnter = dbCPFEnter
+        OnExit = dbCPFExit
+      end
+    end
+    object PanCtle: TPanel
+      Left = 1
+      Top = 324
+      Width = 387
+      Height = 122
+      Align = alBottom
+      TabOrder = 1
+      ExplicitTop = 322
+      object btCancelar: TBitBtn
+        Left = 5
+        Top = 61
+        Width = 168
+        Height = 56
+        Caption = '&Cancelar pedido'
+        TabOrder = 0
+        OnClick = btCancelarClick
+      end
+      object btRetornar: TBitBtn
+        Left = 173
+        Top = 61
+        Width = 208
+        Height = 56
+        Caption = '&Retornar '#224' tela anterior'
+        TabOrder = 1
+        OnClick = btRetornarClick
+      end
+      object btGravar: TBitBtn
+        Left = 5
+        Top = 4
+        Width = 376
+        Height = 56
+        Caption = 'Gravar/Imprimir'
         TabOrder = 2
+        OnClick = btGravarClick
       end
-      object edPIX: TDBEdit
-        Left = 68
-        Top = 113
-        Width = 129
-        Height = 27
-        DataField = 'VlrPIX'
-        DataSource = uDM.DSPedidos
-        TabOrder = 3
+    end
+    object PanPagto: TPanel
+      Left = 1
+      Top = 69
+      Width = 387
+      Height = 255
+      Align = alClient
+      TabOrder = 2
+      ExplicitTop = 68
+      object PanDetPgto: TPanel
+        Left = 152
+        Top = 1
+        Width = 234
+        Height = 253
+        Align = alClient
+        BevelOuter = bvNone
+        TabOrder = 0
+        ExplicitLeft = 147
+        ExplicitTop = 0
+        ExplicitWidth = 245
+        object LabReais: TLabel
+          Left = 59
+          Top = 32
+          Width = 25
+          Height = 19
+          Alignment = taRightJustify
+          Caption = 'R$:'
+        end
+        object LabCDeb: TLabel
+          Left = 17
+          Top = 62
+          Width = 67
+          Height = 19
+          Alignment = taRightJustify
+          Caption = 'C.D'#233'bito:'
+        end
+        object LabCRed: TLabel
+          Left = 12
+          Top = 92
+          Width = 72
+          Height = 19
+          Alignment = taRightJustify
+          Caption = 'C.Cr'#233'dito:'
+        end
+        object LabPix: TLabel
+          Left = 54
+          Top = 122
+          Width = 30
+          Height = 19
+          Alignment = taRightJustify
+          Caption = 'PIX:'
+        end
+        object LabOutros: TLabel
+          Left = 30
+          Top = 152
+          Width = 54
+          Height = 19
+          Alignment = taRightJustify
+          Caption = 'Outros:'
+        end
+        object Label10: TLabel
+          Left = 8
+          Top = 2
+          Width = 91
+          Height = 19
+          Caption = 'Recebimento'
+        end
+        object edReais: TDBEdit
+          Left = 84
+          Top = 28
+          Width = 133
+          Height = 27
+          DataField = 'VlrReais'
+          DataSource = uDM.DSPedidos
+          TabOrder = 0
+        end
+        object edCDeb: TDBEdit
+          Left = 84
+          Top = 58
+          Width = 133
+          Height = 27
+          DataField = 'VlrCDeb'
+          DataSource = uDM.DSPedidos
+          TabOrder = 1
+        end
+        object edCCred: TDBEdit
+          Left = 84
+          Top = 88
+          Width = 133
+          Height = 27
+          DataField = 'VlrCCred'
+          DataSource = uDM.DSPedidos
+          TabOrder = 2
+        end
+        object edPIX: TDBEdit
+          Left = 84
+          Top = 118
+          Width = 133
+          Height = 27
+          DataField = 'VlrPIX'
+          DataSource = uDM.DSPedidos
+          TabOrder = 3
+        end
+        object edOutros: TDBEdit
+          Left = 84
+          Top = 148
+          Width = 133
+          Height = 27
+          DataField = 'VlrOutros'
+          DataSource = uDM.DSPedidos
+          TabOrder = 4
+        end
       end
-      object edCheque: TDBEdit
-        Left = 68
-        Top = 142
-        Width = 129
-        Height = 27
-        DataField = 'VlrCheque'
+      object dbMeioPagto: TDBRadioGroup
+        Left = 1
+        Top = 1
+        Width = 151
+        Height = 253
+        Align = alLeft
+        BiDiMode = bdLeftToRight
+        Caption = 'Pagamento'
+        DataField = 'MeioPagto'
         DataSource = uDM.DSPedidos
-        TabOrder = 4
-      end
-      object edVRef: TDBEdit
-        Left = 68
-        Top = 171
-        Width = 129
-        Height = 27
-        DataField = 'VlrVRef'
-        DataSource = uDM.DSPedidos
-        TabOrder = 5
-      end
-      object edOutros: TDBEdit
-        Left = 68
-        Top = 200
-        Width = 129
-        Height = 27
-        DataField = 'VlrOutros'
-        DataSource = uDM.DSPedidos
-        TabOrder = 6
+        Items.Strings = (
+          'Dinheiro R$'
+          'Cart'#227'o D'#233'bito'
+          'Cart'#227'o Cr'#233'dito'
+          'PIX'
+          'Outros'
+          '<<  Misto  >>')
+        ParentBackground = False
+        ParentBiDiMode = False
+        TabOrder = 1
+        Values.Strings = (
+          '0'
+          '1'
+          '2'
+          '3'
+          '4'
+          '5')
+        OnExit = dbMeioPagtoExit
       end
     end
   end

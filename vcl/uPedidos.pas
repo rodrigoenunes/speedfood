@@ -4,9 +4,8 @@ interface
 
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ExtCtrls, Vcl.Buttons,
-  Vcl.CheckLst, Data.DB, Vcl.DBCtrls, Vcl.Grids, Vcl.DBGrids, Vcl.ComCtrls,
-  Vcl.Mask;
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ExtCtrls, Vcl.Buttons, Vcl.CheckLst,
+  Data.DB, Vcl.DBCtrls, Vcl.Grids, Vcl.DBGrids, Vcl.ComCtrls, Vcl.Mask, System.UITypes;
   Procedure LancamentoPedidos;
 
 type
@@ -424,8 +423,9 @@ procedure TFuPedidos.btFinalizarClick(Sender: TObject);
 var nRet: Integer;
 begin
   PanAlteraBebida.Visible := False;
-  if FuPedidos.totalPedido = 0 then nRet := 2
-     else nRet := FinalizaPedido;
+  if FuPedidos.totalPedido = 0
+    then nRet := 2
+    else nRet := FinalizaPedido;
   if nRet = 0
   then begin
     ShowMessage('Gravou pedido, emite pedido, emite NFCe(se for o caso) e atualiza caixa');

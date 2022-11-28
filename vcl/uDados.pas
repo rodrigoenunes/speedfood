@@ -43,41 +43,6 @@ type
     SisPessoaNrNFCe: TIntegerField;
     SisPessoaSerieNFCe: TStringField;
     ItensZC_Grupo: TStringField;
-    RegCaixa: TFDTable;
-    DSRegCaixa: TDataSource;
-    RegCaixaSequencia: TIntegerField;
-    RegCaixaDtHrInicio: TDateTimeField;
-    RegCaixaDtHrFim: TDateTimeField;
-    RegCaixaSaldoInicial: TBCDField;
-    RegCaixaE_Dinheiro: TBCDField;
-    RegCaixaE_CartaoCredito: TBCDField;
-    RegCaixaE_CartaoDebito: TBCDField;
-    RegCaixaE_PIX: TBCDField;
-    RegCaixaE_Outros: TBCDField;
-    RegCaixaE_Suprimento: TBCDField;
-    RegCaixaS_Saidas: TBCDField;
-    RegCaixaS_Sangria: TBCDField;
-    RegCaixaSaldoFinal: TBCDField;
-    RegCaixaQtd_Dinheiro: TIntegerField;
-    RegCaixaQtd_CartaoCredito: TIntegerField;
-    RegCaixaQtd_CartaoDebito: TIntegerField;
-    RegCaixaQtd_PIX: TIntegerField;
-    RegCaixaQtd_Outros: TIntegerField;
-    RegCaixaQtd_Suprimento: TIntegerField;
-    RegCaixaQtd_Saidas: TIntegerField;
-    RegCaixaQtd_Sangria: TIntegerField;
-    LctCaixa: TFDTable;
-    LctCaixaSeqCaixa: TIntegerField;
-    LctCaixaDtHrLcto: TDateTimeField;
-    LctCaixaOperacao: TIntegerField;
-    LctCaixaValor: TBCDField;
-    LctCaixaMeioPgt: TIntegerField;
-    LctCaixaNrCartao: TStringField;
-    LctCaixaSaldo: TBCDField;
-    LctCaixaHistorico: TStringField;
-    LctCaixaZC_Operacao: TStringField;
-    DSLctos: TDataSource;
-    LctCaixaZC_MeioPgt: TStringField;
     PedWrk: TClientDataSet;
     PedWrkNrLcto: TSmallintField;
     PedWrkTpProd: TSmallintField;
@@ -98,7 +63,6 @@ type
     PedidosMeioPagto: TIntegerField;
     PedidosNrNFCe: TIntegerField;
     PedidosSrNFCe: TIntegerField;
-    PedidosArqXML: TStringField;
     DSPedItens: TDataSource;
     PedItens: TFDTable;
     ItensDescricao: TStringField;
@@ -149,14 +113,60 @@ type
     PedItensVlr03: TBCDField;
     PedItensTxtExtras: TStringField;
     PedItensTxtExclus: TStringField;
-    PedidosNumero: TLongWordField;
     PedidosVlrReais: TBCDField;
     PedidosVlrCDeb: TBCDField;
     PedidosVlrCCred: TBCDField;
     PedidosVlrPIX: TBCDField;
-    PedidosVlrVRef: TBCDField;
-    PedidosVlrCheque: TBCDField;
     PedidosVlrOutros: TBCDField;
+    PedidosEtqImpressas: TShortintField;
+    PedItensEtqImpressa: TShortintField;
+    PedidosArqXML: TMemoField;
+    PedidosNumero: TLongWordField;
+    RegCaixa: TFDTable;
+    RegCaixaTurno: TIntegerField;
+    RegCaixaDtHrInicio: TDateTimeField;
+    RegCaixaDtHrFim: TDateTimeField;
+    RegCaixaSaldoInicial: TBCDField;
+    RegCaixaE_Dinheiro: TBCDField;
+    RegCaixaE_CartaoCredito: TBCDField;
+    RegCaixaE_CartaoDebito: TBCDField;
+    RegCaixaE_PIX: TBCDField;
+    RegCaixaE_Outros: TBCDField;
+    RegCaixaE_Suprimento: TBCDField;
+    RegCaixaS_Saidas: TBCDField;
+    RegCaixaS_Sangria: TBCDField;
+    RegCaixaSaldoFinal: TBCDField;
+    RegCaixaQtd_Dinheiro: TIntegerField;
+    RegCaixaQtd_CartaoCredito: TIntegerField;
+    RegCaixaQtd_CartaoDebito: TIntegerField;
+    RegCaixaQtd_PIX: TIntegerField;
+    RegCaixaQtd_Outros: TIntegerField;
+    RegCaixaQtd_Suprimento: TIntegerField;
+    RegCaixaQtd_Saidas: TIntegerField;
+    RegCaixaQtd_Sangria: TIntegerField;
+    RegCaixaQtd_Misto: TIntegerField;
+    LctCaixa: TFDTable;
+    LctCaixaTurno: TIntegerField;
+    LctCaixaSequencia: TIntegerField;
+    LctCaixaOperacao: TIntegerField;
+    LctCaixaValor: TBCDField;
+    LctCaixaMeioPgt: TIntegerField;
+    LctCaixaSaldo: TBCDField;
+    LctCaixaHistorico: TStringField;
+    LctCaixaPgtReais: TBCDField;
+    LctCaixaPgtCDeb: TBCDField;
+    LctCaixaPgtCCred: TBCDField;
+    LctCaixaPgtPIX: TBCDField;
+    LctCaixaPgtOutros: TBCDField;
+    LctCaixaNroPedido: TIntegerField;
+    LctCaixaDtHrLcto: TStringField;
+    DSRegCaixa: TDataSource;
+    DSLctCaixa: TDataSource;
+    LctCaixaZC_Operacao: TStringField;
+    LctCaixaZC_MeioPgt: TStringField;
+    PedidosNomeCliente: TStringField;
+    PedidosVlrRecebido: TBCDField;
+    PedidosVlrTroco: TBCDField;
     procedure ItensCalcFields(DataSet: TDataSet);
     procedure LctCaixaCalcFields(DataSet: TDataSet);
     procedure PedWrkCalcFields(DataSet: TDataSet);
@@ -181,7 +191,7 @@ var
 
 const
   xGrupos: array[1..4] of String = ('Lanches','Extras','Bedidas','Diversos');
-  xOperacao: array[1..5] of String = ('Saldo','Suprim','Receb','Pagto','Sangria');
+  xOperacao: array[0..4] of String = ('Saldo','Receb','Suprim','Pagto','Sangria');
   xMeioPgt: array[1..5] of String = ('R$', 'CCred','CDeb','PIX','Outros');
 
 implementation
@@ -299,11 +309,11 @@ end;
 
 procedure TuDM.LctCaixaCalcFields(DataSet: TDataSet);
 begin
-  if (uDM.LctCaixaOperacao.AsInteger > 0) and (uDM.LctCaixaOperacao.AsInteger < 6)
+  if (uDM.LctCaixaOperacao.AsInteger >= 0) and (uDM.LctCaixaOperacao.AsInteger <= 4)
      then uDM.LctCaixaZC_Operacao.AsString := xOperacao[uDM.LctCaixaOperacao.AsInteger]
      else uDM.LctCaixaZC_Operacao.AsString := '(' + uDM.LctCaixaOperacao.AsString + ')';
 
-  if (uDM.LctCaixaMeioPgt.AsInteger > 0) and (uDM.LctCaixaMeioPgt.AsInteger < 6)
+  if (uDM.LctCaixaMeioPgt.AsInteger >= 1) and (uDM.LctCaixaMeioPgt.AsInteger <= 5)
      then uDM.LctCaixaZC_MeioPgt.AsString := xMeioPgt[uDM.LctCaixaMeioPgt.AsInteger]
      else uDM.LctCaixaZC_MeioPgt.AsString := '';
 

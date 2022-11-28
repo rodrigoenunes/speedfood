@@ -8,6 +8,7 @@ uses
   Vcl.Mask, Vcl.Buttons;
   Function AberturaDeCaixa(lExibe:Boolean=False): Boolean;
   Function FechamentoDeCaixa: Boolean;
+  Procedure CalculaSaldoCaixa(pSeq:Integer);
 
 type
   TFuCaixa = class(TForm)
@@ -42,7 +43,7 @@ implementation
 
 {$R *.dfm}
 
-uses uDados;
+uses uDados, uPrincipal;
 {
     O 'Caixa' é considerado por sequencia de abertura, compreendendo um período entre
     uma data/hora de abertura e uma data/hora de encerramento
@@ -67,39 +68,58 @@ begin
   dhIni := EncodeDateTime(AA,MM,DD,Hr,Mi,Se,0);
   dhFim := dhIni + 1;
   dhFim := IncSecond(dhFim, -1);
-  //
   uDM.RegCaixa.Append;
-  uDM.RegCaixaSequencia.AsInteger := pSeq;
-  uDM.RegCaixaDtHrInicio.AsDateTime := dhIni;
-  uDM.RegCaixaDtHrFim.AsDateTime := dhFim;    // Registro de caixa para 24 h
+  uDM.RegCaixaTurno.AsInteger         := pSeq;
+  uDM.RegCaixaDtHrInicio.AsDateTime   := dhIni;
+  uDM.RegCaixaDtHrFim.AsDateTime      := dhFim;    // Registro de caixa para 24 h
   uDM.RegCaixaSaldoInicial.AsCurrency := 0;
   uDM.RegCaixa.Post;
 
 end;
 
-Function CalculaSaldoCaixa(pSeq:Integer): Boolean;
-var nMeioPgt: array[1..5] of integer;
-    vMeioPgt: array[1..5] of Currency;
-    nOper: array[1..5] of Integer;
-    vOper: array[1..5] of Currency;
+Procedure CalculaSaldoCaixa(pSeq:Integer);
+var nMeioPgt: array[0..4] of integer;        // R$, CDeb, cCred, PIX, Outros
+    vMeioPgt: array[0..4] of Currency;
+    nMisto: Integer;
+    nOper: array[1..4] of Integer;           // Pedido-Recebimento, Suprimento, Pagamento, Sangria
+    vOper: array[1..4] of Currency;
     nOp,i: Integer;
-    vSdoIni,vSdoFim: Currency;
+    wSdoInicial,wSdoFinal: Currency;
 begin
-  Result := False;
-  if not uDM.RegCaixa.FindKey([pSeq]) then Exit;
-
-  for i := 1 to 5 do
+  if not uDM.RegCaixa.FindKey([pSeq]) then Exit;            // Posiciona o reg.de caixa da sequencia
+  for i := 0 to 4 do
   begin
     nMeioPgt[i] := 0;
     vMeioPgt[i] := 0;
-    nOper[i] := 0;
-    vOper[i] := 0;
+    if i > 0 then
+    begin
+      nOper[i] := 0;
+      vOper[i] := 0;
+    end;
   end;
-  vSdoIni := 0;
-  vSdoFim := 0;
+  nMisto := 0;
 
+  // Somente os lançamentos do caixa referenciado (Sequencia)
   uDM.LctCaixa.Refresh;
   uDM.LctCaixa.First;
+  //  O primeiro registro deve OBRIGATORIAMENTE ser de saldo inicial e somente um registro '0'
+  if uDM.LctCaixaOperacao.AsInteger <> 0 then
+  begin
+    uDM.LctCaixa.Append;
+    uDM.LctCaixaTurno.AsInteger     := uDM.RegCaixaTurno.AsInteger;
+    uDM.LctCaixaSequencia.AsInteger := 0;
+    uDM.LctCaixaOperacao.AsInteger  := 0;         // Informação saldo inicial
+    uDM.LctCaixaValor.AsCurrency    := 0;
+    uDM.LctCaixaMeioPgt.AsInteger   := 0;
+    uDM.LctCaixaSaldo.AsCurrency    := 0;
+    uDM.LctCaixaHistorico.AsString  := 'Saldo inicial';
+    uDM.LctCaixaDtHrLcto.AsDateTime := uDM.RegCaixaDtHrInicio.AsDateTime;
+    uDM.LctCaixa.Post;
+  end;
+  //
+  wSdoInicial := uDM.LctCaixaSaldo.AsCurrency;
+  wSdoFinal   := uDM.LctCaixaSaldo.AsCurrency;
+  uDM.LctCaixa.Next;
   while not uDM.LctCaixa.Eof do
   begin
     nOp := uDM.LctCaixaOperacao.AsInteger;
@@ -107,105 +127,117 @@ begin
     vOper[nOp] := vOper[nOp] + uDM.LctCaixaValor.AsCurrency;
     uDM.LctCaixa.Edit;
     case uDM.LctCaixaOperacao.AsInteger of
-      1:begin                // Saldo inicial
-          uDM.LctCaixaSaldo.AsCurrency := uDM.LctCaixaValor.AsCurrency;
-          vSdoIni := uDM.LctCaixaValor.AsCurrency;
-          vSdoFim := uDM.LctCaixaSaldo.AsCurrency;
-        end;
-      2:begin                // Suprimento
+      1:begin                // Recebimento
           uDM.LctCaixaSaldo.AsCurrency := uDM.LctCaixaSaldo.AsCurrency + uDM.LctCaixaValor.AsCurrency;
-          vSdoFim := vSdoFim + uDM.LctCaixaValor.AsCurrency;
-        end;
-      3:begin                // Recebimento
-          uDM.LctCaixaSaldo.AsCurrency := uDM.LctCaixaSaldo.AsCurrency + uDM.LctCaixaValor.AsCurrency;
-          vSdoFim := vSdoFim + uDM.LctCaixaValor.AsCurrency;
+          wSdoFinal  := wSdoFinal + uDM.LctCaixaValor.AsCurrency;
           i := uDM.LctCaixaMeioPgt.AsInteger;
-          if (i < 1) or (i > 5) then i := 5;
-          nMeioPgt[i] := nMeioPgt[i] + 1;
-          vMeioPgt[i] := vMeioPgt[i] + uDM.LctCaixaValor.AsCurrency;
+          if (i >= 0) and (i <= 4) then
+          begin
+            nMeioPgt[i] := nMeioPgt[i] + 1;
+            vMeioPgt[i] := vMeioPgt[i] + uDM.LctCaixaValor.AsCurrency;
+          end
+          else begin
+            nMisto := nMisto + 1;
+            vMeioPgt[0] := vMeioPgt[0] + uDM.LctCaixaPgtReais.AsCurrency;
+            vMeioPgt[1] := vMeioPgt[0] + uDM.LctCaixaPgtCDeb.AsCurrency;
+            vMeioPgt[2] := vMeioPgt[0] + uDM.LctCaixaPgtCCred.AsCurrency;
+            vMeioPgt[3] := vMeioPgt[0] + uDM.LctCaixaPgtPIX.AsCurrency;
+            vMeioPgt[4] := vMeioPgt[0] + uDM.LctCaixaPgtOutros.AsCurrency;
+          end;
         end;
-      4:begin                // Pagamento
-          uDM.LctCaixaSaldo.AsCurrency := uDM.LctCaixaSaldo.AsCurrency - uDM.LctCaixaValor.AsCurrency;
-          vSdoFim := vSdoFim - uDM.LctCaixaValor.AsCurrency;
+      2:begin                // ( Suprimento
+          uDM.LctCaixaSaldo.AsCurrency := uDM.LctCaixaSaldo.AsCurrency + uDM.LctCaixaValor.AsCurrency;
+          wSdoFinal := wSdoFinal + uDM.LctCaixaValor.AsCurrency;
         end;
-      5:begin                // Sangria
+      3:begin                // Pagamento
           uDM.LctCaixaSaldo.AsCurrency := uDM.LctCaixaSaldo.AsCurrency - uDM.LctCaixaValor.AsCurrency;
-          vSdoFim := vSdoFim - uDM.LctCaixaValor.AsCurrency;
+          wSdoFinal := wSdoFinal - uDM.LctCaixaValor.AsCurrency;
+        end;
+      4:begin                // Sangria
+          uDM.LctCaixaSaldo.AsCurrency := uDM.LctCaixaSaldo.AsCurrency - uDM.LctCaixaValor.AsCurrency;
+          wSdoFinal := wSdoFinal - uDM.LctCaixaValor.AsCurrency;
         end;
     end;
     uDM.LctCaixa.Post;
-    //
     uDM.LctCaixa.Next;
   end;
   uDM.RegCaixa.Edit;
-  uDM.RegCaixaSaldoInicial.AsCurrency := vSdoIni;
-  uDM.RegCaixaE_Dinheiro.AsCurrency := vMeioPgt[1];
-  uDM.RegCaixaE_CartaoCredito.AsCurrency := vMeioPgt[2];
-  uDM.RegCaixaE_CartaoDebito.AsCurrency := vMeioPgt[3];
-  uDM.RegCaixaE_PIX.AsCurrency := vMeioPgt[4];
-  uDM.RegCaixaE_Outros.AsCurrency := vMeioPgt[5];
-  uDM.RegCaixaE_Suprimento.AsCurrency := vOper[2];
-  uDM.RegCaixaS_Saidas.AsCurrency := vOper[4];
-  uDM.RegCaixaS_Sangria.AsCurrency := vOper[5];
-  uDM.RegCaixaSaldoFinal.AsCurrency := vSdoFim;
-  uDM.RegCaixaQtd_Dinheiro.AsInteger := nMeioPgt[1];
+  uDM.RegCaixaSaldoInicial.AsCurrency     := wSdoInicial;
+  uDM.RegCaixaE_Dinheiro.AsCurrency       := vMeioPgt[0];
+  uDM.RegCaixaE_CartaoDebito.AsCurrency   := vMeioPgt[1];
+  uDM.RegCaixaE_CartaoCredito.AsCurrency  := vMeioPgt[2];
+  uDM.RegCaixaE_PIX.AsCurrency            := vMeioPgt[3];
+  uDM.RegCaixaE_Outros.AsCurrency         := vMeioPgt[4];
+  uDM.RegCaixaE_Suprimento.AsCurrency     := vOper[2];
+  uDM.RegCaixaS_Saidas.AsCurrency         := vOper[3];
+  uDM.RegCaixaS_Sangria.AsCurrency        := vOper[4];
+  uDM.RegCaixaSaldoFinal.AsCurrency       := wSdoFinal;
+  uDM.RegCaixaQtd_Dinheiro.AsInteger      := nMeioPgt[0];
+  uDM.RegCaixaQtd_CartaoDebito.AsInteger  := nMeioPgt[1];
   uDM.RegCaixaQtd_CartaoCredito.AsInteger := nMeioPgt[2];
-  uDM.RegCaixaQtd_CartaoDebito.AsInteger := nMeioPgt[3];
-  uDM.RegCaixaQtd_PIX.AsInteger := nMeioPgt[4];
-  uDM.RegCaixaQtd_Outros.AsInteger := nMeioPgt[5];
-  uDM.RegCaixaQtd_Suprimento.AsInteger := nOper[2];
-  uDM.RegCaixaQtd_Saidas.AsInteger := nOper[4];
-  uDM.RegCaixaQtd_Sangria.AsInteger := nOper[5];
+  uDM.RegCaixaQtd_PIX.AsInteger           := nMeioPgt[3];
+  uDM.RegCaixaQtd_Outros.AsInteger        := nMeioPgt[4];
+  uDM.RegCaixaQtd_Misto.AsInteger         := nMisto;
+  uDM.RegCaixaQtd_Suprimento.AsInteger    := nOper[2];
+  uDM.RegCaixaQtd_Saidas.AsInteger        := nOper[3];
+  uDM.RegCaixaQtd_Sangria.AsInteger       := nOper[4];
   uDM.RegCaixa.Post;
 
 end;
 
 
 Function AberturaDeCaixa(lExibe:Boolean=False): Boolean;
-var nSeq: Integer;
+var nTurno,iTam: Integer;
 begin
-  Result := False;
+  Result  := False;
   FuCaixa := TFuCaixa.Create(nil);
   with FuCaixa
   do begin
-    Top := 60;
-    Left := 60;
-    Width := 292;
+    Top    := 60;
+    Left   := 60;
+    Width  := 292;
     Height := 282;
-    LabRotina.Caption := 'Abertura de caixa';
-    edInicio.Enabled := True;
-    edFinal.Enabled := True;
-    edSaldoIni.Enabled := True;
+    LabRotina.Caption   := 'Abertura de caixa';
+    edInicio.Enabled    := True;
+    edFinal.Enabled     := True;
+    edSaldoIni.Enabled  := True;
     LabSaldoFim.Visible := False;
-    edSaldoFim.Visible := False;
+    edSaldoFim.Visible  := False;
     //
     DecodeDateTime(Now,AA,MM,DD,Hr,Mi,Se,Ms);
-    dhIni := EncodeDateTime(AA,MM,DD,Hr,Mi,Se,0);
-    nSeq := 0;
+    dhIni  := EncodeDateTime(AA,MM,DD,Hr,Mi,Se,0);
+    nTurno := 0;
     uDM.RegCaixa.First;
-    while (not uDM.RegCaixa.Eof) and (nSeq = 0) 
-    do begin
-      if (dhIni >= uDM.RegCaixaDtHrInicio.AsDateTime)
-          and (dhIni <= uDM.RegCaixaDtHrFim.AsDateTime)
-      then nSeq := uDM.RegCaixaSequencia.AsInteger          // Registro de caixa já existe
-      else uDM.RegCaixa.Next;
-    end;
-    if nSeq = 0
-    then begin
+    while (not uDM.RegCaixa.Eof) and (nTurno = 0)
+    do if (dhIni >= uDM.RegCaixaDtHrInicio.AsDateTime) and (dhIni <= uDM.RegCaixaDtHrFim.AsDateTime)
+         then nTurno := uDM.RegCaixaTurno.AsInteger          // Registro de caixa já existe
+         else uDM.RegCaixa.Next;
+    //
+    if nTurno = 0
+    then begin        // Não existe o registro de caixa do turno (Turno de 1 a .....)
       uDM.RegCaixa.Last;
-      nSeq := uDM.RegCaixaSequencia.AsInteger + 1;
-      AdicionaRegCaixa(nSeq);
+      nTurno := uDM.RegCaixaTurno.AsInteger + 1;
+      AdicionaRegCaixa(nTurno);
       lExibe := True;
     end;
     if lExibe
     then begin
-      uDM.RegCaixa.FindKey([nSeq]);
+      uDM.RegCaixa.FindKey([nTurno]);
       uDM.RegCaixa.Edit;
       wrkOperacao := 1;      // Abertura do caixa ou correção de saldo inicial
       ShowModal;
     end;
     Result := True;
   end;
+
+  with FuPrincipal
+  do begin
+    gbTurno.Caption   := 'Turno (' + uDM.RegCaixaTurno.AsString + ')';
+    LabInicio.Caption := '> ' + uDM.RegCaixaDtHrInicio.AsString;
+    LabFinal.Caption  := '> ' + uDM.RegCaixaDtHrFim.AsString;
+    gbTurno.Visible   := True;
+  end;
+
   FuCaixa.Free;
 
 end;
@@ -216,17 +248,17 @@ begin
   FuCaixa := TFuCaixa.Create(nil);
   with FuCaixa
   do begin
-    Top := 60;
-    Left := 200;
-    Width := 292;
+    Top    := 60;
+    Left   := 200;
+    Width  := 292;
     Height := 282;
-    LabRotina.Caption := 'Fechamento de caixa';
-    edInicio.Enabled := False;
-    edFinal.Enabled := False;
-    edSaldoIni.Enabled := True;
+    LabRotina.Caption   := 'Fechamento de caixa';
+    edInicio.Enabled    := False;
+    edFinal.Enabled     := False;
+    edSaldoIni.Enabled  := True;
     LabSaldoFim.Visible := True;
-    edSaldoFim.Visible := True;
-    edSaldoFim.Enabled := False;
+    edSaldoFim.Visible  := True;
+    edSaldoFim.Enabled  := False;
     //
     wrkOperacao := 2;      // Fechamento do caixa
     ShowModal;
@@ -247,32 +279,34 @@ end;
 procedure TFuCaixa.btOkClick(Sender: TObject);
 begin
   if wrkOperacao = 1 then
-  begin   // Abertura do caixa ou correção de saldo inicial
+  begin                 // Abertura do caixa ou correção de saldo inicial
     uDM.RegCaixa.Post;
     uDM.LctCaixa.Refresh;
     if uDM.LctCaixa.RecordCount = 0 then
-    begin     // Se não há lançamentos para o dia (sequencia)
+    begin             // Se não há lançamentos para o dia (sequencia), cria o registro de saldo inicial
       uDM.LctCaixa.Append;
-      uDM.LctCaixaSeqCaixa.AsInteger := uDM.RegCaixaSequencia.AsInteger;
+      uDM.LctCaixaTurno.AsInteger     := uDM.RegCaixaTurno.AsInteger;
+      uDM.LctCaixaSequencia.AsInteger := 0;
+      uDM.LctCaixaOperacao.AsInteger  := 0;         // Informação de saldo
+      uDM.LctCaixaValor.AsCurrency    := uDM.RegCaixaSaldoInicial.AsCurrency;
+      uDM.LctCaixaMeioPgt.AsInteger   := 0;         // R$
+      uDM.LctCaixaSaldo.AsCurrency    := uDM.RegCaixaSaldoInicial.AsCurrency;
+      uDM.LctCaixaHistorico.AsString  := 'Saldo inicial';
       uDM.LctCaixaDtHrLcto.AsDateTime := Now;
-      uDM.LctCaixaOperacao.AsInteger := 1;      // Saldo
-      uDM.LctCaixaValor.AsCurrency := uDM.RegCaixaSaldoInicial.AsCurrency;
-      uDM.LctCaixaMeioPgt.AsInteger := 1;         // R$
-      uDM.LctCaixaNrCartao.Clear;
-      uDM.LctCaixaSaldo.AsCurrency := uDM.RegCaixaSaldoInicial.AsCurrency;
-      uDM.LctCaixaHistorico.AsString := 'Saldo inicial';
       uDM.LctCaixa.Post;
     end
-    else begin
+    else begin        // Corrige o registro de saldo inicial
       uDM.LctCaixa.First;
       uDM.LctCaixa.Edit;
-      uDM.LctCaixaValor.AsCurrency := uDM.RegCaixaSaldoInicial.AsCurrency; 
+      uDM.LctCaixaValor.AsCurrency := uDM.RegCaixaSaldoInicial.AsCurrency;
+      uDM.LctCaixaSaldo.AsCurrency := uDM.RegCaixaSaldoInicial.AsCurrency;
       uDM.LctCaixa.Post;
     end;
-    CalculaSaldoCaixa(uDM.RegCaixaSequencia.AsInteger);
+    CalculaSaldoCaixa(uDM.RegCaixaTurno.AsInteger);
   end
   else begin                 // Fechamento do caixa
-    ShowMessage('Fechamento do caixa');
+    ShowMessage('Fechamento do caixa, emite relatorio de fechamento');
+    CalculaSaldoCaixa(uDM.RegCaixaTurno.AsInteger);
   end;
   FuCaixa.Close;
 

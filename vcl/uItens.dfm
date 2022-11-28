@@ -76,7 +76,7 @@ object FuItens: TFuItens
         Alignment = taRightJustify
         Caption = 'Imagem:'
       end
-      object SpeedButton1: TSpeedButton
+      object sbImagem: TSpeedButton
         Left = 636
         Top = 151
         Width = 44
@@ -96,7 +96,8 @@ object FuItens: TFuItens
           333338F3333338F33333308F7F7F80333333383FF333F8333333330888880333
           333333883FF88333333333380008333333333333888333333333}
         NumGlyphs = 2
-        OnClick = SpeedButton1Click
+        Visible = False
+        OnClick = sbImagemClick
       end
       object ImgItem: TImage
         Left = 686
@@ -141,7 +142,6 @@ object FuItens: TFuItens
           '4')
         OnClick = dbTipoClick
         OnExit = edZC_KeyChange
-        ExplicitTop = -3
       end
       object dbCodigo: TDBEdit
         Left = 96
@@ -407,6 +407,7 @@ object FuItens: TFuItens
         DataField = 'Imagem'
         DataSource = uDM.DSItens
         TabOrder = 8
+        OnExit = dbImagemExit
       end
       object dbUnid: TDBEdit
         Left = 140

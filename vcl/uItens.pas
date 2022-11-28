@@ -3,10 +3,9 @@ unit uItens;
 interface
 
 uses
-  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes,
-  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ExtCtrls,
-  Vcl.DBCtrls, Vcl.Grids, Vcl.DBGrids, Vcl.Buttons, Vcl.Mask,
-  Data.DB, Datasnap.DBClient, Vcl.ExtDlgs;
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ExtCtrls, Vcl.DBCtrls, Vcl.Grids,
+  Vcl.DBGrids, Vcl.Buttons, Vcl.Mask, Data.DB, Datasnap.DBClient, Vcl.ExtDlgs, System.UITypes;
   Procedure ManutencaoProdutos;
 
 type
@@ -56,7 +55,7 @@ type
     edZC_Key: TDBEdit;
     Label15: TLabel;
     dbImagem: TDBEdit;
-    SpeedButton1: TSpeedButton;
+    sbImagem: TSpeedButton;
     ImgItem: TImage;
     OpenPictureDialog1: TOpenPictureDialog;
     Label16: TLabel;
@@ -72,9 +71,10 @@ type
     procedure btExcluirClick(Sender: TObject);
     procedure dbTipoClick(Sender: TObject);
     procedure edZC_KeyChange(Sender: TObject);
-    procedure SpeedButton1Click(Sender: TObject);
+    procedure sbImagemClick(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure FormResize(Sender: TObject);
+    procedure dbImagemExit(Sender: TObject);
   private
     { Private declarations }
   public
@@ -110,6 +110,7 @@ begin
     btOk.Visible     := pModo;
     btCancel.Visible := pModo;
     panManut.Enabled := pModo;
+    sbImagem.Visible := pModo;
     if pModo then pModo := False
              else pModo := True;
     GridProds.Enabled := pModo;
@@ -152,7 +153,7 @@ begin
 
 end;
 
-procedure TFuItens.SpeedButton1Click(Sender: TObject);
+procedure TFuItens.sbImagemClick(Sender: TObject);
 begin
   OpenPictureDialog1.Execute();
   if OpenPictureDialog1.FileName = '' then Exit;
@@ -160,7 +161,13 @@ begin
   imgItem.Picture.LoadFromFile(OpenPictureDialog1.FileName);
   imgItem.Visible := True;
   if MessageDlg('Manter a imagem indicada para o ítem?',
-                mtConfirmation,[mbYes,mbNo],0,mbYes,['Sim','Não']) = mrNo then Exit;
+                mtConfirmation,[mbYes,mbNo],0,mbYes,['Sim','Não']) = mrNo
+  then begin
+    if FileExists(uDM.ItensImagem.AsString)
+       then imgItem.Picture.LoadfromFile(uDM.ItensImagem.AsString)
+       else imgItem.Visible := False;
+    Exit;
+  end;
   uDM.ItensImagem.AsString := OpenPictureDialog1.FileName;
 
 end;
@@ -227,7 +234,7 @@ begin
         Try
           uDM.Itens.Post;
         Except
-          MessageDlg('Tipo/Código já existe no cadastro, reinforme',mtError,[mbOk],0);
+          MessageDlg('Item já existe no cadastro, reinforme',mtError,[mbOk],0);
           dbCodigo.SetFocus;
           Exit;
         End;
@@ -236,6 +243,8 @@ begin
         uDM.Itens.Post;
       end;
   end;
+  if (uDM.ItensImagem.AsString = '')  or
+     (not FileExists(uDM.ItensImagem.AsString)) then ImgItem.Visible := False;
   wAcao := CtleProds(0,False);
 
 end;
@@ -260,41 +269,47 @@ begin
 
 end;
 
+procedure TFuItens.dbImagemExit(Sender: TObject);
+begin
+  if dbImagem.Text = '' then ImgItem.Visible := False;
+
+end;
+
 procedure TFuItens.dbTipoClick(Sender: TObject);
 begin
   case dbTipo.ItemIndex of
     0:begin     // Lanches
-        uDM.ItensCFOP.AsInteger := 5101;
-        uDM.ItensNCM.AsString  := '21069090';
-        uDM.ItensCSOSN.AsInteger := 102;
-        uDM.ItensCST.AsInteger := 90;
-        uDM.ItensCST_IPI.AsInteger := 99;
-        uDM.ItensCST_PIS.AsInteger := 99;
+        uDM.ItensCFOP.AsInteger       := 5101;
+        uDM.ItensNCM.AsString         := '21069090';
+        uDM.ItensCSOSN.AsInteger      := 102;
+        uDM.ItensCST.AsInteger        := 90;
+        uDM.ItensCST_IPI.AsInteger    := 99;
+        uDM.ItensCST_PIS.AsInteger    := 99;
         uDM.ItensCST_COFINS.AsInteger := 99;
-        uDM.ItensPcReduz.AsFloat := 0;
-        uDM.ItensAliqICMS.AsFloat := 0;
+        uDM.ItensPcReduz.AsFloat      := 0;
+        uDM.ItensAliqICMS.AsFloat     := 0;
       end;
     3:begin     // Bebidas
-        uDM.ItensCFOP.AsInteger := 5102;
-        uDM.ItensNCM.AsString  := '22021000';
-        uDM.ItensCSOSN.AsInteger := 102;
-        uDM.ItensCST.AsInteger := 90;
-        uDM.ItensCST_IPI.AsInteger := 99;
-        uDM.ItensCST_PIS.AsInteger := 99;
+        uDM.ItensCFOP.AsInteger       := 5102;
+        uDM.ItensNCM.AsString         := '22021000';
+        uDM.ItensCSOSN.AsInteger      := 102;
+        uDM.ItensCST.AsInteger        := 90;
+        uDM.ItensCST_IPI.AsInteger    := 99;
+        uDM.ItensCST_PIS.AsInteger    := 99;
         uDM.ItensCST_COFINS.AsInteger := 99;
-        uDM.ItensPcReduz.AsFloat := 0;
-        uDM.ItensAliqICMS.AsFloat := 0;
+        uDM.ItensPcReduz.AsFloat      := 0;
+        uDM.ItensAliqICMS.AsFloat     := 0;
       end;
     4:begin     // Diversos
-        uDM.ItensCFOP.AsInteger := 5102;
-        uDM.ItensNCM.AsString  := '22021000';
-        uDM.ItensCSOSN.AsInteger := 102;
-        uDM.ItensCST.AsInteger := 90;
-        uDM.ItensCST_IPI.AsInteger := 99;
-        uDM.ItensCST_PIS.AsInteger := 99;
+        uDM.ItensCFOP.AsInteger       := 5102;
+        uDM.ItensNCM.AsString         := '22021000';
+        uDM.ItensCSOSN.AsInteger      := 102;
+        uDM.ItensCST.AsInteger        := 90;
+        uDM.ItensCST_IPI.AsInteger    := 99;
+        uDM.ItensCST_PIS.AsInteger    := 99;
         uDM.ItensCST_COFINS.AsInteger := 99;
-        uDM.ItensPcReduz.AsFloat := 0;
-        uDM.ItensAliqICMS.AsFloat := 0;
+        uDM.ItensPcReduz.AsFloat      := 0;
+        uDM.ItensAliqICMS.AsFloat     := 0;
         end;
     else begin
         uDM.ItensCFOP.Clear;

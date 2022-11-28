@@ -54,7 +54,6 @@ object FuCaixa: TFuCaixa
     Height = 19
     AutoSize = True
     DataField = 'Sequencia'
-    DataSource = uDM.DSRegCaixa
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
     Font.Height = -16
@@ -176,7 +175,7 @@ object FuCaixa: TFuCaixa
     Top = 148
     Width = 121
     Height = 24
-    DataField = 'SaldoInicial'
+    DataField = 'SaldoFinal'
     DataSource = uDM.DSRegCaixa
     TabOrder = 5
   end

@@ -9,7 +9,8 @@ uses
   uCaixa in 'uCaixa.pas' {FuCaixa},
   uPedidos in 'uPedidos.pas' {FuPedidos},
   uTrataLanche in 'uTrataLanche.pas' {FuTrataLanche},
-  uFinPedido in 'uFinPedido.pas' {FuFinPedido};
+  uFinPedido in 'uFinPedido.pas' {FuFinPedido},
+  uImpressoes in 'uImpressoes.pas' {FuImpressoes};
 
 {$R *.res}
 
@@ -21,6 +22,8 @@ begin
   Application.CreateForm(TFuPedidos, FuPedidos);
   Application.CreateForm(TFuTrataLanche, FuTrataLanche);
   Application.CreateForm(TFuFinPedido, FuFinPedido);
+  Application.CreateForm(TFuImpressoes, FuImpressoes);
+  Application.CreateForm(TFuImpressoes, FuImpressoes);
   //  Application.CreateForm(TFuCaixa, FuCaixa);
   //  Application.CreateForm(TuDM, uDM);
 

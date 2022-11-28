@@ -13,6 +13,9 @@ type
     btSair: TBitBtn;
     btAbrirCaixa: TBitBtn;
     btPedidos: TBitBtn;
+    gbTurno: TGroupBox;
+    LabInicio: TLabel;
+    LabFinal: TLabel;
     procedure btSairClick(Sender: TObject);
     procedure btSuporteClick(Sender: TObject);
     procedure FormActivate(Sender: TObject);
@@ -33,11 +36,11 @@ implementation
 
 {$R *.dfm}
 
-uses uItens, uDados, uGenericas, uCaixa, uPedidos;
+uses uItens, uDados, uGenericas, uCaixa, uPedidos, uImpressoes;
 
 procedure TFuPrincipal.btAbrirCaixaClick(Sender: TObject);
 begin
-  AberturaDeCaixa;
+  AberturaDeCaixa(True);
 
 end;
 
@@ -49,12 +52,17 @@ end;
 
 procedure TFuPrincipal.btSairClick(Sender: TObject);
 begin
+  if MessageDlg('Imprimir fechamento de caixa ?',mtConfirmation,[mbYes,mbNo],0,mbNo,['Sim','Não']) = mrYes
+     then begin
+       CalculaSaldoCaixa(uDM.RegCaixaTurno.AsInteger);
+       ImprimeCaixa(uDM.RegCaixaTurno.AsInteger);
+     end;
   uDM.PedItens.Active := False;
-  uDM.Pedidos.Active := False;
+  uDM.Pedidos.Active  := False;
   uDM.LctCaixa.Active := False;
   uDM.RegCaixa.Active := False;
-  uDM.Itens.Active := False;
-  uDM.FDC.Connected := False;
+  uDM.Itens.Active    := False;
+  uDM.FDC.Connected   := False;
   //
   Application.Terminate;
 
@@ -72,17 +80,17 @@ begin
   if uDM = Nil then
   begin
     uDM := TuDM.Create(nil);
-    uDM.FDC.Connected := True;
-    uDM.Itens.Active := True;
+    uDM.FDC.Connected   := True;
+    uDM.Itens.Active    := True;
     uDM.RegCaixa.Active := True;
     uDM.LctCaixa.Active := True;
-    uDM.Pedidos.Active := True;
+    uDM.Pedidos.Active  := True;
     uDM.PedItens.Active := True;
-    FGen.lSalvaForm := True;
-    FGen.pathSalvaForm := wPathWork;
-    uDM.pathWork := wPathWork;
+    FGen.lSalvaForm     := True;
+    FGen.pathSalvaForm  := wPathWork;
+    uDM.pathWork        := wPathWork;
     ContaExtras;                  // Obtem qtd de ítens 'extras'
-    AberturaDeCaixa(False);
+    AberturaDeCaixa;
 
   end;
 
@@ -90,11 +98,11 @@ end;
 
 procedure TFuPrincipal.FormCreate(Sender: TObject);
 begin
-  wPathWork := ExtractFilePath(Application.ExeName);
-  FuPrincipal.Width := Screen.Width div 3;
+  wPathWork          := ExtractFilePath(Application.ExeName);
+  FuPrincipal.Width  := Screen.Width div 3;
   FuPrincipal.Height := FuPrincipal.Width;
-  FuPrincipal.Top := 20;
-  FuPrincipal.Left := 40;
+  FuPrincipal.Top    := 20;
+  FuPrincipal.Left   := 40;
   FuPrincipal.Image1.Align := alClient;
   FuPrincipal.Image1.Picture.LoadFromFile(wPathWork + 'ImgFundo.BMP');
   FuPrincipal.Image1.Stretch := True;
