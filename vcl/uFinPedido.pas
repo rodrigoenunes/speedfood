@@ -335,7 +335,7 @@ begin
     3:uDM.PedidosVlrPIX.AsCurrency    := FuPedidos.totalPedido;
     4:uDM.PedidosVlrOutros.AsCurrency := FuPedidos.totalPedido;
     5:begin
-        gbEspecif.Enabled := True;
+        //gbEspecif.Enabled := True;
         uDM.PedidosVlrReais.AsCurrency  := FuPedidos.totalPedido;
       end;
   end;

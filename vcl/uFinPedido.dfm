@@ -41,7 +41,6 @@ object FuFinPedido: TFuFinPedido
     Font.Style = []
     ParentFont = False
     TabOrder = 0
-    ExplicitLeft = 450
     object PanCliente: TPanel
       Left = 1
       Top = 1
@@ -96,7 +95,6 @@ object FuFinPedido: TFuFinPedido
       Height = 122
       Align = alBottom
       TabOrder = 1
-      ExplicitTop = 322
       object btCancelar: TBitBtn
         Left = 5
         Top = 61
@@ -132,7 +130,6 @@ object FuFinPedido: TFuFinPedido
       Height = 255
       Align = alClient
       TabOrder = 2
-      ExplicitTop = 68
       object PanDetPgto: TPanel
         Left = 152
         Top = 1
@@ -141,9 +138,6 @@ object FuFinPedido: TFuFinPedido
         Align = alClient
         BevelOuter = bvNone
         TabOrder = 0
-        ExplicitLeft = 147
-        ExplicitTop = 0
-        ExplicitWidth = 245
         object LabReais: TLabel
           Left = 59
           Top = 32
@@ -294,6 +288,8 @@ object FuFinPedido: TFuFinPedido
       ReadOnly = True
       ScrollBars = ssVertical
       TabOrder = 0
+      ExplicitLeft = -227
+      ExplicitTop = 128
     end
   end
   object PanTopo: TPanel
