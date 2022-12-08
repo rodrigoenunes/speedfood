@@ -141,7 +141,7 @@ Function ValidarParametrosNFCe: TRetorno;
 Begin
   Result.Resultado:= False;
 
-  CriarTabela_sis_parametros_se_necessario;
+  // CriarTabela_sis_parametros_se_necessario;
 
   //
   Result:= TSVPE_VazioOuDir('ACNFE_HOME', vACNFE_HOME);
