@@ -67,7 +67,10 @@ Begin
     'where nome = ' + pNome.QuotedString;
   fdqTemp1.Open;
 
-  Result:= fdqTemp1.Fields[0].AsString;
+  If fdqTemp1.IsEmpty Then
+    Result:= EmptyStr
+  Else
+    Result:= fdqTemp1.Fields[0].AsString;
 
   fdqTemp1.Close;
 
