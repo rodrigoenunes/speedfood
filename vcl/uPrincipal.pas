@@ -13,15 +13,19 @@ type
     btSair: TBitBtn;
     btAbrirCaixa: TBitBtn;
     btPedidos: TBitBtn;
-    gbTurno: TGroupBox;
+    btUsuario: TBitBtn;
+    btAdmin: TBitBtn;
+    PanTurno: TPanel;
     LabInicio: TLabel;
     LabFinal: TLabel;
+    LabTurno: TLabel;
     procedure btSairClick(Sender: TObject);
     procedure btSuporteClick(Sender: TObject);
     procedure FormActivate(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure btAbrirCaixaClick(Sender: TObject);
     procedure btPedidosClick(Sender: TObject);
+    procedure btUsuarioClick(Sender: TObject);
   private
     { Private declarations }
   public
@@ -36,7 +40,7 @@ implementation
 
 {$R *.dfm}
 
-uses uItens, uDados, uGenericas, uCaixa, uPedidos, uImpressoes;
+uses uItens, uDados, uGenericas, uCaixa, uPedidos, uImpressoes, uUsuario;
 
 procedure TFuPrincipal.btAbrirCaixaClick(Sender: TObject);
 begin
@@ -57,12 +61,13 @@ begin
        CalculaSaldoCaixa(uDM.RegCaixaTurno.AsInteger);
        ImprimeCaixa(uDM.RegCaixaTurno.AsInteger);
      end;
-  uDM.PedItens.Active := False;
-  uDM.Pedidos.Active  := False;
-  uDM.LctCaixa.Active := False;
-  uDM.RegCaixa.Active := False;
-  uDM.Itens.Active    := False;
-  uDM.FDC.Connected   := False;
+  uDM.PedItens.Active  := False;
+  uDM.Pedidos.Active   := False;
+  uDM.LctCaixa.Active  := False;
+  uDM.RegCaixa.Active  := False;
+  uDM.Itens.Active     := False;
+  uDM.SisPessoa.Active := False;
+  uDM.FDC.Connected    := False;
   //
   Application.Terminate;
 
@@ -75,23 +80,29 @@ begin
 
 end;
 
+procedure TFuPrincipal.btUsuarioClick(Sender: TObject);
+begin
+  ManutencaoUsuario;
+
+end;
+
 procedure TFuPrincipal.FormActivate(Sender: TObject);
 begin
   if uDM = Nil then
   begin
     uDM := TuDM.Create(nil);
-    uDM.FDC.Connected   := True;
-    uDM.Itens.Active    := True;
-    uDM.RegCaixa.Active := True;
-    uDM.LctCaixa.Active := True;
-    uDM.Pedidos.Active  := True;
-    uDM.PedItens.Active := True;
-    FGen.lSalvaForm     := True;
-    FGen.pathSalvaForm  := wPathWork;
-    uDM.pathWork        := wPathWork;
+    uDM.FDC.Connected    := True;
+    uDM.SisPessoa.Active := True;
+    uDM.Itens.Active     := True;
+    uDM.RegCaixa.Active  := True;
+    uDM.LctCaixa.Active  := True;
+    uDM.Pedidos.Active   := True;
+    uDM.PedItens.Active  := True;
+    FGen.lSalvaForm      := True;
+    FGen.pathSalvaForm   := wPathWork;
+    uDM.pathWork         := wPathWork;
     ContaExtras;                  // Obtem qtd de ítens 'extras'
     AberturaDeCaixa;
-
   end;
 
 end;
@@ -99,7 +110,7 @@ end;
 procedure TFuPrincipal.FormCreate(Sender: TObject);
 begin
   wPathWork          := ExtractFilePath(Application.ExeName);
-  FuPrincipal.Width  := Screen.Width div 3;
+  FuPrincipal.Width  := (Screen.Width div 5) * 2;
   FuPrincipal.Height := FuPrincipal.Width;
   FuPrincipal.Top    := 20;
   FuPrincipal.Left   := 40;

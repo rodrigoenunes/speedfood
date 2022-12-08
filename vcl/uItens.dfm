@@ -199,7 +199,7 @@ object FuItens: TFuItens
           0055555555555577FF5555555555555220005555555555577FFF555555555555
           5220555555555555577F55555555555555555555555555555555}
         NumGlyphs = 2
-        TabOrder = 10
+        TabOrder = 11
         Visible = False
         OnClick = btOkClick
       end
@@ -223,7 +223,7 @@ object FuItens: TFuItens
           550666777F66666777F665550666666655066777F666666677F6655506666666
           65066777F666666667F666666666666666666666666666666666}
         NumGlyphs = 2
-        TabOrder = 11
+        TabOrder = 12
         Visible = False
         OnClick = btCancelClick
       end
@@ -234,7 +234,7 @@ object FuItens: TFuItens
         Height = 57
         DataField = 'DescrCompleta'
         DataSource = uDM.DSItens
-        TabOrder = 7
+        TabOrder = 8
       end
       object gbFiscais: TGroupBox
         Left = 95
@@ -242,7 +242,7 @@ object FuItens: TFuItens
         Width = 585
         Height = 60
         Caption = 'Dados fiscais'
-        TabOrder = 9
+        TabOrder = 10
         object Label6: TLabel
           Left = 8
           Top = 16
@@ -395,7 +395,7 @@ object FuItens: TFuItens
         Height = 24
         DataField = 'ZC_Key'
         DataSource = uDM.DSItens
-        TabOrder = 12
+        TabOrder = 13
         Visible = False
         OnChange = edZC_KeyChange
       end
@@ -406,7 +406,7 @@ object FuItens: TFuItens
         Height = 24
         DataField = 'Imagem'
         DataSource = uDM.DSItens
-        TabOrder = 8
+        TabOrder = 9
         OnExit = dbImagemExit
       end
       object dbUnid: TDBEdit
@@ -426,6 +426,16 @@ object FuItens: TFuItens
         DataField = 'CodBarras'
         DataSource = uDM.DSItens
         TabOrder = 6
+      end
+      object cbAlteraPreco: TDBCheckBox
+        Left = 440
+        Top = 62
+        Width = 171
+        Height = 17
+        Caption = 'Permite altera'#231#227'o de valor'
+        DataField = 'AlteraPreco'
+        DataSource = uDM.DSItens
+        TabOrder = 7
       end
     end
     object GridProds: TDBGrid
@@ -473,6 +483,17 @@ object FuItens: TFuItens
           Title.Alignment = taRightJustify
           Title.Caption = 'Pre'#231'o'
           Width = 81
+          Visible = True
+        end
+        item
+          Expanded = False
+          FieldName = 'ZC_AltPreco'
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -13
+          Font.Name = 'Wingdings'
+          Font.Style = []
+          Title.Caption = 'P'
           Visible = True
         end
         item

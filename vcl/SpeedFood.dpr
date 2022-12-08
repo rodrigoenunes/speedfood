@@ -10,7 +10,10 @@ uses
   uPedidos in 'uPedidos.pas' {FuPedidos},
   uTrataLanche in 'uTrataLanche.pas' {FuTrataLanche},
   uFinPedido in 'uFinPedido.pas' {FuFinPedido},
-  uImpressoes in 'uImpressoes.pas' {FuImpressoes};
+  uImpressoes in 'uImpressoes.pas' {FuImpressoes},
+  uUsuario in 'uUsuario.pas' {FuUsuario},
+  uCaixaMovto in 'uCaixaMovto.pas' {FuCaixaMovto},
+  uBiblioteca in 'uBiblioteca.pas';
 
 {$R *.res}
 
@@ -23,10 +26,6 @@ begin
   Application.CreateForm(TFuTrataLanche, FuTrataLanche);
   Application.CreateForm(TFuFinPedido, FuFinPedido);
   Application.CreateForm(TFuImpressoes, FuImpressoes);
-  Application.CreateForm(TFuImpressoes, FuImpressoes);
-  //  Application.CreateForm(TFuCaixa, FuCaixa);
-  //  Application.CreateForm(TuDM, uDM);
-
   Application.Run;
 
 end.

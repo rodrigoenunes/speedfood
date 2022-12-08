@@ -8,7 +8,7 @@ uses
   Vcl.Mask, Vcl.Buttons;
   Function AberturaDeCaixa(lExibe:Boolean=False): Boolean;
   Function FechamentoDeCaixa: Boolean;
-  Procedure CalculaSaldoCaixa(pSeq:Integer);
+  Procedure CalculaSaldoCaixa(pTurno:Integer);
 
 type
   TFuCaixa = class(TForm)
@@ -16,7 +16,7 @@ type
     Label2: TLabel;
     Label3: TLabel;
     Label4: TLabel;
-    DBText1: TDBText;
+    dbTurno: TDBText;
     edInicio: TDBEdit;
     edFinal: TDBEdit;
     edSaldoIni: TDBEdit;
@@ -25,8 +25,14 @@ type
     btCancel: TBitBtn;
     LabSaldoFim: TLabel;
     edSaldoFim: TDBEdit;
+    btLctCaixa: TBitBtn;
     procedure btOkClick(Sender: TObject);
     procedure btCancelClick(Sender: TObject);
+    procedure edInicioKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
+    procedure edFinalKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
+    procedure edSaldoIniKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
+    procedure edSaldoFimKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
+    procedure btLctCaixaClick(Sender: TObject);
   private
     { Private declarations }
   public
@@ -43,7 +49,7 @@ implementation
 
 {$R *.dfm}
 
-uses uDados, uPrincipal;
+uses uDados, uPrincipal, uCaixaMovto;
 {
     O 'Caixa' é considerado por sequencia de abertura, compreendendo um período entre
     uma data/hora de abertura e uma data/hora de encerramento
@@ -58,7 +64,7 @@ uses uDados, uPrincipal;
        Informar: 'Fechamento'
 
   Operacao: array[1..5] of String = ('Saldo','Suprim','Receb','Pagto','Sangria');
-  xMeioPgt: array[1..5] of String = ('R$', 'CCred','CDeb','PIX','Outros');
+  xMeioPgt: array[1..5] of String = ('R$', 'CDeb','CCred','PIX','Outros');
 }
 
 
@@ -77,7 +83,7 @@ begin
 
 end;
 
-Procedure CalculaSaldoCaixa(pSeq:Integer);
+Procedure CalculaSaldoCaixa(pTurno:Integer);
 var nMeioPgt: array[0..4] of integer;        // R$, CDeb, cCred, PIX, Outros
     vMeioPgt: array[0..4] of Currency;
     nMisto: Integer;
@@ -86,7 +92,7 @@ var nMeioPgt: array[0..4] of integer;        // R$, CDeb, cCred, PIX, Outros
     nOp,i: Integer;
     wSdoInicial,wSdoFinal: Currency;
 begin
-  if not uDM.RegCaixa.FindKey([pSeq]) then Exit;            // Posiciona o reg.de caixa da sequencia
+  if not uDM.RegCaixa.FindKey([pTurno]) then Exit;            // Posiciona o reg.de caixa da sequencia
   for i := 0 to 4 do
   begin
     nMeioPgt[i] := 0;
@@ -115,6 +121,7 @@ begin
     uDM.LctCaixaHistorico.AsString  := 'Saldo inicial';
     uDM.LctCaixaDtHrLcto.AsDateTime := uDM.RegCaixaDtHrInicio.AsDateTime;
     uDM.LctCaixa.Post;
+    uDM.LctCaixa.First;
   end;
   //
   wSdoInicial := uDM.LctCaixaSaldo.AsCurrency;
@@ -128,8 +135,8 @@ begin
     uDM.LctCaixa.Edit;
     case uDM.LctCaixaOperacao.AsInteger of
       1:begin                // Recebimento
-          uDM.LctCaixaSaldo.AsCurrency := uDM.LctCaixaSaldo.AsCurrency + uDM.LctCaixaValor.AsCurrency;
           wSdoFinal  := wSdoFinal + uDM.LctCaixaValor.AsCurrency;
+          uDM.LctCaixaSaldo.AsCurrency := wSdoFinal;
           i := uDM.LctCaixaMeioPgt.AsInteger;
           if (i >= 0) and (i <= 4) then
           begin
@@ -139,23 +146,23 @@ begin
           else begin
             nMisto := nMisto + 1;
             vMeioPgt[0] := vMeioPgt[0] + uDM.LctCaixaPgtReais.AsCurrency;
-            vMeioPgt[1] := vMeioPgt[0] + uDM.LctCaixaPgtCDeb.AsCurrency;
-            vMeioPgt[2] := vMeioPgt[0] + uDM.LctCaixaPgtCCred.AsCurrency;
-            vMeioPgt[3] := vMeioPgt[0] + uDM.LctCaixaPgtPIX.AsCurrency;
-            vMeioPgt[4] := vMeioPgt[0] + uDM.LctCaixaPgtOutros.AsCurrency;
+            vMeioPgt[1] := vMeioPgt[1] + uDM.LctCaixaPgtCDeb.AsCurrency;
+            vMeioPgt[2] := vMeioPgt[2] + uDM.LctCaixaPgtCCred.AsCurrency;
+            vMeioPgt[3] := vMeioPgt[3] + uDM.LctCaixaPgtPIX.AsCurrency;
+            vMeioPgt[4] := vMeioPgt[4] + uDM.LctCaixaPgtOutros.AsCurrency;
           end;
         end;
       2:begin                // ( Suprimento
-          uDM.LctCaixaSaldo.AsCurrency := uDM.LctCaixaSaldo.AsCurrency + uDM.LctCaixaValor.AsCurrency;
           wSdoFinal := wSdoFinal + uDM.LctCaixaValor.AsCurrency;
+          uDM.LctCaixaSaldo.AsCurrency := wSdoFinal;
         end;
       3:begin                // Pagamento
-          uDM.LctCaixaSaldo.AsCurrency := uDM.LctCaixaSaldo.AsCurrency - uDM.LctCaixaValor.AsCurrency;
           wSdoFinal := wSdoFinal - uDM.LctCaixaValor.AsCurrency;
+          uDM.LctCaixaSaldo.AsCurrency := wSdoFinal;
         end;
       4:begin                // Sangria
-          uDM.LctCaixaSaldo.AsCurrency := uDM.LctCaixaSaldo.AsCurrency - uDM.LctCaixaValor.AsCurrency;
           wSdoFinal := wSdoFinal - uDM.LctCaixaValor.AsCurrency;
+          uDM.LctCaixaSaldo.AsCurrency := wSdoFinal;
         end;
     end;
     uDM.LctCaixa.Post;
@@ -187,7 +194,7 @@ end;
 
 
 Function AberturaDeCaixa(lExibe:Boolean=False): Boolean;
-var nTurno,iTam: Integer;
+var nTurno: Integer;
 begin
   Result  := False;
   FuCaixa := TFuCaixa.Create(nil);
@@ -195,8 +202,14 @@ begin
   do begin
     Top    := 60;
     Left   := 60;
-    Width  := 292;
-    Height := 282;
+    Height := 284;
+    btCancel.Caption := '&Cancelar';
+    if lExibe then
+    begin
+      Height := 320;
+      btCancel.Caption := '&Sair';
+    end;
+    Width  := 284;
     LabRotina.Caption   := 'Abertura de caixa';
     edInicio.Enabled    := True;
     edFinal.Enabled     := True;
@@ -224,7 +237,7 @@ begin
     then begin
       uDM.RegCaixa.FindKey([nTurno]);
       uDM.RegCaixa.Edit;
-      wrkOperacao := 1;      // Abertura do caixa ou correção de saldo inicial
+      wrkOperacao := 1;           // Abertura do caixa ou correção de saldo inicial
       ShowModal;
     end;
     Result := True;
@@ -232,10 +245,10 @@ begin
 
   with FuPrincipal
   do begin
-    gbTurno.Caption   := 'Turno (' + uDM.RegCaixaTurno.AsString + ')';
+    LabTurno.Caption  := 'Turno atual (' + uDM.RegCaixaTurno.AsString + ')';
     LabInicio.Caption := '> ' + uDM.RegCaixaDtHrInicio.AsString;
     LabFinal.Caption  := '> ' + uDM.RegCaixaDtHrFim.AsString;
-    gbTurno.Visible   := True;
+    PanTurno.Visible  := True;
   end;
 
   FuCaixa.Free;
@@ -250,8 +263,8 @@ begin
   do begin
     Top    := 60;
     Left   := 200;
-    Width  := 292;
-    Height := 282;
+    Width  := 284;
+    Height := 284;
     LabRotina.Caption   := 'Fechamento de caixa';
     edInicio.Enabled    := False;
     edFinal.Enabled     := False;
@@ -272,6 +285,13 @@ end;
 procedure TFuCaixa.btCancelClick(Sender: TObject);
 begin
   uDM.RegCaixa.Cancel;
+  FuCaixa.Close;
+
+end;
+
+procedure TFuCaixa.btLctCaixaClick(Sender: TObject);
+begin
+  CaixaMovimentacao;
   FuCaixa.Close;
 
 end;
@@ -309,6 +329,30 @@ begin
     CalculaSaldoCaixa(uDM.RegCaixaTurno.AsInteger);
   end;
   FuCaixa.Close;
+
+end;
+
+procedure TFuCaixa.edFinalKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
+begin
+  if Key = vk_Return then SelectNext((Sender as TwinControl), True, True);
+
+end;
+
+procedure TFuCaixa.edInicioKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
+begin
+  if Key = vk_Return then SelectNext((Sender as TwinControl), True, True);
+
+end;
+
+procedure TFuCaixa.edSaldoFimKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
+begin
+  if Key = vk_Return then SelectNext((Sender as TwinControl), True, True);
+
+end;
+
+procedure TFuCaixa.edSaldoIniKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
+begin
+  if Key = vk_Return then SelectNext((Sender as TwinControl), True, True);
 
 end;
 

@@ -62,6 +62,7 @@ type
     dbUnid: TDBEdit;
     Label17: TLabel;
     dbCodBarras: TDBEdit;
+    cbAlteraPreco: TDBCheckBox;
     procedure btSairClick(Sender: TObject);
     procedure btIncluirClick(Sender: TObject);
     procedure btOkClick(Sender: TObject);
@@ -149,7 +150,7 @@ procedure TFuItens.FormResize(Sender: TObject);
 begin
   if FuItens.Width < 846 then FuItens.Width := 846;
   if FuItens.Height < 510 then FuItens.Height := 510;
-  DefineGrid(GridProds,[0.11,0.05,0.33,0.11,0.10,0.04,0.10],2,0);
+  DefineGrid(GridProds,[0.11,0.05,0.33,0.11,0.02,0.10,0.04,0.10],2,0);
 
 end;
 
@@ -215,6 +216,7 @@ begin
   uDM.Itens.Append;
   uDM.ItensGrupo.AsInteger := 0;
   uDM.ItensDescrCompleta.AsString := '';
+  uDM.ItensAlteraPreco.AsBoolean  := False;
   dbTipo.ItemIndex := -1;
   dbTipo.SetFocus;
 
@@ -271,7 +273,13 @@ end;
 
 procedure TFuItens.dbImagemExit(Sender: TObject);
 begin
-  if dbImagem.Text = '' then ImgItem.Visible := False;
+  imgItem.Visible := False;
+  if uDM.ItensImagem.AsString <> '' then
+     if FileExists(uDM.ItensImagem.AsString) then
+        begin
+          imgItem.Picture.LoadfromFile(uDM.ItensImagem.AsString);
+          imgItem.Visible := True;
+        end;
 
 end;
 
@@ -334,11 +342,15 @@ begin
      or (uDM.ItensGrupo.AsInteger = 3)    // Bebidas
      or (uDM.ItensGrupo.AsInteger = 4)    // Diversos
   then gbFiscais.Visible := True;
+  if uDM.ItensGrupo.AsInteger = 1
+     then cbAlteraPreco.Visible := True
+     else cbAlteraPreco.Visible := False;
   if FileExists(uDM.ItensImagem.AsString)
   then begin
     imgItem.Picture.LoadFromFile(uDM.ItensImagem.AsString);
     imgItem.Visible := True;
   end;
+
 
 end;
 

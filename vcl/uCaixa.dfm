@@ -3,8 +3,8 @@ object FuCaixa: TFuCaixa
   Top = 0
   BorderIcons = [biSystemMenu]
   Caption = 'Caixa'
-  ClientHeight = 226
-  ClientWidth = 276
+  ClientHeight = 253
+  ClientWidth = 261
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -16,12 +16,12 @@ object FuCaixa: TFuCaixa
   PixelsPerInch = 96
   TextHeight = 16
   object Label1: TLabel
-    Left = 20
+    Left = 45
     Top = 36
-    Width = 64
+    Width = 39
     Height = 16
     Alignment = taRightJustify
-    Caption = 'Sequencia:'
+    Caption = 'Turno:'
   end
   object Label2: TLabel
     Left = 50
@@ -47,13 +47,14 @@ object FuCaixa: TFuCaixa
     Alignment = taRightJustify
     Caption = 'Saldo inicial:'
   end
-  object DBText1: TDBText
+  object dbTurno: TDBText
     Left = 85
     Top = 33
-    Width = 60
+    Width = 61
     Height = 19
     AutoSize = True
-    DataField = 'Sequencia'
+    DataField = 'Turno'
+    DataSource = uDM.DSRegCaixa
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
     Font.Height = -16
@@ -64,7 +65,7 @@ object FuCaixa: TFuCaixa
   object LabRotina: TLabel
     Left = 0
     Top = 0
-    Width = 276
+    Width = 261
     Height = 23
     Align = alTop
     Alignment = taCenter
@@ -93,6 +94,7 @@ object FuCaixa: TFuCaixa
     DataField = 'DtHrInicio'
     DataSource = uDM.DSRegCaixa
     TabOrder = 0
+    OnKeyDown = edInicioKeyDown
   end
   object edFinal: TDBEdit
     Left = 85
@@ -102,6 +104,7 @@ object FuCaixa: TFuCaixa
     DataField = 'DtHrFim'
     DataSource = uDM.DSRegCaixa
     TabOrder = 1
+    OnKeyDown = edFinalKeyDown
   end
   object edSaldoIni: TDBEdit
     Left = 85
@@ -111,10 +114,11 @@ object FuCaixa: TFuCaixa
     DataField = 'SaldoInicial'
     DataSource = uDM.DSRegCaixa
     TabOrder = 2
+    OnKeyDown = edSaldoIniKeyDown
   end
   object btOk: TBitBtn
     Left = 8
-    Top = 185
+    Top = 182
     Width = 115
     Height = 29
     Caption = '&Ok'
@@ -138,12 +142,12 @@ object FuCaixa: TFuCaixa
       5990555555555555577755555555555555555555555555555555}
     NumGlyphs = 2
     ParentFont = False
-    TabOrder = 3
+    TabOrder = 4
     OnClick = btOkClick
   end
   object btCancel: TBitBtn
-    Left = 144
-    Top = 185
+    Left = 130
+    Top = 181
     Width = 115
     Height = 29
     Caption = '&Cancelar'
@@ -167,7 +171,7 @@ object FuCaixa: TFuCaixa
       6199666666666666678866666666666666666666666666666666}
     NumGlyphs = 2
     ParentFont = False
-    TabOrder = 4
+    TabOrder = 5
     OnClick = btCancelClick
   end
   object edSaldoFim: TDBEdit
@@ -177,6 +181,36 @@ object FuCaixa: TFuCaixa
     Height = 24
     DataField = 'SaldoFinal'
     DataSource = uDM.DSRegCaixa
-    TabOrder = 5
+    TabOrder = 3
+    OnKeyDown = edSaldoFimKeyDown
+  end
+  object btLctCaixa: TBitBtn
+    Left = 28
+    Top = 216
+    Width = 197
+    Height = 29
+    Caption = 'Lan'#231'amentos de caixa'
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -16
+    Font.Name = 'Tahoma'
+    Font.Style = []
+    Glyph.Data = {
+      76010000424D7601000000000000760000002800000020000000100000000100
+      04000000000000010000120B0000120B00001000000000000000000000000000
+      800000800000008080008000000080008000808000007F7F7F00BFBFBF000000
+      FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFFFF00500000000055
+      555557777777775F55550FFFFFFFFF0555557F5555555F7FFF5F0FEEEEEE0000
+      05007F555555777775770FFFFFF0BFBFB00E7F5F5557FFF557770F0EEEE000FB
+      FB0E7F75FF57775555770FF00F0FBFBFBF0E7F57757FFFF555770FE0B00000FB
+      FB0E7F575777775555770FFF0FBFBFBFBF0E7F5575FFFFFFF5770FEEE0000000
+      FB0E7F555777777755770FFFFF0B00BFB0007F55557577FFF7770FEEEEE0B000
+      05557F555557577775550FFFFFFF0B0555557FF5F5F57575F55500F0F0F0F0B0
+      555577F7F7F7F7F75F5550707070700B055557F7F7F7F7757FF5507070707050
+      9055575757575757775505050505055505557575757575557555}
+    NumGlyphs = 2
+    ParentFont = False
+    TabOrder = 6
+    OnClick = btLctCaixaClick
   end
 end

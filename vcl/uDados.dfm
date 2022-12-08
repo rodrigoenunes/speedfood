@@ -76,7 +76,7 @@ object uDM: TuDM
       AutoGenerateValue = arDefault
       FieldName = 'NCM'
       Origin = 'NCM'
-      EditMask = '00\.00\.00\.00;0;0'
+      EditMask = '00.00.00.00;0; '
       Size = 8
     end
     object ItensCFOP: TIntegerField
@@ -139,25 +139,21 @@ object uDM: TuDM
       Origin = 'CodBarras'
       Size = 25
     end
-    object ItensMinMax: TBooleanField
+    object ItensAlteraPreco: TBooleanField
       AutoGenerateValue = arDefault
-      FieldName = 'MinMax'
-      Origin = 'MinMax'
-    end
-    object ItensMaximo: TIntegerField
-      AutoGenerateValue = arDefault
-      FieldName = 'Maximo'
-      Origin = 'Maximo'
-    end
-    object ItensMinimo: TIntegerField
-      AutoGenerateValue = arDefault
-      FieldName = 'Minimo'
-      Origin = 'Minimo'
+      FieldName = 'AlteraPreco'
+      Origin = 'AlteraPreco'
     end
     object ItensZC_Grupo: TStringField
       FieldKind = fkCalculated
       FieldName = 'ZC_Grupo'
       Size = 12
+      Calculated = True
+    end
+    object ItensZC_AltPreco: TStringField
+      FieldKind = fkCalculated
+      FieldName = 'ZC_AltPreco'
+      Size = 1
       Calculated = True
     end
     object ItensZC_Key: TStringField
@@ -199,6 +195,7 @@ object uDM: TuDM
       AutoGenerateValue = arDefault
       FieldName = 'cnpj'
       Origin = 'cnpj'
+      EditMask = '00\.000\.000\/0000-00;1; '
       Size = 14
     end
     object SisPessoaIE: TStringField
@@ -242,28 +239,31 @@ object uDM: TuDM
       Origin = 'uf'
       Size = 2
     end
-    object SisPessoaigbecidade: TStringField
+    object SisPessoaibgecidade: TStringField
       AutoGenerateValue = arDefault
-      FieldName = 'igbecidade'
-      Origin = 'igbecidade'
+      FieldName = 'ibgecidade'
+      Origin = 'ibgecidade'
       Size = 8
     end
     object SisPessoacep: TStringField
       AutoGenerateValue = arDefault
       FieldName = 'cep'
       Origin = 'cep'
+      EditMask = '00\.000\-999;0; '
       Size = 8
     end
     object SisPessoatelefone: TStringField
       AutoGenerateValue = arDefault
       FieldName = 'telefone'
       Origin = 'telefone'
+      EditMask = '!\(99\)00000-0000;1; '
       Size = 14
     end
     object SisPessoawhatsapp: TStringField
       AutoGenerateValue = arDefault
       FieldName = 'whatsapp'
       Origin = 'whatsapp'
+      EditMask = '!\(99\)0000-0000;1; '
       Size = 14
     end
     object SisPessoaCSC_Homolog: TStringField
@@ -294,6 +294,20 @@ object uDM: TuDM
       FieldName = 'SerieNFCe'
       Origin = 'SerieNFCe'
       Size = 3
+    end
+    object SisPessoaValCertificado: TDateTimeField
+      FieldName = 'ValCertificado'
+    end
+    object SisPessoaTecladoVirtual: TBooleanField
+      AutoGenerateValue = arDefault
+      FieldName = 'TecladoVirtual'
+      Origin = 'TecladoVirtual'
+    end
+    object SisPessoaPathImagens: TStringField
+      AutoGenerateValue = arDefault
+      FieldName = 'PathImagens'
+      Origin = 'PathImagens'
+      Size = 200
     end
   end
   object PedWrk: TClientDataSet
@@ -352,23 +366,36 @@ object uDM: TuDM
     end
     object PedWrkVlrTotal: TCurrencyField
       FieldName = 'VlrTotal'
-      DisplayFormat = ',0.00'
+      DisplayFormat = 'R$ ,0.00'
       EditFormat = '0.00'
     end
-    object PedWrkTxtExtras: TMemoField
-      FieldName = 'TxtExtras'
+    object PedWrkTxtSem: TMemoField
+      FieldName = 'TxtSem'
       BlobType = ftMemo
       Size = 10
     end
-    object PedWrkTxtExclus: TMemoField
-      FieldName = 'TxtExclus'
+    object PedWrkTxtMais: TMemoField
+      FieldName = 'TxtMais'
       BlobType = ftMemo
       Size = 10
+    end
+    object PedWrkTxtMenos: TMemoField
+      FieldName = 'TxtMenos'
+      BlobType = ftMemo
+      Size = 10
+    end
+    object PedWrkAltPreco: TBooleanField
+      FieldName = 'AltPreco'
     end
     object PedWrkZC_Aviso: TStringField
       FieldKind = fkCalculated
       FieldName = 'ZC_Aviso'
       Size = 1
+      Calculated = True
+    end
+    object PedWrkZC_Extras: TCurrencyField
+      FieldKind = fkCalculated
+      FieldName = 'ZC_Extras'
       Calculated = True
     end
   end
@@ -619,12 +646,22 @@ object uDM: TuDM
       FixedChar = True
       Size = 24
     end
-    object PedItensTxtExtras: TStringField
-      FieldName = 'TxtExtras'
+    object PedItensTxtSem: TStringField
+      AutoGenerateValue = arDefault
+      FieldName = 'TxtSem'
+      Origin = 'TxtSem'
       Size = 1024
     end
-    object PedItensTxtExclus: TStringField
-      FieldName = 'TxtExclus'
+    object PedItensTxtMais: TStringField
+      AutoGenerateValue = arDefault
+      FieldName = 'TxtMais'
+      Origin = 'TxtMais'
+      Size = 1024
+    end
+    object PedItensTxtMenos: TStringField
+      AutoGenerateValue = arDefault
+      FieldName = 'TxtMenos'
+      Origin = 'TxtMenos'
       Size = 1024
     end
     object PedItensObservacao: TStringField
@@ -640,6 +677,7 @@ object uDM: TuDM
     end
   end
   object RegCaixa: TFDTable
+    OnCalcFields = RegCaixaCalcFields
     IndexFieldNames = 'Turno'
     Connection = FDC
     TableName = 'speedfood.com_regcaixa'
@@ -655,6 +693,7 @@ object uDM: TuDM
       AutoGenerateValue = arDefault
       FieldName = 'DtHrInicio'
       Origin = 'DtHrInicio'
+      EditMask = '!90/00/0000 90:00:00;1; '
     end
     object RegCaixaDtHrFim: TDateTimeField
       AutoGenerateValue = arDefault
@@ -681,20 +720,20 @@ object uDM: TuDM
       Precision = 15
       Size = 2
     end
-    object RegCaixaE_CartaoCredito: TBCDField
+    object RegCaixaE_CartaoDebito: TBCDField
       AutoGenerateValue = arDefault
-      FieldName = 'E_CartaoCredito'
-      Origin = 'E_CartaoCredito'
+      FieldName = 'E_CartaoDebito'
+      Origin = 'E_CartaoDebito'
       DisplayFormat = ',0.00'
       EditFormat = '0.00'
       currency = True
       Precision = 15
       Size = 2
     end
-    object RegCaixaE_CartaoDebito: TBCDField
+    object RegCaixaE_CartaoCredito: TBCDField
       AutoGenerateValue = arDefault
-      FieldName = 'E_CartaoDebito'
-      Origin = 'E_CartaoDebito'
+      FieldName = 'E_CartaoCredito'
+      Origin = 'E_CartaoCredito'
       DisplayFormat = ',0.00'
       EditFormat = '0.00'
       currency = True
@@ -766,15 +805,15 @@ object uDM: TuDM
       FieldName = 'Qtd_Dinheiro'
       Origin = 'Qtd_Dinheiro'
     end
-    object RegCaixaQtd_CartaoCredito: TIntegerField
-      AutoGenerateValue = arDefault
-      FieldName = 'Qtd_CartaoCredito'
-      Origin = 'Qtd_CartaoCredito'
-    end
     object RegCaixaQtd_CartaoDebito: TIntegerField
       AutoGenerateValue = arDefault
       FieldName = 'Qtd_CartaoDebito'
       Origin = 'Qtd_CartaoDebito'
+    end
+    object RegCaixaQtd_CartaoCredito: TIntegerField
+      AutoGenerateValue = arDefault
+      FieldName = 'Qtd_CartaoCredito'
+      Origin = 'Qtd_CartaoCredito'
     end
     object RegCaixaQtd_PIX: TIntegerField
       AutoGenerateValue = arDefault
@@ -785,6 +824,11 @@ object uDM: TuDM
       AutoGenerateValue = arDefault
       FieldName = 'Qtd_Outros'
       Origin = 'Qtd_Outros'
+    end
+    object RegCaixaQtd_Misto: TIntegerField
+      AutoGenerateValue = arDefault
+      FieldName = 'Qtd_Misto'
+      Origin = 'Qtd_Misto'
     end
     object RegCaixaQtd_Suprimento: TIntegerField
       AutoGenerateValue = arDefault
@@ -801,13 +845,37 @@ object uDM: TuDM
       FieldName = 'Qtd_Sangria'
       Origin = 'Qtd_Sangria'
     end
-    object RegCaixaQtd_Misto: TIntegerField
-      AutoGenerateValue = arDefault
-      FieldName = 'Qtd_Misto'
-      Origin = 'Qtd_Misto'
+    object RegCaixaZC_IniFim: TStringField
+      FieldKind = fkCalculated
+      FieldName = 'ZC_IniFim'
+      Size = 40
+      Calculated = True
+    end
+    object RegCaixaZC_VlrEntradas: TCurrencyField
+      FieldKind = fkCalculated
+      FieldName = 'ZC_VlrEntradas'
+      DisplayFormat = ',0.00'
+      Calculated = True
+    end
+    object RegCaixaZC_VlrSaidas: TCurrencyField
+      FieldKind = fkCalculated
+      FieldName = 'ZC_VlrSaidas'
+      DisplayFormat = ',0.00'
+      Calculated = True
+    end
+    object RegCaixaZC_QtdEntradas: TIntegerField
+      FieldKind = fkCalculated
+      FieldName = 'ZC_QtdEntradas'
+      Calculated = True
+    end
+    object RegCaixaZC_QtdSaidas: TIntegerField
+      FieldKind = fkCalculated
+      FieldName = 'ZC_QtdSaidas'
+      Calculated = True
     end
   end
   object LctCaixa: TFDTable
+    OnCalcFields = LctCaixaCalcFields
     IndexFieldNames = 'Turno;Sequencia'
     MasterSource = DSRegCaixa
     MasterFields = 'Turno'
@@ -924,6 +992,13 @@ object uDM: TuDM
       Origin = 'DtHrLcto'
       Size = 45
     end
+    object LctCaixaTipo: TStringField
+      AutoGenerateValue = arDefault
+      FieldName = 'Tipo'
+      Origin = 'Tipo'
+      FixedChar = True
+      Size = 1
+    end
     object LctCaixaZC_Operacao: TStringField
       FieldKind = fkCalculated
       FieldName = 'ZC_Operacao'
@@ -936,6 +1011,42 @@ object uDM: TuDM
       Size = 10
       Calculated = True
     end
+    object LctCaixaZC_DtHr: TStringField
+      FieldKind = fkCalculated
+      FieldName = 'ZC_DtHr'
+      Size = 14
+      Calculated = True
+    end
+    object LctCaixaZC_Reais: TStringField
+      FieldKind = fkCalculated
+      FieldName = 'ZC_Reais'
+      Size = 12
+      Calculated = True
+    end
+    object LctCaixaZC_CDeb: TStringField
+      FieldKind = fkCalculated
+      FieldName = 'ZC_CDeb'
+      Size = 12
+      Calculated = True
+    end
+    object LctCaixaZC_CCred: TStringField
+      FieldKind = fkCalculated
+      FieldName = 'ZC_CCred'
+      Size = 12
+      Calculated = True
+    end
+    object LctCaixaZC_PIX: TStringField
+      FieldKind = fkCalculated
+      FieldName = 'ZC_PIX'
+      Size = 12
+      Calculated = True
+    end
+    object LctCaixaZC_Outros: TStringField
+      FieldKind = fkCalculated
+      FieldName = 'ZC_Outros'
+      Size = 12
+      Calculated = True
+    end
   end
   object DSRegCaixa: TDataSource
     DataSet = RegCaixa
@@ -946,5 +1057,10 @@ object uDM: TuDM
     DataSet = LctCaixa
     Left = 84
     Top = 312
+  end
+  object DSSisPessoa: TDataSource
+    DataSet = SisPessoa
+    Left = 100
+    Top = 80
   end
 end

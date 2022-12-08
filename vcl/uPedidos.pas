@@ -83,13 +83,15 @@ implementation
 
 {$R *.dfm}
 
-uses uDados, uGenericas, uFinPedido, uTrataLanche; //, HDProds, HDLanche, uGenericas, HDPrincipal, HDFinPedido;
+uses uDados, uGenericas, uFinPedido, uTrataLanche, //, HDProds, HDLanche, uGenericas, HDPrincipal, HDFinPedido;
+     uBiblioteca;
 
 Procedure LancamentoPedidos;
 begin
   FuPedidos := TFuPedidos.Create(nil);
+
   FuPedidos.ShowModal;
-  FuPedidos.Free;
+FuPedidos.Free;
 
 end;
 
@@ -111,13 +113,20 @@ begin
        end;
     FuPedidos.Align := alClient;
     //
-    imgFundo.Height  := FuPedidos.ClientHeight - 60;
-    imgFundo.Width   := imgFundo.Height;
+    imgFundo.Top      := 0;
+    imgFundo.Left     := 0;
+    imgFundo.Stretch  := False;
+    imgFundo.AutoSize := True;
+    imgFundo.Picture.LoadFromFile(uDM.pathWork + '\imgFundo.BMP');
+    imgFundo.AutoSize := False;
+    imgFundo.Stretch  := True;
+    while imgFundo.Height > (FuPedidos.ClientHeight-20) do
+    begin
+      imgFundo.Height := Trunc(imgFundo.Height * 0.99);
+      imgFundo.Width  := Trunc(imgFundo.Width * 0.99);
+    end;
     imgFundo.Top     := (FuPedidos.ClientHeight - imgFundo.Height) div 2;
     imgFundo.Left    := (FuPedidos.ClientWidth - imgFundo.Width) div 2;
-    imgFundo.Stretch := True;
-    imgFundo.Picture.LoadFromFile(uDM.pathWork + '\HotDog1.bmp');
-    //
     PanGridPed.Width := PanWork.Width div 4;    // (PanWork.Width div 5) * 2;
     PanGridPed.Align := alRight;
     pgControle.Align := alClient;
@@ -223,18 +232,27 @@ begin
     end;
     //
     // DBNavigator do pedido
-    NavPedido.Left    := 4;
-    NavPedido.Width   := 120;
-    btEditar.Left     := NavPedido.Left + NavPedido.Width + 4;
-    btEditar.Width    :=(PanPedCtle.Width - (btEditar.Left + 8)) div 2;
-    btEditar.Caption  := '&Alterar' + #13 + 'ítem';
-    btExcluir.Left    := btEditar.Left + btEditar.Width + 4;
-    btExcluir.Width   := btEditar.Width;
-    btExcluir.Caption := '&Excluir' + #13 + 'ítem';
-    btFinalizar.Left  := 4;
-    btFinalizar.Width := NavPedido.Width + btEditar.Width + btExcluir.Width + 8;
-    btCancelar.Left   := 4;
-    btCancelar.Width  := (btFinalizar.Width - btDummy.Width) - 16;
+    NavPedido.Left      := 4;
+    NavPedido.Width     := 120;
+    btEditar.Left       := NavPedido.Left + NavPedido.Width + 4;
+    btEditar.Width      :=(PanPedCtle.Width - (btEditar.Left + 8)) div 2;
+    btEditar.Caption    := 'Alterar' + #13 + 'ítem';
+    btExcluir.Left      := btEditar.Left + btEditar.Width + 4;
+    btExcluir.Width     := btEditar.Width;
+    btExcluir.Caption   := 'Excluir' + #13 + 'ítem';
+    btFinalizar.Left    := 4;
+    btFinalizar.Width   := NavPedido.Width + btEditar.Width + btExcluir.Width + 8;
+    btFinalizar.Caption := 'Finalizar pedido';
+    btCancelar.Left     := 4;
+    btCancelar.Width    := (btFinalizar.Width - btDummy.Width) - 16;
+    btCancelar.Caption  := 'Cancelar';
+    if not uDM.SisPessoaTecladoVirtual.AsBoolean then
+    begin
+      btEditar.Caption    := '&' + btEditar.Caption;
+      btExcluir.Caption   := '&' + btExcluir.Caption;
+      btFinalizar.Caption := '&' + btFinalizar.Caption;
+      btCancelar.Caption  := '&' + btCancelar.Caption;
+    end;
     btDummy.Left      := btCancelar.Left + btCancelar.Width + 16;
     btDummy.Top       := btCancelar.Top + 10;
     PanWork.Visible   := False;
@@ -275,11 +293,12 @@ begin
     PedWrkNrLcto.AsInteger    := nLct;
     PedWrkTpProd.AsInteger    := 1;
     PedWrkCodProd.AsInteger   := pCodLanche;
-    PedWrkDescricao.AsString  := ItensDescricao.AsString;
+    PedWrkDescricao.AsString  := stringReplace(ItensDescricao.AsString,'#',' ',[rfIgnoreCase, rfReplaceAll]);
     PedWrkQuant.AsInteger     := 1;
     PedWrkVlrUnit.AsCurrency  := ItensPreco.AsCurrency;
     PedWrkVlrTotal.AsCurrency := ItensPreco.AsCurrency;
-    PedWrkExtras.AsString     := stringFiller('0',24);
+    PedWrkExtras.AsString     := stringFiller('.',24);
+    PedWrkAltPreco.AsBoolean  := ItensAlteraPreco.AsBoolean;
     PedWrk.Post;
     PedWrk.Edit;
     FuPedidos.FormResize(nil);
@@ -428,6 +447,18 @@ begin
     else nRet := FinalizaPedido;
   if nRet = 0
   then begin
+
+    With uBiblioteca.EmitirNFCeDePV(1, uDM.Pedidos.FieldByName('numero').AsInteger ) Do
+    Begin
+      if Not Resultado then
+      Begin
+        ShowMessage(Mensagem);
+        Exit;
+      End;
+    End;
+
+
+
     ShowMessage('Gravou pedido, emite pedido, emite NFCe(se for o caso) e atualiza caixa');
     nRet := 2;
   end;
@@ -506,37 +537,56 @@ begin
 end;
 
 
-procedure TFuPedidos.GridBebidasDrawCell(Sender: TObject; ACol, ARow: Integer;
-  Rect: TRect; State: TGridDrawState);
+procedure TFuPedidos.GridBebidasDrawCell(Sender: TObject; ACol, ARow: Integer; Rect: TRect; State: TGridDrawState);
 var wTxt: String;
-    wKey: Integer;
+    wKey,i,nTop: Integer;
     wImagem: TImage;
+    lin2: Boolean;
 begin
   // Preenche a celula com código, descrição, preço e imagem
+  wKey := wCodBebida[ACol,ARow];
+  if wKey = 0 then Exit;   // Não há bebida na célula
+  if not uDM.Itens.FindKey([3,wKey]) then Exit;   // Bebida não encontrada
+  //
   wImagem := TImage.Create(nil);
   GridBebidas.Canvas.Brush.Style := bsClear;
   GridBebidas.Canvas.FillRect(Rect);
-  wKey := wCodBebida[ACol,ARow];
-  if wKey > 0 then
+  GridBebidas.Color := clWhite;
+  //
+  if uDM.ItensImagem.AsString <> '' then
   begin
-    if uDM.Itens.FindKey([3,wKey])
-    then begin
-      if uDM.ItensImagem.AsString <> '' then
-      begin
-        wImagem.Picture.LoadFromFile(uDM.ItensImagem.AsString);
-        GridBebidas.Canvas.StretchDraw(Rect,wImagem.Picture.Graphic);
-      end;
-      wTxt := IntToStr(wKey);
-      if Length(Trim(wTxt)) = 1 then wTxt := '0' + wTxt;
-      //wTxt := uDM.ItensGrupo.AsString + '.' + wTxt;
-      GridBebidas.Canvas.Font.Size := 28;
-      GridBebidas.Canvas.TextOut(Rect.Left+4, Rect.Top+4, wTxt);
-      GridBebidas.Canvas.Font.Size := 18;
-      wTxt := uDM.ItensDescricao.AsString;
-      GridBebidas.Canvas.TextOut(Rect.Left+4, Rect.Top+52, wTxt);
-    end;
-
+    wImagem.Picture.LoadFromFile(uDM.ItensImagem.AsString);
+    GridBebidas.Canvas.StretchDraw(Rect,wImagem.Picture.Graphic);
   end;
+  //
+  wTxt := IntToStr(wKey);
+  if wKey < 10 then wTxt := '0' + wTxt;
+  GridBebidas.Canvas.Font.Color := clBlue;
+  GridBebidas.Canvas.Font.Size  := 28;
+  GridBebidas.Canvas.Font.Style := [fsBold];
+  GridBebidas.Canvas.TextOut(Rect.Left+4, Rect.Top, wTxt);
+  //
+  GridBebidas.Canvas.Font.Size  := 20;
+  GridBebidas.Canvas.Font.Color := clBlack;
+  wTxt := uDM.ItensDescricao.AsString;
+  LabAux1.Caption   := '';
+  LabAux1.Font.Size := GridBebidas.Canvas.Font.Size;
+  LabAux2.Caption   := '';
+  LabAux2.Font.Size := GridBebidas.Canvas.Font.Size;
+  lin2 := False;
+  for i := 1 to Length(wTxt)
+  do begin
+    if wTxt[i] = '#' then lin2 := True
+    else if not lin2 then
+           LabAux1.Caption := LabAux1.Caption + wTxt[i]
+         else
+           LabAux2.Caption := LabAux2.Caption + wTxt[i];
+  end;
+  nTop := Rect.Height - ((LabAux1.Height * 2) + 4);
+  GridBebidas.Canvas.TextOut(Rect.Left+4, Rect.Top+nTop, LabAux1.Caption);
+  nTop := nTop + LabAux1.Height;
+  GridBebidas.Canvas.TextOut(Rect.Left+4, Rect.Top+nTop, LabAux2.Caption);
+  //
   wImagem.Free;
 
 end;
@@ -554,55 +604,57 @@ begin
 
 end;
 
-procedure TFuPedidos.GridLanchesDrawCell(Sender: TObject; ACol, ARow: Integer;
-  Rect: TRect; State: TGridDrawState);
+procedure TFuPedidos.GridLanchesDrawCell(Sender: TObject; ACol, ARow: Integer; Rect: TRect; State: TGridDrawState);
 var wTxt: String;
     wKey,i,nTop: Integer;
     wImagem: TImage;
+    lin2: Boolean;
 begin
-  wImagem := TImage.Create(nil);
-  // Escreve o texto na célula
-  GridLanches.Canvas.Brush.Style := bsClear;
+  // Identifica o lanche na célula
   wKey := wCodLanche[ACol,ARow];
-  if wKey > 0 then
+  if wKey = 0 then Exit;   // Não há lanche na célula
+  if not uDM.Itens.FindKey([1,wKey]) then Exit;   // Lanche não encontrado
+  //
+  wImagem := TImage.Create(nil);
+  GridLanches.Canvas.Brush.Style := bsClear;
+  GridLanches.Canvas.FillRect(Rect);
+  GridLanches.Color := clWhite;
+  //
+  if uDM.ItensImagem.AsString <> '' then
   begin
-    if uDM.Itens.FindKey([1,wKey])
-    then begin
-      GridLanches.Canvas.FillRect(Rect);
-      if uDM.ItensImagem.AsString <> '' then
-      begin
-        wImagem.Picture.LoadFromFile(uDM.ItensImagem.AsString);
-        GridLanches.Canvas.StretchDraw(Rect,wImagem.Picture.Graphic);
-      end;
-      wTxt := IntToStr(wKey);
-      if Length(Trim(wTxt)) = 1 then wTxt := '0' + wTxt;
-      //wTxt := uDM.ItensGrupo.AsString + '.' + wTxt;
-      GridLanches.Canvas.Font.Size := 28;
-      GridLanches.Canvas.TextOut(Rect.Left+4, Rect.Top+4, wTxt);
-      GridLanches.Canvas.Font.Size := 18;
-      wTxt := uDM.ItensDescricao.AsString;
-      LabAux1.Caption   := '';
-      LabAux1.Font.Size := GridLanches.Canvas.Font.Size;
-      LabAux2.Caption   := '';
-      LabAux2.Font.Size := GridLanches.Canvas.Font.Size;
-      nTop := 44;
-      for i := 1 to Length(wTxt)
-      do begin
-        LabAux1.Caption := LabAux1.Caption + wTxt[i];
-        if LabAux1.Width > lrgLanche
-        then begin
-          GridLanches.Canvas.TextOut(Rect.Left+4, Rect.Top+nTop, LabAux2.Caption);
-          nTop := nTop + LabAux2.Height;
-          LabAux1.Caption := '';
-          LabAux2.Caption := wTxt[i];
-        end
-        else LabAux2.Caption := LabAux2.Caption + wTxt[i];
-      end;
-      if LabAux2.Caption <> ''
-         then GridLanches.Canvas.TextOut(Rect.Left+4, Rect.Top+nTop, LabAux2.Caption);
+    wImagem.Picture.LoadFromFile(uDM.ItensImagem.AsString);
+    GridLanches.Canvas.StretchDraw(Rect,wImagem.Picture.Graphic);
+  end
+  else begin      // Se não houver imagem, 'escreve' a identificação do lanche
+    GridLanches.Canvas.Font.Size  := 18;
+    GridLanches.Canvas.Font.Color := clBlack;
+    wTxt := uDM.ItensDescricao.AsString;
+    LabAux1.Caption   := '';
+    LabAux1.Font.Size := GridLanches.Canvas.Font.Size;
+    LabAux2.Caption   := '';
+    LabAux2.Font.Size := GridLanches.Canvas.Font.Size;
+    lin2 := False;
+    for i := 1 to Length(wTxt)
+    do begin
+      if wTxt[i] = '#' then lin2 := True
+      else if not lin2 then
+             LabAux1.Caption := LabAux1.Caption + wTxt[i]
+           else
+             LabAux2.Caption := LabAux2.Caption + wTxt[i];
     end;
-
+    nTop := Rect.Height - ((LabAux1.Height * 2) + 4);
+    GridLanches.Canvas.TextOut(Rect.Left+4, Rect.Top+nTop, LabAux1.Caption);
+    nTop := nTop + LabAux1.Height;
+    GridLanches.Canvas.TextOut(Rect.Left+4, Rect.Top+nTop, LabAux2.Caption);
   end;
+  wTxt := IntToStr(wKey);
+  if wKey < 10 then wTxt := '0' + wTxt;
+  GridLanches.Canvas.Font.Color := clRed;
+  GridLanches.Canvas.Font.Size  := 28;
+  GridLanches.Canvas.Font.Style := [fsBold];
+  GridLanches.Canvas.TextOut(Rect.Left+4, Rect.Top, wTxt);
+
+
   wImagem.Free;
 
 end;

@@ -10,7 +10,7 @@ uses
   FireDAC.Stan.Param, FireDAC.DatS, FireDAC.DApt.Intf, FireDAC.DApt,
   FireDAC.Comp.DataSet, FireDAC.Comp.Client, FireDAC.Comp.UI, Datasnap.DBClient;
   Procedure ContaExtras;
-  Procedure CarregaExtras(pLins: Integer);
+  Procedure CarregaExtras(pCols,pLins: Integer);
 
   Function CriaAbrePedidoWrk(pNro:Integer): Integer;
 
@@ -33,7 +33,6 @@ type
     SisPessoabairro: TStringField;
     SisPessoacidade: TStringField;
     SisPessoauf: TStringField;
-    SisPessoaigbecidade: TStringField;
     SisPessoacep: TStringField;
     SisPessoatelefone: TStringField;
     SisPessoawhatsapp: TStringField;
@@ -53,7 +52,6 @@ type
     PedWrkVlrUnit: TCurrencyField;
     PedWrkExtras: TStringField;
     PedWrkVlrTotal: TCurrencyField;
-    PedWrkTxtExtras: TMemoField;
     SPedWrk: TDataSource;
     Pedidos: TFDTable;
     DSPedidos: TDataSource;
@@ -86,9 +84,6 @@ type
     ItensDescrCompleta: TStringField;
     ItensUnidade: TStringField;
     ItensCodBarras: TStringField;
-    ItensMinMax: TBooleanField;
-    ItensMaximo: TIntegerField;
-    ItensMinimo: TIntegerField;
     PedItensNumero: TIntegerField;
     PedItensNrLcto: TIntegerField;
     PedItensTpProd: TIntegerField;
@@ -101,9 +96,7 @@ type
     PedWrkCod01: TSmallintField;
     PedWrkCod02: TSmallintField;
     PedWrkCod03: TSmallintField;
-    PedWrkTxtExclus: TMemoField;
     PedWrkZC_Aviso: TStringField;
-    ItensZC_Key: TStringField;
     PedidosLanctos: TIntegerField;
     PedItensCod01: TIntegerField;
     PedItensVlr01: TBCDField;
@@ -111,8 +104,6 @@ type
     PedItensVlr02: TBCDField;
     PedItensCod03: TIntegerField;
     PedItensVlr03: TBCDField;
-    PedItensTxtExtras: TStringField;
-    PedItensTxtExclus: TStringField;
     PedidosVlrReais: TBCDField;
     PedidosVlrCDeb: TBCDField;
     PedidosVlrCCred: TBCDField;
@@ -167,9 +158,38 @@ type
     PedidosNomeCliente: TStringField;
     PedidosVlrRecebido: TBCDField;
     PedidosVlrTroco: TBCDField;
+    DSSisPessoa: TDataSource;
+    SisPessoaValCertificado: TDateTimeField;
+    SisPessoaibgecidade: TStringField;
+    SisPessoaTecladoVirtual: TBooleanField;
+    PedWrkTxtSem: TMemoField;
+    PedWrkTxtMais: TMemoField;
+    PedWrkTxtMenos: TMemoField;
+    PedItensTxtSem: TStringField;
+    PedItensTxtMais: TStringField;
+    PedItensTxtMenos: TStringField;
+    ItensAlteraPreco: TBooleanField;
+    ItensZC_AltPreco: TStringField;
+    ItensZC_Key: TStringField;
+    PedWrkAltPreco: TBooleanField;
+    SisPessoaPathImagens: TStringField;
+    PedWrkZC_Extras: TCurrencyField;
+    LctCaixaZC_DtHr: TStringField;
+    LctCaixaZC_Reais: TStringField;
+    LctCaixaZC_CDeb: TStringField;
+    LctCaixaZC_PIX: TStringField;
+    LctCaixaZC_Outros: TStringField;
+    LctCaixaZC_CCred: TStringField;
+    RegCaixaZC_IniFim: TStringField;
+    RegCaixaZC_VlrEntradas: TCurrencyField;
+    RegCaixaZC_VlrSaidas: TCurrencyField;
+    RegCaixaZC_QtdEntradas: TIntegerField;
+    RegCaixaZC_QtdSaidas: TIntegerField;
+    LctCaixaTipo: TStringField;
     procedure ItensCalcFields(DataSet: TDataSet);
     procedure LctCaixaCalcFields(DataSet: TDataSet);
     procedure PedWrkCalcFields(DataSet: TDataSet);
+    procedure RegCaixaCalcFields(DataSet: TDataSet);
   private
     { Private declarations }
   public
@@ -192,7 +212,7 @@ var
 const
   xGrupos: array[1..4] of String = ('Lanches','Extras','Bedidas','Diversos');
   xOperacao: array[0..4] of String = ('Saldo','Receb','Suprim','Pagto','Sangria');
-  xMeioPgt: array[1..5] of String = ('R$', 'CCred','CDeb','PIX','Outros');
+  xMeioPgt: array[0..5] of String = ('R$', 'CDeb','CCred','PIX','Outros','Misto');
 
 implementation
 
@@ -213,11 +233,15 @@ begin
 end;
 
 
-Procedure CarregaExtras(pLins: Integer);
+Procedure CarregaExtras(pCols,pLins: Integer);
 var i,j,k: Integer;
+    maxCol,maxLin: Integer;
 begin
-  for i := 1 to 2 do
-    for j := 1 to 12 do
+  if pCols = 4 then maxCol := 1
+               else maxCol := 2;
+  maxLin := pLins;
+  for i := 1 to MaxCol do
+    for j := 1 to MaxLin do
       begin
         uDM.wCodExtra[i,j] := 0;
         uDM.wTxtExtra[i,j] := '';
@@ -238,7 +262,7 @@ begin
     uDM.wTxtExtra[i,j] := uDM.ItensDescricao.AsString;
     uDM.wVlrExtra[i,j] := uDM.ItensPreco.AsCurrency;
     j := j + 1;
-    if j > pLins
+    if j > maxLin
     then begin
       j := 1;
       i := i + 1;
@@ -276,8 +300,10 @@ begin
     PedWrk.FieldDefs.Add('Cod03',     ftSmallint);
     PedWrk.FieldDefs.Add('Vlr03',     ftCurrency);
     PedWrk.FieldDefs.Add('VlrTotal',  ftCurrency);
-    PedWrk.FieldDefs.Add('TxtExtras', ftMemo, 1024);      // Extras - texto
-    PedWrk.FieldDefs.Add('TxtExclus', ftMemo, 1024);      // Exclusoes - texto
+    PedWrk.FieldDefs.Add('TxtSem',    ftMemo, 10);      // Texto 'SEM'
+    PedWrk.FieldDefs.Add('TxtMais',   ftMemo, 10);
+    PedWrk.FieldDefs.Add('TxtMenos',  ftMemo, 10);
+    PedWrk.FieldDefs.Add('AltPreco',  ftBoolean);
     PedWrk.IndexDefs.Clear;
     PedWrk.IndexDefs.Add('','NrLcto',[ixPrimary,ixUnique]);
     PedWrk.CreateDataSet;
@@ -304,6 +330,8 @@ begin
      then uDM.ItensZC_Grupo.AsString := xGrupos[uDM.ItensGrupo.AsInteger]
      else uDM.ItensZC_Grupo.AsString := '(' + uDM.ItensGrupo.AsString + ')';
   uDM.ItensZC_Key.AsString := uDM.ItensGrupo.AsString + uDM.ItensCodigo.AsString;
+  if uDM.ItensAlteraPreco.AsBoolean then uDM.ItensZC_AltPreco.AsString := 'P'
+  else uDM.ItensZC_AltPreco.AsString := '';
 
 end;
 
@@ -313,9 +341,31 @@ begin
      then uDM.LctCaixaZC_Operacao.AsString := xOperacao[uDM.LctCaixaOperacao.AsInteger]
      else uDM.LctCaixaZC_Operacao.AsString := '(' + uDM.LctCaixaOperacao.AsString + ')';
 
-  if (uDM.LctCaixaMeioPgt.AsInteger >= 1) and (uDM.LctCaixaMeioPgt.AsInteger <= 5)
+  if (uDM.LctCaixaMeioPgt.AsInteger >= 0) and (uDM.LctCaixaMeioPgt.AsInteger <= 5)
      then uDM.LctCaixaZC_MeioPgt.AsString := xMeioPgt[uDM.LctCaixaMeioPgt.AsInteger]
-     else uDM.LctCaixaZC_MeioPgt.AsString := '';
+     else uDM.LctCaixaZC_MeioPgt.AsString := '(' + uDM.LctCaixaMeioPgt.AsString + ')';
+  uDM.LctCaixaZC_DtHr.AsString := Copy(uDM.LctCaixaDtHrLcto.AsString,9,2) + '/' +
+                                  Copy(uDM.LctCaixaDtHrLcto.AsString,6,2) + '/' +
+                                  Copy(uDM.LctCaixaDtHrLcto.AsString,3,2) + ' ' +
+                                  Copy(uDM.LctCaixaDtHrLcto.AsString,12,5);
+  uDM.LctCaixaZC_Reais.AsString  := '';
+  uDM.LctCaixaZC_CDeb.AsString   := '';
+  uDM.LctCaixaZC_CCred.AsString  := '';
+  uDM.LctCaixaZC_PIX.AsString    := '';
+  uDM.LctCaixaZC_Outros.AsString := '';
+  if uDM.LctCaixaPgtReais.AsCurrency > 0 then
+    uDM.LctCaixaZC_Reais.AsString  := FloatToStrF(uDM.LctCaixaPgtReais.AsCurrency,ffNumber,15,2);
+  if uDM.LctCaixaPgtCDeb.AsCurrency > 0 then
+    uDM.LctCaixaZC_CDeb.AsString   := FloatToStrF(uDM.LctCaixaPgtCDeb.AsCurrency,ffNumber,15,2);
+  if uDM.LctCaixaPgtCCred.AsCurrency > 0 then
+    uDM.LctCaixaZC_CCred.AsString  := FloatToStrF(uDM.LctCaixaPgtCCred.AsCurrency,ffNumber,15,2);
+  if uDM.LctCaixaPgtPIX.AsCurrency > 0 then
+    uDM.LctCaixaZC_PIX.AsString    := FloatToStrF(uDM.LctCaixaPgtPIX.AsCurrency,ffNumber,15,2);
+  if uDM.LctCaixaPgtOutros.AsCurrency > 0 then
+    uDM.LctCaixaZC_Outros.AsString := FloatToStrF(uDM.LctCaixaPgtOutros.AsCurrency,ffNumber,15,2);
+
+
+
 
 end;
 
@@ -325,6 +375,25 @@ begin
   PedWrkZC_Aviso.AsString := '';
   if (Pos('1',PedWrkExtras.AsString) > 0)
      or (Pos('2',PedWrkExtras.AsString) > 0) then PedWrkZC_Aviso.AsString := 'P';
+  PedWrkZC_Extras.AsCurrency := PedWrkVlr01.AsCurrency + PedWrkVlr02.AsCurrency + PedWrkVlr03.AsCurrency;
+
+end;
+
+procedure TuDM.RegCaixaCalcFields(DataSet: TDataSet);
+begin
+  RegCaixaZC_IniFim.AsString := Copy(RegCaixaDtHrInicio.AsString,1,6) +
+                                Copy(RegCaixaDtHrInicio.AsString,9,8) + ' - ' +
+                                Copy(RegCaixaDtHrFim.AsString,1,6) +
+                                Copy(RegCaixaDtHrFim.AsString,9,8);
+  RegCaixaZC_VlrEntradas.AsCurrency := RegCaixaE_Dinheiro.AsCurrency + RegCaixaE_CartaoDebito.AsCurrency +
+                                       RegCaixaE_CartaoCredito.AsCurrency + RegCaixaE_PIX.AsCurrency +
+                                       RegCaixaE_Outros.AsCurrency + RegCaixaE_Suprimento.AsCurrency;
+  RegCaixaZC_QtdEntradas.AsInteger  := RegCaixaQtd_Dinheiro.AsInteger + RegCaixaQtd_CartaoDebito.AsInteger +
+                                       RegCaixaQtd_CartaoCredito.AsInteger + RegCaixaQtd_PIX.AsInteger +
+                                       RegCaixaQtd_Outros.AsInteger + RegCaixaQtd_Suprimento.AsInteger +
+                                       RegCaixaQtd_Misto.AsInteger;
+  RegCaixaZC_VlrSaidas.AsCurrency   := RegCaixaS_Saidas.AsCurrency + RegCaixaS_Sangria.AsCurrency;
+  RegCaixaZC_QtdSaidas.AsInteger    := RegCaixaQtd_Saidas.AsInteger + RegCaixaQtd_Sangria.AsInteger;
 
 end;
 

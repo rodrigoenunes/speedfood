@@ -9,6 +9,7 @@ Type
   End;
 
   Function EmitirNFCeDePV(pSis_Pessoa_id, pCom_Pedido_Numero: Integer): TRetorno;
+  Function getValorParametro(pNome: String): String;
 
 implementation
 
@@ -36,6 +37,8 @@ Var
   vExists, vCreateTable: String;
 Begin
   setfdqTemp1;
+
+  Exit;
   fdqTemp1.SQL.Text:=
     'CALL sys.table_exists(''speedfood'', ''sis_parametros'', @exists); ' +
     'SELECT @exists;';
@@ -144,7 +147,7 @@ Function ValidarParametrosNFCe: TRetorno;
 Begin
   Result.Resultado:= False;
 
-  // CriarTabela_sis_parametros_se_necessario;
+  CriarTabela_sis_parametros_se_necessario;
 
   //
   Result:= TSVPE_VazioOuDir('ACNFE_HOME', vACNFE_HOME);
@@ -473,7 +476,7 @@ Begin
   if Not Result.Resultado then
     Exit;
 
-  vxmld.XML.SaveToFile('C:\ACCenter\arqs\nfe\contr\nfe.xml');
+  vxmld.XML.SaveToFile( IncludeTrailingPathDelimiter(vACNFE_TMP) + pCom_Pedido_Numero.ToString + '.xml'  );
   vxmld.Active:= False;
 
 
