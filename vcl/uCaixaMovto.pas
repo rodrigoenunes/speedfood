@@ -31,7 +31,6 @@ type
     Label7: TLabel;
     dbEQtd: TDBEdit;
     dbSQtd: TDBEdit;
-    btRecalc1: TBitBtn;
     Label17: TLabel;
     GroupBox1: TGroupBox;
     DBEdit1: TDBEdit;
@@ -66,7 +65,7 @@ type
     btIncluir: TBitBtn;
     btImprimir: TBitBtn;
     btAlterar: TBitBtn;
-    btRecalc2: TBitBtn;
+    btRecalcular: TBitBtn;
     btExcluir: TBitBtn;
     BitBtn7: TBitBtn;
     PanManutLcto: TPanel;
@@ -95,7 +94,6 @@ type
     procedure btProsseguirClick(Sender: TObject);
     procedure PanTurnosEnter(Sender: TObject);
     procedure FormResize(Sender: TObject);
-    procedure btRecalc1Click(Sender: TObject);
     procedure btFecharClick(Sender: TObject);
     procedure btResumoClick(Sender: TObject);
     procedure btExcluirClick(Sender: TObject);
@@ -104,6 +102,10 @@ type
     procedure dbOperacaoClick(Sender: TObject);
     procedure btManutOkClick(Sender: TObject);
     procedure btIncluirClick(Sender: TObject);
+    procedure edValorExit(Sender: TObject);
+    procedure FormClose(Sender: TObject; var Action: TCloseAction);
+    procedure dbMeioClick(Sender: TObject);
+    procedure btRecalcularClick(Sender: TObject);
   private
     { Private declarations }
   public
@@ -146,7 +148,7 @@ begin
 end;
 
 
-procedure TFuCaixaMovto.btRecalc1Click(Sender: TObject);
+procedure TFuCaixaMovto.btRecalcularClick(Sender: TObject);
 begin
   GridLctos.Visible := False;
   CalculaSaldoCaixa(uDM.RegCaixaTurno.AsInteger);
@@ -156,12 +158,15 @@ end;
 
 procedure TFuCaixaMovto.btResumoClick(Sender: TObject);
 begin
+  GridLctos.Visible := False;
+  CalculaSaldoCaixa(uDM.RegCaixaTurno.AsInteger);
+  GridLctos.Visible := True;
   PanTurnos.Enabled := False;
   PanRodape.Enabled := False;
-  PanResumo.Top  := 40;
-  PanResumo.Left := 80;
+  PanResumo.Top     := 40;
+  PanResumo.Left    := 80;
   PanResumo.Visible := True;
-  btRecalc1.SetFocus;
+  btFechar.SetFocus;
 
 end;
 
@@ -240,8 +245,6 @@ begin
   PanManutLcto.Left    := 80;
   PanManutLcto.Width   := 560;
   PanManutLcto.Visible := True;
-  dbMeio.Visible       := False;
-  gbDetal.Visible      := False;
   dbOperacao.SetFocus;
 
 end;
@@ -257,22 +260,22 @@ end;
 
 procedure TFuCaixaMovto.btManutOkClick(Sender: TObject);
 begin
-  if dbOperacao.ItemIndex <> 0 then
-  begin
-    uDM.LctCaixaMeioPgt.AsInteger := 0;
-    uDM.LctCaixaPgtReais.AsCurrency := uDM.LctCaixaValor.AsCurrency;
-    uDM.LctCaixaPgtCDeb.Clear;
-    uDM.LctCaixaPgtCCred.Clear;
-    uDM.LctCaixaPgtPIX.Clear;
-    uDM.LctCaixaPgtOutros.Clear;
+  if uDM.LctCaixaValor.AsCurrency <> uDM.LctCaixaZC_SomaMP.AsCurrency
+  then begin
+    MessageDlg('SOma dos meios de pagamento difere do valor total',mtError,[mbOk],0);
+    edReais.SetFocus;
+    Exit;
   end;
   uDM.LctCaixa.Post;
   PanManutLcto.Visible := False;
+  PanTurnos.Enabled    := True;
+  PanRodape.Enabled    := True;
 
 end;
 
 procedure TFuCaixaMovto.btProsseguirClick(Sender: TObject);
 var i,nTurno: Integer;
+    lMovto: Boolean;
 begin
   i := Pos(' ',cbTurnos.Text) - 1;
   nTurno := StrToIntDef(Copy(cbTurnos.Text,1,i),0);
@@ -289,8 +292,15 @@ begin
     Exit;
   end;
   //
+  lMovto := True;
+  if cbTurnos.ItemIndex <> 0 then
+    lMovto := False;
+  btIncluir.Enabled := lMovto;
+  btAlterar.Enabled := lMovto;
+  btExcluir.Enabled := lMovto;
+
   uDM.LctCaixa.Refresh;
-  uDM.LctCaixa.First;
+  uDM.LctCaixa.Last;
   LabNRegs.Caption := IntToStr(uDM.LctCaixa.RecordCount) + ' lanctos';
   PanLanctos.Visible := True;
   FormResize(nil);
@@ -303,16 +313,69 @@ begin
 
 end;
 
+procedure TFuCaixaMovto.dbMeioClick(Sender: TObject);
+begin
+  gbDetal.Enabled := False;
+  uDM.LctCaixaPgtReais.Clear;
+  uDM.LctCaixaPgtCDeb.Clear;
+  uDM.LctCaixaPgtCCred.Clear;
+  uDM.LctCaixaPgtPIX.Clear;
+  uDM.LctCaixaPgtOutros.Clear;
+  case dbMeio.ItemIndex of
+    0:uDM.LctCaixaPgtReais.AsCurrency  := uDM.LctCaixaValor.AsCurrency;
+    1:uDM.LctCaixaPgtCDeb.AsCurrency   := uDM.LctCaixaValor.AsCurrency;
+    2:uDM.LctCaixaPgtCCred.AsCurrency  := uDM.LctCaixaValor.AsCurrency;
+    3:uDM.LctCaixaPgtPIX.AsCurrency    := uDM.LctCaixaValor.AsCurrency;
+    4:uDM.LctCaixaPgtOutros.AsCurrency := uDM.LctCaixaValor.AsCurrency;
+    5:gbDetal.Enabled := True;
+  end;
+
+end;
+
 procedure TFuCaixaMovto.dbOperacaoClick(Sender: TObject);
 begin
-  if dbOperacao.ItemIndex = 0 then
-  begin
-    dbMeio.Visible := True;
-  end
-  else begin
-    dbMeio.Visible  := False;
-    gbDetal.Visible := False;
+  dbMeio.Enabled  := False;
+  gbDetal.Enabled := False;
+  case dbOperacao.ItemIndex of
+    0:begin
+      dbMeio.Enabled := True;
+      if uDM.LctCaixaHistorico.AsString = '' then
+         uDM.LctCaixaHistorico.AsString := 'Receber ';
+    end;
+    1:begin
+      uDM.LctCaixaHistorico.AsString := 'Suprimento';
+    end;
+    2:begin
+      if uDM.LctCaixaHistorico.AsString = '' then
+         uDM.LctCaixaHistorico.AsString := 'Pagar ';
+    end;
+    3:begin
+      uDM.LctCaixaHistorico.AsString := 'Sangria';
+    end;
   end;
+
+end;
+
+procedure TFuCaixaMovto.edValorExit(Sender: TObject);
+begin
+  if uDM.LctCaixaOperacao.AsInteger <> 0 then
+  begin
+    uDM.LctCaixaPgtReais.AsCurrency := uDM.LctCaixaValor.AsCurrency;
+    uDM.LctCaixaPgtCDeb.Clear;
+    uDM.LctCaixaPgtCCred.Clear;
+    uDM.LctCaixaPgtPIX.Clear;
+    uDM.LctCaixaPgtOutros.Clear;
+    uDM.LctCaixaMeioPgt.AsInteger := 0;
+  end;
+
+end;
+
+procedure TFuCaixaMovto.FormClose(Sender: TObject; var Action: TCloseAction);
+begin
+  GridLctos.Visible := False;
+  CalculaSaldoCaixa(uDM.RegCaixaTurno.AsInteger);
+  GridLctos.Visible := True;
+
 end;
 
 procedure TFuCaixaMovto.FormResize(Sender: TObject);

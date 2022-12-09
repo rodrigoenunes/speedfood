@@ -195,7 +195,7 @@ object uDM: TuDM
       AutoGenerateValue = arDefault
       FieldName = 'cnpj'
       Origin = 'cnpj'
-      EditMask = '00\.000\.000\/0000-00;1; '
+      EditMask = '00\.000\.000\/0000-00;0; '
       Size = 14
     end
     object SisPessoaIE: TStringField
@@ -675,6 +675,20 @@ object uDM: TuDM
       FieldName = 'EtqImpressa'
       Origin = 'EtqImpressa'
     end
+    object PedItensAlteraPreco: TShortintField
+      AutoGenerateValue = arDefault
+      FieldName = 'AlteraPreco'
+      Origin = 'AlteraPreco'
+    end
+    object PedItensVlrUnFiscal: TBCDField
+      AutoGenerateValue = arDefault
+      FieldName = 'VlrUnFiscal'
+      Origin = 'VlrUnFiscal'
+      DisplayFormat = ',0.00'
+      EditFormat = '0.00'
+      Precision = 15
+      Size = 2
+    end
   end
   object RegCaixa: TFDTable
     OnCalcFields = RegCaixaCalcFields
@@ -1045,6 +1059,11 @@ object uDM: TuDM
       FieldKind = fkCalculated
       FieldName = 'ZC_Outros'
       Size = 12
+      Calculated = True
+    end
+    object LctCaixaZC_SomaMP: TCurrencyField
+      FieldKind = fkCalculated
+      FieldName = 'ZC_SomaMP'
       Calculated = True
     end
   end

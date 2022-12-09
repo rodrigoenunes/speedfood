@@ -299,6 +299,7 @@ begin
     uDM.PedItensNrLcto.AsInteger       := uDM.PedWrkNrLcto.AsInteger;
     uDM.PedItensTpProd.AsInteger       := uDM.PedWrkTpProd.AsInteger;
     uDM.PedItensCodProd.AsInteger      := uDM.PedWrkCodProd.AsInteger;
+    uDM.PedItensQuant.AsInteger        := uDM.PedWrkQuant.AsInteger;
     uDM.PedItensVlrUnitario.AsCurrency := uDM.PedWrkVlrUnit.AsCurrency;
     uDM.PedItensCod01.AsInteger        := uDM.PedWrkCod01.AsInteger;
     uDM.PedItensVlr01.AsCurrency       := uDM.PedWrkVlr01.AsCurrency;
@@ -313,6 +314,7 @@ begin
     uDM.PedItensTxtMenos.AsString      := uDM.PedWrkTxtMenos.AsString;
     uDM.PedItensObservacao.AsString    := uDM.PedWrkObserv.AsString;
     uDM.PedItensEtqImpressa.AsInteger  := 0;
+    uDM.PedItensVlrUnFiscal.AsCurrency := uDM.PedWrkVlrTotal.AsCurrency / uDM.PedWrkQuant.AsInteger;
     uDM.PedItens.Post;
     uDM.Pedwrk.Next;
   end;
@@ -682,7 +684,7 @@ end;
 procedure TFuFinPedido.MudaPontoVirgula(Sender: TObject; var Key: Char);
 begin
   if Key = '.' then
-    Key:= ',';
+    Key := ',';
 end;
 
 procedure TFuFinPedido.FormCreate(Sender: TObject);

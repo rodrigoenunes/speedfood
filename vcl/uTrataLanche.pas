@@ -51,6 +51,7 @@ type
     procedure dbPrecoEnter(Sender: TObject);
     procedure dbPrecoExit(Sender: TObject);
     procedure dbPrecoKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
+    procedure dbPrecoKeyPress(Sender: TObject; var Key: Char);
   private
     { Private declarations }
   public
@@ -167,11 +168,11 @@ end;
 procedure TFuTrataLanche.dbPrecoEnter(Sender: TObject);
 begin
   if not uDM.SisPessoaTecladoVirtual.AsBoolean then Exit;
-  Teclado.Left    := dbPreco.Left - 260;
+  Teclado.Left    := dbPreco.Left - 12;
   Teclado.Top     := PanIdLanche.Top + PanIdLanche.Height;
-  Teclado.Width   := 550;
+  Teclado.Width   := 180;
   Teclado.Height  := 180;
-  Teclado.Layout  := 'Standard';
+  Teclado.Layout  := 'NumPad';
   Teclado.Visible := True;
 
 end;
@@ -186,6 +187,13 @@ end;
 procedure TFuTrataLanche.dbPrecoKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
 begin
   if Key = Vk_Return then SelectNext((Sender as TwinControl), True, True);
+
+end;
+
+procedure TFuTrataLanche.dbPrecoKeyPress(Sender: TObject; var Key: Char);
+begin
+  if Key = '.' then
+    Key := ',';
 
 end;
 

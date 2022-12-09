@@ -186,6 +186,9 @@ type
     RegCaixaZC_QtdEntradas: TIntegerField;
     RegCaixaZC_QtdSaidas: TIntegerField;
     LctCaixaTipo: TStringField;
+    PedItensAlteraPreco: TShortintField;
+    PedItensVlrUnFiscal: TBCDField;
+    LctCaixaZC_SomaMP: TCurrencyField;
     procedure ItensCalcFields(DataSet: TDataSet);
     procedure LctCaixaCalcFields(DataSet: TDataSet);
     procedure PedWrkCalcFields(DataSet: TDataSet);
@@ -364,8 +367,11 @@ begin
   if uDM.LctCaixaPgtOutros.AsCurrency > 0 then
     uDM.LctCaixaZC_Outros.AsString := FloatToStrF(uDM.LctCaixaPgtOutros.AsCurrency,ffNumber,15,2);
 
-
-
+  uDM.LctCaixaZC_SomaMP.AsCurrency := uDM.LctCaixaPgtReais.AsCurrency +
+                                      uDM.LctCaixaPgtCDeb.AsCurrency +
+                                      uDM.LctCaixaPgtCCred.AsCurrency +
+                                      uDM.LctCaixaPgtPIX.AsCurrency +
+                                      uDM.LctCaixaPgtOutros.AsCurrency;
 
 end;
 

@@ -182,11 +182,11 @@ begin
          else if TSBebidas.Width > 600
               then nCol := 3
               else nCol := 2;
-    nLargura := TSBebidas.Width div nCol;          // Largura da célula
-    nRow := nBebidas div nCol;                     // Qtd necessária de linhas
+    nLargura := (TSBebidas.Width div nCol) - 2;          // Largura da célula
+    nRow := nBebidas div nCol;                           // Qtd necessária de linhas
     if nRow < 1 
     then nRow := 1
-    else if (nBebidas mod nRow) > 0 
+    else if (nBebidas mod nCol) > 0
          then nRow := nRow + 1;
     nAltura := (TSBebidas.Height-8) div nRow;      // Altura da célula
     if nAltura > 220
@@ -374,7 +374,7 @@ begin
     uDM.PedWrkQuant.AsInteger     := 1;
     uDM.PedWrkVlrUnit.AsCurrency  := uDM.ItensPreco.AsCurrency;
     uDM.PedWrkVlrTotal.AsCurrency := uDM.ItensPreco.AsCurrency;
-    uDM.PedWrkExtras.AsString     := stringFiller('0',24);
+    uDM.PedWrkExtras.AsString     := stringFiller('.',24);
     uDM.PedWrk.Post;
   end;
   TotalizaPedido;

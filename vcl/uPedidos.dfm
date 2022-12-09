@@ -619,7 +619,7 @@ object FuPedidos: TFuPedidos
       Top = 1
       Width = 589
       Height = 369
-      ActivePage = TSLanches
+      ActivePage = TSBebidas
       Align = alClient
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
@@ -661,7 +661,7 @@ object FuPedidos: TFuPedidos
         ParentFont = False
         object GridBebidas: TDrawGrid
           Left = 54
-          Top = 20
+          Top = 22
           Width = 320
           Height = 120
           FixedCols = 0

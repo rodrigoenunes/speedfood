@@ -1345,7 +1345,6 @@ object FuTrataLanche: TFuTrataLanche
       ParentBackground = False
       ParentFont = False
       TabOrder = 3
-      ExplicitTop = 0
       DesignSize = (
         737
         53)
@@ -1616,6 +1615,7 @@ object FuTrataLanche: TFuTrataLanche
         OnEnter = dbPrecoEnter
         OnExit = dbPrecoExit
         OnKeyDown = dbPrecoKeyDown
+        OnKeyPress = dbPrecoKeyPress
       end
       object dbExtras: TDBEdit
         Left = 559
