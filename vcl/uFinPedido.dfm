@@ -70,6 +70,7 @@ object FuFinPedido: TFuFinPedido
         Top = 34
         Width = 169
         Height = 27
+        TabStop = False
         DataField = 'CPF_CNPJ'
         DataSource = uDM.DSPedidos
         TabOrder = 1
@@ -82,6 +83,7 @@ object FuFinPedido: TFuFinPedido
         Top = 4
         Width = 290
         Height = 27
+        TabStop = False
         CharCase = ecUpperCase
         DataField = 'NomeCliente'
         DataSource = uDM.DSPedidos

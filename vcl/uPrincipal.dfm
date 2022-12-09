@@ -265,23 +265,23 @@ object FuPrincipal: TFuPrincipal
     TabOrder = 3
   end
   object PanTurno: TPanel
-    Left = 267
+    Left = 291
     Top = 22
     Width = 198
     Height = 79
     BevelInner = bvLowered
-    Color = clHighlight
+    Color = clGradientInactiveCaption
     ParentBackground = False
     TabOrder = 6
     object LabInicio: TLabel
       Left = 12
       Top = 28
-      Width = 50
-      Height = 16
+      Width = 64
+      Height = 19
       Caption = 'LabInicio'
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
-      Font.Height = -13
+      Font.Height = -16
       Font.Name = 'Tahoma'
       Font.Style = []
       ParentFont = False
@@ -289,12 +289,12 @@ object FuPrincipal: TFuPrincipal
     object LabFinal: TLabel
       Left = 12
       Top = 52
-      Width = 47
-      Height = 16
+      Width = 58
+      Height = 19
       Caption = 'LabFinal'
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
-      Font.Height = -13
+      Font.Height = -16
       Font.Name = 'Tahoma'
       Font.Style = []
       ParentFont = False

@@ -56,7 +56,6 @@ type
     procedure btCancelarClick(Sender: TObject);
     procedure dbCPFExit(Sender: TObject);
     procedure dbCPFEnter(Sender: TObject);
-    procedure dbMeioPagtoExit(Sender: TObject);
     procedure edMeioPgtoChange(Sender: TObject);
     procedure dbMeioPagtoClick(Sender: TObject);
     procedure FormShow(Sender: TObject);
@@ -84,6 +83,7 @@ type
     procedure dbCPFKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure dbNomeExit(Sender: TObject);
     procedure MudaPontoVirgula(Sender: TObject; var Key: Char);
+    procedure dbMeioPagtoExit(Sender: TObject);
   private
     { Private declarations }
   public
@@ -429,7 +429,9 @@ begin
   uDM.PedidosVlrCCred.Clear;
   uDM.PedidosVlrPIX.Clear;
   uDM.PedidosVlrOutros.Clear;
-
+  //ShowMessage('1 ' + uDM.PedidosMeioPagto.AsString + '  Index=' + IntToStr(dbMeioPagto.ItemIndex));
+  uDM.PedidosMeioPagto.AsInteger := dbMeioPagto.ItemIndex;
+  //ShowMessage('2 ' + uDM.PedidosMeioPagto.AsString + '  Index=' + IntToStr(dbMeioPagto.ItemIndex));
   case dbMeioPagto.ItemIndex of
     0:begin
         uDM.PedidosVlrReais.AsCurrency  := FuPedidos.totalPedido;
@@ -462,23 +464,45 @@ end;
 procedure TFuFinPedido.dbMeioPagtoExit(Sender: TObject);
 begin
 {
-  if dbMeioPagto.ItemIndex <> 5
-  then begin
-    uDM.PedidosVlrReais.Clear;
-    uDM.PedidosVlrCDeb.Clear;
-    uDM.PedidosVlrCCred.Clear;
-    uDM.PedidosVlrPIX.Clear;
-    uDM.PedidosVlrOutros.Clear;
-  end;
+  edReais.Enabled  := False;
+  edReceb.Visible  := False;
+  LabReceb.Visible := False;
+  edTroco.Visible  := False;
+  LabTroco.Visible := False;
+  edCDeb.Enabled   := False;
+  edCCred.Enabled  := False;
+  edPIX.Enabled    := False;
+  edOutros.Enabled := False;
+
+  uDM.PedidosVlrReais.Clear;
+  uDM.PedidosVlrCDeb.Clear;
+  uDM.PedidosVlrCCred.Clear;
+  uDM.PedidosVlrPIX.Clear;
+  uDM.PedidosVlrOutros.Clear;
   case dbMeioPagto.ItemIndex of
-    0:uDM.PedidosVlrReais.AsCurrency  := FuPedidos.totalPedido;
+    0:begin
+        uDM.PedidosVlrReais.AsCurrency  := FuPedidos.totalPedido;
+        if uDM.PedidosVlrRecebido.AsCurrency = 0 then
+           uDM.PedidosVlrRecebido.AsCurrency := FuPedidos.totalPedido;
+        uDM.PedidosVlrTroco.AsCurrency := uDM.PedidosVlrRecebido.AsCurrency - uDM.PedidosVlrReais.AsCurrency;
+      edReceb.Visible  := True;
+      LabReceb.Visible := True;
+      edTroco.Visible  := True;
+      LabTroco.Visible := True;
+      edReceb.SetFocus;
+    end;
     1:uDM.PedidosVlrCDeb.AsCurrency   := FuPedidos.totalPedido;
     2:uDM.PedidosVlrCCred.AsCurrency  := FuPedidos.totalPedido;
     3:uDM.PedidosVlrPIX.AsCurrency    := FuPedidos.totalPedido;
     4:uDM.PedidosVlrOutros.AsCurrency := FuPedidos.totalPedido;
     5:begin
-        //gbEspecif.Enabled := True;
         uDM.PedidosVlrReais.AsCurrency  := FuPedidos.totalPedido;
+        edReais.Enabled  := True;
+        edCDeb.Enabled   := True;
+        edCCred.Enabled  := True;
+        edPIX.Enabled    := True;
+        edOutros.Enabled := True;
+        edReais.SetFocus;
       end;
   end;
 }
@@ -493,6 +517,7 @@ end;
 procedure TFuFinPedido.dbNomeExit(Sender: TObject);
 begin
   Teclado.Visible := False;
+  dbCPF.SetFocus;
 
 end;
 

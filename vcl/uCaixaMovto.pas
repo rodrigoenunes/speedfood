@@ -89,6 +89,9 @@ type
     edCCred: TDBEdit;
     edPIX: TDBEdit;
     edOutros: TDBEdit;
+    sbAnterior: TSpeedButton;
+    sbAtual: TSpeedButton;
+    sbProximo: TSpeedButton;
     procedure FormShow(Sender: TObject);
     procedure btSairClick(Sender: TObject);
     procedure btProsseguirClick(Sender: TObject);
@@ -106,6 +109,11 @@ type
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure dbMeioClick(Sender: TObject);
     procedure btRecalcularClick(Sender: TObject);
+    procedure sbAtualClick(Sender: TObject);
+    procedure sbProximoClick(Sender: TObject);
+    procedure sbAnteriorClick(Sender: TObject);
+    procedure cbTurnosChange(Sender: TObject);
+    procedure cbTurnosEnter(Sender: TObject);
   private
     { Private declarations }
   public
@@ -178,13 +186,11 @@ begin
     MessageDlg('Para alterar o saldo inicial utilize a "Abertura do caixa"',mtWarning,[mbOk],0);
     Exit;
   end;
-  {
   if uDM.LctCaixaTipo.AsString <> 'M' then
   begin
     MessageDlg('Lançamento automático, alteração não permitida',mtError,[mbOk],0);
     Exit;
   end;
-  }
   Try
     uDM.LctCaixa.Edit;
   Except
@@ -218,6 +224,7 @@ begin
     Exit;
   end;
   if MessageDlg('Excluir lançamento ?',mtConfirmation,[mbYes,mbNo],0,mbNo,['Sim','Não']) <> mrYes then Exit;
+  uDM.LctCaixa.Delete;
 
 end;
 
@@ -238,6 +245,7 @@ begin
   uDM.LctCaixaTurno.AsInteger := uDM.RegCaixaTurno.AsInteger;
   uDM.LctCaixaSequencia.AsInteger := nSeq;
   uDM.LctCaixaOperacao.AsInteger := -1;
+  uDM.LctCaixaTipo.AsString := 'M';
 
   PanTurnos.Enabled    := False;
   PanRodape.Enabled    := False;
@@ -310,6 +318,18 @@ end;
 procedure TFuCaixaMovto.btSairClick(Sender: TObject);
 begin
   FuCaixaMovto.Close;
+
+end;
+
+procedure TFuCaixaMovto.cbTurnosChange(Sender: TObject);
+begin
+  btProsseguir.SetFocus;
+
+end;
+
+procedure TFuCaixaMovto.cbTurnosEnter(Sender: TObject);
+begin
+  PanLanctos.Visible := False;
 
 end;
 
@@ -395,6 +415,29 @@ end;
 procedure TFuCaixaMovto.PanTurnosEnter(Sender: TObject);
 begin
   PanLanctos.Visible := False;
+
+end;
+
+procedure TFuCaixaMovto.sbAnteriorClick(Sender: TObject);
+begin
+  PanLanctos.Visible := False;
+  if cbTurnos.ItemIndex < (cbTurnos.Items.Count-1) then
+    cbTurnos.ItemIndex := cbTurnos.ItemIndex + 1;
+
+end;
+
+procedure TFuCaixaMovto.sbAtualClick(Sender: TObject);
+begin
+  PanLanctos.Visible := False;
+  cbTurnos.ItemIndex := 0;
+
+end;
+
+procedure TFuCaixaMovto.sbProximoClick(Sender: TObject);
+begin
+  PanLanctos.Visible := False;
+  if cbTurnos.ItemIndex > 0 then
+    cbTurnos.ItemIndex := cbTurnos.ItemIndex - 1;
 
 end;
 
