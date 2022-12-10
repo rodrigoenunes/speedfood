@@ -11,7 +11,6 @@ uses
   FireDAC.Comp.DataSet, FireDAC.Comp.Client, FireDAC.Comp.UI, Datasnap.DBClient;
   Procedure ContaExtras;
   Procedure CarregaExtras(pCols,pLins: Integer);
-
   Function CriaAbrePedidoWrk(pNro:Integer): Integer;
 
 type
@@ -189,6 +188,22 @@ type
     PedItensAlteraPreco: TShortintField;
     PedItensVlrUnFiscal: TBCDField;
     LctCaixaZC_SomaMP: TCurrencyField;
+    PedidosTurno: TIntegerField;
+    PedItensTurno: TIntegerField;
+    EtqItens: TFDTable;
+    EtqItensNumero: TIntegerField;
+    EtqItensNrLcto: TIntegerField;
+    EtqItensTpProd: TIntegerField;
+    EtqItensCodProd: TIntegerField;
+    EtqItensQuant: TIntegerField;
+    EtqItensTxtSem: TStringField;
+    EtqItensTxtMais: TStringField;
+    EtqItensTxtMenos: TStringField;
+    EtqItensObservacao: TStringField;
+    EtqItensEtqImpressa: TShortintField;
+    EtqItensTurno: TIntegerField;
+    DSEtqItens: TDataSource;
+    EtqItensZL_Descricao: TStringField;
     procedure ItensCalcFields(DataSet: TDataSet);
     procedure LctCaixaCalcFields(DataSet: TDataSet);
     procedure PedWrkCalcFields(DataSet: TDataSet);

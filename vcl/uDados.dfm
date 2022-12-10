@@ -543,6 +543,11 @@ object uDM: TuDM
       Precision = 15
       Size = 2
     end
+    object PedidosTurno: TIntegerField
+      AutoGenerateValue = arDefault
+      FieldName = 'Turno'
+      Origin = 'Turno'
+    end
   end
   object DSPedidos: TDataSource
     DataSet = Pedidos
@@ -688,6 +693,11 @@ object uDM: TuDM
       EditFormat = '0.00'
       Precision = 15
       Size = 2
+    end
+    object PedItensTurno: TIntegerField
+      AutoGenerateValue = arDefault
+      FieldName = 'Turno'
+      Origin = 'Turno'
     end
   end
   object RegCaixa: TFDTable
@@ -1081,5 +1091,88 @@ object uDM: TuDM
     DataSet = SisPessoa
     Left = 100
     Top = 80
+  end
+  object EtqItens: TFDTable
+    IndexFieldNames = 'Numero;NrLcto'
+    Connection = FDC
+    TableName = 'speedfood.com_pedidoitem'
+    Left = 216
+    Top = 328
+    object EtqItensNumero: TIntegerField
+      FieldName = 'Numero'
+      Origin = 'Numero'
+      ProviderFlags = [pfInUpdate, pfInWhere, pfInKey]
+      Required = True
+    end
+    object EtqItensNrLcto: TIntegerField
+      FieldName = 'NrLcto'
+      Origin = 'NrLcto'
+      ProviderFlags = [pfInUpdate, pfInWhere, pfInKey]
+      Required = True
+    end
+    object EtqItensTpProd: TIntegerField
+      AutoGenerateValue = arDefault
+      FieldName = 'TpProd'
+      Origin = 'TpProd'
+    end
+    object EtqItensCodProd: TIntegerField
+      AutoGenerateValue = arDefault
+      FieldName = 'CodProd'
+      Origin = 'CodProd'
+    end
+    object EtqItensQuant: TIntegerField
+      AutoGenerateValue = arDefault
+      FieldName = 'Quant'
+      Origin = 'Quant'
+    end
+    object EtqItensTxtSem: TStringField
+      AutoGenerateValue = arDefault
+      FieldName = 'TxtSem'
+      Origin = 'TxtSem'
+      Size = 1024
+    end
+    object EtqItensTxtMais: TStringField
+      AutoGenerateValue = arDefault
+      FieldName = 'TxtMais'
+      Origin = 'TxtMais'
+      Size = 1024
+    end
+    object EtqItensTxtMenos: TStringField
+      AutoGenerateValue = arDefault
+      FieldName = 'TxtMenos'
+      Origin = 'TxtMenos'
+      Size = 1024
+    end
+    object EtqItensObservacao: TStringField
+      AutoGenerateValue = arDefault
+      FieldName = 'Observacao'
+      Origin = 'Observacao'
+      Size = 1024
+    end
+    object EtqItensEtqImpressa: TShortintField
+      AutoGenerateValue = arDefault
+      FieldName = 'EtqImpressa'
+      Origin = 'EtqImpressa'
+    end
+    object EtqItensTurno: TIntegerField
+      AutoGenerateValue = arDefault
+      FieldName = 'Turno'
+      Origin = 'Turno'
+    end
+    object EtqItensZL_Descricao: TStringField
+      FieldKind = fkLookup
+      FieldName = 'ZL_Descricao'
+      LookupDataSet = Itens
+      LookupKeyFields = 'Grupo;Codigo'
+      LookupResultField = 'Descricao'
+      KeyFields = 'TpProd;CodProd'
+      Size = 1024
+      Lookup = True
+    end
+  end
+  object DSEtqItens: TDataSource
+    DataSet = EtqItens
+    Left = 260
+    Top = 348
   end
 end

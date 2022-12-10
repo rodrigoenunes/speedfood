@@ -150,7 +150,12 @@ begin
     uDM.PedidosNrNFCe.Clear;
     uDM.PedidosSrNFCe.Clear;
     uDM.PedidosArqXML.Clear;
+    uDM.PedidosEtqImpressas.AsInteger := 0;
+    uDM.PedidosNomeCliente.Clear;
+    uDM.PedidosVlrRecebido.Clear;
+    uDM.PedidosVlrTroco.Clear;
     uDM.PedidosCPF_CNPJ.EditMask := '';
+    uDM.PedidosTurno.AsInteger := uDM.RegCaixaTurno.AsInteger;
 {
 <     D e s c r i ç ã o     >                                < Total >
 123456789.123456789.123456789.123456789.123456789.123456789. 999999,99
@@ -315,6 +320,7 @@ begin
     uDM.PedItensObservacao.AsString    := uDM.PedWrkObserv.AsString;
     uDM.PedItensEtqImpressa.AsInteger  := 0;
     uDM.PedItensVlrUnFiscal.AsCurrency := uDM.PedWrkVlrTotal.AsCurrency / uDM.PedWrkQuant.AsInteger;
+    uDM.PedItensTurno.AsInteger        := uDM.RegCaixaTurno.AsInteger;
     uDM.PedItens.Post;
     uDM.Pedwrk.Next;
   end;
