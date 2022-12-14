@@ -83,15 +83,13 @@ implementation
 
 {$R *.dfm}
 
-uses uDados, uGenericas, uFinPedido, uTrataLanche, //, HDProds, HDLanche, uGenericas, HDPrincipal, HDFinPedido;
-     uBiblioteca;
+uses uDados, uGenericas, uFinPedido, uTrataLanche, uBiblioteca;
 
 Procedure LancamentoPedidos;
 begin
   FuPedidos := TFuPedidos.Create(nil);
-
   FuPedidos.ShowModal;
-FuPedidos.Free;
+  FuPedidos.Free;
 
 end;
 
@@ -447,7 +445,7 @@ begin
     else nRet := FinalizaPedido;
   if nRet = 0
   then begin
-
+    {
     With uBiblioteca.EmitirNFCeDePV(1, uDM.Pedidos.FieldByName('numero').AsInteger ) Do
     Begin
       if Not Resultado then
@@ -456,7 +454,7 @@ begin
         Exit;
       End;
     End;
-
+    }
 
 
     ShowMessage('Gravou pedido, emite pedido, emite NFCe(se for o caso) e atualiza caixa');

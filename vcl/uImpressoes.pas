@@ -25,6 +25,9 @@ implementation
 
 {$R *.dfm}
 
+uses uDados, uBiblioteca;
+
+
 Procedure ImprimePedido(pNroPedido:Integer);
 begin
   ShowMessage('Imprime pedido nr: ' + IntToStr(pNroPedido));
@@ -33,7 +36,15 @@ end;
 
 Procedure GeraImprimeNFCe(pNroPedido:Integer);
 begin
-  ShowMessage('Gera NFCe pedido nr: ' + IntToStr(pNroPedido));
+  With uBiblioteca.EmitirNFCeDePV(1, uDM.Pedidos.FieldByName('numero').AsInteger ) Do
+  Begin
+    if Not Resultado then
+    Begin
+      ShowMessage(Mensagem);
+      Exit;
+    End;
+  End;
+
 
 end;
 

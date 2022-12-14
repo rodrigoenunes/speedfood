@@ -1093,6 +1093,7 @@ object uDM: TuDM
     Top = 80
   end
   object EtqItens: TFDTable
+    OnCalcFields = EtqItensCalcFields
     IndexFieldNames = 'Numero;NrLcto'
     Connection = FDC
     TableName = 'speedfood.com_pedidoitem'
@@ -1159,20 +1160,67 @@ object uDM: TuDM
       FieldName = 'Turno'
       Origin = 'Turno'
     end
-    object EtqItensZL_Descricao: TStringField
-      FieldKind = fkLookup
-      FieldName = 'ZL_Descricao'
-      LookupDataSet = Itens
-      LookupKeyFields = 'Grupo;Codigo'
-      LookupResultField = 'Descricao'
-      KeyFields = 'TpProd;CodProd'
+    object EtqItensExtras: TStringField
+      AutoGenerateValue = arDefault
+      FieldName = 'Extras'
+      Origin = 'Extras'
+      FixedChar = True
+      Size = 24
+    end
+    object EtqItensZC_Descricao: TStringField
+      FieldKind = fkCalculated
+      FieldName = 'ZC_Descricao'
       Size = 1024
-      Lookup = True
+      Calculated = True
+    end
+    object EtqItensZC_DataHora: TStringField
+      FieldKind = fkCalculated
+      FieldName = 'ZC_DataHora'
+      Size = 16
+      Calculated = True
+    end
+    object EtqItensZC_NroLcto: TStringField
+      FieldKind = fkCalculated
+      FieldName = 'ZC_NroLcto'
+      Size = 10
+      Calculated = True
     end
   end
   object DSEtqItens: TDataSource
     DataSet = EtqItens
     Left = 260
     Top = 348
+  end
+  object Parametros: TFDTable
+    IndexFieldNames = 'Nome'
+    Connection = FDC
+    TableName = 'speedfood.sis_parametros'
+    Left = 208
+    Top = 80
+    object ParametrosNome: TStringField
+      FieldName = 'Nome'
+      Origin = 'Nome'
+      ProviderFlags = [pfInUpdate, pfInWhere, pfInKey]
+      Required = True
+      Size = 32
+    end
+    object ParametrosDescricao: TStringField
+      AutoGenerateValue = arDefault
+      FieldName = 'Descricao'
+      Origin = 'Descricao'
+      Size = 120
+    end
+    object ParametrosValor: TStringField
+      AutoGenerateValue = arDefault
+      FieldName = 'Valor'
+      Origin = 'Valor'
+      Size = 999
+    end
+    object Parametrossis_parametroscol: TStringField
+      AutoGenerateValue = arDefault
+      FieldName = 'sis_parametroscol'
+      Origin = 'sis_parametroscol'
+      Size = 45
+    end
   end
 end

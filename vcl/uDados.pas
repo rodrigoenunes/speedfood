@@ -12,6 +12,7 @@ uses
   Procedure ContaExtras;
   Procedure CarregaExtras(pCols,pLins: Integer);
   Function CriaAbrePedidoWrk(pNro:Integer): Integer;
+  Function ObtemParametro(idParam:String): String;
 
 type
   TuDM = class(TDataModule)
@@ -203,11 +204,20 @@ type
     EtqItensEtqImpressa: TShortintField;
     EtqItensTurno: TIntegerField;
     DSEtqItens: TDataSource;
-    EtqItensZL_Descricao: TStringField;
+    EtqItensZC_Descricao: TStringField;
+    EtqItensZC_DataHora: TStringField;
+    EtqItensExtras: TStringField;
+    EtqItensZC_NroLcto: TStringField;
+    Parametros: TFDTable;
+    ParametrosNome: TStringField;
+    ParametrosDescricao: TStringField;
+    ParametrosValor: TStringField;
+    Parametrossis_parametroscol: TStringField;
     procedure ItensCalcFields(DataSet: TDataSet);
     procedure LctCaixaCalcFields(DataSet: TDataSet);
     procedure PedWrkCalcFields(DataSet: TDataSet);
     procedure RegCaixaCalcFields(DataSet: TDataSet);
+    procedure EtqItensCalcFields(DataSet: TDataSet);
   private
     { Private declarations }
   public
@@ -339,6 +349,27 @@ begin
 
 end;
 
+Function ObtemParametro(idParam:String): String;
+begin
+  Result := '';
+  if not uDM.Parametros.Active then
+    uDM.Parametros.Active := True;
+  if uDM.Parametros.FindKey([idParam]) then Result := uDM.ParametrosValor.AsString;
+
+end;
+
+
+procedure TuDM.EtqItensCalcFields(DataSet: TDataSet);
+begin
+  EtqItensZC_Descricao.AsString := '';
+  if Itens.FindKey([EtqItensTpProd.AsInteger,EtqItensCodProd.AsInteger]) then
+    EtqItensZC_Descricao.AsString := stringReplace(ItensDescricao.AsString,'#',' ',[rfIgnoreCase, rfReplaceAll]);
+  EtqItensZC_DataHora.AsString := '';
+  if uDM.Pedidos.FindKey([EtqItensNumero.AsInteger]) then
+    EtqItensZC_DataHora.AsString := uDM.PedidosData.AsString;
+  EtqItensZC_NroLcto.AsString := EtqItensNumero.AsString + '/' + EtqItensNrLcto.AsString;
+
+end;
 
 procedure TuDM.ItensCalcFields(DataSet: TDataSet);
 begin
