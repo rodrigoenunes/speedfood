@@ -114,6 +114,7 @@ type
     procedure sbAnteriorClick(Sender: TObject);
     procedure cbTurnosChange(Sender: TObject);
     procedure cbTurnosEnter(Sender: TObject);
+    procedure btImprimirClick(Sender: TObject);
   private
     { Private declarations }
   public
@@ -128,7 +129,7 @@ implementation
 
 {$R *.dfm}
 
-uses uDados, uGenericas, uCaixa;
+uses uDados, uGenericas, uCaixa, uImpressoes;
 
 Procedure CaixaMovimentacao(pAtual:Boolean=False);
 begin
@@ -233,6 +234,13 @@ begin
   PanTurnos.Enabled := True;
   PanRodape.Enabled := True;
   PanResumo.Visible := False;
+
+end;
+
+procedure TFuCaixaMovto.btImprimirClick(Sender: TObject);
+begin
+  CalculaSaldoCaixa(uDM.RegCaixaTurno.AsInteger);
+  ImprimeCaixa(uDM.RegCaixaTurno.AsInteger);
 
 end;
 

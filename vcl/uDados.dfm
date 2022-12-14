@@ -1076,6 +1076,18 @@ object uDM: TuDM
       FieldName = 'ZC_SomaMP'
       Calculated = True
     end
+    object LctCaixaZC_OpAbrv: TStringField
+      FieldKind = fkCalculated
+      FieldName = 'ZC_OpAbrv'
+      Size = 3
+      Calculated = True
+    end
+    object LctCaixaZC_MpAbrv: TStringField
+      FieldKind = fkCalculated
+      FieldName = 'ZC_MpAbrv'
+      Size = 3
+      Calculated = True
+    end
   end
   object DSRegCaixa: TDataSource
     DataSet = RegCaixa

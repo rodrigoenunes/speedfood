@@ -26,6 +26,7 @@ type
     procedure btAbrirCaixaClick(Sender: TObject);
     procedure btPedidosClick(Sender: TObject);
     procedure btUsuarioClick(Sender: TObject);
+    procedure FormClose(Sender: TObject; var Action: TCloseAction);
   private
     { Private declarations }
   public
@@ -61,15 +62,7 @@ begin
        CalculaSaldoCaixa(uDM.RegCaixaTurno.AsInteger);
        ImprimeCaixa(uDM.RegCaixaTurno.AsInteger);
      end;
-  uDM.PedItens.Active  := False;
-  uDM.Pedidos.Active   := False;
-  uDM.LctCaixa.Active  := False;
-  uDM.RegCaixa.Active  := False;
-  uDM.Itens.Active     := False;
-  uDM.SisPessoa.Active := False;
-  uDM.FDC.Connected    := False;
-  //
-  Application.Terminate;
+  FuPrincipal.Close;
 
 end;
 
@@ -104,6 +97,20 @@ begin
     ContaExtras;                  // Obtem qtd de ítens 'extras'
     AberturaDeCaixa;
   end;
+
+end;
+
+procedure TFuPrincipal.FormClose(Sender: TObject; var Action: TCloseAction);
+begin
+  uDM.PedItens.Active  := False;
+  uDM.Pedidos.Active   := False;
+  uDM.LctCaixa.Active  := False;
+  uDM.RegCaixa.Active  := False;
+  uDM.Itens.Active     := False;
+  uDM.SisPessoa.Active := False;
+  uDM.FDC.Connected    := False;
+  //
+  Application.Terminate;
 
 end;
 

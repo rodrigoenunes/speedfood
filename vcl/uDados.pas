@@ -213,6 +213,8 @@ type
     ParametrosDescricao: TStringField;
     ParametrosValor: TStringField;
     Parametrossis_parametroscol: TStringField;
+    LctCaixaZC_OpAbrv: TStringField;
+    LctCaixaZC_MpAbrv: TStringField;
     procedure ItensCalcFields(DataSet: TDataSet);
     procedure LctCaixaCalcFields(DataSet: TDataSet);
     procedure PedWrkCalcFields(DataSet: TDataSet);
@@ -240,7 +242,9 @@ var
 const
   xGrupos: array[1..4] of String = ('Lanches','Extras','Bedidas','Diversos');
   xOperacao: array[0..4] of String = ('Saldo','Receb','Suprim','Pagto','Sangria');
-  xMeioPgt: array[0..5] of String = ('R$', 'CDeb','CCred','PIX','Outros','Misto');
+  xOperAbrv: array[0..4] of String = ('Sdo',  'Rec',  'Sup',   'Pgt',  'San');
+  xMeioPgto: array[0..5] of String = ('R$', 'CDeb','CCred','PIX','Outros','Misto');
+  xMeioAbrv: array[0..5] of String = ('R$', 'CDb', 'CCr',  'PIX','Ou',    'Mit');
 
 implementation
 
@@ -387,12 +391,23 @@ end;
 procedure TuDM.LctCaixaCalcFields(DataSet: TDataSet);
 begin
   if (uDM.LctCaixaOperacao.AsInteger >= 0) and (uDM.LctCaixaOperacao.AsInteger <= 4)
-     then uDM.LctCaixaZC_Operacao.AsString := xOperacao[uDM.LctCaixaOperacao.AsInteger]
-     else uDM.LctCaixaZC_Operacao.AsString := '(' + uDM.LctCaixaOperacao.AsString + ')';
-
+     then begin
+       uDM.LctCaixaZC_Operacao.AsString := xOperacao[uDM.LctCaixaOperacao.AsInteger];
+       uDM.LctCaixaZC_OpAbrv.AsString   := xOperAbrv[uDM.LctCaixaOperacao.AsInteger];
+     end
+     else begin
+       uDM.LctCaixaZC_Operacao.AsString := '(' + uDM.LctCaixaOperacao.AsString + ')';
+       uDM.LctCaixaZC_OpAbrv.AsString   := '(' + uDM.LctCaixaOperacao.AsString + ')';
+     end;
   if (uDM.LctCaixaMeioPgt.AsInteger >= 0) and (uDM.LctCaixaMeioPgt.AsInteger <= 5)
-     then uDM.LctCaixaZC_MeioPgt.AsString := xMeioPgt[uDM.LctCaixaMeioPgt.AsInteger]
-     else uDM.LctCaixaZC_MeioPgt.AsString := '(' + uDM.LctCaixaMeioPgt.AsString + ')';
+     then begin
+       uDM.LctCaixaZC_MeioPgt.AsString := xMeioPgto[uDM.LctCaixaMeioPgt.AsInteger];
+       uDM.LctCaixaZC_MpAbrv.AsString  := xMeioAbrv[uDM.LctCaixaMeioPgt.AsInteger];
+     end
+     else begin
+       uDM.LctCaixaZC_MeioPgt.AsString := '(' + uDM.LctCaixaMeioPgt.AsString + ')';
+       uDM.LctCaixaZC_MpAbrv.AsString  := '(' + uDM.LctCaixaMeioPgt.AsString + ')';
+     end;
   uDM.LctCaixaZC_DtHr.AsString := Copy(uDM.LctCaixaDtHrLcto.AsString,9,2) + '/' +
                                   Copy(uDM.LctCaixaDtHrLcto.AsString,6,2) + '/' +
                                   Copy(uDM.LctCaixaDtHrLcto.AsString,3,2) + ' ' +
