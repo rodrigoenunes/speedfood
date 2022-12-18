@@ -38,6 +38,10 @@ type
     Label3: TLabel;
     dbExtras: TDBEdit;
     dbTotal: TDBEdit;
+    Panel1: TPanel;
+    DBCheckBox1: TDBCheckBox;
+    DBCheckBox2: TDBCheckBox;
+    Label4: TLabel;
     procedure FormShow(Sender: TObject);
     procedure btOkLancheClick(Sender: TObject);
     procedure btCanLancheClick(Sender: TObject);
@@ -342,6 +346,7 @@ begin
           else xExtras[wKey] := '+';      // Extra sem valor
         end;
     2,7:begin              // SEM
+        if uDM.wVlrExtraTab[wKey] > 0 then Exit;
         xExtras[wKey] := '0';
     end;
     3,8:begin              // Menos
@@ -349,7 +354,8 @@ begin
            then xExtras[wKey] := '1'
            else if xExtras[wKey] = '1'
                    then xExtras[wKey] := '.'
-                   else xExtras[wKey] := '-';        // Se '.' ou '+'  vira MENOS
+                   else if uDM.wVlrExtraTab[wKey] = 0
+                        then xExtras[wKey] := '-';        // Se '.' ou '+'  vira MENOS, somente se NÃO tiver valor
     end;
     4:begin                // Restaura padrão do extra ('.')
         xExtras := stringFiller('.',24);

@@ -181,56 +181,64 @@ begin
       xDescr := stringCompleta(xDescr,'D','.',60);
       xTotal := StringCompleta(FloatToStrF(uDM.PedWrkVlrTotal.AsCurrency,ffNumber,8,2),'E','.',10);
       strItem.Add(xDescr + xTotal);
+      // Cortado / Prensado
+      wTxtAux := '';
+      if uDM.PedWrkCortado.AsBoolean then wTxtAux := '<<  CORTAR  >>     ';
+      if uDM.PedWrkPrensado.AsBoolean then wTxtAux := wTxtAux + '<<  PRENSAR  >>';
+      if wTxtAux <> ''
+      then begin
+        strItem.Add(stringCompleta(wTxtAux,'C',' ',60));
+        strItem.Add(' ');
+      end;
       // Texto SEM
       if uDM.PedWrkTxtSem.AsString <> '' then
       begin
-        strItem.Add('SEM');
-        wTxtAux := uDM.PedWrkTxtSem.AsString;
+        wTxtAux := '< SEM > ' + uDM.PedWrkTxtSem.AsString;
         while Length(wTxtAux) >= 56 do
         begin
-          strItem.Add('    ' + Copy(wTxtAux,1,56));
-          wTxtAux := Copy(wTxtAux,57,Length(wTxtAux)-56);
+          strItem.Add(Copy(wTxtAux,1,56));
+          wTxtAux := '    ' + Copy(wTxtAux,57,Length(wTxtAux)-56);
         end;
-        if Length(wTxtAux) > 0 then strItem.Add('    ' + wTxtAux);
+        if Length(wTxtAux) > 0 then strItem.Add(wTxtAux);
+        strItem.Add(' ');
       end;
       // MAIS
       if uDM.PedWrkTxtMais.AsString <> '' then
       begin
-        strItem.Add('MAIS');
-        wTxtAux := uDM.PedWrkTxtMais.AsString;
+        wTxtAux := '< MAIS > ' + uDM.PedWrkTxtMais.AsString;
         while Length(wTxtAux) >= 56 do
         begin
-          strItem.Add('    ' + Copy(wTxtAux,1,56));
-          wTxtAux := Copy(wTxtAux,57,Length(wTxtAux)-56);
+          strItem.Add(Copy(wTxtAux,1,56));
+          wTxtAux := '    ' + Copy(wTxtAux,57,Length(wTxtAux)-56);
         end;
-        if Length(wTxtAux) > 0 then strItem.Add('    ' + wTxtAux);
+        if Length(wTxtAux) > 0 then strItem.Add(wTxtAux);
+        strItem.Add(' ');
       end;
       // Menos
       if uDM.PedWrkTxtMenos.AsString <> '' then
       begin
-        strItem.Add('MENOS');
-        wTxtAux := uDM.PedWrkTxtMenos.AsString;
+        wTxtAux := '< MENOS > ' + uDM.PedWrkTxtMenos.AsString;
         while Length(wTxtAux) >= 56 do
         begin
-          strItem.Add('    ' + Copy(wTxtAux,1,56));
-          wTxtAux := Copy(wTxtAux,57,Length(wTxtAux)-56);
+          strItem.Add(Copy(wTxtAux,1,56));
+          wTxtAux := '    ' + Copy(wTxtAux,57,Length(wTxtAux)-56);
         end;
-        if Length(wTxtAux) > 0 then strItem.Add('    ' + wTxtAux);
+        if Length(wTxtAux) > 0 then strItem.Add(wTxtAux);
+        strItem.Add(' ');
       end;
       // Observações
       if uDM.PedWrkObserv.AsString <> '' then
       begin
-        strItem.Add('  Observações');
-        wTxtAux := uDM.PedWrkObserv.AsString;
-        while Length(wTxtAux) >= 56
-        do begin
-          strItem.Add('    ' + Copy(wTxtAux,1,56));
-          wTxtAux := Copy(wTxtAux,57,Length(wTxtAux)-56);
+        wTxtAux := '< OBS > ' + uDM.PedWrkObserv.AsString;
+        while Length(wTxtAux) >= 56 do
+        begin
+          strItem.Add(Copy(wTxtAux,1,56));
+          wTxtAux := '    ' + Copy(wTxtAux,57,Length(wTxtAux)-56);
         end;
-        if Length(wTxtAux) > 0 then strItem.Add('    ' + wTxtAux);
+        if Length(wTxtAux) > 0 then strItem.Add(wTxtAux);
+        strItem.Add(' ');
       end;
       //
-      strItem.Add(' ');
       for i := 0 to strItem.Count-1
         do MemPedido.Lines.Add(strItem[i]);
       uDM.PedWrk.Next;
@@ -243,8 +251,9 @@ begin
     //
     nRetorno := 1;
     ShowModal;
+    Result := nRetorno;
+
   end;
-  Result := nRetorno;
 
 end;
 
@@ -321,6 +330,15 @@ begin
     uDM.PedItensEtqImpressa.AsInteger  := 0;
     uDM.PedItensVlrUnFiscal.AsCurrency := uDM.PedWrkVlrTotal.AsCurrency / uDM.PedWrkQuant.AsInteger;
     uDM.PedItensTurno.AsInteger        := uDM.RegCaixaTurno.AsInteger;
+    if uDM.PedWrkAltPreco.AsBoolean
+       then uDM.PedItensAlteraPreco.AsInteger := 1
+       else uDM.PedItensAlteraPreco.AsInteger := 0;
+    if uDM.PedWrkCortado.AsBoolean
+       then uDM.PedItensCortado.AsInteger := 1
+       else uDM.PedItensCortado.AsInteger := 0;
+    if uDM.PedWrkPrensado.AsBoolean
+       then uDM.PedItensPrensado.AsInteger := 1
+       else uDM.PedItensPrensado.AsInteger := 0;
     uDM.PedItens.Post;
     uDM.Pedwrk.Next;
   end;

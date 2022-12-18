@@ -215,6 +215,10 @@ type
     Parametrossis_parametroscol: TStringField;
     LctCaixaZC_OpAbrv: TStringField;
     LctCaixaZC_MpAbrv: TStringField;
+    PedItensCortado: TShortintField;
+    PedItensPrensado: TShortintField;
+    PedWrkCortado: TBooleanField;
+    PedWrkPrensado: TBooleanField;
     procedure ItensCalcFields(DataSet: TDataSet);
     procedure LctCaixaCalcFields(DataSet: TDataSet);
     procedure PedWrkCalcFields(DataSet: TDataSet);
@@ -336,6 +340,8 @@ begin
     PedWrk.FieldDefs.Add('TxtMais',   ftMemo, 10);
     PedWrk.FieldDefs.Add('TxtMenos',  ftMemo, 10);
     PedWrk.FieldDefs.Add('AltPreco',  ftBoolean);
+    PedWrk.FieldDefs.Add('Cortado',   ftBoolean);
+    PedWrk.FieldDefs.Add('Prensado',  ftBoolean);
     PedWrk.IndexDefs.Clear;
     PedWrk.IndexDefs.Add('','NrLcto',[ixPrimary,ixUnique]);
     PedWrk.CreateDataSet;

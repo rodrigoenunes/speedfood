@@ -57,11 +57,11 @@ end;
 
 procedure TFuPrincipal.btSairClick(Sender: TObject);
 begin
+{
+  CalculaSaldoCaixa(uDM.RegCaixaTurno.AsInteger);
   if MessageDlg('Imprimir fechamento de caixa ?',mtConfirmation,[mbYes,mbNo],0,mbNo,['Sim','Não']) = mrYes
-     then begin
-       CalculaSaldoCaixa(uDM.RegCaixaTurno.AsInteger);
-       ImprimeCaixa(uDM.RegCaixaTurno.AsInteger);
-     end;
+     then ImprimeCaixa(uDM.RegCaixaTurno.AsInteger);
+}
   FuPrincipal.Close;
 
 end;

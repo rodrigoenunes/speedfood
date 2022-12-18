@@ -387,6 +387,12 @@ object uDM: TuDM
     object PedWrkAltPreco: TBooleanField
       FieldName = 'AltPreco'
     end
+    object PedWrkCortado: TBooleanField
+      FieldName = 'Cortado'
+    end
+    object PedWrkPrensado: TBooleanField
+      FieldName = 'Prensado'
+    end
     object PedWrkZC_Aviso: TStringField
       FieldKind = fkCalculated
       FieldName = 'ZC_Aviso'
@@ -698,6 +704,16 @@ object uDM: TuDM
       AutoGenerateValue = arDefault
       FieldName = 'Turno'
       Origin = 'Turno'
+    end
+    object PedItensCortado: TShortintField
+      AutoGenerateValue = arDefault
+      FieldName = 'Cortado'
+      Origin = 'Cortado'
+    end
+    object PedItensPrensado: TShortintField
+      AutoGenerateValue = arDefault
+      FieldName = 'Prensado'
+      Origin = 'Prensado'
     end
   end
   object RegCaixa: TFDTable

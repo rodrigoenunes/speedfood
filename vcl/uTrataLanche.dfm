@@ -4,7 +4,7 @@ object FuTrataLanche: TFuTrataLanche
   BorderIcons = [biSystemMenu]
   Caption = 'Especifica'#231#227'o do lanche'
   ClientHeight = 539
-  ClientWidth = 745
+  ClientWidth = 757
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -19,16 +19,17 @@ object FuTrataLanche: TFuTrataLanche
   object PanInfoLanche: TPanel
     Left = 0
     Top = 0
-    Width = 745
+    Width = 757
     Height = 539
     Align = alClient
     BevelInner = bvLowered
     BevelWidth = 2
     TabOrder = 0
+    ExplicitWidth = 758
     object PanRodape: TPanel
       Left = 4
       Top = 355
-      Width = 737
+      Width = 749
       Height = 180
       Align = alBottom
       Font.Charset = DEFAULT_CHARSET
@@ -38,22 +39,24 @@ object FuTrataLanche: TFuTrataLanche
       Font.Style = []
       ParentFont = False
       TabOrder = 0
+      ExplicitWidth = 750
       object PanBtOk: TPanel
-        Left = 533
+        Left = 633
         Top = 1
-        Width = 203
+        Width = 115
         Height = 178
         Align = alClient
         ParentBackground = False
         ParentColor = True
         TabOrder = 1
+        ExplicitWidth = 116
         DesignSize = (
-          203
+          115
           178)
         object btOkLanche: TBitBtn
           Left = 4
           Top = 4
-          Width = 195
+          Width = 107
           Height = 48
           Anchors = [akLeft, akTop, akRight]
           Caption = '&Ok'
@@ -103,11 +106,12 @@ object FuTrataLanche: TFuTrataLanche
           ParentFont = False
           TabOrder = 0
           OnClick = btOkLancheClick
+          ExplicitWidth = 108
         end
         object btCanLanche: TBitBtn
           Left = 4
           Top = 124
-          Width = 195
+          Width = 107
           Height = 48
           Anchors = [akLeft, akRight, akBottom]
           Caption = '&Cancelar'
@@ -127,11 +131,12 @@ object FuTrataLanche: TFuTrataLanche
           NumGlyphs = 2
           TabOrder = 2
           OnClick = btCanLancheClick
+          ExplicitWidth = 108
         end
         object btExcLanche: TBitBtn
           Left = 4
           Top = 54
-          Width = 195
+          Width = 107
           Height = 48
           Anchors = [akLeft, akTop, akRight]
           Caption = '&Excluir'
@@ -182,12 +187,13 @@ object FuTrataLanche: TFuTrataLanche
           TabOrder = 1
           Visible = False
           OnClick = btExcLancheClick
+          ExplicitWidth = 108
         end
       end
       object PanObserv: TPanel
         Left = 1
         Top = 1
-        Width = 532
+        Width = 512
         Height = 178
         Align = alLeft
         Anchors = [akLeft, akBottom]
@@ -195,7 +201,7 @@ object FuTrataLanche: TFuTrataLanche
         ParentBackground = False
         TabOrder = 0
         DesignSize = (
-          532
+          512
           178)
         object imgObs: TImage
           Left = 2
@@ -1254,7 +1260,7 @@ object FuTrataLanche: TFuTrataLanche
         object dbSEM: TDBMemo
           Left = 40
           Top = 2
-          Width = 486
+          Width = 466
           Height = 43
           TabStop = False
           Anchors = [akLeft, akTop, akRight]
@@ -1266,7 +1272,7 @@ object FuTrataLanche: TFuTrataLanche
         object dbObserv: TDBMemo
           Left = 40
           Top = 134
-          Width = 486
+          Width = 466
           Height = 40
           TabStop = False
           Anchors = [akLeft, akRight, akBottom]
@@ -1280,7 +1286,7 @@ object FuTrataLanche: TFuTrataLanche
         object dbMenos: TDBMemo
           Left = 40
           Top = 90
-          Width = 486
+          Width = 466
           Height = 43
           TabStop = False
           Anchors = [akLeft, akTop, akRight]
@@ -1292,7 +1298,7 @@ object FuTrataLanche: TFuTrataLanche
         object dbMais: TDBMemo
           Left = 40
           Top = 46
-          Width = 486
+          Width = 466
           Height = 43
           TabStop = False
           Anchors = [akLeft, akTop, akRight]
@@ -1302,12 +1308,69 @@ object FuTrataLanche: TFuTrataLanche
           TabOrder = 3
         end
       end
+      object Panel1: TPanel
+        Left = 513
+        Top = 1
+        Width = 120
+        Height = 178
+        Align = alLeft
+        Color = 6993407
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -21
+        Font.Name = 'Tahoma'
+        Font.Style = [fsBold]
+        ParentBackground = False
+        ParentFont = False
+        TabOrder = 2
+        DesignSize = (
+          120
+          178)
+        object Label4: TLabel
+          Left = 1
+          Top = 1
+          Width = 118
+          Height = 25
+          Align = alTop
+          Alignment = taCenter
+          Caption = 'Obs'
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -21
+          Font.Name = 'Tahoma'
+          Font.Style = [fsBold, fsUnderline]
+          ParentFont = False
+          ExplicitWidth = 40
+        end
+        object DBCheckBox1: TDBCheckBox
+          Left = 8
+          Top = 41
+          Width = 102
+          Height = 24
+          Anchors = [akTop, akRight]
+          Caption = 'Cortar'
+          DataField = 'Cortado'
+          DataSource = uDM.SPedWrk
+          TabOrder = 0
+        end
+        object DBCheckBox2: TDBCheckBox
+          Left = 8
+          Top = 101
+          Width = 102
+          Height = 17
+          Anchors = [akTop, akRight]
+          Caption = 'Prensar'
+          DataField = 'Prensado'
+          DataSource = uDM.SPedWrk
+          TabOrder = 1
+        end
+      end
     end
     object GridExtras: TDrawGrid
-      Left = 9
-      Top = 68
+      Left = 13
+      Top = 75
       Width = 727
-      Height = 261
+      Height = 238
       FixedCols = 0
       FixedRows = 0
       Font.Charset = DEFAULT_CHARSET
@@ -1321,20 +1384,20 @@ object FuTrataLanche: TFuTrataLanche
       OnMouseDown = GridExtrasMouseDown
     end
     object Teclado: TTouchKeyboard
-      Left = 49
-      Top = 128
-      Width = 550
-      Height = 180
+      Left = 509
+      Top = 124
+      Width = 180
+      Height = 150
       GradientEnd = clSilver
       GradientStart = clGray
-      Layout = 'Standard'
+      Layout = 'NumPad'
       Visible = False
     end
     object PanIdLanche: TPanel
       Left = 4
       Top = 4
-      Width = 737
-      Height = 53
+      Width = 749
+      Height = 65
       Align = alTop
       Color = clTeal
       Font.Charset = DEFAULT_CHARSET
@@ -1345,26 +1408,30 @@ object FuTrataLanche: TFuTrataLanche
       ParentBackground = False
       ParentFont = False
       TabOrder = 3
+      ExplicitWidth = 750
       DesignSize = (
-        737
-        53)
+        749
+        65)
       object dbDescricao: TDBText
-        Left = 5
-        Top = 11
-        Width = 417
-        Height = 25
+        Left = 4
+        Top = 12
+        Width = 164
+        Height = 33
+        Anchors = [akLeft, akTop, akRight]
+        AutoSize = True
         DataField = 'Descricao'
         DataSource = uDM.SPedWrk
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clWindowText
-        Font.Height = -21
+        Font.Height = -27
         Font.Name = 'Tahoma'
-        Font.Style = []
+        Font.Style = [fsBold]
         ParentFont = False
+        ExplicitWidth = 165
       end
       object imgMais: TImage
-        Left = 162
-        Top = 6
+        Left = 150
+        Top = 11
         Width = 32
         Height = 32
         Picture.Data = {
@@ -1429,8 +1496,8 @@ object FuTrataLanche: TFuTrataLanche
         Visible = False
       end
       object imgMenos: TImage
-        Left = 200
-        Top = 6
+        Left = 188
+        Top = 11
         Width = 32
         Height = 32
         Picture.Data = {
@@ -1495,8 +1562,8 @@ object FuTrataLanche: TFuTrataLanche
         Visible = False
       end
       object imgPreco: TImage
-        Left = 428
-        Top = 11
+        Left = 446
+        Top = 16
         Width = 32
         Height = 32
         Anchors = [akTop, akRight]
@@ -1571,33 +1638,37 @@ object FuTrataLanche: TFuTrataLanche
           0909}
         Transparent = True
         OnMouseDown = imgPrecoMouseDown
+        ExplicitLeft = 434
       end
       object Label1: TLabel
-        Left = 466
+        Left = 478
         Top = 2
         Width = 39
         Height = 19
         Anchors = [akTop, akRight]
         Caption = 'Pre'#231'o'
+        ExplicitLeft = 466
       end
       object Label2: TLabel
-        Left = 559
+        Left = 571
         Top = 2
         Width = 43
         Height = 19
         Anchors = [akTop, akRight]
         Caption = 'Extras'
+        ExplicitLeft = 559
       end
       object Label3: TLabel
-        Left = 645
+        Left = 657
         Top = 2
         Width = 36
         Height = 19
         Anchors = [akTop, akRight]
         Caption = 'Total'
+        ExplicitLeft = 645
       end
       object dbPreco: TDBEdit
-        Left = 466
+        Left = 478
         Top = 21
         Width = 87
         Height = 27
@@ -1616,9 +1687,10 @@ object FuTrataLanche: TFuTrataLanche
         OnExit = dbPrecoExit
         OnKeyDown = dbPrecoKeyDown
         OnKeyPress = dbPrecoKeyPress
+        ExplicitLeft = 479
       end
       object dbExtras: TDBEdit
-        Left = 559
+        Left = 571
         Top = 21
         Width = 80
         Height = 27
@@ -1634,9 +1706,10 @@ object FuTrataLanche: TFuTrataLanche
         ParentFont = False
         ReadOnly = True
         TabOrder = 1
+        ExplicitLeft = 572
       end
       object dbTotal: TDBEdit
-        Left = 645
+        Left = 657
         Top = 21
         Width = 87
         Height = 27
@@ -1653,6 +1726,7 @@ object FuTrataLanche: TFuTrataLanche
         ReadOnly = True
         TabOrder = 2
         OnKeyDown = dbPrecoKeyDown
+        ExplicitLeft = 658
       end
     end
   end

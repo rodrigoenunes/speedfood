@@ -297,6 +297,8 @@ begin
     PedWrkVlrTotal.AsCurrency := ItensPreco.AsCurrency;
     PedWrkExtras.AsString     := stringFiller('.',24);
     PedWrkAltPreco.AsBoolean  := ItensAlteraPreco.AsBoolean;
+    PedWrkCortado.AsBoolean   := False;
+    PedWrkPrensado.AsBoolean  := False;
     PedWrk.Post;
     PedWrk.Edit;
     FuPedidos.FormResize(nil);
