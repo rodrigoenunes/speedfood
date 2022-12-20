@@ -12,13 +12,10 @@ type
   TFuFinPedido = class(TForm)
     PanRodape: TPanel;
     PanInform: TPanel;
-    PanTexto: TPanel;
-    MemPedido: TMemo;
     PanTopo: TPanel;
     Label1: TLabel;
     Label2: TLabel;
     Label3: TLabel;
-    LabTaman: TLabel;
     dbNro: TDBEdit;
     dbLcts: TDBEdit;
     dbValor: TDBEdit;
@@ -51,6 +48,12 @@ type
     LabTroco: TLabel;
     edMeioPgto: TDBEdit;
     Teclado: TTouchKeyboard;
+    dbSem: TDBMemo;
+    dbMais: TDBMemo;
+    dbMenos: TDBMemo;
+    SBoxPedido: TScrollBox;
+    imgPedido: TImage;
+    LabTaman: TLabel;
     procedure btGravarClick(Sender: TObject);
     procedure btRetornarClick(Sender: TObject);
     procedure btCancelarClick(Sender: TObject);
@@ -94,6 +97,8 @@ var
   FuFinPedido: TFuFinPedido;
   nRetorno,nrPedido: Integer;
   wTop,wLeft: Integer;
+  linHifen: String;
+  wrkImag: TImage;
 
 implementation
 
@@ -101,11 +106,21 @@ implementation
 
 uses uDados, uGenericas, uPedidos, uImpressoes;
 
+Procedure AjustaFonteImagem;
+begin
+  wrkImag.Canvas.Font.Name := FuFinPedido.LabTaman.Font.Name;
+  wrkImag.Canvas.Font.Size := FuFinPedido.LabTaman.Font.Size;
+  wrkImag.Canvas.Font.Style := FuFinPedido.LabTaman.Font.Style;
+
+end;
+
+
 Function FinalizaPedido: Integer;
-var linHifen: String;
-    xDescr,xTotal,wTxtAux: String;
-    i,tMax: Integer;
-    strItem: TStringList;
+var
+  qtdLin,linAux,linMax,i,tMax: Integer;
+  posX,posY,posDescr,posSem,posMais,posMenos: Integer;
+  xObserv: String;
+
 begin
   with FuFinPedido
   do begin
@@ -124,15 +139,10 @@ begin
     Left     := (Screen.Width - Width) div 2;
     Height   := Trunc(Screen.Height * 0.80);
     Top      := (Screen.Height - Height) div 2;
-    linHifen := stringFiller('-',70);
-    LabTaman.Font.Name  := 'Lucida Console';
-    LabTaman.Font.Size  := 8;
-    LabTaman.Caption    := linHifen;
-    PanTexto.Width      := LabTaman.Width + 32;
-    MemPedido.Font.Name := LabTaman.Font.Name;
-    MemPedido.Font.Size := LabTaman.Font.Size;
+  //  SBoxPedido.Align := alClient;
+    SBoxPedido.VertScrollBar.Visible := True;
+    imgPedido.Align := alClient;
     //
-    strItem := TStringList.Create;
     uDM.Pedidos.Last;
     nrPedido := uDM.PedidosNumero.AsInteger + 1;
     uDM.Pedidos.Append;
@@ -156,12 +166,180 @@ begin
     uDM.PedidosVlrTroco.Clear;
     uDM.PedidosCPF_CNPJ.EditMask := '';
     uDM.PedidosTurno.AsInteger := uDM.RegCaixaTurno.AsInteger;
+    //
+    qtdLin := 0;
+    uDM.PedWrk.First;
+    while not uDM.PedWrk.Eof
+    do begin
+      linAux := dbSem.Lines.Count;
+      if dbMais.Lines.Count > linAux
+         then linAux := dbMais.Lines.Count;
+      if dbMenos.Lines.Count > linAux
+         then linAux := dbMenos.Lines.Count;
+      qtdLin := qtdLin + 1 + linAux;
+      uDM.PedWrk.Next;
+    end;
+    wrkImag := TImage.Create(nil);
+    wrkImag.Width := SBoxPedido.Width-24;
+    wrkImag.Height := (qtdLin+10)*20;
+    //
+    LabTaman.Font.Name := 'Tahoma';
+    LabTaman.Font.Size := 12;
+    LabTaman.Font.Style := [fsBold];
+    AjustaFonteImagem;
+    posX := 2;
+    posY := 2;
+    LabTaman.Caption := 'Qt';
+    wrkImag.Canvas.TextOut(posX,posY,'Qt');
+    posDescr := posX + LabTaman.Width + 2;
+    wrkImag.Canvas.TextOut(posDescr,posY,'Descrição');
+    LabTaman.Caption := 'Total';
+    wrkImag.Canvas.TextOut(wrkImag.Width-(LabTaman.Width+2),2,LabTaman.Caption);
+    posX := 2;
+    posY := posY + LabTaman.Height;
+    wrkImag.Canvas.MoveTo(posX,posY);
+    posX := wrkImag.Width-2;
+    wrkImag.Canvas.LineTo(posX,posY);
+    //
+    uDM.PedWrk.First;
+    while not uDM.PedWrk.Eof
+    do begin
+      posX := 2;
+      posY := posY + 2;
+      LabTaman.Font.Size := 11;
+      LabTaman.Font.Style := [];
+      AjustaFonteImagem;
+      LabTaman.Caption := uDM.PedWrkQuant.AsString;
+      if uDM.PedWrkQuant.AsInteger < 10 then
+        LabTaman.Caption := ' ' + LabTaman.Caption;
+      wrkImag.Canvas.TextOut(posX,posY,LabTaman.Caption);
+      LabTaman.Caption := uDM.PedWrkDescricao.AsString;
+      if (uDM.PedWrkTpProd.AsInteger = 3) or            // Bebidas
+         (uDM.PedWrkTpProd.AsInteger = 4)               // Diversos
+      then LabTaman.Caption := LabTaman.Caption + ' (' + uDM.PedWrkQuant.AsString + 'x' +
+                               FloatToStrF(uDM.PedWrkVlrUnit.AsCurrency,ffNumber,6,2) + ')';
+      wrkImag.Canvas.TextOut(posDescr,posY,LabTaman.Caption);
+      LabTaman.Caption := FloatToStrF(uDM.PedWrkVlrTotal.AsCurrency,ffNumber,8,2);
+      posX := wrkImag.Width-(LabTaman.Width+5);
+      wrkImag.Canvas.TextOut(posX,posY,LabTaman.Caption);
+      posY := posY + LabTaman.Height;
+      // Prensado / Cortado
+      if uDM.PedWrkCortado.AsBoolean or uDM.PedWrkPrensado.AsBoolean then
+      begin
+        LabTaman.Font.Size := 10;
+        LabTaman.Font.Style := [fsBold];
+        AjustaFonteImagem;
+        posX := posDescr;
+        if uDM.PedWrkPrensado.AsBoolean then
+        begin
+          LabTaman.Caption := 'Prensado';
+          wrkImag.Canvas.TextOut(posX,posY,LabTaman.Caption);
+          posX := posX + LabTaman.Width + 40;
+        end;
+        if uDM.PedWrkCortado.AsBoolean then
+        begin
+          LabTaman.Caption := 'Cortado';
+          wrkImag.Canvas.TextOut(posX,posY,LabTaman.Caption);
+          posX := posX + LabTaman.Width + 40;
+        end;
+        posY := posY + LabTaman.Height;
+      end;
+      // Texto SEM, MAIS e MENOS (tpProd = 1)
+      if (dbSem.Lines.Count > 0) or (dbMais.Lines.Count > 0) or (dbMenos.Lines.Count > 0) then
+      begin
+        linMax := dbSem.Lines.Count;
+        if dbMais.Lines.Count > linMax then
+          linMax := dbMais.Lines.Count;
+        if dbMenos.Lines.Count > linMax then
+          linMax := dbMenos.Lines.Count;
+        posSem := posDescr;
+        posMais := posSem + 120;
+        posMenos := posMais + 120 ;
+        LabTaman.Font.Size := 9;
+        LabTaman.Font.Style :=[fsBold,fsUnderline];
+        AjustaFonteImagem;
+        wrkImag.Canvas.TextOut(posSem,posY,'[ SEM ]');
+        wrkImag.Canvas.TextOut(posMais,posY,'[ MAIS ]');
+        wrkImag.Canvas.TextOut(posMenos,posY,'[ MENOS ]');
+        posY := posY + LabTaman.Height;
+        LabTaman.Font.Style :=[];
+        AjustaFonteImagem;
+        for i := 0 to linMax-1 do
+        begin
+          if i <= dbSem.Lines.Count-1 then
+            wrkImag.Canvas.TextOut(posSem,posY,dbSem.Lines[i]);
+          if i <= dbMais.Lines.Count-1 then
+            wrkImag.Canvas.TextOut(posMais,posY,dbMais.Lines[i]);
+          if i <= dbMenos.Lines.Count-1 then
+            wrkImag.Canvas.TextOut(posMenos,posY,dbMenos.Lines[i]);
+          posY := posY + LabTaman.Height;
+        end;
+      end;
+      // Observação
+      if uDM.PedWrkObserv.AsString <> '' then
+      begin
+        LabTaman.Font.Size := 9;
+        LabTaman.Font.Style := [fsBold];
+        LabTaman.Caption := 'Obs';
+        AjustaFonteImagem;
+        posX := 5;
+        wrkImag.Canvas.TextOut(posX,posY,LabTaman.Caption);
+        posX := posX + LabTaman.Width + 4;
+        LabTaman.Font.Style := [];
+        AjustaFonteImagem;
+        tMax := wrkImag.Width - (posX + 20);
+        xObserv := Trim(uDM.PedWrkObserv.AsString);
+        LabTaman.Caption := '';
+        for i := 1 to Length(xObserv) do
+        begin
+          LabTaman.Caption := LabTaman.Caption + xObserv[i];
+          if LabTaman.Width >= tMax then
+          begin
+            wrkImag.Canvas.TextOut(posX,posY,LabTaman.Caption);
+            LabTaman.Caption := '';
+            posY := posY + LabTaman.Height;
+          end;
+        end;
+        if LabTaman.Caption <> '' then
+        begin
+          wrkImag.Canvas.TextOut(posX,posY,LabTaman.Caption);
+          posY := posY + LabTaman.Height;
+        end;
+      end;
+      //
+      posX := 2;
+      wrkImag.Canvas.MoveTo(posX,posY);
+      posX := wrkImag.Width-2;
+      wrkImag.Canvas.LineTo(posX,posY);
+      uDM.PedWrk.Next;
+    end;
+
+    LabTaman.Font.Size := 12;
+    LabTaman.Font.Style := [fsBold];
+    AjustaFonteImagem;
+    wrkImag.Canvas.MoveTo(2,posY);
+    wrkImag.Canvas.LineTo(wrkImag.Width-2,posY);
+
+    posX := 20;
+    posY := posY + 2;
+    LabTaman.Caption := IntToStr(FuPedidos.itensPedido) + ' ítens';
+    wrkImag.Canvas.TextOut(posX,posY,LabTaman.Caption);
+    LabTaman.Caption := 'Total  R$ '+ FloatToStrF(FuPedidos.totalPedido,ffNumber,15,2);
+    posX := wrkImag.Width-(LabTaman.Width+5);
+    wrkImag.Canvas.TextOut(posX,posY,LabTaman.Caption);
+    posY := posY + LabTaman.Height;
+    wrkImag.Canvas.MoveTo(2,posY);
+    wrkImag.Canvas.LineTo(wrkImag.Width-2,posY);
+
+    imgPedido.Picture.Assign(wrkImag.Picture);
+    wrkImag.Free;
 {
 <     D e s c r i ç ã o     >                                < Total >
 123456789.123456789.123456789.123456789.123456789.123456789. 999999,99
 ----------------------------------------------------------------------
 123456789.123456789.123456789.123456789.123456789.123456789.123456789.
 }
+{
     MemPedido.Lines.Clear;
     MemPedido.Lines.Add(StringCompleta('<     D e s c r i ç ã o     >','D',' ',60) + ' < Total >');
     MemPedido.Lines.Add(linHifen);
@@ -181,61 +359,64 @@ begin
       xDescr := stringCompleta(xDescr,'D','.',60);
       xTotal := StringCompleta(FloatToStrF(uDM.PedWrkVlrTotal.AsCurrency,ffNumber,8,2),'E','.',10);
       strItem.Add(xDescr + xTotal);
-      // Cortado / Prensado
-      wTxtAux := '';
-      if uDM.PedWrkCortado.AsBoolean then wTxtAux := '<<  CORTAR  >>     ';
-      if uDM.PedWrkPrensado.AsBoolean then wTxtAux := wTxtAux + '<<  PRENSAR  >>';
-      if wTxtAux <> ''
-      then begin
-        strItem.Add(stringCompleta(wTxtAux,'C',' ',60));
-        strItem.Add(' ');
-      end;
-      // Texto SEM
-      if uDM.PedWrkTxtSem.AsString <> '' then
+      // Textos SEM, Mais e Menos
+      linMax := 0;
+      if dbSem.Lines.Count > 0 then
       begin
-        wTxtAux := '< SEM > ' + uDM.PedWrkTxtSem.AsString;
-        while Length(wTxtAux) >= 56 do
-        begin
-          strItem.Add(Copy(wTxtAux,1,56));
-          wTxtAux := '    ' + Copy(wTxtAux,57,Length(wTxtAux)-56);
-        end;
-        if Length(wTxtAux) > 0 then strItem.Add(wTxtAux);
-        strItem.Add(' ');
-      end;
-      // MAIS
-      if uDM.PedWrkTxtMais.AsString <> '' then
+        linMax := dbSem.Lines.Count;
+        wTxtAux := stringCompleta('< SEM >','D',' ',18);
+      end
+      else wTxtAux := stringFiller(' ',18);
+      if dbMais.Lines.Count > 0 then
       begin
-        wTxtAux := '< MAIS > ' + uDM.PedWrkTxtMais.AsString;
-        while Length(wTxtAux) >= 56 do
-        begin
-          strItem.Add(Copy(wTxtAux,1,56));
-          wTxtAux := '    ' + Copy(wTxtAux,57,Length(wTxtAux)-56);
-        end;
-        if Length(wTxtAux) > 0 then strItem.Add(wTxtAux);
-        strItem.Add(' ');
-      end;
-      // Menos
-      if uDM.PedWrkTxtMenos.AsString <> '' then
+        if dbMais.Lines.Count > linMax then
+          linMax := dbMais.Lines.Count;
+        wTxtAux := wTxtAux + stringCompleta('< MAIS >','D',' ',30);
+      end
+      else wTxtAux := wTxtAux + stringFiller(' ',30);
+      if dbMenos.Lines.Count > 0 then
       begin
-        wTxtAux := '< MENOS > ' + uDM.PedWrkTxtMenos.AsString;
-        while Length(wTxtAux) >= 56 do
-        begin
-          strItem.Add(Copy(wTxtAux,1,56));
-          wTxtAux := '    ' + Copy(wTxtAux,57,Length(wTxtAux)-56);
-        end;
-        if Length(wTxtAux) > 0 then strItem.Add(wTxtAux);
-        strItem.Add(' ');
+        if dbMenos.Lines.Count > linMax then
+          linMax := dbMenos.Lines.Count;
+        wTxtAux := wTxtAux + stringCompleta('< MENOS >','D',' ',17);
+      end
+      else wTxtAux := wTxtAux + stringFiller(' ',17);
+      if wTxtAux <> '' then
+        strItem.Add(wTxtAux);
+      //
+      for i := 0 to linMax-1 do
+      begin
+        if i <= (dbSem.Lines.Count-1)
+          then wTxtAux := StringCompleta(dbSem.Lines[i],'D',' ',17,True) + ' '
+          else wTxtAux := stringFiller(' ',18);
+        if i <= (dbMais.Lines.Count-1)
+          then wTxtAux := wTxtAux + StringCompleta(dbMais.Lines[i],'D',' ',29,True) + ' '
+          else wTxtAux := wTxtAux + stringFiller(' ',30);
+        if i <= (dbMenos.Lines.Count-1)
+          then wTxtAux := wTxtAux + StringCompleta(dbMenos.Lines[i],'D',' ',17,True)
+          else wTxtAux := wTxtAux + stringFiller(' ',17);
+        strItem.Add(wTxtAux);
       end;
       // Observações
       if uDM.PedWrkObserv.AsString <> '' then
       begin
-        wTxtAux := '< OBS > ' + uDM.PedWrkObserv.AsString;
+        wTxtAux := uDM.PedWrkObserv.AsString;
         while Length(wTxtAux) >= 56 do
         begin
           strItem.Add(Copy(wTxtAux,1,56));
-          wTxtAux := '    ' + Copy(wTxtAux,57,Length(wTxtAux)-56);
+          wTxtAux := Copy(wTxtAux,57,Length(wTxtAux)-56);
         end;
         if Length(wTxtAux) > 0 then strItem.Add(wTxtAux);
+        //strItem.Add(' ');
+      end;
+      // Cortado / Prensado
+      wTxtAux := '';
+      if uDM.PedWrkCortado.AsBoolean then wTxtAux := '<<  CORTAR  >>   ';
+      if uDM.PedWrkPrensado.AsBoolean then wTxtAux := wTxtAux + '<<  PRENSAR  >>';
+      if wTxtAux <> ''
+      then begin
+        strItem.Add(' ');
+        strItem.Add(stringCompleta(wTxtAux,'C',' ',60));
         strItem.Add(' ');
       end;
       //
@@ -249,6 +430,7 @@ begin
     MemPedido.Lines.Add(stringCompleta(xDescr,'C',' ',70));
     MemPedido.Lines.Add(linHifen);
     //
+}
     nRetorno := 1;
     ShowModal;
     Result := nRetorno;
@@ -739,7 +921,7 @@ end;
 procedure TFuFinPedido.FormCreate(Sender: TObject);
 begin
   Teclado.Visible := False;
-  PanTexto.Align := alLeft;
+  SBoxPedido.Align := alLeft;
   PanInform.Align := alClient;
 
 end;

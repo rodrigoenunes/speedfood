@@ -28,20 +28,21 @@ object FuFinPedido: TFuFinPedido
     Font.Name = 'Tahoma'
     Font.Style = []
     ParentFont = False
-    TabOrder = 3
+    TabOrder = 2
   end
   object PanInform: TPanel
     Left = 445
     Top = 41
     Width = 389
     Height = 447
+    Align = alRight
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
     Font.Height = -16
     Font.Name = 'Tahoma'
     Font.Style = []
     ParentFont = False
-    TabOrder = 2
+    TabOrder = 1
     object PanCliente: TPanel
       Left = 1
       Top = 256
@@ -421,33 +422,6 @@ object FuFinPedido: TFuFinPedido
       end
     end
   end
-  object PanTexto: TPanel
-    Left = 0
-    Top = 316
-    Width = 445
-    Height = 172
-    Caption = 'PanTexto'
-    TabOrder = 1
-    object MemPedido: TMemo
-      Left = 1
-      Top = 1
-      Width = 443
-      Height = 170
-      TabStop = False
-      Align = alClient
-      Font.Charset = DEFAULT_CHARSET
-      Font.Color = clWindowText
-      Font.Height = -13
-      Font.Name = 'Lucida Console'
-      Font.Style = []
-      Lines.Strings = (
-        'MemPedido')
-      ParentFont = False
-      ReadOnly = True
-      ScrollBars = ssVertical
-      TabOrder = 0
-    end
-  end
   object PanTopo: TPanel
     Left = 0
     Top = 0
@@ -476,21 +450,6 @@ object FuFinPedido: TFuFinPedido
       Width = 43
       Height = 19
       Caption = 'Valor:'
-    end
-    object LabTaman: TLabel
-      Left = 308
-      Top = 2
-      Width = 64
-      Height = 13
-      Caption = 'LabTaman'
-      Font.Charset = DEFAULT_CHARSET
-      Font.Color = clWindowText
-      Font.Height = -13
-      Font.Name = 'Lucida Console'
-      Font.Style = []
-      ParentFont = False
-      Visible = False
-      WordWrap = True
     end
     object dbNro: TDBEdit
       Left = 67
@@ -534,11 +493,89 @@ object FuFinPedido: TFuFinPedido
       OnChange = edMeioPgtoChange
     end
   end
+  object SBoxPedido: TScrollBox
+    Left = 0
+    Top = 41
+    Width = 445
+    Height = 447
+    Align = alClient
+    TabOrder = 7
+    ExplicitLeft = 76
+    ExplicitTop = 8
+    object imgPedido: TImage
+      Left = 28
+      Top = 14
+      Width = 105
+      Height = 105
+    end
+    object LabTaman: TLabel
+      Left = 264
+      Top = 266
+      Width = 74
+      Height = 19
+      Caption = 'LabTaman'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -16
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      ParentFont = False
+      Visible = False
+    end
+  end
+  object dbMenos: TDBMemo
+    Left = 239
+    Top = 136
+    Width = 152
+    Height = 37
+    DataField = 'TxtMenos'
+    DataSource = uDM.SPedWrk
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -13
+    Font.Name = 'Tahoma'
+    Font.Style = []
+    ParentFont = False
+    TabOrder = 6
+    Visible = False
+  end
+  object dbMais: TDBMemo
+    Left = 239
+    Top = 95
+    Width = 200
+    Height = 37
+    DataField = 'TxtMais'
+    DataSource = uDM.SPedWrk
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -13
+    Font.Name = 'Tahoma'
+    Font.Style = []
+    ParentFont = False
+    TabOrder = 5
+    Visible = False
+  end
+  object dbSem: TDBMemo
+    Left = 239
+    Top = 52
+    Width = 152
+    Height = 37
+    DataField = 'TxtSem'
+    DataSource = uDM.SPedWrk
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -13
+    Font.Name = 'Tahoma'
+    Font.Style = []
+    ParentFont = False
+    TabOrder = 4
+    Visible = False
+  end
   object Teclado: TTouchKeyboard
-    Left = 21
-    Top = 66
-    Width = 192
-    Height = 192
+    Left = 30
+    Top = 208
+    Width = 180
+    Height = 165
     DrawingStyle = dsGradient
     GradientEnd = clAqua
     GradientStart = clTeal

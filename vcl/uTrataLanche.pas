@@ -21,11 +21,8 @@ type
     btExcLanche: TBitBtn;
     imgObs: TImage;
     GridExtras: TDrawGrid;
-    imgExtra: TImage;
     dbMenos: TDBMemo;
     dbMais: TDBMemo;
-    Image1: TImage;
-    Image2: TImage;
     Teclado: TTouchKeyboard;
     PanIdLanche: TPanel;
     dbPreco: TDBEdit;
@@ -39,9 +36,12 @@ type
     dbExtras: TDBEdit;
     dbTotal: TDBEdit;
     Panel1: TPanel;
-    DBCheckBox1: TDBCheckBox;
-    DBCheckBox2: TDBCheckBox;
+    dbCortado: TDBCheckBox;
+    dbPrensado: TDBCheckBox;
     Label4: TLabel;
+    Panel2: TPanel;
+    Panel3: TPanel;
+    Panel4: TPanel;
     procedure FormShow(Sender: TObject);
     procedure btOkLancheClick(Sender: TObject);
     procedure btCanLancheClick(Sender: TObject);
@@ -290,7 +290,7 @@ var nCol,nLin,wCol,wLin,wKey,nExtVlr,nVezes: Integer;
     lctCods: array of integer;
     lctVlrs: array of Currency;
     i,j: Integer;
-    wTxtSem,wTxtMais,wTxtMenos: String;
+    wTxtSem,wTxtMais,wTxtMenos: TStringList;
 
 begin
   GridExtras.MouseToCell(X,Y,nCol,nLin);
@@ -299,14 +299,17 @@ begin
   // Col 2 e 7: Indica SEM
   // Col 3 e 8: Indica MENOS
   // Col 4: Separador - Lanche PADRAO
-  // 'Extras' (1 a 24) '.' Sem ação; '+' Mais; '1' ou '2' Mais um ou dois (com valor);
-  //                   '-' Menos  e '0' SEM
-  xExtras := uDM.PedWrkExtras.AsString;    // String de 24 posições (24 extras possíveis)
+  // 'Extras' (1 a 24)    '.' Sem ação
+  //                      '+' Mais
+  //                      '1' ou '2' Mais um ou dois (com valor)
+  //                      '-' Menos
+  //                      '0' SEM
+  xExtras := uDM.PedWrkExtras.AsString;            // String de 24 posições (24 extras possíveis)
   // Obtem código de extra considerado/lançado
   if nCol < 5 then wCol := 1
               else wCol := 2;
   wLin    := nLin + 1;
-  wKey    := uDM.wCodExtra[wCol,wLin];                  // Obtem o Código do 'extra'
+  wKey    := uDM.wCodExtra[wCol,wLin];     // 'Extra' (wCol,wLin) -> na matriz gerada qdo extras são carregados (uDM.wCodExtra[wCol,wLin])
   // Verifica quantos e quais os extras com valor já utilizados no lanche
   nExtVlr := 0;
   lctCods := [99,0,0,0];
@@ -314,18 +317,19 @@ begin
   for i := 1 to 24
   do if (xExtras[i] = '1') or (xExtras[i] = '2')
      then begin
-       nExtVlr := nExtVlr + 1;
+       nExtVlr := nExtVlr + 1;         // Extras com valor
        if j < 4
        then begin     // Armazena os códigos de extras com valor
          lctCods[j] := i;
          j := j + 1;
        end;
      end;
-  // Verifica se um dos extras já utilizados é o extra atualmente solicitado
-  // Não pode haver um quarto extra com valor
-  if (nCol <> 4) and (nExtVlr >= 3)
-  then if (wKey <> lctCods[1]) and (wKey <> lctCods[2]) and (wKey <> lctCods[3])
-       then Exit;
+  // Verifica se um dos extras já utilizados é o extra atualmente solicitado, não pode haver um quarto extra com valor
+  if (nCol=1) or (nCol=6) then               // indicação de 'Mais'
+    if uDM.wVlrExtra[wCol,wLin] > 0 then     // Item com valor
+       if nExtVlr >= 3 then                  // Já há 3 extras com valor
+          if (wKey<>lctCods[1]) and (wKey<>lctCods[2]) and (wKey<>lctCods[3]) then
+             Exit;            // Não é nenhum dos extras com valor
   //
   case nCol of
     0,5:begin
@@ -383,39 +387,32 @@ begin
   uDM.PedWrkCod03.AsInteger  := lctCods[3];
   uDM.PedWrkVlr03.AsCurrency := lctVlrs[3];
   uDM.PedWrkVlrTotal.AsCurrency := uDM.PedWrkVlrUnit.AsCurrency + uDM.PedWrkZC_Extras.AsCurrency;
-  //uDM.PedWrkVlrTotal.AsCurrency := wVlrItem + lctVlrs[1] + lctVlrs[2] + lctVlrs[3];
   //
-  wTxtSem   := '';
-  wTxtMais  := '';
-  wTxtMenos := '';
+  wTxtSem := TStringList.Create;
+  wTxtMais := TStringList.Create;
+  wTxtMenos := TStringList.Create;
   for i := 1 to 24 do
-  begin
     if uDM.Itens.FindKey([2,i]) then
     begin
-      if xExtras[i] = '0' then wTxtSem   := wTxtSem + Trim(uDM.ItensDescricao.AsString) + '; ';
-      if xExtras[i] = '-' then wTxtMenos := wTxtMenos + Trim(uDM.ItensDescricao.AsString) + '; ';
-      if xExtras[i] = '+' then wTxtMais  := wTxtMais  + Trim(uDM.ItensDescricao.AsString) + '; ';
-      if (xExtras[i] = '1') or
-         (xExtras[i] = '2') then wTxtMais := wTxtMais + Trim(uDM.ItensDescricao.AsString) +
-                                 '(' + xExtras[i] + 'X' + FloatToStrF(uDM.ItensPreco.AsCurrency,ffNumber,15,2) + ');';
+      if xExtras[i] = '0' then wTxtSem.Add(Trim(uDM.ItensDescricao.AsString));
+      if xExtras[i] = '+' then wTxtMais.Add(Trim(uDM.ItensDescricao.AsString));
+      if (xExtras[i] = '1') or (xExtras[i] = '2')
+      then wTxtMais.Add(Trim(uDM.ItensDescricao.AsString) + ' ' + xExtras[i] +
+                        ' X ' + FloatToStrF(uDM.ItensPreco.AsCurrency,ffNumber,15,2));
+      if xExtras[i] = '-' then wTxtMenos.Add(Trim(uDM.ItensDescricao.AsString));
     end;
-  end;
-  //if wTxtSem   <> '' then wTxtSem   := 'Sem ' + wTxtSem;
-  //if wTxtMais  <> '' then wTxtMais  := '+ ' + wTxtMais;
-  //if wTxtMenos <> '' then wTxtMenos := '- ' + wTxtMenos;
-  uDM.PedWrkTxtSem.AsString   := wTxtSem;
-  uDM.PedWrkTxtMais.AsString  := wTxtMais;
-  uDM.PedWrkTxtMenos.AsString := wTxtMenos;
+  uDM.PedWrkTxtSem.Assign(wTxtSem);
+  uDM.PedWrkTxtMais.Assign(wTxtMais);
+  uDM.PedWrkTxtMenos.Assign(wTxtMenos);
+  wTxtSem.Free;
+  wTxtMais.Free;
+  wTxtMenos.Free;
 
 end;
 
 procedure TFuTrataLanche.imgPrecoMouseDown(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
 begin
-  if True then
-
-  dbPreco.Visible := True;
   dbPreco.SetFocus;
-  //if not uDM.SisPessoaTecladoVirtual.AsBoolean then EXit;
 
 end;
 
