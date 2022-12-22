@@ -303,7 +303,6 @@ begin
     uDM.wCodExtraTab[k] := uDM.ItensCodigo.AsInteger;
     uDM.wTxtExtraTab[k] := uDM.ItensDescricao.AsString;
     uDM.wVlrExtraTab[k] := uDM.ItensPreco.AsCurrency;
-    k := k + 1;
     uDM.Itens.Next;
   end;
 
@@ -447,7 +446,6 @@ begin
 end;
 
 procedure TuDM.PedItensCalcFields(DataSet: TDataSet);
-var wDescr: String;
 begin
   case PedItensTpProd.AsInteger of
     1:PedItensZC_Tipo.AsString := 'Lan';

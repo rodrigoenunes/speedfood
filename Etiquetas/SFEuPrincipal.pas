@@ -149,7 +149,7 @@ procedure TFuPrincipalEtq.btPrintAllClick(Sender: TObject);
 var filAnt: Boolean;
     filTxtAnt: String;
 begin
-  wPrinter := ObtemParametro('PrinterEtq');
+  wPrinter := ObtemParametro('EtiquetaPrinter');
   if not DefineImpressora(True,wPrinter,wPorta,wDriver,nIndex) then
   begin
     lDialog := True;
@@ -208,7 +208,7 @@ begin
   nKey2 := uDM.PedItensNrLcto.AsInteger;
   tpImpres := 1;
   lDialog  := False;
-  wPrinter := ObtemParametro('PrinterEtq');          // 'HP Photosmart';
+  wPrinter := ObtemParametro('EtiquetaPrinter');
   if not DefineImpressora(True,wPrinter,wPorta,wDriver,nIndex) then
   begin
     lDialog := True;
@@ -217,9 +217,9 @@ begin
   RLPrinters.RLPrinter.PrinterName := wPrinter;
   RLPrinters.RLPrinter.Copies := 1;
   FFRCtle.RLPreviewSetup1.CustomActionText := '';
-  FSFEuPrintFortes := TFSFEuPrintFortes.Create(nil);
 
-  FSFEuPrintFortes.RLEtiqLanche.PrintDialog := lDialog;
+  FSFEuPrintFortes := TFSFEuPrintFortes.Create(nil);
+    FSFEuPrintFortes.RLEtiqLanche.PrintDialog := lDialog;
   if uDM.PedItensTpProd.AsInteger = 1 then
     FSFEuPrintFortes.RLEtiqLanche.Print
   else begin
@@ -242,8 +242,8 @@ begin
     uDM.PedItens.Filter := filTxtAnt;
     uDM.PedItens.Refresh
   end;
-
   FSFEuPrintFortes.Free;
+
   if tpImpres = 1 then
     if uDM.PedItens.FindKey([nKey1,nKey2]) then
     begin
