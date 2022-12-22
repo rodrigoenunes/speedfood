@@ -4,7 +4,7 @@ interface
 
 uses
   Windows, Messages, Classes, SysUtils, Graphics, Controls, StdCtrls, Forms,
-  Dialogs, DBCtrls, DB, DBTables, Mask, ExtCtrls, Vcl.Buttons;
+  Dialogs, DBCtrls, DB, Mask, ExtCtrls, Vcl.Buttons;
   Procedure ManutencaoUsuario;
 
 
