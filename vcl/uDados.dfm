@@ -411,6 +411,7 @@ object uDM: TuDM
     Top = 72
   end
   object Pedidos: TFDTable
+    OnCalcFields = PedidosCalcFields
     IndexFieldNames = 'Numero'
     Connection = FDC
     TableName = 'speedfood.com_pedido'
@@ -554,6 +555,30 @@ object uDM: TuDM
       FieldName = 'Turno'
       Origin = 'Turno'
     end
+    object PedidosZC_Impresso: TStringField
+      FieldKind = fkCalculated
+      FieldName = 'ZC_Impresso'
+      Size = 8
+      Calculated = True
+    end
+    object PedidosZC_DataHora: TStringField
+      FieldKind = fkCalculated
+      FieldName = 'ZC_DataHora'
+      Size = 14
+      Calculated = True
+    end
+    object PedidosZC_MeioPagto: TStringField
+      FieldKind = fkCalculated
+      FieldName = 'ZC_MeioPagto'
+      Size = 6
+      Calculated = True
+    end
+    object PedidosZC_MPExtenso: TStringField
+      FieldKind = fkCalculated
+      FieldName = 'ZC_MPExtenso'
+      Size = 15
+      Calculated = True
+    end
   end
   object DSPedidos: TDataSource
     DataSet = Pedidos
@@ -566,6 +591,7 @@ object uDM: TuDM
     Top = 224
   end
   object PedItens: TFDTable
+    OnCalcFields = PedItensCalcFields
     IndexFieldNames = 'Numero;NrLcto'
     MasterSource = DSPedidos
     MasterFields = 'Numero'
@@ -714,6 +740,49 @@ object uDM: TuDM
       AutoGenerateValue = arDefault
       FieldName = 'Prensado'
       Origin = 'Prensado'
+    end
+    object PedItensZC_Tipo: TStringField
+      FieldKind = fkCalculated
+      FieldName = 'ZC_Tipo'
+      Size = 3
+      Calculated = True
+    end
+    object PedItensZC_Cortado: TStringField
+      FieldKind = fkCalculated
+      FieldName = 'ZC_Cortado'
+      Size = 8
+      Calculated = True
+    end
+    object PedItensZC_Prensado: TStringField
+      FieldKind = fkCalculated
+      FieldName = 'ZC_Prensado'
+      Size = 8
+      Calculated = True
+    end
+    object PedItensZC_Descricao: TStringField
+      FieldKind = fkCalculated
+      FieldName = 'ZC_Descricao'
+      Size = 120
+      Calculated = True
+    end
+    object PedItensZC_PedLcto: TStringField
+      FieldKind = fkCalculated
+      FieldName = 'ZC_PedLcto'
+      Size = 8
+      Calculated = True
+    end
+    object PedItensZC_Impresso: TStringField
+      DisplayWidth = 1
+      FieldKind = fkCalculated
+      FieldName = 'ZC_Impresso'
+      Size = 1
+      Calculated = True
+    end
+    object PedItensZC_Tp: TStringField
+      FieldKind = fkCalculated
+      FieldName = 'ZC_Tp'
+      Size = 1
+      Calculated = True
     end
   end
   object RegCaixa: TFDTable
@@ -1119,105 +1188,6 @@ object uDM: TuDM
     DataSet = SisPessoa
     Left = 100
     Top = 80
-  end
-  object EtqItens: TFDTable
-    OnCalcFields = EtqItensCalcFields
-    IndexFieldNames = 'Numero;NrLcto'
-    Connection = FDC
-    TableName = 'speedfood.com_pedidoitem'
-    Left = 216
-    Top = 328
-    object EtqItensNumero: TIntegerField
-      FieldName = 'Numero'
-      Origin = 'Numero'
-      ProviderFlags = [pfInUpdate, pfInWhere, pfInKey]
-      Required = True
-    end
-    object EtqItensNrLcto: TIntegerField
-      FieldName = 'NrLcto'
-      Origin = 'NrLcto'
-      ProviderFlags = [pfInUpdate, pfInWhere, pfInKey]
-      Required = True
-    end
-    object EtqItensTpProd: TIntegerField
-      AutoGenerateValue = arDefault
-      FieldName = 'TpProd'
-      Origin = 'TpProd'
-    end
-    object EtqItensCodProd: TIntegerField
-      AutoGenerateValue = arDefault
-      FieldName = 'CodProd'
-      Origin = 'CodProd'
-    end
-    object EtqItensQuant: TIntegerField
-      AutoGenerateValue = arDefault
-      FieldName = 'Quant'
-      Origin = 'Quant'
-    end
-    object EtqItensTxtSem: TStringField
-      AutoGenerateValue = arDefault
-      FieldName = 'TxtSem'
-      Origin = 'TxtSem'
-      Size = 1024
-    end
-    object EtqItensTxtMais: TStringField
-      AutoGenerateValue = arDefault
-      FieldName = 'TxtMais'
-      Origin = 'TxtMais'
-      Size = 1024
-    end
-    object EtqItensTxtMenos: TStringField
-      AutoGenerateValue = arDefault
-      FieldName = 'TxtMenos'
-      Origin = 'TxtMenos'
-      Size = 1024
-    end
-    object EtqItensObservacao: TStringField
-      AutoGenerateValue = arDefault
-      FieldName = 'Observacao'
-      Origin = 'Observacao'
-      Size = 1024
-    end
-    object EtqItensEtqImpressa: TShortintField
-      AutoGenerateValue = arDefault
-      FieldName = 'EtqImpressa'
-      Origin = 'EtqImpressa'
-    end
-    object EtqItensTurno: TIntegerField
-      AutoGenerateValue = arDefault
-      FieldName = 'Turno'
-      Origin = 'Turno'
-    end
-    object EtqItensExtras: TStringField
-      AutoGenerateValue = arDefault
-      FieldName = 'Extras'
-      Origin = 'Extras'
-      FixedChar = True
-      Size = 24
-    end
-    object EtqItensZC_Descricao: TStringField
-      FieldKind = fkCalculated
-      FieldName = 'ZC_Descricao'
-      Size = 1024
-      Calculated = True
-    end
-    object EtqItensZC_DataHora: TStringField
-      FieldKind = fkCalculated
-      FieldName = 'ZC_DataHora'
-      Size = 16
-      Calculated = True
-    end
-    object EtqItensZC_NroLcto: TStringField
-      FieldKind = fkCalculated
-      FieldName = 'ZC_NroLcto'
-      Size = 10
-      Calculated = True
-    end
-  end
-  object DSEtqItens: TDataSource
-    DataSet = EtqItens
-    Left = 260
-    Top = 348
   end
   object Parametros: TFDTable
     IndexFieldNames = 'Nome'

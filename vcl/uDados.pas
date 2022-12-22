@@ -191,23 +191,6 @@ type
     LctCaixaZC_SomaMP: TCurrencyField;
     PedidosTurno: TIntegerField;
     PedItensTurno: TIntegerField;
-    EtqItens: TFDTable;
-    EtqItensNumero: TIntegerField;
-    EtqItensNrLcto: TIntegerField;
-    EtqItensTpProd: TIntegerField;
-    EtqItensCodProd: TIntegerField;
-    EtqItensQuant: TIntegerField;
-    EtqItensTxtSem: TStringField;
-    EtqItensTxtMais: TStringField;
-    EtqItensTxtMenos: TStringField;
-    EtqItensObservacao: TStringField;
-    EtqItensEtqImpressa: TShortintField;
-    EtqItensTurno: TIntegerField;
-    DSEtqItens: TDataSource;
-    EtqItensZC_Descricao: TStringField;
-    EtqItensZC_DataHora: TStringField;
-    EtqItensExtras: TStringField;
-    EtqItensZC_NroLcto: TStringField;
     Parametros: TFDTable;
     ParametrosNome: TStringField;
     ParametrosDescricao: TStringField;
@@ -219,11 +202,23 @@ type
     PedItensPrensado: TShortintField;
     PedWrkCortado: TBooleanField;
     PedWrkPrensado: TBooleanField;
+    PedidosZC_Impresso: TStringField;
+    PedItensZC_Tipo: TStringField;
+    PedItensZC_Cortado: TStringField;
+    PedItensZC_Prensado: TStringField;
+    PedItensZC_Descricao: TStringField;
+    PedItensZC_PedLcto: TStringField;
+    PedidosZC_DataHora: TStringField;
+    PedItensZC_Impresso: TStringField;
+    PedItensZC_Tp: TStringField;
+    PedidosZC_MeioPagto: TStringField;
+    PedidosZC_MPExtenso: TStringField;
     procedure ItensCalcFields(DataSet: TDataSet);
     procedure LctCaixaCalcFields(DataSet: TDataSet);
     procedure PedWrkCalcFields(DataSet: TDataSet);
     procedure RegCaixaCalcFields(DataSet: TDataSet);
-    procedure EtqItensCalcFields(DataSet: TDataSet);
+    procedure PedidosCalcFields(DataSet: TDataSet);
+    procedure PedItensCalcFields(DataSet: TDataSet);
   private
     { Private declarations }
   public
@@ -249,7 +244,8 @@ const
   xOperAbrv: array[0..4] of String = ('Sdo',  'Rec',  'Sup',   'Pgt',  'San');
   xMeioPgto: array[0..5] of String = ('R$', 'CDeb','CCred','PIX','Outros','Misto');
   xMeioAbrv: array[0..5] of String = ('R$', 'CDb', 'CCr',  'PIX','Ou',    'Mit');
-
+  xMPExtenso: array[0..5] of String = ('Dinheiro', 'Cartão débito','Cartão crédito',
+                                       'PIX', 'Outros', 'Misto');
 implementation
 
 {%CLASSGROUP 'Vcl.Controls.TControl'}
@@ -369,18 +365,6 @@ begin
 end;
 
 
-procedure TuDM.EtqItensCalcFields(DataSet: TDataSet);
-begin
-  EtqItensZC_Descricao.AsString := '';
-  if Itens.FindKey([EtqItensTpProd.AsInteger,EtqItensCodProd.AsInteger]) then
-    EtqItensZC_Descricao.AsString := stringReplace(ItensDescricao.AsString,'#',' ',[rfIgnoreCase, rfReplaceAll]);
-  EtqItensZC_DataHora.AsString := '';
-  if uDM.Pedidos.FindKey([EtqItensNumero.AsInteger]) then
-    EtqItensZC_DataHora.AsString := uDM.PedidosData.AsString;
-  EtqItensZC_NroLcto.AsString := EtqItensNumero.AsString + '/' + EtqItensNrLcto.AsString;
-
-end;
-
 procedure TuDM.ItensCalcFields(DataSet: TDataSet);
 begin
   if uDM = Nil then Exit;
@@ -439,6 +423,61 @@ begin
                                       uDM.LctCaixaPgtCCred.AsCurrency +
                                       uDM.LctCaixaPgtPIX.AsCurrency +
                                       uDM.LctCaixaPgtOutros.AsCurrency;
+
+end;
+
+procedure TuDM.PedidosCalcFields(DataSet: TDataSet);
+var xData: String;
+begin
+  uDM.PedidosZC_Impresso.AsString := '';
+  if uDM.PedidosEtqImpressas.AsInteger > 0 then
+    uDM.PedidosZC_Impresso.AsString := 'Impresso';
+  xData := uDM.PedidosData.AsString;
+  uDM.PedidosZC_DataHora.AsString := Copy(xData,1,6) + Copy(xData,9,8);
+  if (uDM.PedidosMeioPagto.AsInteger >= 0) and (uDM.PedidosMeioPagto.AsInteger <= 5)
+  then begin
+    uDM.PedidosZC_MeioPagto.AsString := xMeioAbrv[uDM.PedidosMeioPagto.AsInteger];
+    uDM.PedidosZC_MPExtenso.AsString := xMPExtenso[uDM.PedidosMeioPagto.AsInteger];
+  end
+  else begin
+    uDM.PedidosZC_MeioPagto.AsString := '(' + uDM.PedidosMeioPagto.AsString + ')';
+    uDM.PedidosZC_MPExtenso.AsString := '[  ' + uDM.PedidosMeioPagto.AsString + '  ]';
+  end;
+
+end;
+
+procedure TuDM.PedItensCalcFields(DataSet: TDataSet);
+var wDescr: String;
+begin
+  case PedItensTpProd.AsInteger of
+    1:PedItensZC_Tipo.AsString := 'Lan';
+    3:PedItensZC_Tipo.AsString := 'Beb';
+    4:PedItensZC_Tipo.AsString := 'Div';
+    else PedItensZC_Tipo.AsString := '';
+  end;
+  case PedItensTpProd.AsInteger of
+    1:PedItensZC_Tp.AsString := 'L';
+    3:PedItensZC_Tp.AsString := 'B';
+    4:PedItensZC_Tp.AsString := 'D';
+    else PedItensZC_Tp.AsString := '';
+  end;
+  if PedItensCortado.AsInteger <> 0 then
+    PedItensZC_Cortado.AsString := 'Cortado'
+  else
+    PedItensZC_Cortado.AsString := '';
+  if PedItensPrensado.AsInteger <> 0 then
+    PedItensZC_Prensado.AsString := 'Prensado'
+  else
+    PedItensZC_Prensado.AsString := '';
+  if uDM.Itens.FindKey([uDM.PedItensTpProd.AsInteger,uDM.PedItensCodProd.AsInteger]) then
+    PedItensZC_Descricao.AsString := stringReplace(ItensDescricao.AsString,'#',' ',[rfIgnoreCase, rfReplaceAll])
+  else
+    PedItensZC_Descricao.AsString := '';
+  if PedItensEtqImpressa.AsInteger <> 0 then
+    PedItensZC_Impresso.ASString := 'P'
+  else
+    PedItensZC_Impresso.AsString := '';
+  PedItensZC_PedLcto.AsString := PedItensNumero.AsString + '/' + PedItensNrLcto.AsString;
 
 end;
 

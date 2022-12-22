@@ -500,8 +500,6 @@ object FuFinPedido: TFuFinPedido
     Height = 447
     Align = alClient
     TabOrder = 7
-    ExplicitLeft = 76
-    ExplicitTop = 8
     object imgPedido: TImage
       Left = 28
       Top = 14
@@ -536,7 +534,7 @@ object FuFinPedido: TFuFinPedido
     Font.Name = 'Tahoma'
     Font.Style = []
     ParentFont = False
-    TabOrder = 6
+    TabOrder = 5
     Visible = False
   end
   object dbMais: TDBMemo
@@ -552,7 +550,7 @@ object FuFinPedido: TFuFinPedido
     Font.Name = 'Tahoma'
     Font.Style = []
     ParentFont = False
-    TabOrder = 5
+    TabOrder = 4
     Visible = False
   end
   object dbSem: TDBMemo
@@ -568,7 +566,7 @@ object FuFinPedido: TFuFinPedido
     Font.Name = 'Tahoma'
     Font.Style = []
     ParentFont = False
-    TabOrder = 4
+    TabOrder = 3
     Visible = False
   end
   object Teclado: TTouchKeyboard

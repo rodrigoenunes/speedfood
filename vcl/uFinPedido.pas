@@ -475,6 +475,7 @@ procedure TFuFinPedido.btGravarClick(Sender: TObject);
 var somaVlr,wSaldo: Currency;
     newSeq: Integer;
     vlrEntradas,vlrSaidas: Currency;
+    xImpressao: String;
 begin
   somaVlr := uDM.PedidosVlrReais.AsCurrency + uDM.PedidosVlrCDeb.AsCurrency +
              uDM.PedidosVlrCCred.AsCurrency + uDM.PedidosVlrPIX.AsCurrency +
@@ -568,7 +569,17 @@ begin
   uDM.RegCaixaSaldoFinal.AsCurrency := (uDM.RegCaixaSaldoInicial.AsCurrency + vlrEntradas) - vlrSaidas;
   uDM.RegCaixa.Post;
   //
-  ImprimePedido(uDM.PedidosNumero.AsInteger);
+  xImpressao := ObtemParametro('PedidoImprimir');
+  if Pos(xImpressao,'SNP')= 0 then xImpressao := 'P';
+  if xImpressao = 'P' then
+    if MessageDlg('Imprimir pedido ?',mtConfirmation,[mbYes,mbNo],0,mbNo) = mrYes then
+      xImpressao := 'S'
+    else
+      xImpressao := 'N';
+  //
+  if xImpressao = 'S' then
+    ImprimePedido(uDM.PedidosNumero.AsInteger);
+
   GeraImprimeNFCe(uDM.PedidosNumero.AsInteger);
   //
   nRetorno := 0;

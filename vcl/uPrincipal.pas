@@ -19,6 +19,7 @@ type
     LabInicio: TLabel;
     LabFinal: TLabel;
     LabTurno: TLabel;
+    btConsPedidos: TBitBtn;
     procedure btSairClick(Sender: TObject);
     procedure btSuporteClick(Sender: TObject);
     procedure FormActivate(Sender: TObject);
@@ -27,6 +28,7 @@ type
     procedure btPedidosClick(Sender: TObject);
     procedure btUsuarioClick(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
+    procedure btConsPedidosClick(Sender: TObject);
   private
     { Private declarations }
   public
@@ -41,11 +43,18 @@ implementation
 
 {$R *.dfm}
 
-uses uItens, uDados, uGenericas, uCaixa, uPedidos, uImpressoes, uUsuario;
+uses uItens, uDados, uGenericas, uCaixa, uPedidos, uImpressoes, uUsuario,
+  uConsPedidos;
 
 procedure TFuPrincipal.btAbrirCaixaClick(Sender: TObject);
 begin
   AberturaDeCaixa(True);
+
+end;
+
+procedure TFuPrincipal.btConsPedidosClick(Sender: TObject);
+begin
+  FuConsPedidos.ShowModal;
 
 end;
 

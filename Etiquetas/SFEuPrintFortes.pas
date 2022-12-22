@@ -5,34 +5,56 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, RLReport;
+  procedure SetaRegsEtqLanches(pmtModo:Integer);
 
 type
   TFSFEuPrintFortes = class(TForm)
-    RLEtiqueta: TRLReport;
-    RLDetalhe: TRLBand;
-    RLLabel4: TRLLabel;
+    RLEtiqLanche: TRLReport;
+    RLDetLanche: TRLBand;
     RLDBMemo1: TRLDBMemo;
-    RLPanel1: TRLPanel;
-    RLDBText3: TRLDBText;
-    RLPanel2: TRLPanel;
-    RLDBText1: TRLDBText;
-    RLDBText2: TRLDBText;
     RLPanel3: TRLPanel;
     RLDBText4: TRLDBText;
     RLPanel4: TRLPanel;
     RLPanel5: TRLPanel;
-    RLLabel1: TRLLabel;
     RLSem: TRLMemo;
     RLPanel6: TRLPanel;
-    RLLabel2: TRLLabel;
     RLMais: TRLMemo;
     RLPanel7: TRLPanel;
-    RLLabel3: TRLLabel;
     RLMenos: TRLMemo;
     RLNadaSem: TRLImage;
     RLNadaMais: TRLImage;
     RLNadaMenos: TRLImage;
-    procedure RLEtiquetaBeforePrint(Sender: TObject; var PrintIt: Boolean);
+    RLAngleLabel4: TRLAngleLabel;
+    RLAngleLabel1: TRLAngleLabel;
+    RLAngleLabel2: TRLAngleLabel;
+    RLAngleLabel3: TRLAngleLabel;
+    RLLabPrensado: TRLLabel;
+    RLEtiqBebida: TRLReport;
+    RLCabBeb: TRLBand;
+    RLPanel8: TRLPanel;
+    RLDBText5: TRLDBText;
+    RLDBText6: TRLDBText;
+    RLPanel9: TRLPanel;
+    RLDBText7: TRLDBText;
+    RLCabLanche: TRLBand;
+    RLPanel2: TRLPanel;
+    RLDBText1: TRLDBText;
+    RLDBText2: TRLDBText;
+    RLPanel1: TRLPanel;
+    RLDBText3: TRLDBText;
+    RLLabCortado: TRLLabel;
+    RLDBText8: TRLDBText;
+    RLDetBebida: TRLBand;
+    RLBebFooter: TRLBand;
+    RLBebColFooter: TRLBand;
+    RLDBText10: TRLDBText;
+    RLDBText11: TRLDBText;
+    RLDBText12: TRLDBText;
+    RLLabel1: TRLLabel;
+    RLLabel2: TRLLabel;
+    RLDBResult1: TRLDBResult;
+    RLDBText9: TRLDBText;
+    procedure RLEtiqLancheBeforePrint(Sender: TObject; var PrintIt: Boolean);
   private
     { Private declarations }
   public
@@ -48,16 +70,33 @@ implementation
 
 uses uDados;
 
-procedure TFSFEuPrintFortes.RLEtiquetaBeforePrint(Sender: TObject; var PrintIt: Boolean);
+procedure SetaRegsEtqLanches(pmtModo:Integer);
+begin
+  if pmtModo = 1 then
+    FSFEuPrintFortes.RLEtiqLanche.RecordRange := rrAllRecords
+  else
+    FSFEuPrintFortes.RLEtiqLanche.RecordRange := rrCurrentOnly;
+
+end;
+
+procedure TFSFEuPrintFortes.RLEtiqLancheBeforePrint(Sender: TObject; var PrintIt: Boolean);
 var i: Integer;
     AllExtras,xExtra: String;
+    wImgVazio: String;
 begin
   with FSFEuPrintFortes
   do begin
+    wImgVazio := ObtemParametro('imgVazio');
+    if FileExists(wImgVazio) then
+    begin
+      RLNadaSem.Picture.LoadFromFile(wImgVazio);
+      RLNadaMais.Picture.LoadFromFile(wImgVazio);
+      RLNadaMenos.Picture.LoadFromFile(wImgVazio);
+    end;
     RLSem.Lines.Clear;
     RLMais.Lines.Clear;
     RLMenos.Lines.Clear;
-    AllExtras := uDM.EtqItensExtras.AsString;
+    AllExtras := uDM.PedItensExtras.AsString;
     for i := 1 to 24 do
       if AllExtras[i] <> '.' then
          if uDM.Itens.FindKey([2,i])
@@ -73,6 +112,11 @@ begin
       RLNadaMais.Visible := True;
     if RLMenos.Lines.Count = 0 then
       RLNadaMenos.Visible := True;
+    if uDM.PedItensPrensado.AsInteger <> 0 then
+      RLLabPrensado.Visible := True;
+    if uDM.PedItensCortado.AsInteger <> 0 then
+      RLLabCortado.Visible := True;
+
    end;
 
 end;

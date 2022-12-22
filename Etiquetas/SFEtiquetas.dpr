@@ -3,12 +3,12 @@ program SFEtiquetas;
 uses
   Vcl.Forms,
   SFEuPrincipal in 'SFEuPrincipal.pas' {FuPrincipalEtq},
-  uDados in '..\vcl\uDados.pas' {uDM: TDataModule},
   uGenericas in '..\..\UsoGeral\uGenericas.pas' {FGen},
   SFEuPrintFortes in 'SFEuPrintFortes.pas' {FSFEuPrintFortes},
   FortesReportCtle in '..\..\uFortesReport\FortesReportCtle.pas' {FFRCtle},
   EnviaEMail in '..\..\uFortesReport\EnviaEMail.pas' {FEnviaEMail},
-  uSysPrinters in '..\..\UsoGeral\uSysPrinters.pas' {FuSysPrinters};
+  uSysPrinters in '..\..\UsoGeral\uSysPrinters.pas' {FuSysPrinters},
+  uDados in '..\vcl\uDados.pas' {uDM: TDataModule};
 
 {$R *.res}
 

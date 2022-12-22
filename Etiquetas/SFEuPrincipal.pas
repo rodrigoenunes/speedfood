@@ -5,7 +5,8 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ExtCtrls, Vcl.Buttons,
-  Data.DB, Vcl.Grids, Vcl.DBGrids, Vcl.DBCtrls, System.UITypes, RLPrinters;
+  Data.DB, Vcl.Grids, Vcl.DBGrids, Vcl.DBCtrls, System.UITypes, RLPrinters,
+  Vcl.Mask;
 
 type
   TFuPrincipalEtq = class(TForm)
@@ -15,14 +16,30 @@ type
     btProsseguir: TBitBtn;
     btSair: TBitBtn;
     btCarrega: TBitBtn;
-    GridEtqs: TDBGrid;
-    PanRodape: TPanel;
-    NavEtqs: TDBNavigator;
+    PanPedidos: TPanel;
+    PanEtiquetas: TPanel;
+    GridPeds: TDBGrid;
+    PanRodapePed: TPanel;
+    LabNrPeds: TLabel;
+    NavPeds: TDBNavigator;
+    PanRodapeItens: TPanel;
     LabNrEtqs: TLabel;
-    btPrint: TBitBtn;
+    NavItens: TDBNavigator;
+    GridItens: TDBGrid;
+    dbNroPedido: TDBEdit;
     btNoEtiq: TBitBtn;
-    btSair2: TBitBtn;
     btPreview: TBitBtn;
+    btPrint: TBitBtn;
+    PanCliente: TPanel;
+    Label3: TLabel;
+    DBText1: TDBText;
+    Panel1: TPanel;
+    Label2: TLabel;
+    cbSelPedidos: TComboBox;
+    Label4: TLabel;
+    cbSelItens: TComboBox;
+    btPrintAll: TBitBtn;
+    btSair2: TBitBtn;
     procedure FormCreate(Sender: TObject);
     procedure FormActivate(Sender: TObject);
     procedure btCarregaClick(Sender: TObject);
@@ -33,7 +50,13 @@ type
     procedure btNoEtiqClick(Sender: TObject);
     procedure btPrintClick(Sender: TObject);
     procedure btPreviewClick(Sender: TObject);
-    procedure GridEtqsDblClick(Sender: TObject);
+    procedure GridPedsDblClick(Sender: TObject);
+    procedure dbNroPedidoChange(Sender: TObject);
+    procedure cbTurnosExit(Sender: TObject);
+    procedure FormClose(Sender: TObject; var Action: TCloseAction);
+    procedure cbSelPedidosClick(Sender: TObject);
+    procedure cbSelItensClick(Sender: TObject);
+    procedure btPrintAllClick(Sender: TObject);
   private
     { Private declarations }
   public
@@ -43,31 +66,40 @@ type
 var
   FuPrincipalEtq: TFuPrincipalEtq;
   wPathWork: String;
+  xTurno: String;
   imgEtiq: TImage;
+  wPrinter,wPorta,wDriver: String;
+  nIndex: Integer;
+  lDialog: Boolean;
 
 const
-  txtNoEtiq: String = 'Não há etiquetas à imprimir';
-  txtEtiqs: String = 'Etiquetas à imprimir: ';
+
+  txtNoEtiq: String = 'Não há pedidos à imprimir';
+  txtEtiqs: String = 'Pedidos à imprimir: ';
 
 implementation
 
 {$R *.dfm}
 
-uses uDados, uGenericas, SFEuPrintFortes, FortesReportCtle, uSysPrinters;
+uses uGenericas, SFEuPrintFortes, FortesReportCtle, uSysPrinters, uDados;
 
 procedure CarregaTurnos;
-var xTurno: String;
+var lCarrega: Boolean;
+    wrkTurno: String;
 begin
   with FuPrincipalEtq
   do begin
     cbTurnos.Clear;
+    lCarrega := True;
     uDM.RegCaixa.Last;
-    while not uDM.RegCaixa.Bof do
+    while lCarrega do
     begin
-      xTurno := uDM.RegCaixaTurno.AsString + '  ' +
-                uDM.RegCaixaDtHrInicio.AsString + ' - ' + uDM.RegCaixaDtHrFim.AsString;
-      cbTurnos.AddItem(xTurno,nil);
+      wrkTurno := uDM.RegCaixaTurno.AsString + '  ' +
+                  uDM.RegCaixaDtHrInicio.AsString + ' - ' + uDM.RegCaixaDtHrFim.AsString;
+      cbTurnos.AddItem(wrkTurno,nil);
       uDM.RegCaixa.Prior;
+      if uDM.RegCaixa.Bof or (cbTurnos.Items.Count > 60) then
+        lCarrega := False;
     end;
     cbTurnos.ItemIndex := 0;
   end;
@@ -77,15 +109,30 @@ end;
 
 procedure TFuPrincipalEtq.btPreviewClick(Sender: TObject);
 var nKey1,nKey2: Integer;
+    filTxtAnt: String;
+    filAnt: Boolean;
 begin
-  if uDM.EtqItens.RecordCount = 0 then Exit;
-  nKey1 := uDM.EtqItensNumero.AsInteger;
-  nKey2 := uDM.EtqItensNrLcto.AsInteger;
+  if uDM.PedItens.RecordCount = 0 then Exit;
+  nKey1 := uDM.PedItensNumero.AsInteger;
+  nKey2 := uDM.PedItensNrLcto.AsInteger;
   FFRCtle.RLPreviewSetup1.CustomActionText := '';
   FSFEuPrintFortes := TFSFEuPrintFortes.Create(nil);
-  FSFEuPrintFortes.RLEtiqueta.Preview;
+
+  if uDM.PedItensTpProd.AsInteger = 1 then
+    FSFEuPrintFortes.RLEtiqLanche.Preview
+  else begin
+    filAnt := uDM.PedItens.Filtered;
+    filTxtAnt := uDM.pedItens.Filter;
+    uDM.PedItens.Filtered := True;
+    uDM.PedItens.Filter := 'TpProd=3';
+    uDM.PedItens.Refresh;
+    FSFEuPrintFortes.RLEtiqBebida.Preview;    // Visualiza etiqueta com TODAS as bebidas
+    uDM.PedItens.Filtered := filAnt;
+    uDM.PedItens.Filter := filTxtAnt;
+    uDM.PedItens.Refresh
+  end;
   FSFEuPrintFortes.Free;
-  uDM.EtqItens.FindKey([nKey1,nKey2]);
+  uDM.PedItens.FindKey([nKey1,nKey2]);
 
 end;
 
@@ -98,18 +145,11 @@ begin
 
 end;
 
-procedure TFuPrincipalEtq.btPrintClick(Sender: TObject);
-var nKey1,nKey2: Integer;
-    wPrinter,wPorta,wDriver: String;
-    nIndex: Integer;
-    lDialog: Boolean;
+procedure TFuPrincipalEtq.btPrintAllClick(Sender: TObject);
+var filAnt: Boolean;
+    filTxtAnt: String;
 begin
-  if uDM.EtqItens.RecordCount = 0 then Exit;
-  nKey1 := uDM.EtqItensNumero.AsInteger;
-  nKey2 := uDM.EtqItensNrLcto.AsInteger;
-  lDialog  := False;
-  wPrinter := ObtemParametro('PrinterEtq');          // 'HP Photosmart';
-  //wPrinter := uBiblioteca.getValorParametro('PrinterEtq');
+  wPrinter := ObtemParametro('PrinterEtq');
   if not DefineImpressora(True,wPrinter,wPorta,wDriver,nIndex) then
   begin
     lDialog := True;
@@ -119,20 +159,99 @@ begin
   RLPrinters.RLPrinter.Copies := 1;
   FFRCtle.RLPreviewSetup1.CustomActionText := '';
   FSFEuPrintFortes := TFSFEuPrintFortes.Create(nil);
-  FSFEuPrintFortes.RLEtiqueta.PrintDialog := lDialog;
-  FSFEuPrintFortes.RLEtiqueta.Print;
-  FSFEuPrintFortes.Free;
-  if uDM.EtqItens.FindKey([nKey1,nKey2]) then
+  FSFEuPrintFortes.RLEtiqLanche.PrintDialog := lDialog;            // Lanches
+  FSFEuPrintFortes.RLEtiqBebida.PrintDialog := lDialog;            // Bebidas
+  filAnt := uDM.PedItens.Filtered;
+  filTxtAnt := uDM.PedItens.Filter;
+  uDM.PedItens.Filtered := True;
+  uDM.PedItens.Filter := 'TpProd=1';
+  uDM.Pedidos.Refresh;
+  if uDM.PedItens.RecordCount > 0 then
   begin
-    uDM.EtqItens.Edit;
-    uDM.EtqItensEtqImpressa.AsInteger := uDM.EtqItensEtqImpressa.AsInteger + 1;
-    uDM.EtqItens.Post;
+    SetaRegsEtqLanches(1);       // Todos os registros
+    uDM.PedItens.First;
+    FSFEuPrintFortes.RLEtiqLanche.Print;
+    SetaRegsEtqLanches(0);       // Somente registro atual (Defualt)
   end;
-  uDM.EtqItens.Refresh;
-  if uDM.EtqItens.RecordCount = 0 then
-    LabNrEtqs.Caption := txtNoEtiq
-  else
-    LabNrEtqs.Caption := txtEtiqs + IntToStr(uDM.EtqItens.RecordCount);
+  uDM.PedItens.Filter := 'TpProd=3';
+  uDM.PedItens.Refresh;
+  if uDM.Pedidos.RecordCount > 0 then
+  begin
+    uDM.PedItens.First;
+    FSFEuPrintFortes.RLEtiqBebida.Print;    // Imprime TODAS as bebidas em uma etiqueta
+  end;
+  FSFEuPrintFortes.Free;
+  //
+  uDM.PedItens.Filtered := False;
+  uDM.PedItens.Refresh;
+  uDM.PedItens.First;
+  while not uDM.PedItens.Eof do
+  begin
+    uDM.PedItens.Edit;
+    uDM.PedItensEtqImpressa.AsInteger := 1;
+    uDM.PedItens.Post;
+    uDM.PedItens.Next;
+  end;
+  uDM.PedItens.Filtered := filAnt;
+  uDM.PedItens.Filter := filTxtAnt;
+  uDM.PedItens.Refresh;
+
+end;
+
+procedure TFuPrincipalEtq.btPrintClick(Sender: TObject);
+var nKey1,nKey2,tpImpres: Integer;
+    filTxtAnt: String;
+    filAnt: Boolean;
+begin
+  if uDM.PedItens.RecordCount = 0 then Exit;
+  nKey1 := uDM.PedItensNumero.AsInteger;
+  nKey2 := uDM.PedItensNrLcto.AsInteger;
+  tpImpres := 1;
+  lDialog  := False;
+  wPrinter := ObtemParametro('PrinterEtq');          // 'HP Photosmart';
+  if not DefineImpressora(True,wPrinter,wPorta,wDriver,nIndex) then
+  begin
+    lDialog := True;
+    if not RetornaImpressoraPadrao(wPrinter,wPorta,wDriver,nIndex) then Exit;
+  end;
+  RLPrinters.RLPrinter.PrinterName := wPrinter;
+  RLPrinters.RLPrinter.Copies := 1;
+  FFRCtle.RLPreviewSetup1.CustomActionText := '';
+  FSFEuPrintFortes := TFSFEuPrintFortes.Create(nil);
+
+  FSFEuPrintFortes.RLEtiqLanche.PrintDialog := lDialog;
+  if uDM.PedItensTpProd.AsInteger = 1 then
+    FSFEuPrintFortes.RLEtiqLanche.Print
+  else begin
+    tpImpres := 3;
+    filAnt := uDM.PedItens.Filtered;
+    filTxtAnt := uDM.PedItens.Filter;
+    uDM.PedItens.Filter := 'TpProd=3';
+    uDM.PedItens.Filtered := True;
+    uDM.PedItens.Refresh;
+    FSFEuPrintFortes.RLEtiqBebida.Print;       // Imprime TODAS as bebidas em uma etiqueta
+    uDM.PedItens.First;
+    while not uDM.PedItens.Eof do
+    begin
+      uDM.PedItens.Edit;
+      uDM.PedItensEtqImpressa.AsInteger := 1;
+      uDM.PedItens.Post;
+      uDM.PedItens.Next;
+    end;
+    uDM.PedItens.Filtered := filAnt;
+    uDM.PedItens.Filter := filTxtAnt;
+    uDM.PedItens.Refresh
+  end;
+
+  FSFEuPrintFortes.Free;
+  if tpImpres = 1 then
+    if uDM.PedItens.FindKey([nKey1,nKey2]) then
+    begin
+      uDM.PedItens.Edit;
+      uDM.PedItensEtqImpressa.AsInteger := 1;
+      uDM.PedItens.Post;
+    end;
+  uDM.PedItens.Refresh;
 
 end;
 
@@ -141,21 +260,16 @@ begin
  if MessageDlg('Excluir da relação de etiquetas à imprimir ?',
                 mtConfirmation,[mbYes,mbNo],0,mbNo,['Sim','Não']) = mrYes then
   begin
-    uDM.etqItens.Edit;
-    uDM.EtqItensEtqImpressa.AsInteger := 9;
-    uDM.EtqItens.Post;
-    uDM.EtqItens.Refresh;
-    if uDM.EtqItens.RecordCount = 0 then
-      LabNrEtqs.Caption := txtNoEtiq
-    else
-      LabNrEtqs.Caption := txtEtiqs + IntToStr(uDM.EtqItens.RecordCount);
+    uDM.PedItens.Edit;
+    uDM.PedItensEtqImpressa.AsInteger := 9;
+    uDM.PedItens.Post;
   end;
+  uDM.PedItens.Refresh;
 
 end;
 
 procedure TFuPrincipalEtq.btProsseguirClick(Sender: TObject);
 var nPos: Integer;
-    xTurno: String;
 begin
   nPos := Pos(' ',cbTurnos.Text);
   xTurno := Copy(cbTurnos.Text,1,nPos-1);
@@ -166,19 +280,27 @@ begin
     Exit;
   end;
   //
-  uDM.EtqItens.Filtered := True;
-  uDM.EtqItens.Filter   := 'Turno=' + xTurno + ' and TpProd=1 and EtqImpressa=0';
-  uDM.EtqItens.Active   := True;
-  if uDM.EtqItens.RecordCount = 0 then
-    LabNrEtqs.Caption := txtNoEtiq
+  cbSelPedidos.ItemIndex := 0;    // À imprimir
+  uDM.Pedidos.Filtered := True;
+  uDM.Pedidos.Filter := 'Turno=' + xTurno + ' and EtqImpressas = 0';
+  uDM.Pedidos.Refresh;
+  if uDM.Pedidos.RecordCount = 0 then
+    LabNrPeds.Caption := 'Sem pedidos'
   else
-    LabNrEtqs.Caption := txtEtiqs + IntToStr(uDM.EtqItens.RecordCount);
-  GridEtqs.Visible  := True;
-  NavEtqs.Visible   := True;
-  LabNrEtqs.Visible := True;
-  btPreview.Visible := True;
-  btPrint.Visible   := True;
-  btNoEtiq.Visible  := True;
+    LabNrPeds.Caption := IntToStr(uDM.Pedidos.RecordCount) + ' pedidos';
+  //
+  cbSelItens.ItemIndex := 0;      // À imprimir
+{
+  uDM.PedItens.Filtered := True;
+  uDM.PedItens.Filter := 'EtqImpressa = 0';
+  uDM.PedItens.Refresh;
+  if uDM.PedItens.RecordCount = 0 then
+    LabNrEtqs.Caption := 'Sem ítens'
+  else
+    LabNrEtqs.Caption := IntToStr(uDM.PedItens.RecordCount) + ' ítens';
+}  //
+  PanPedidos.Visible := True;
+  PanEtiquetas.Visible := True;
 
   FormResize(nil);
 
@@ -191,12 +313,59 @@ end;
 
 procedure TFuPrincipalEtq.cbTurnosEnter(Sender: TObject);
 begin
-  GridEtqs.Visible  := False;
-  NavEtqs.Visible   := False;
-  LabNrEtqs.Visible := False;
-  btPreview.Visible := False;
-  btPrint.Visible    := False;
-  btNoEtiq.Visible  := False;
+  PanPedidos.Visible := False;
+  PanEtiquetas.Visible := False;
+
+end;
+
+procedure TFuPrincipalEtq.cbTurnosExit(Sender: TObject);
+begin
+  btProsseguirClick(nil);
+
+end;
+
+procedure TFuPrincipalEtq.cbSelItensClick(Sender: TObject);
+begin
+  if cbSelItens.ItemIndex = 2 then
+  begin
+    uDM.PedItens.Filtered := False;
+    uDM.PedItens.Filter := '';
+  end
+  else begin
+    uDM.PedItens.Filtered := True;
+    if cbSelItens.ItemIndex = 0 then
+      uDM.PedItens.Filter := 'EtqImpressa = 0'
+    else
+      uDM.PedItens.Filter := 'EtqImpressa <> 0';
+  end;
+  uDM.PedItens.Refresh;
+  if uDM.PedItens.RecordCount = 0 then
+    LabNrEtqs.Caption := 'Sem ítens'
+  else
+    LabNrEtqs.Caption := IntToStr(uDM.PedItens.RecordCount) + ' ítens';
+
+end;
+
+procedure TFuPrincipalEtq.cbSelPedidosClick(Sender: TObject);
+begin
+  case cbSelPedidos.ItemIndex of
+    0:uDM.Pedidos.Filter := 'Turno=' + xTurno + ' and EtqImpressas = 0';
+    1:uDM.Pedidos.Filter := 'Turno=' + xTurno + ' and EtqImpressas <> 0';
+    2:uDM.Pedidos.Filter := 'Turno=' + xTurno;
+  end;
+  uDM.Pedidos.Refresh;
+  if uDM.Pedidos.RecordCount = 0 then
+    LabNrPeds.Caption := 'Sem pedidos'
+  else
+    LabNrPeds.Caption := IntToStr(uDM.Pedidos.RecordCount) + ' pedidos';
+
+end;
+
+procedure TFuPrincipalEtq.dbNroPedidoChange(Sender: TObject);
+begin
+  if not uDM.PedItens.Active then Exit;
+  cbSelItens.ItemIndex := 0;
+  cbSelItensClick(nil);
 
 end;
 
@@ -205,32 +374,68 @@ begin
   if uDM = Nil then
   begin
     uDM := TuDM.Create(nil);
-    uDM.FDC.Connected    := True;
-    uDM.SisPessoa.Active := True;
-    uDM.Itens.Active     := True;
-    uDM.RegCaixa.Active  := True;
-    uDM.Pedidos.Active   := True;
-    uDM.pathWork         := wPathWork;
+    uDM.FDC.Connected     := True;
+    uDM.SisPessoa.Active  := True;
+    uDM.Itens.Active      := True;
+    uDM.RegCaixa.Active   := True;
+    uDM.Pedidos.Active    := True;
+    uDM.PedItens.Active   := True;
+    uDM.pathWork          := wPathWork;
     CarregaTurnos;
-    btProsseguir.SetFocus;
-    btProsseguirClick(nil);
+    cbTurnos.SetFocus;
   end;
+
+end;
+
+procedure TFuPrincipalEtq.FormClose(Sender: TObject; var Action: TCloseAction);
+begin
+  uDM.PedItens.Active   := False;
+  uDM.Pedidos.Active    := False;
+  uDM.RegCaixa.Active   := False;
+  uDM.Itens.Active      := False;
+  uDM.SisPessoa.Active  := False;
+  Application.Terminate;
 
 end;
 
 procedure TFuPrincipalEtq.FormCreate(Sender: TObject);
 begin
   wPathWork := ExtractFilePath(Application.ExeName);
+  btPreview.Caption := 'Visualizar etiqueta';
+  btPrint.Caption := 'Imprimir etiqueta';
+  btNoEtiq.Caption := 'Excluir etiqueta';
+  btPrintAll.Caption := 'Imprimir TODAS as etiquetas do pedido';
+  FuPrincipalEtq.FormResize(nil);
 
 end;
 
 procedure TFuPrincipalEtq.FormResize(Sender: TObject);
 begin
-  GridEtqs := DefineGrid(GridEtqs,[0.08, 0.04, 0.33],2,0);
+  FuPrincipalEtq.Width := (Screen.Width div 5) * 4;
+  FuPrincipalEtq.Height := Screen.Height - 100;
+  FuPrincipalEtq.Left := (Screen.Width - FuPrincipalEtq.Width) div 2;
+  FuPrincipalEtq.Top := 40;
+  //
+  PanPedidos.Width := 255;
+  GridPeds.Columns[0].Width := 80;
+  GridPeds.Columns[1].Width := 46;
+  GridPeds.Columns[2].Width := 84;
+  //
+  GridItens := DefineGrid(GridItens,[0.08, 0.08, 0.08, 0.33, 0.08],3,0);
+
+  btPreview.Width := (PanRodapeItens.Width - (btPreview.Left + 16)) div 3;
+  btPrint.Left := btPreview.Left + btPreview.Width + 3;
+  btPrint.Width := btPreview.Width;
+  btNoEtiq.Left := btPrint.Left + btPrint.Width + 3;
+  btNoEtiq.Width := btPreview.Width;
+  btPrintAll.Left := btPreview.Left;
+  btPrintAll.Width := btPreview.Width * 2 + 3;
+  btSair2.Left := btNoEtiq.Left;
+  btSair2.Width := btNoEtiq.Width;
 
 end;
 
-procedure TFuPrincipalEtq.GridEtqsDblClick(Sender: TObject);
+procedure TFuPrincipalEtq.GridPedsDblClick(Sender: TObject);
 begin
   btPrintClick(nil);
 

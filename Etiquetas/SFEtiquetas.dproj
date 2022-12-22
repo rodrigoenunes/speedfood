@@ -4,7 +4,7 @@
         <ProjectVersion>19.2</ProjectVersion>
         <FrameworkType>VCL</FrameworkType>
         <Base>True</Base>
-        <Config Condition="'$(Config)'==''">Release</Config>
+        <Config Condition="'$(Config)'==''">Debug</Config>
         <Platform Condition="'$(Platform)'==''">Win32</Platform>
         <TargetedPlatforms>1</TargetedPlatforms>
         <AppType>Application</AppType>
@@ -105,11 +105,6 @@
             <Form>FuPrincipalEtq</Form>
             <FormType>dfm</FormType>
         </DCCReference>
-        <DCCReference Include="..\vcl\uDados.pas">
-            <Form>uDM</Form>
-            <FormType>dfm</FormType>
-            <DesignClass>TDataModule</DesignClass>
-        </DCCReference>
         <DCCReference Include="..\..\UsoGeral\uGenericas.pas">
             <Form>FGen</Form>
             <FormType>dfm</FormType>
@@ -129,6 +124,11 @@
         <DCCReference Include="..\..\UsoGeral\uSysPrinters.pas">
             <Form>FuSysPrinters</Form>
             <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="..\vcl\uDados.pas">
+            <Form>uDM</Form>
+            <FormType>dfm</FormType>
+            <DesignClass>TDataModule</DesignClass>
         </DCCReference>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>

@@ -242,7 +242,7 @@ object FuImpressoes: TFuImpressoes
       Left = 19
       Top = 98
       Width = 264
-      Height = 283
+      Height = 235
       BandType = btSummary
       Borders.Sides = sdCustom
       Borders.DrawLeft = False
@@ -253,13 +253,13 @@ object FuImpressoes: TFuImpressoes
         Left = 0
         Top = 1
         Width = 264
-        Height = 136
+        Height = 68
         Align = faTop
         Borders.Sides = sdCustom
         Borders.DrawLeft = False
         Borders.DrawTop = False
         Borders.DrawRight = False
-        Borders.DrawBottom = False
+        Borders.DrawBottom = True
         object RLLabel8: TRLLabel
           Left = 1
           Top = 16
@@ -403,13 +403,18 @@ object FuImpressoes: TFuImpressoes
         end
       end
       object RLPanel2: TRLPanel
-        Left = 154
-        Top = 149
-        Width = 101
-        Height = 156
+        Left = 0
+        Top = 70
+        Width = 137
+        Height = 147
+        Borders.Sides = sdCustom
+        Borders.DrawLeft = False
+        Borders.DrawTop = False
+        Borders.DrawRight = True
+        Borders.DrawBottom = False
         object RLLabel12: TRLLabel
-          Left = 0
-          Top = 1
+          Left = -1
+          Top = -2
           Width = 59
           Height = 16
           Caption = 'Entradas'
@@ -421,58 +426,208 @@ object FuImpressoes: TFuImpressoes
           ParentFont = False
         end
         object RLLabel9: TRLLabel
-          Left = 20
+          Left = 16
           Top = 20
           Width = 19
           Height = 14
+          Alignment = taRightJustify
           Caption = 'R$:'
         end
         object RLLabel10: TRLLabel
-          Left = 32
+          Left = 9
           Top = 36
           Width = 26
           Height = 14
+          Alignment = taRightJustify
           Caption = 'CDb:'
         end
         object RLLabel13: TRLLabel
-          Left = 24
+          Left = 11
           Top = 52
           Width = 24
           Height = 14
+          Alignment = taRightJustify
           Caption = 'CCr:'
         end
         object RLLabel14: TRLLabel
-          Left = 16
+          Left = 14
           Top = 68
           Width = 21
           Height = 14
+          Alignment = taRightJustify
           Caption = 'PIX:'
         end
         object RLLabel15: TRLLabel
-          Left = 52
+          Left = 12
           Top = 84
           Width = 23
           Height = 14
+          Alignment = taRightJustify
           Caption = 'Out:'
         end
         object RLLabel16: TRLLabel
-          Left = 16
+          Left = 4
           Top = 104
           Width = 31
           Height = 14
+          Alignment = taRightJustify
           Caption = 'Misto:'
         end
         object RLLabel17: TRLLabel
-          Left = 20
+          Left = 10
           Top = 124
           Width = 25
           Height = 14
+          Alignment = taRightJustify
           Caption = 'Sup:'
+        end
+        object RLDBText15: TRLDBText
+          Left = 64
+          Top = 20
+          Width = 65
+          Height = 14
+          Alignment = taRightJustify
+          AutoSize = False
+          DataField = 'E_Dinheiro'
+          DataSource = uDM.DSRegCaixa
+          Text = ''
+        end
+        object RLDBText16: TRLDBText
+          Left = 64
+          Top = 36
+          Width = 65
+          Height = 14
+          Alignment = taRightJustify
+          AutoSize = False
+          DataField = 'E_CartaoDebito'
+          DataSource = uDM.DSRegCaixa
+          Text = ''
+        end
+        object RLDBText17: TRLDBText
+          Left = 64
+          Top = 52
+          Width = 65
+          Height = 14
+          Alignment = taRightJustify
+          AutoSize = False
+          DataField = 'E_CartaoCredito'
+          DataSource = uDM.DSRegCaixa
+          Text = ''
+        end
+        object RLDBText18: TRLDBText
+          Left = 64
+          Top = 68
+          Width = 65
+          Height = 14
+          Alignment = taRightJustify
+          AutoSize = False
+          DataField = 'E_PIX'
+          DataSource = uDM.DSRegCaixa
+          Text = ''
+        end
+        object RLDBText19: TRLDBText
+          Left = 64
+          Top = 84
+          Width = 65
+          Height = 14
+          Alignment = taRightJustify
+          AutoSize = False
+          DataField = 'E_Outros'
+          DataSource = uDM.DSRegCaixa
+          Text = ''
+        end
+        object RLDBText20: TRLDBText
+          Left = 64
+          Top = 124
+          Width = 65
+          Height = 14
+          Alignment = taRightJustify
+          AutoSize = False
+          DataField = 'E_Suprimento'
+          DataSource = uDM.DSRegCaixa
+          Text = ''
+        end
+        object RLDBText21: TRLDBText
+          Left = 35
+          Top = 20
+          Width = 30
+          Height = 14
+          Alignment = taCenter
+          AutoSize = False
+          DataField = 'Qtd_Dinheiro'
+          DataSource = uDM.DSRegCaixa
+          Text = '[#]'
+        end
+        object RLDBText22: TRLDBText
+          Left = 35
+          Top = 36
+          Width = 30
+          Height = 14
+          Alignment = taCenter
+          AutoSize = False
+          DataField = 'Qtd_CartaoDebito'
+          DataSource = uDM.DSRegCaixa
+          Text = '[#]'
+        end
+        object RLDBText23: TRLDBText
+          Left = 35
+          Top = 52
+          Width = 30
+          Height = 14
+          Alignment = taCenter
+          AutoSize = False
+          DataField = 'Qtd_CartaoCredito'
+          DataSource = uDM.DSRegCaixa
+          Text = '[#]'
+        end
+        object RLDBText24: TRLDBText
+          Left = 35
+          Top = 68
+          Width = 30
+          Height = 14
+          Alignment = taCenter
+          AutoSize = False
+          DataField = 'Qtd_PIX'
+          DataSource = uDM.DSRegCaixa
+          Text = '[#]'
+        end
+        object RLDBText25: TRLDBText
+          Left = 35
+          Top = 84
+          Width = 30
+          Height = 14
+          Alignment = taCenter
+          AutoSize = False
+          DataField = 'Qtd_Outros'
+          DataSource = uDM.DSRegCaixa
+          Text = '[#]'
+        end
+        object RLDBText26: TRLDBText
+          Left = 35
+          Top = 104
+          Width = 30
+          Height = 14
+          Alignment = taCenter
+          AutoSize = False
+          DataField = 'Qtd_Misto'
+          DataSource = uDM.DSRegCaixa
+          Text = '[#]'
+        end
+        object RLDBText27: TRLDBText
+          Left = 35
+          Top = 124
+          Width = 30
+          Height = 14
+          Alignment = taCenter
+          AutoSize = False
+          DataField = 'Qtd_Suprimento'
+          DataSource = uDM.DSRegCaixa
+          Text = '[#]'
         end
       end
       object RLPanel4: TRLPanel
         Left = 0
-        Top = 265
+        Top = 217
         Width = 264
         Height = 17
         Align = faBottom
@@ -491,6 +646,418 @@ object FuImpressoes: TFuImpressoes
           Info = riCount
           Text = '# Lctos relacionados'
         end
+      end
+      object RLPanel5: TRLPanel
+        Left = 138
+        Top = 70
+        Width = 123
+        Height = 147
+        object RLLabel20: TRLLabel
+          Left = 3
+          Top = 2
+          Width = 47
+          Height = 16
+          Caption = 'Sa'#237'das'
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clBlack
+          Font.Height = -13
+          Font.Name = 'Arial'
+          Font.Style = [fsBold, fsUnderline]
+          ParentFont = False
+        end
+        object RLLabel21: TRLLabel
+          Left = 9
+          Top = 24
+          Width = 39
+          Height = 14
+          Alignment = taRightJustify
+          Caption = 'Sa'#237'das:'
+        end
+        object RLDBText28: TRLDBText
+          Left = 18
+          Top = 40
+          Width = 30
+          Height = 14
+          Alignment = taCenter
+          AutoSize = False
+          DataField = 'Qtd_Saidas'
+          DataSource = uDM.DSRegCaixa
+          Text = '[#]'
+        end
+        object RLDBText29: TRLDBText
+          Left = 48
+          Top = 40
+          Width = 65
+          Height = 14
+          Alignment = taRightJustify
+          AutoSize = False
+          DataField = 'S_Saidas'
+          DataSource = uDM.DSRegCaixa
+          Text = ''
+        end
+        object RLLabel22: TRLLabel
+          Left = 5
+          Top = 68
+          Width = 43
+          Height = 14
+          Alignment = taRightJustify
+          Caption = 'Sangria:'
+        end
+        object RLDBText30: TRLDBText
+          Left = 19
+          Top = 84
+          Width = 30
+          Height = 14
+          Alignment = taCenter
+          AutoSize = False
+          DataField = 'Qtd_CartaoDebito'
+          DataSource = uDM.DSRegCaixa
+          Text = '[#]'
+        end
+        object RLDBText31: TRLDBText
+          Left = 48
+          Top = 84
+          Width = 65
+          Height = 14
+          Alignment = taRightJustify
+          AutoSize = False
+          DataField = 'E_CartaoDebito'
+          DataSource = uDM.DSRegCaixa
+          Text = ''
+        end
+      end
+    end
+  end
+  object RLPedido: TRLReport
+    Left = 316
+    Top = 8
+    Width = 302
+    Height = 454
+    Margins.LeftMargin = 5.000000000000000000
+    Margins.TopMargin = 5.000000000000000000
+    Margins.RightMargin = 5.000000000000000000
+    Margins.BottomMargin = 5.000000000000000000
+    DataSource = uDM.DSPedItens
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clBlack
+    Font.Height = -11
+    Font.Name = 'Arial'
+    Font.Style = []
+    PageSetup.PaperSize = fpCustom
+    PageSetup.PaperWidth = 80.000000000000000000
+    PageSetup.PaperHeight = 120.000000000000000000
+    object RLPedCab: TRLBand
+      Left = 19
+      Top = 19
+      Width = 264
+      Height = 48
+      AutoSize = True
+      BandType = btHeader
+      Borders.Sides = sdCustom
+      Borders.DrawLeft = True
+      Borders.DrawTop = True
+      Borders.DrawRight = True
+      Borders.DrawBottom = True
+      object RLPanId: TRLPanel
+        Left = 1
+        Top = 1
+        Width = 262
+        Height = 16
+        Align = faTop
+        Borders.Sides = sdCustom
+        Borders.DrawLeft = False
+        Borders.DrawTop = False
+        Borders.DrawRight = False
+        Borders.DrawBottom = False
+        object RLDBText33: TRLDBText
+          Left = 106
+          Top = 0
+          Width = 50
+          Height = 15
+          Align = faCenter
+          Alignment = taCenter
+          DataField = 'fantasia'
+          DataSource = uDM.DSSisPessoa
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clBlack
+          Font.Height = -12
+          Font.Name = 'Arial'
+          Font.Style = [fsBold]
+          ParentFont = False
+          Text = ''
+        end
+      end
+      object RLDBText32: TRLDBText
+        Left = 42
+        Top = 16
+        Width = 54
+        Height = 16
+        DataField = 'Numero'
+        DataSource = uDM.DSPedidos
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clBlack
+        Font.Height = -13
+        Font.Name = 'Arial'
+        Font.Style = [fsBold]
+        ParentFont = False
+        Text = ''
+      end
+      object RLDBText34: TRLDBText
+        Left = 168
+        Top = 17
+        Width = 95
+        Height = 14
+        Align = faRightTop
+        Alignment = taRightJustify
+        DataField = 'ZC_DataHora'
+        DataSource = uDM.DSPedidos
+        Text = 'Dt/Hr:'
+      end
+      object RLDBText41: TRLDBText
+        Left = 42
+        Top = 33
+        Width = 74
+        Height = 14
+        DataField = 'NomeCliente'
+        DataSource = uDM.DSPedidos
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clBlack
+        Font.Height = -11
+        Font.Name = 'Arial'
+        Font.Style = [fsBold]
+        ParentFont = False
+        Text = ''
+      end
+      object RLLabel29: TRLLabel
+        Left = 1
+        Top = 18
+        Width = 41
+        Height = 14
+        Caption = 'Pedido: '
+      end
+      object RLLabel30: TRLLabel
+        Left = 4
+        Top = 33
+        Width = 38
+        Height = 14
+        Caption = 'Cliente:'
+      end
+    end
+    object RLPedColCab: TRLBand
+      Left = 19
+      Top = 67
+      Width = 264
+      Height = 16
+      BandType = btColumnHeader
+      Borders.Sides = sdCustom
+      Borders.DrawLeft = False
+      Borders.DrawTop = False
+      Borders.DrawRight = False
+      Borders.DrawBottom = True
+      object RLLabel23: TRLLabel
+        Left = 0
+        Top = 0
+        Width = 18
+        Height = 14
+        Alignment = taCenter
+        AutoSize = False
+        Caption = 'Sq'
+      end
+      object RLLabel24: TRLLabel
+        Left = 18
+        Top = 0
+        Width = 12
+        Height = 14
+        Alignment = taCenter
+        AutoSize = False
+        Caption = 'T'
+      end
+      object RLLabel25: TRLLabel
+        Left = 30
+        Top = 0
+        Width = 18
+        Height = 14
+        Alignment = taCenter
+        AutoSize = False
+        Caption = 'Qt'
+      end
+      object RLLabel26: TRLLabel
+        Left = 48
+        Top = 0
+        Width = 52
+        Height = 14
+        Caption = 'Descri'#231#227'o'
+      end
+      object RLLabel27: TRLLabel
+        Left = 180
+        Top = 0
+        Width = 40
+        Height = 14
+        Alignment = taRightJustify
+        AutoSize = False
+        Caption = 'Unit'
+      end
+      object RLLabel28: TRLLabel
+        Left = 220
+        Top = 0
+        Width = 44
+        Height = 14
+        Alignment = taRightJustify
+        AutoSize = False
+        Caption = 'Total'
+      end
+    end
+    object RLPedDetal: TRLBand
+      Left = 19
+      Top = 83
+      Width = 264
+      Height = 29
+      AutoSize = True
+      Borders.Sides = sdCustom
+      Borders.DrawLeft = False
+      Borders.DrawTop = False
+      Borders.DrawRight = False
+      Borders.DrawBottom = False
+      BeforePrint = RLPedDetalBeforePrint
+      object RLDBText35: TRLDBText
+        Left = 0
+        Top = 0
+        Width = 18
+        Height = 14
+        Alignment = taCenter
+        AutoSize = False
+        DataField = 'NrLcto'
+        DataSource = uDM.DSPedItens
+        Text = ''
+      end
+      object RLDBText36: TRLDBText
+        Left = 18
+        Top = 0
+        Width = 12
+        Height = 14
+        Alignment = taCenter
+        AutoSize = False
+        DataField = 'ZC_Tp'
+        DataSource = uDM.DSPedItens
+        Text = ''
+      end
+      object RLDBText37: TRLDBText
+        Left = 30
+        Top = 0
+        Width = 18
+        Height = 14
+        Alignment = taCenter
+        AutoSize = False
+        DataField = 'Quant'
+        DataSource = uDM.DSPedItens
+        Text = ''
+      end
+      object RLDBText38: TRLDBText
+        Left = 48
+        Top = 0
+        Width = 132
+        Height = 14
+        AutoSize = False
+        DataField = 'ZC_Descricao'
+        DataSource = uDM.DSPedItens
+        Text = ''
+      end
+      object RLDBText39: TRLDBText
+        Left = 180
+        Top = 0
+        Width = 40
+        Height = 14
+        Alignment = taRightJustify
+        AutoSize = False
+        DataField = 'VlrUnFiscal'
+        DataSource = uDM.DSPedItens
+        Text = ''
+      end
+      object RLDBText40: TRLDBText
+        Left = 220
+        Top = 0
+        Width = 44
+        Height = 14
+        Alignment = taRightJustify
+        AutoSize = False
+        DataField = 'VlrTotal'
+        DataSource = uDM.DSPedItens
+        Text = ''
+      end
+      object RLMemo1: TRLMemo
+        Left = 0
+        Top = 15
+        Width = 261
+        Height = 14
+        Behavior = [beSiteExpander]
+      end
+    end
+    object RLPedSum: TRLBand
+      Left = 19
+      Top = 112
+      Width = 264
+      Height = 42
+      BandType = btSummary
+      Borders.Sides = sdCustom
+      Borders.DrawLeft = False
+      Borders.DrawTop = False
+      Borders.DrawRight = False
+      Borders.DrawBottom = True
+      object RLDBText42: TRLDBText
+        Left = 186
+        Top = 3
+        Width = 78
+        Height = 16
+        Alignment = taRightJustify
+        DataField = 'Valor'
+        DataSource = uDM.DSPedidos
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clBlack
+        Font.Height = -13
+        Font.Name = 'Arial'
+        Font.Style = [fsBold]
+        ParentFont = False
+        Text = 'Total: '
+      end
+      object RLDBText43: TRLDBText
+        Left = 3
+        Top = 20
+        Width = 175
+        Height = 14
+        DataField = 'ZC_MPExtenso'
+        DataSource = uDM.DSPedidos
+        Text = 'Meio de pagamento: '
+      end
+    end
+    object RLPedFoot: TRLBand
+      Left = 19
+      Top = 154
+      Width = 264
+      Height = 17
+      BandType = btFooter
+      Borders.Sides = sdCustom
+      Borders.DrawLeft = False
+      Borders.DrawTop = True
+      Borders.DrawRight = False
+      Borders.DrawBottom = False
+      object RLLabel32: TRLLabel
+        Left = 172
+        Top = 1
+        Width = 92
+        Height = 10
+        Alignment = taRightJustify
+        Borders.Sides = sdCustom
+        Borders.DrawLeft = False
+        Borders.DrawTop = False
+        Borders.DrawRight = False
+        Borders.DrawBottom = False
+        Caption = 'RLPedido - SpeedFood 1.0'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clBlack
+        Font.Height = -8
+        Font.Name = 'Arial'
+        Font.Style = []
+        ParentFont = False
       end
     end
   end

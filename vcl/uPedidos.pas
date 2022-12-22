@@ -340,42 +340,45 @@ var nSeq: Integer;
     lExiste,lProcura: Boolean;
 begin
   if not uDM.Itens.FindKey([3,pNrBebida]) then Exit;
-  lExiste := False;
-  lProcura := True;
-  uDM.PedWrk.First;
-  while lProcura
+  with uDM
   do begin
-    if (uDM.PedWrkTpProd.AsInteger = 3) and
-       (uDM.PedWrkCodProd.AsInteger = pNrBebida)
-    then begin
-      lExiste := True;
-      lProcura := False;
+    lExiste := False;
+    lProcura := True;
+    PedWrk.First;
+    // Verifica se a bebida já existe no pedido
+    while lProcura
+    do begin
+      if (PedWrkTpProd.AsInteger = 3) and (PedWrkCodProd.AsInteger = pNrBebida)
+      then begin
+        lExiste := True;
+        lProcura := False;
+      end
+      else PedWrk.Next;
+      if PedWrk.Eof then lProcura := False;
+    end;
+    //
+    if lExiste then
+    begin          // Altera a bebida;
+      nSeq := PedWrkNrLcto.AsInteger;
+      PedWrk.Edit;
+      PedWrkQuant.AsInteger := PedWrkQuant.AsInteger + 1;
+      PedWrkVlrTotal.AsCurrency := PedWrkVlrUnit.AsCurrency * PedWrkQuant.AsInteger;
+      PedWrk.Post;
     end
-    else uDM.PedWrk.Next;
-    if uDM.PedWrk.Eof then lProcura := False;
-  end;
-  if lExiste then
-  begin
-    nSeq := uDM.PedWrkNrLcto.AsInteger;
-    uDM.PedWrk.Edit;
-    uDM.PedWrkQuant.AsInteger := uDM.PedWrkQuant.AsInteger + 1;
-    uDM.PedWrkVlrTotal.AsCurrency := uDM.PedWrkVlrUnit.AsCurrency * uDM.PedWrkQuant.AsInteger;
-    uDM.PedWrk.Post;
-    //AlteraBebida;
-  end
-  else begin
-    uDM.PedWrk.Last;
-    nSeq := uDM.PedWrkNrLcto.AsInteger + 1;
-    uDM.PedWrk.Append;
-    uDM.PedWrkNrLcto.AsInteger    := nSeq;
-    uDM.PedWrkTpProd.AsInteger    := 3;
-    uDM.PedWrkCodProd.AsInteger   := pNrBebida;
-    uDM.PedWrkDescricao.AsString  := uDM.ItensDescricao.AsString;
-    uDM.PedWrkQuant.AsInteger     := 1;
-    uDM.PedWrkVlrUnit.AsCurrency  := uDM.ItensPreco.AsCurrency;
-    uDM.PedWrkVlrTotal.AsCurrency := uDM.ItensPreco.AsCurrency;
-    uDM.PedWrkExtras.AsString     := stringFiller('.',24);
-    uDM.PedWrk.Post;
+    else begin     // Inclue a bebida
+      PedWrk.Last;
+      nSeq := PedWrkNrLcto.AsInteger + 1;
+      PedWrk.Append;
+      PedWrkNrLcto.AsInteger    := nSeq;
+      PedWrkTpProd.AsInteger    := 3;
+      PedWrkCodProd.AsInteger   := pNrBebida;
+      PedWrkDescricao.AsString  := stringReplace(ItensDescricao.AsString,'#',' ',[rfIgnoreCase, rfReplaceAll]);
+      PedWrkQuant.AsInteger     := 1;
+      PedWrkVlrUnit.AsCurrency  := ItensPreco.AsCurrency;
+      PedWrkVlrTotal.AsCurrency := ItensPreco.AsCurrency;
+      PedWrkExtras.AsString     := stringFiller('.',24);
+      PedWrk.Post;
+    end;
   end;
   TotalizaPedido;
 
@@ -386,20 +389,24 @@ var wQtd: Integer;
     lDeletou: Boolean;
 begin
   // pMais:  True: Mais    False: Menos
-  lDeletou := False;
-  if pMais
-     then wQtd := uDM.PedWrkQuant.AsInteger + 1
-     else wQtd := uDM.PedWrkQuant.AsInteger - 1;
-  if wQtd = 0
-  then begin
-    uDM.PedWrk.Delete;
-    lDeletou := True;
-  end
-  else begin
-    uDM.PedWrk.Edit;
-    uDM.PedWrkQuant.AsInteger := wQtd;
-    uDM.PedWrkVlrTotal.AsCurrency := uDM.PedWrkQuant.AsInteger * uDM.PedWrkVlrUnit.AsCurrency;
-    uDM.PedWrk.Post;
+  with uDM
+  do begin
+    lDeletou := False;
+    if pMais then
+      wQtd := PedWrkQuant.AsInteger + 1
+    else
+      wQtd := PedWrkQuant.AsInteger - 1;
+    if wQtd = 0 then
+    begin
+      PedWrk.Delete;
+      lDeletou := True;
+    end
+    else begin
+      PedWrk.Edit;
+      PedWrkQuant.AsInteger := wQtd;
+      PedWrkVlrTotal.AsCurrency := PedWrkQuant.AsInteger * PedWrkVlrUnit.AsCurrency;
+      PedWrk.Post;
+    end;
   end;
   TotalizaPedido;
   if lDeletou

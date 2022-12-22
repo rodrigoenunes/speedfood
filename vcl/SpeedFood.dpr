@@ -13,7 +13,9 @@ uses
   uImpressoes in 'uImpressoes.pas' {FuImpressoes},
   uUsuario in 'uUsuario.pas' {FuUsuario},
   uCaixaMovto in 'uCaixaMovto.pas' {FuCaixaMovto},
-  uBiblioteca in 'uBiblioteca.pas';
+  uBiblioteca in 'uBiblioteca.pas',
+  uConsPedidos in 'uConsPedidos.pas' {FuConsPedidos},
+  uSysPrinters in '..\..\UsoGeral\uSysPrinters.pas' {FuSysPrinters};
 
 {$R *.res}
 
@@ -25,7 +27,8 @@ begin
   Application.CreateForm(TFuPedidos, FuPedidos);
   Application.CreateForm(TFuTrataLanche, FuTrataLanche);
   Application.CreateForm(TFuFinPedido, FuFinPedido);
-  Application.CreateForm(TFuImpressoes, FuImpressoes);
+  //Application.CreateForm(TFuImpressoes, FuImpressoes);
+  Application.CreateForm(TFuConsPedidos, FuConsPedidos);
   Application.Run;
 
 end.

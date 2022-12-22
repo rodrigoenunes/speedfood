@@ -619,7 +619,7 @@ object FuPedidos: TFuPedidos
       Top = 1
       Width = 589
       Height = 369
-      ActivePage = TSLanches
+      ActivePage = TSBebidas
       Align = alClient
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
