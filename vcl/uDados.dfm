@@ -113,8 +113,8 @@ object uDM: TuDM
       AutoGenerateValue = arDefault
       FieldName = 'PcReduz'
       Origin = 'PcReduz'
-      DisplayFormat = '0.00%'
-      EditFormat = '0.00'
+      DisplayFormat = '0.0000%'
+      EditFormat = '0.0000'
       Precision = 8
       Size = 5
     end
@@ -143,6 +143,15 @@ object uDM: TuDM
       AutoGenerateValue = arDefault
       FieldName = 'AlteraPreco'
       Origin = 'AlteraPreco'
+    end
+    object ItenspMVAST: TFMTBCDField
+      AutoGenerateValue = arDefault
+      FieldName = 'pMVAST'
+      Origin = 'pMVAST'
+      DisplayFormat = '0.0000%'
+      EditFormat = '0.0000'
+      Precision = 8
+      Size = 5
     end
     object ItensZC_Grupo: TStringField
       FieldKind = fkCalculated

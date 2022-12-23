@@ -88,7 +88,11 @@ uses uDados, uGenericas, uFinPedido, uTrataLanche, uBiblioteca;
 Procedure LancamentoPedidos;
 begin
   FuPedidos := TFuPedidos.Create(nil);
+  FuTrataLanche := TFuTrataLanche.Create(nil);
+  FuFinPedido := TFuFinPedido.Create(nil);
   FuPedidos.ShowModal;
+  FuFinPedido.Free;
+  FuTrataLanche.Free;
   FuPedidos.Free;
 
 end;
@@ -111,20 +115,25 @@ begin
        end;
     FuPedidos.Align := alClient;
     //
-    imgFundo.Top      := 0;
-    imgFundo.Left     := 0;
-    imgFundo.Stretch  := False;
-    imgFundo.AutoSize := True;
-    imgFundo.Picture.LoadFromFile(uDM.pathWork + '\imgFundo.BMP');
-    imgFundo.AutoSize := False;
-    imgFundo.Stretch  := True;
-    while imgFundo.Height > (FuPedidos.ClientHeight-20) do
+    imgFundo.Visible := False;
+    if FileExists(uDM.pathImagens + '\imgFundo.BMP') then
     begin
-      imgFundo.Height := Trunc(imgFundo.Height * 0.99);
-      imgFundo.Width  := Trunc(imgFundo.Width * 0.99);
+      imgFundo.Top := 0;
+      imgFundo.Left := 0;
+      imgFundo.Stretch := False;
+      imgFundo.AutoSize := True;
+      imgFundo.Picture.LoadFromFile(uDM.pathImagens + '\imgFundo.BMP');
+      imgFundo.AutoSize := False;
+      imgFundo.Stretch := True;
+      while imgFundo.Height > (FuPedidos.ClientHeight-20) do
+      begin
+        imgFundo.Height := Trunc(imgFundo.Height * 0.99);
+        imgFundo.Width := Trunc(imgFundo.Width * 0.99);
+      end;
+      imgFundo.Top := (FuPedidos.ClientHeight - imgFundo.Height) div 2;
+      imgFundo.Left := (FuPedidos.ClientWidth - imgFundo.Width) div 2;
+      imgFundo.Visible := True;
     end;
-    imgFundo.Top     := (FuPedidos.ClientHeight - imgFundo.Height) div 2;
-    imgFundo.Left    := (FuPedidos.ClientWidth - imgFundo.Width) div 2;
     PanGridPed.Width := PanWork.Width div 4;    // (PanWork.Width div 5) * 2;
     PanGridPed.Align := alRight;
     pgControle.Align := alClient;
@@ -560,18 +569,11 @@ begin
   GridBebidas.Canvas.FillRect(Rect);
   GridBebidas.Color := clWhite;
   //
-  if uDM.ItensImagem.AsString <> '' then
+  if FileExists(uDM.ItensImagem.AsString) then
   begin
     wImagem.Picture.LoadFromFile(uDM.ItensImagem.AsString);
     GridBebidas.Canvas.StretchDraw(Rect,wImagem.Picture.Graphic);
   end;
-  //
-  wTxt := IntToStr(wKey);
-  if wKey < 10 then wTxt := '0' + wTxt;
-  GridBebidas.Canvas.Font.Color := clBlue;
-  GridBebidas.Canvas.Font.Size  := 28;
-  GridBebidas.Canvas.Font.Style := [fsBold];
-  GridBebidas.Canvas.TextOut(Rect.Left+4, Rect.Top, wTxt);
   //
   GridBebidas.Canvas.Font.Size  := 20;
   GridBebidas.Canvas.Font.Color := clBlack;
@@ -594,6 +596,13 @@ begin
   nTop := nTop + LabAux1.Height;
   GridBebidas.Canvas.TextOut(Rect.Left+4, Rect.Top+nTop, LabAux2.Caption);
   //
+  wTxt := IntToStr(wKey);
+  if wKey < 10 then wTxt := '0' + wTxt;
+  GridBebidas.Canvas.Font.Color := clBlue;
+  GridBebidas.Canvas.Font.Size  := 28;
+  GridBebidas.Canvas.Font.Style := [fsBold];
+  GridBebidas.Canvas.TextOut(Rect.Left+4, Rect.Top+1, wTxt);
+
   wImagem.Free;
 
 end;
@@ -627,7 +636,7 @@ begin
   GridLanches.Canvas.FillRect(Rect);
   GridLanches.Color := clWhite;
   //
-  if uDM.ItensImagem.AsString <> '' then
+  if FileExists(uDM.ItensImagem.AsString) then
   begin
     wImagem.Picture.LoadFromFile(uDM.ItensImagem.AsString);
     GridLanches.Canvas.StretchDraw(Rect,wImagem.Picture.Graphic);
@@ -636,9 +645,9 @@ begin
     GridLanches.Canvas.Font.Size  := 18;
     GridLanches.Canvas.Font.Color := clBlack;
     wTxt := uDM.ItensDescricao.AsString;
-    LabAux1.Caption   := '';
+    LabAux1.Caption := '';
     LabAux1.Font.Size := GridLanches.Canvas.Font.Size;
-    LabAux2.Caption   := '';
+    LabAux2.Caption := '';
     LabAux2.Font.Size := GridLanches.Canvas.Font.Size;
     lin2 := False;
     for i := 1 to Length(wTxt)
@@ -660,7 +669,6 @@ begin
   GridLanches.Canvas.Font.Size  := 28;
   GridLanches.Canvas.Font.Style := [fsBold];
   GridLanches.Canvas.TextOut(Rect.Left+4, Rect.Top, wTxt);
-
 
   wImagem.Free;
 

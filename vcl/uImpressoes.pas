@@ -5,7 +5,7 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, RLReport, System.UITypes, RLPrinters;
-  Procedure ImprimePedido(pNroPedido:Integer);
+  Procedure ImprimePedido(pNroPedido:Integer; pSys:Boolean = True);
   Procedure GeraImprimeNFCe(pNroPedido:Integer);
   Procedure ImprimeCaixa(pSequencia: Integer);
 
@@ -186,7 +186,7 @@ begin
 end;
 
 
-Procedure ImprimePedido(pNroPedido:Integer);
+Procedure ImprimePedido(pNroPedido:Integer; pSys:Boolean = True);
 var filTxtAnt: String;
     filAnt: Boolean;
     i: Integer;
@@ -209,6 +209,8 @@ begin
     else lDialog := False;
   if not DefineImpressora(True,idPrinter,portaPrt,driverPrt,indexPrt) then
     lPreview := True;
+
+  if not pSys then lPreview := True;
 
 
   uDM.PedItens.Filtered := False;

@@ -2,7 +2,7 @@ object FuPedidos: TFuPedidos
   Left = 146
   Top = 55
   BorderStyle = bsSingle
-  Caption = 'Hotdog'
+  Caption = 'Pedidos'
   ClientHeight = 479
   ClientWidth = 1000
   Color = clBtnFace
@@ -619,7 +619,7 @@ object FuPedidos: TFuPedidos
       Top = 1
       Width = 589
       Height = 369
-      ActivePage = TSLanches
+      ActivePage = TSBebidas
       Align = alClient
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText

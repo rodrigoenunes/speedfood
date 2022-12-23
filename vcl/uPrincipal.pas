@@ -37,7 +37,6 @@ type
 
 var
   FuPrincipal: TFuPrincipal;
-  wPathWork: String;
 
 implementation
 
@@ -54,7 +53,7 @@ end;
 
 procedure TFuPrincipal.btConsPedidosClick(Sender: TObject);
 begin
-  FuConsPedidos.ShowModal;
+  ConsultarPedidos;
 
 end;
 
@@ -89,6 +88,8 @@ begin
 end;
 
 procedure TFuPrincipal.FormActivate(Sender: TObject);
+var arqimg: String;
+    i: Integer;
 begin
   if uDM = Nil then
   begin
@@ -100,9 +101,21 @@ begin
     uDM.LctCaixa.Active  := True;
     uDM.Pedidos.Active   := True;
     uDM.PedItens.Active  := True;
-    FGen.lSalvaForm      := True;
-    FGen.pathSalvaForm   := wPathWork;
-    uDM.pathWork         := wPathWork;
+    Image1.Visible := False;
+    uDM.pathImagens := uDM.SisPessoaPathImagens.AsString;
+    i := Length(Trim(uDM.PathImagens));
+    if uDM.pathImagens[i] <> '\' then
+      uDM.pathImagens := uDM.pathImagens + '\';
+    arqimg := uDM.pathImagens + 'ImgFundo.BMP';
+    if FileExists(arqimg)
+    then begin
+      Image1.Picture.LoadFromFile(arqimg);
+      Image1.Align := alClient;
+      Image1.Stretch := True;
+      Image1.Visible := True;
+    end;
+    FGen.lSalvaForm := True;
+    FGen.pathSalvaForm := ExtractFilePath(Application.ExeName);
     ContaExtras;                  // Obtem qtd de ítens 'extras'
     AberturaDeCaixa;
   end;
@@ -125,14 +138,11 @@ end;
 
 procedure TFuPrincipal.FormCreate(Sender: TObject);
 begin
-  wPathWork          := ExtractFilePath(Application.ExeName);
   FuPrincipal.Width  := (Screen.Width div 5) * 2;
   FuPrincipal.Height := FuPrincipal.Width;
   FuPrincipal.Top    := 20;
   FuPrincipal.Left   := 40;
-  FuPrincipal.Image1.Align := alClient;
-  FuPrincipal.Image1.Picture.LoadFromFile(wPathWork + 'ImgFundo.BMP');
-  FuPrincipal.Image1.Stretch := True;
+  FuPrincipal.Image1.Visible := False;
 
 end;
 
