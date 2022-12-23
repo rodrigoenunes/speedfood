@@ -213,6 +213,7 @@ type
     PedItensZC_Tp: TStringField;
     PedidosZC_MeioPagto: TStringField;
     PedidosZC_MPExtenso: TStringField;
+    ItenspMVAST: TFMTBCDField;
     procedure ItensCalcFields(DataSet: TDataSet);
     procedure LctCaixaCalcFields(DataSet: TDataSet);
     procedure PedWrkCalcFields(DataSet: TDataSet);
@@ -223,7 +224,7 @@ type
     { Private declarations }
   public
     { Public declarations }
-    pathWork: String;
+    pathImagens: String;
     nExtras: Integer;
     wNroPedido: Integer;
     wCodExtra: array[1..2,1..12] of integer;

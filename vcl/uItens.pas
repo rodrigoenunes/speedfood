@@ -63,6 +63,8 @@ type
     Label17: TLabel;
     dbCodBarras: TDBEdit;
     cbAlteraPreco: TDBCheckBox;
+    Label18: TLabel;
+    DBEdit8: TDBEdit;
     procedure btSairClick(Sender: TObject);
     procedure btIncluirClick(Sender: TObject);
     procedure btOkClick(Sender: TObject);

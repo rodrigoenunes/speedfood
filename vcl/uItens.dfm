@@ -180,8 +180,8 @@ object FuItens: TFuItens
         TabOrder = 3
       end
       object btOk: TBitBtn
-        Left = 694
-        Top = 180
+        Left = 732
+        Top = 184
         Width = 89
         Height = 25
         Caption = '&Ok'
@@ -204,8 +204,8 @@ object FuItens: TFuItens
         OnClick = btOkClick
       end
       object btCancel: TBitBtn
-        Left = 694
-        Top = 207
+        Left = 732
+        Top = 211
         Width = 89
         Height = 25
         Caption = '&Cancelar'
@@ -239,7 +239,7 @@ object FuItens: TFuItens
       object gbFiscais: TGroupBox
         Left = 95
         Top = 178
-        Width = 585
+        Width = 631
         Height = 60
         Caption = 'Dados fiscais'
         TabOrder = 10
@@ -279,32 +279,39 @@ object FuItens: TFuItens
           Caption = '%Red ICMS'
         end
         object Label11: TLabel
-          Left = 313
+          Left = 309
           Top = 16
           Width = 55
           Height = 16
           Caption = 'Aliq ICMS'
         end
         object Label12: TLabel
-          Left = 382
+          Left = 372
           Top = 16
           Width = 44
           Height = 16
           Caption = 'CST-IPI'
         end
         object Label13: TLabel
-          Left = 438
+          Left = 422
           Top = 16
           Width = 48
           Height = 16
           Caption = 'CST-PIS'
         end
         object Label14: TLabel
-          Left = 498
+          Left = 476
           Top = 16
           Width = 73
           Height = 16
           Caption = 'CST-COFINS'
+        end
+        object Label18: TLabel
+          Left = 558
+          Top = 16
+          Width = 54
+          Height = 16
+          Caption = '%MVAST'
         end
         object dbCFOP: TDBEdit
           Left = 8
@@ -345,14 +352,14 @@ object FuItens: TFuItens
         object DBEdit3: TDBEdit
           Left = 236
           Top = 30
-          Width = 73
+          Width = 69
           Height = 24
           DataField = 'PcReduz'
           DataSource = uDM.DSItens
           TabOrder = 4
         end
         object DBEdit4: TDBEdit
-          Left = 313
+          Left = 309
           Top = 30
           Width = 57
           Height = 24
@@ -361,7 +368,7 @@ object FuItens: TFuItens
           TabOrder = 5
         end
         object DBEdit5: TDBEdit
-          Left = 388
+          Left = 378
           Top = 30
           Width = 33
           Height = 24
@@ -370,7 +377,7 @@ object FuItens: TFuItens
           TabOrder = 6
         end
         object DBEdit6: TDBEdit
-          Left = 446
+          Left = 430
           Top = 30
           Width = 33
           Height = 24
@@ -379,7 +386,7 @@ object FuItens: TFuItens
           TabOrder = 7
         end
         object DBEdit7: TDBEdit
-          Left = 518
+          Left = 496
           Top = 30
           Width = 33
           Height = 24
@@ -387,10 +394,19 @@ object FuItens: TFuItens
           DataSource = uDM.DSItens
           TabOrder = 8
         end
+        object DBEdit8: TDBEdit
+          Left = 558
+          Top = 30
+          Width = 69
+          Height = 24
+          DataField = 'pMVAST'
+          DataSource = uDM.DSItens
+          TabOrder = 9
+        end
       end
       object edZC_Key: TDBEdit
-        Left = 789
-        Top = 191
+        Left = 625
+        Top = 30
         Width = 28
         Height = 24
         DataField = 'ZC_Key'
