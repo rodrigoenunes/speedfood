@@ -1,7 +1,7 @@
 object FuCaixaMovto: TFuCaixaMovto
   Left = 0
   Top = 0
-  Caption = 'FuCaixaMovto'
+  Caption = 'Lan'#231'amentos de caixa'
   ClientHeight = 509
   ClientWidth = 979
   Color = clBtnFace

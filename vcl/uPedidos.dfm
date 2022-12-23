@@ -2,7 +2,7 @@ object FuPedidos: TFuPedidos
   Left = 146
   Top = 55
   BorderStyle = bsSingle
-  Caption = 'Hotdog'
+  Caption = 'Pedidos'
   ClientHeight = 479
   ClientWidth = 1000
   Color = clBtnFace

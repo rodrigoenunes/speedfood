@@ -54,7 +54,7 @@ end;
 
 procedure TFuPrincipal.btConsPedidosClick(Sender: TObject);
 begin
-  FuConsPedidos.ShowModal;
+  ConsultarPedidos;
 
 end;
 
@@ -130,9 +130,13 @@ begin
   FuPrincipal.Height := FuPrincipal.Width;
   FuPrincipal.Top    := 20;
   FuPrincipal.Left   := 40;
-  FuPrincipal.Image1.Align := alClient;
-  FuPrincipal.Image1.Picture.LoadFromFile(wPathWork + 'ImgFundo.BMP');
-  FuPrincipal.Image1.Stretch := True;
+  FuPrincipal.Image1.Visible := False;
+  if FileExists(wPathWork + 'ImgFundo.BMP') then
+  begin
+    FuPrincipal.Image1.Align := alClient;
+    FuPrincipal.Image1.Picture.LoadFromFile(wPathWork + 'ImgFundo.BMP');
+    FuPrincipal.Image1.Stretch := True;
+  end;
 
 end;
 

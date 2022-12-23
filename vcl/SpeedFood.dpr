@@ -24,11 +24,6 @@ begin
   Application.MainFormOnTaskbar := True;
   Application.CreateForm(TFuPrincipal, FuPrincipal);
   Application.CreateForm(TFGen, FGen);
-  Application.CreateForm(TFuPedidos, FuPedidos);
-  Application.CreateForm(TFuTrataLanche, FuTrataLanche);
-  Application.CreateForm(TFuFinPedido, FuFinPedido);
-  //Application.CreateForm(TFuImpressoes, FuImpressoes);
-  Application.CreateForm(TFuConsPedidos, FuConsPedidos);
   Application.Run;
 
 end.
