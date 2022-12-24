@@ -380,7 +380,7 @@ begin
     uDM.RegCaixa.Active   := True;
     uDM.Pedidos.Active    := True;
     uDM.PedItens.Active   := True;
-    uDM.pathWork          := wPathWork;
+    FFRCtle.RLPreviewSetup1.ZoomFactor := StrToIntDef(ObtemParametro('FortesZoomFactor'),100);
     CarregaTurnos;
     cbTurnos.SetFocus;
   end;
@@ -394,6 +394,7 @@ begin
   uDM.RegCaixa.Active   := False;
   uDM.Itens.Active      := False;
   uDM.SisPessoa.Active  := False;
+  uDM.Parametros.Active := False;
   Application.Terminate;
 
 end;

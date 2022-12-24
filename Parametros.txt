@@ -1,0 +1,41 @@
+Parametros para SpeedFood
+
+Rotina      Parametro         Função
+===========================================================================
+Uso geral   FortesZoomFactor  Fator de visualização preview de relatórios
+---------------------------------------------------------------------------
+SFEtiquetas EtiquetaPrinter   Id impressora de etiquetas
+            imgVazio          Imagem(.bmp) para indicar 'Sem', 'Mais', 
+                              ou 'Menos' sem comentários
+-------------------------------------------------------------------------------
+Speedfood  PedidoImprimir     Imprimir pedido no final da operação
+                              [S]im  [N]ão  ou  [P]erguntar ao operador
+           PedidoLinhaSep     Linha separadora entre os ítens do pedido
+                              [S]im ou [N]ão
+           PedidoPrinter      Id da impressora de pedidos
+           PedidoTamMax       Tam. máximo da 'pag' pedido em mm (300)
+           PedidoMargEsquerda Margem esquerda em mm
+           PedidoMargDireita  Margem direita em mm
+                              a soma das margens não deve ultrapassar 10 mm
+           PedidoMargTopo     Margem topo em mm
+           PedidoMargRodape   Margem rodape
+           PedidoCopias       Cópias do pedido
+           PedidoPreview      Pré-visualização da impressão do pedido 
+                              [S]im ou [N]ão
+           PedidoDialogo      Dialogo para impressão do pedido
+                              [S]im ou [N]ão
+
+ 
+           CaixaPrinter       Id da impressora do caixa
+           CaixaTamMax        Tam. máximo da 'pag' do caixa em mm (300)
+           CaixaMargEsquerda  Margem esquerda em mm
+           CaixaMargDireita   Margem direita em mm
+                              a soma das margens não deve ultrapassar 10 mm
+           CaixaMargTopo      Margem topo em mm
+           CaixaMargRodape    Margem rodape
+           CaixaCopias        Cópias do relatório do caixa
+           CaixaPreview       Pré-visualização da impressão do pedido 
+                              [S]im ou [N]ão
+           CaixaDialogo       Dialogo para impressão do pedido
+                              [S]im ou [N]ão
+           

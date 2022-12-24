@@ -15,7 +15,9 @@ uses
   uCaixaMovto in 'uCaixaMovto.pas' {FuCaixaMovto},
   uBiblioteca in 'uBiblioteca.pas',
   uConsPedidos in 'uConsPedidos.pas' {FuConsPedidos},
-  uSysPrinters in '..\..\UsoGeral\uSysPrinters.pas' {FuSysPrinters};
+  uSysPrinters in '..\..\UsoGeral\uSysPrinters.pas' {FuSysPrinters},
+  FortesReportCtle in '..\..\uFortesReport\FortesReportCtle.pas' {FFRCtle},
+  EnviaEMail in '..\..\uFortesReport\EnviaEMail.pas' {FEnviaEMail};
 
 {$R *.res}
 
@@ -24,6 +26,8 @@ begin
   Application.MainFormOnTaskbar := True;
   Application.CreateForm(TFuPrincipal, FuPrincipal);
   Application.CreateForm(TFGen, FGen);
+  Application.CreateForm(TFFRCtle, FFRCtle);
+  Application.CreateForm(TFEnviaEMail, FEnviaEMail);
   Application.Run;
 
 end.

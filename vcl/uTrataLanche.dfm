@@ -669,7 +669,7 @@ object FuTrataLanche: TFuTrataLanche
         749
         65)
       object dbDescricao: TDBText
-        Left = 4
+        Left = 8
         Top = 12
         Width = 165
         Height = 33
@@ -678,15 +678,15 @@ object FuTrataLanche: TFuTrataLanche
         DataField = 'Descricao'
         DataSource = uDM.SPedWrk
         Font.Charset = DEFAULT_CHARSET
-        Font.Color = clWindowText
+        Font.Color = clWhite
         Font.Height = -27
         Font.Name = 'Tahoma'
         Font.Style = [fsBold]
         ParentFont = False
       end
       object imgMais: TImage
-        Left = 150
-        Top = 11
+        Left = 282
+        Top = 13
         Width = 32
         Height = 32
         Picture.Data = {
@@ -751,8 +751,8 @@ object FuTrataLanche: TFuTrataLanche
         Visible = False
       end
       object imgMenos: TImage
-        Left = 188
-        Top = 11
+        Left = 320
+        Top = 13
         Width = 32
         Height = 32
         Picture.Data = {
@@ -902,7 +902,7 @@ object FuTrataLanche: TFuTrataLanche
         Anchors = [akTop, akRight]
         Caption = 'Pre'#231'o'
         Font.Charset = DEFAULT_CHARSET
-        Font.Color = clWindowText
+        Font.Color = clWhite
         Font.Height = -19
         Font.Name = 'Tahoma'
         Font.Style = []
@@ -916,7 +916,7 @@ object FuTrataLanche: TFuTrataLanche
         Anchors = [akTop, akRight]
         Caption = 'Extras'
         Font.Charset = DEFAULT_CHARSET
-        Font.Color = clWindowText
+        Font.Color = clWhite
         Font.Height = -19
         Font.Name = 'Tahoma'
         Font.Style = []
@@ -930,7 +930,7 @@ object FuTrataLanche: TFuTrataLanche
         Anchors = [akTop, akRight]
         Caption = 'Total'
         Font.Charset = DEFAULT_CHARSET
-        Font.Color = clWindowText
+        Font.Color = clWhite
         Font.Height = -19
         Font.Name = 'Tahoma'
         Font.Style = []

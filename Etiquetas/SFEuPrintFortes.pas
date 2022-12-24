@@ -24,11 +24,9 @@ type
     RLNadaSem: TRLImage;
     RLNadaMais: TRLImage;
     RLNadaMenos: TRLImage;
-    RLAngleLabel4: TRLAngleLabel;
     RLAngleLabel1: TRLAngleLabel;
     RLAngleLabel2: TRLAngleLabel;
     RLAngleLabel3: TRLAngleLabel;
-    RLLabPrensado: TRLLabel;
     RLEtiqBebida: TRLReport;
     RLCabBeb: TRLBand;
     RLPanel8: TRLPanel;
@@ -42,8 +40,6 @@ type
     RLDBText2: TRLDBText;
     RLPanel1: TRLPanel;
     RLDBText3: TRLDBText;
-    RLLabCortado: TRLLabel;
-    RLDBText8: TRLDBText;
     RLDetBebida: TRLBand;
     RLBebFooter: TRLBand;
     RLBebColFooter: TRLBand;
@@ -54,6 +50,9 @@ type
     RLLabel2: TRLLabel;
     RLDBResult1: TRLDBResult;
     RLDBText9: TRLDBText;
+    RLDBText8: TRLDBText;
+    RLLabPrensado: TRLLabel;
+    RLLabCortado: TRLLabel;
     procedure RLEtiqLancheBeforePrint(Sender: TObject; var PrintIt: Boolean);
   private
     { Private declarations }

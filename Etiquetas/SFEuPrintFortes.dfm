@@ -45,9 +45,9 @@ object FSFEuPrintFortes: TFSFEuPrintFortes
       Borders.DrawRight = True
       Borders.DrawBottom = True
       object RLDBMemo1: TRLDBMemo
-        Left = 23
-        Top = 123
-        Width = 373
+        Left = 7
+        Top = 136
+        Width = 389
         Height = 12
         Behavior = [beSiteExpander]
         DataField = 'Observacao'
@@ -103,12 +103,13 @@ object FSFEuPrintFortes: TFSFEuPrintFortes
           Left = 0
           Top = 0
           Width = 133
-          Height = 83
+          Height = 99
+          Align = faLeft
           Borders.Sides = sdCustom
           Borders.DrawLeft = False
           Borders.DrawTop = False
           Borders.DrawRight = True
-          Borders.DrawBottom = True
+          Borders.DrawBottom = False
           object RLSem: TRLMemo
             Left = 16
             Top = 2
@@ -124,9 +125,9 @@ object FSFEuPrintFortes: TFSFEuPrintFortes
           end
           object RLNadaSem: TRLImage
             Left = 20
-            Top = 24
+            Top = 16
             Width = 100
-            Height = 50
+            Height = 78
             Picture.Data = {
               07544269746D61709E0A0000424D9E0A00000000000076000000280000006400
               0000320000000100040000000000280A00000000000000000000100000000000
@@ -214,18 +215,19 @@ object FSFEuPrintFortes: TFSFEuPrintFortes
               FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF888888880000888888FFFFFFFFFFFFFF
               FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
               FFFFFFFFFF8888880000}
+            Stretch = True
             Visible = False
           end
           object RLAngleLabel1: TRLAngleLabel
-            Left = 1
-            Top = 8
-            Width = 14
-            Height = 28
+            Left = 0
+            Top = 10
+            Width = 16
+            Height = 33
             Angle = 90.000000000000000000
             Caption = 'Sem'
             Font.Charset = DEFAULT_CHARSET
             Font.Color = clBlack
-            Font.Height = -11
+            Font.Height = -13
             Font.Name = 'Arial'
             Font.Style = [fsBold]
             ParentFont = False
@@ -234,13 +236,14 @@ object FSFEuPrintFortes: TFSFEuPrintFortes
         object RLPanel6: TRLPanel
           Left = 133
           Top = 0
-          Width = 133
-          Height = 83
+          Width = 132
+          Height = 99
+          Align = faClient
           Borders.Sides = sdCustom
           Borders.DrawLeft = False
           Borders.DrawTop = False
           Borders.DrawRight = True
-          Borders.DrawBottom = True
+          Borders.DrawBottom = False
           object RLMais: TRLMemo
             Left = 16
             Top = 2
@@ -256,9 +259,9 @@ object FSFEuPrintFortes: TFSFEuPrintFortes
           end
           object RLNadaMais: TRLImage
             Left = 20
-            Top = 24
+            Top = 16
             Width = 100
-            Height = 50
+            Height = 78
             Picture.Data = {
               07544269746D61709E0A0000424D9E0A00000000000076000000280000006400
               0000320000000100040000000000280A00000000000000000000100000000000
@@ -346,33 +349,35 @@ object FSFEuPrintFortes: TFSFEuPrintFortes
               FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF888888880000888888FFFFFFFFFFFFFF
               FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
               FFFFFFFFFF8888880000}
+            Stretch = True
             Visible = False
           end
           object RLAngleLabel2: TRLAngleLabel
-            Left = 1
-            Top = 8
-            Width = 14
-            Height = 46
+            Left = 0
+            Top = 10
+            Width = 16
+            Height = 53
             Angle = 90.000000000000000000
             Caption = 'Mais [+]'
             Font.Charset = DEFAULT_CHARSET
             Font.Color = clBlack
-            Font.Height = -11
+            Font.Height = -13
             Font.Name = 'Arial'
             Font.Style = [fsBold]
             ParentFont = False
           end
         end
         object RLPanel7: TRLPanel
-          Left = 266
+          Left = 265
           Top = 0
           Width = 133
-          Height = 83
+          Height = 99
+          Align = faRight
           Borders.Sides = sdCustom
           Borders.DrawLeft = False
           Borders.DrawTop = False
           Borders.DrawRight = False
-          Borders.DrawBottom = True
+          Borders.DrawBottom = False
           object RLMenos: TRLMemo
             Left = 16
             Top = 2
@@ -387,10 +392,10 @@ object FSFEuPrintFortes: TFSFEuPrintFortes
             ParentFont = False
           end
           object RLNadaMenos: TRLImage
-            Left = 20
-            Top = 24
+            Left = 21
+            Top = 16
             Width = 100
-            Height = 50
+            Height = 78
             Picture.Data = {
               07544269746D61709E0A0000424D9E0A00000000000076000000280000006400
               0000320000000100040000000000280A00000000000000000000100000000000
@@ -478,76 +483,63 @@ object FSFEuPrintFortes: TFSFEuPrintFortes
               FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF888888880000888888FFFFFFFFFFFFFF
               FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
               FFFFFFFFFF8888880000}
+            Stretch = True
             Visible = False
           end
           object RLAngleLabel3: TRLAngleLabel
-            Left = 1
-            Top = 8
-            Width = 14
-            Height = 56
+            Left = 0
+            Top = 10
+            Width = 16
+            Height = 61
             Angle = 90.000000000000000000
             Caption = 'Menos [-]'
             Font.Charset = DEFAULT_CHARSET
             Font.Color = clBlack
-            Font.Height = -11
+            Font.Height = -13
             Font.Name = 'Arial'
             Font.Style = [fsBold]
             ParentFont = False
           end
         end
-        object RLLabPrensado: TRLLabel
-          Left = 6
-          Top = 83
-          Width = 67
-          Height = 15
-          Caption = 'PRENSADO'
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clBlack
-          Font.Height = -12
-          Font.Name = 'Arial'
-          Font.Style = [fsBold]
-          ParentFont = False
-          Visible = False
-        end
-        object RLLabCortado: TRLLabel
-          Left = 80
-          Top = 83
-          Width = 60
-          Height = 15
-          Caption = 'CORTADO'
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clBlack
-          Font.Height = -12
-          Font.Name = 'Arial'
-          Font.Style = [fsBold]
-          ParentFont = False
-          Visible = False
-        end
-        object RLDBText8: TRLDBText
-          Left = 164
-          Top = 83
-          Width = 231
-          Height = 16
-          Alignment = taRightJustify
-          AutoSize = False
-          DataField = 'NomeCliente'
-          DataSource = uDM.DSPedidos
-          Text = ''
-        end
       end
-      object RLAngleLabel4: TRLAngleLabel
-        Left = 7
-        Top = 123
-        Width = 14
-        Height = 25
-        Angle = 90.000000000000000000
-        Caption = 'Obs'
+      object RLDBText8: TRLDBText
+        Left = 165
+        Top = 119
+        Width = 231
+        Height = 16
+        Alignment = taRightJustify
+        AutoSize = False
+        DataField = 'NomeCliente'
+        DataSource = uDM.DSPedidos
+        Text = ''
+      end
+      object RLLabPrensado: TRLLabel
+        Left = 6
+        Top = 120
+        Width = 67
+        Height = 15
+        Caption = 'PRENSADO'
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clBlack
-        Font.Height = -11
+        Font.Height = -12
         Font.Name = 'Arial'
         Font.Style = [fsBold]
         ParentFont = False
+        Visible = False
+      end
+      object RLLabCortado: TRLLabel
+        Left = 80
+        Top = 120
+        Width = 60
+        Height = 15
+        Caption = 'CORTADO'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clBlack
+        Font.Height = -12
+        Font.Name = 'Arial'
+        Font.Style = [fsBold]
+        ParentFont = False
+        Visible = False
       end
     end
     object RLCabLanche: TRLBand

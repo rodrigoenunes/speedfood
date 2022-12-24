@@ -4,7 +4,7 @@ interface
 
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Buttons, Vcl.ExtCtrls;
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Buttons, Vcl.ExtCtrls, Midaslib;
 
 type
   TFuPrincipal = class(TForm)
@@ -43,7 +43,7 @@ implementation
 {$R *.dfm}
 
 uses uItens, uDados, uGenericas, uCaixa, uPedidos, uImpressoes, uUsuario,
-  uConsPedidos;
+  uConsPedidos, FortesReportCtle;
 
 procedure TFuPrincipal.btAbrirCaixaClick(Sender: TObject);
 begin
@@ -116,6 +116,7 @@ begin
     end;
     FGen.lSalvaForm := True;
     FGen.pathSalvaForm := ExtractFilePath(Application.ExeName);
+    FFRCtle.RLPreviewSetup1.ZoomFactor := StrToIntDef(ObtemParametro('FortesZoomFactor'),100);
     ContaExtras;                  // Obtem qtd de ítens 'extras'
     AberturaDeCaixa;
   end;
