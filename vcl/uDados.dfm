@@ -417,7 +417,7 @@ object uDM: TuDM
   object SPedWrk: TDataSource
     DataSet = PedWrk
     Left = 540
-    Top = 72
+    Top = 64
   end
   object Pedidos: TFDTable
     OnCalcFields = PedidosCalcFields
@@ -963,6 +963,20 @@ object uDM: TuDM
       FieldName = 'Qtd_Sangria'
       Origin = 'Qtd_Sangria'
     end
+    object RegCaixaVlrPedidos: TBCDField
+      AutoGenerateValue = arDefault
+      FieldName = 'VlrPedidos'
+      Origin = 'VlrPedidos'
+      DisplayFormat = ',0.00'
+      EditFormat = '0.00'
+      Precision = 15
+      Size = 2
+    end
+    object RegCaixaQtdPedidos: TIntegerField
+      AutoGenerateValue = arDefault
+      FieldName = 'QtdPedidos'
+      Origin = 'QtdPedidos'
+    end
     object RegCaixaZC_IniFim: TStringField
       FieldKind = fkCalculated
       FieldName = 'ZC_IniFim'
@@ -1229,5 +1243,40 @@ object uDM: TuDM
       Origin = 'sis_parametroscol'
       Size = 45
     end
+  end
+  object ResVendas: TClientDataSet
+    Aggregates = <>
+    Params = <>
+    OnCalcFields = ResVendasCalcFields
+    Left = 548
+    Top = 140
+    object ResVendasTpProd: TSmallintField
+      FieldName = 'TpProd'
+    end
+    object ResVendasCodProd: TIntegerField
+      FieldName = 'CodProd'
+    end
+    object ResVendasQuant: TIntegerField
+      FieldName = 'Quant'
+    end
+    object ResVendasValor: TCurrencyField
+      FieldName = 'Valor'
+      DisplayFormat = ',0.00'
+    end
+    object ResVendasDescricao: TStringField
+      FieldName = 'Descricao'
+      Size = 80
+    end
+    object ResVendasZC_Cod: TStringField
+      FieldKind = fkCalculated
+      FieldName = 'ZC_Cod'
+      Size = 5
+      Calculated = True
+    end
+  end
+  object SResVendas: TDataSource
+    DataSet = ResVendas
+    Left = 552
+    Top = 192
   end
 end

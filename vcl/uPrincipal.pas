@@ -29,6 +29,7 @@ type
     procedure btUsuarioClick(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure btConsPedidosClick(Sender: TObject);
+    procedure btAdminClick(Sender: TObject);
   private
     { Private declarations }
   public
@@ -43,11 +44,17 @@ implementation
 {$R *.dfm}
 
 uses uItens, uDados, uGenericas, uCaixa, uPedidos, uImpressoes, uUsuario,
-  uConsPedidos, FortesReportCtle;
+  uConsPedidos, FortesReportCtle, uAdministrativo;
 
 procedure TFuPrincipal.btAbrirCaixaClick(Sender: TObject);
 begin
   AberturaDeCaixa(True);
+
+end;
+
+procedure TFuPrincipal.btAdminClick(Sender: TObject);
+begin
+  Administrativo;
 
 end;
 

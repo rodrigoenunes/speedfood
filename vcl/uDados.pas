@@ -8,10 +8,12 @@ uses
   FireDAC.Stan.Def, FireDAC.Stan.Pool, FireDAC.Stan.Async, FireDAC.Phys,
   FireDAC.Phys.MySQL, FireDAC.Phys.MySQLDef, FireDAC.FMXUI.Wait,
   FireDAC.Stan.Param, FireDAC.DatS, FireDAC.DApt.Intf, FireDAC.DApt,
-  FireDAC.Comp.DataSet, FireDAC.Comp.Client, FireDAC.Comp.UI, Datasnap.DBClient;
+  FireDAC.Comp.DataSet, FireDAC.Comp.Client, FireDAC.Comp.UI, FireDAC.Stan.ExprFuncs,
+  FireDAC.Stan.Expr, Datasnap.DBClient;
   Procedure ContaExtras;
   Procedure CarregaExtras(pCols,pLins: Integer);
   Function CriaAbrePedidoWrk(pNro:Integer): Integer;
+  Function CriaResumoVendas: Boolean;
   Function ObtemParametro(idParam:String): String;
 
 type
@@ -214,12 +216,23 @@ type
     PedidosZC_MeioPagto: TStringField;
     PedidosZC_MPExtenso: TStringField;
     ItenspMVAST: TFMTBCDField;
+    RegCaixaVlrPedidos: TBCDField;
+    RegCaixaQtdPedidos: TIntegerField;
+    ResVendas: TClientDataSet;
+    SResVendas: TDataSource;
+    ResVendasTpProd: TSmallintField;
+    ResVendasCodProd: TIntegerField;
+    ResVendasQuant: TIntegerField;
+    ResVendasValor: TCurrencyField;
+    ResVendasDescricao: TStringField;
+    ResVendasZC_Cod: TStringField;
     procedure ItensCalcFields(DataSet: TDataSet);
     procedure LctCaixaCalcFields(DataSet: TDataSet);
     procedure PedWrkCalcFields(DataSet: TDataSet);
     procedure RegCaixaCalcFields(DataSet: TDataSet);
     procedure PedidosCalcFields(DataSet: TDataSet);
     procedure PedItensCalcFields(DataSet: TDataSet);
+    procedure ResVendasCalcFields(DataSet: TDataSet);
   private
     { Private declarations }
   public
@@ -354,6 +367,36 @@ begin
   end;
 
 end;
+
+
+Function CriaResumoVendas: Boolean;
+begin
+  Result  := True;
+  with uDM
+  do begin
+    ResVendas.Active := False;
+    ResVendas.FieldDefs.Clear;
+    ResVendas.FieldDefs.Add('TpProd',    ftSmallint);
+    ResVendas.FieldDefs.Add('CodProd',   ftInteger);
+    ResVendas.FieldDefs.Add('Quant',     ftInteger);
+    ResVendas.FieldDefs.Add('Valor',     ftCurrency);
+    ResVendas.FieldDefs.Add('Descricao', ftString, 80);
+    ResVendas.IndexDefs.Clear;
+    ResVendas.IndexDefs.Add('','TpProd;CodProd',[ixPrimary,ixUnique]);
+    ResVendas.CreateDataSet;
+    Try
+      ResVendas.Active := True;
+      ResVendas.Active := False;
+    Except
+      Result := False;
+      Exit;
+    End;
+    ResVendas.Active := True;
+
+  end;
+
+end;
+
 
 Function ObtemParametro(idParam:String): String;
 begin
@@ -505,6 +548,12 @@ begin
                                        RegCaixaQtd_Misto.AsInteger;
   RegCaixaZC_VlrSaidas.AsCurrency   := RegCaixaS_Saidas.AsCurrency + RegCaixaS_Sangria.AsCurrency;
   RegCaixaZC_QtdSaidas.AsInteger    := RegCaixaQtd_Saidas.AsInteger + RegCaixaQtd_Sangria.AsInteger;
+
+end;
+
+procedure TuDM.ResVendasCalcFields(DataSet: TDataSet);
+begin
+  ResVendasZC_Cod.AsString := ResVendasTpProd.AsString + '.' + ResVendasCodProd.AsString;
 
 end;
 

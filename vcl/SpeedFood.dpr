@@ -17,7 +17,8 @@ uses
   uConsPedidos in 'uConsPedidos.pas' {FuConsPedidos},
   uSysPrinters in '..\..\UsoGeral\uSysPrinters.pas' {FuSysPrinters},
   FortesReportCtle in '..\..\uFortesReport\FortesReportCtle.pas' {FFRCtle},
-  EnviaEMail in '..\..\uFortesReport\EnviaEMail.pas' {FEnviaEMail};
+  EnviaEMail in '..\..\uFortesReport\EnviaEMail.pas' {FEnviaEMail},
+  uAdministrativo in 'uAdministrativo.pas' {FuAdministrativo};
 
 {$R *.res}
 

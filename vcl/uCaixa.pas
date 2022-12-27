@@ -109,6 +109,7 @@ begin
   uDM.LctCaixa.Refresh;
   uDM.LctCaixa.First;
   //  O primeiro registro deve OBRIGATORIAMENTE ser de saldo inicial e somente um registro '0'
+  //  Se não for, cria o registro
   if uDM.LctCaixaOperacao.AsInteger <> 0 then
   begin
     uDM.LctCaixa.Append;
@@ -188,6 +189,8 @@ begin
   uDM.RegCaixaQtd_Suprimento.AsInteger    := nOper[2];
   uDM.RegCaixaQtd_Saidas.AsInteger        := nOper[3];
   uDM.RegCaixaQtd_Sangria.AsInteger       := nOper[4];
+  uDM.RegCaixaVlrPedidos.AsCurrency       := vOper[1];
+  uDM.RegCaixaQtdPedidos.AsInteger        := nOper[1];
   uDM.RegCaixa.Post;
 
 end;

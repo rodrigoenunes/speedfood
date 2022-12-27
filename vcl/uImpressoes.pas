@@ -8,6 +8,7 @@ uses
   Procedure ImprimePedido(pNroPedido:Integer; pSys:Boolean = True);
   Procedure GeraImprimeNFCe(pNroPedido:Integer);
   Procedure ImprimeCaixa(pSequencia: Integer);
+  Procedure ImprimeResumo(pIni,pFim:String;pVlr:array of Currency; pQtd:array of Integer);
 
 
 type
@@ -106,6 +107,51 @@ type
     RLDBText43: TRLDBText;
     RLLabel29: TRLLabel;
     RLLabel30: TRLLabel;
+    RLPanel6: TRLPanel;
+    RLDBText44: TRLDBText;
+    RLLabel31: TRLLabel;
+    RLDBText45: TRLDBText;
+    RLResumo: TRLReport;
+    RLRes_Cabec: TRLBand;
+    RLPanel7: TRLPanel;
+    RLDBText46: TRLDBText;
+    RLLabel33: TRLLabel;
+    RLLabTurnoIni: TRLLabel;
+    RLLabTurnoFim: TRLLabel;
+    RLRes_Cols: TRLBand;
+    RLRes_Detal: TRLBand;
+    RLRes_Sum: TRLBand;
+    RLLabel34: TRLLabel;
+    RLLabel35: TRLLabel;
+    RLLabel36: TRLLabel;
+    RLLabel37: TRLLabel;
+    RLDBText47: TRLDBText;
+    RLDBText48: TRLDBText;
+    RLDBText49: TRLDBText;
+    RLDBText50: TRLDBText;
+    RLLabel39: TRLLabel;
+    RLLabel40: TRLLabel;
+    RLLabel41: TRLLabel;
+    RLLabel42: TRLLabel;
+    RLLabel43: TRLLabel;
+    RLLabel44: TRLLabel;
+    RLLabel45: TRLLabel;
+    RLAngleLabel1: TRLAngleLabel;
+    RLLabReais: TRLLabel;
+    RLLabCDeb: TRLLabel;
+    RLLabCCred: TRLLabel;
+    RLLabPIX: TRLLabel;
+    RLLabOutros: TRLLabel;
+    RLLabMisto: TRLLabel;
+    RLLabTotal: TRLLabel;
+    RLLabQtdReais: TRLLabel;
+    RLLabQtdCDeb: TRLLabel;
+    RLLabQtdCCred: TRLLabel;
+    RLLabQtdPIX: TRLLabel;
+    RLLabQtdOutros: TRLLabel;
+    RLLabQtdMisto: TRLLabel;
+    RLLabQtdTotal: TRLLabel;
+    RLLabel38: TRLLabel;
     procedure RLCaixaBeforePrint(Sender: TObject; var PrintIt: Boolean);
     procedure RLPedDetalBeforePrint(Sender: TObject; var PrintIt: Boolean);
   private
@@ -121,6 +167,7 @@ var
   portaPrt,driverPrt: String;
   indexPrt: Integer;
   tmMax,margEsq,margDir,margTop,margBot,copias: Integer;
+  lstAction: String;
   lPreview,lDialog: Boolean;
 
 
@@ -128,7 +175,7 @@ implementation
 
 {$R *.dfm}
 
-uses uDados, uBiblioteca, uGenericas, uSysPrinters;
+uses uDados, uBiblioteca, uGenericas, uSysPrinters, FortesReportCtle;
 
 Function MontaTextoImpressao: Integer;
 var xExtra,txtAux: String;
@@ -203,6 +250,7 @@ begin
   margTop := StrToIntDef(ObtemParametro('PedidoMargTopo'),5);
   margBot := StrToIntDef(ObtemParametro('PedidoMargRodape'),5);
   copias := StrToIntDef(ObtemParametro('PedidoCopias'),1);
+  lstAction := ObtemParametro('PedidoAction');
   if AnsiUpperCase(ObtemParametro('PedidoPreview')) = 'S' then lPreview := True
     else lPreview := False;
   if AnsiUpperCase(ObtemParametro('PedidoDialogo')) = 'S' then lDialog := True
@@ -244,6 +292,8 @@ begin
     RLPedido.Margins.TopMargin := margTop;
     RLPedido.Margins.BottomMargin := margBot;
     RLPedDetal.Borders.DrawBottom := lSeparador;
+    FFRCtle.RLPreviewSetup1.CustomActionText := lstAction;
+
    // RLPedSum.Borders.DrawTop := False;
    // if not lSeparador then RLPedSum.Borders.DrawTop := True;
  
@@ -292,6 +342,7 @@ begin
   margTop := StrToIntDef(ObtemParametro('CaixaMargTopo'),5);
   margBot := StrToIntDef(ObtemParametro('CaixaMargRodape'),5);
   copias := StrToIntDef(ObtemParametro('CaixaCopias'),1);
+  lstAction := ObtemParametro('CaixaAction');
   if AnsiUpperCase(ObtemParametro('CaixaPreview')) = 'S' then lPreview := True
     else lPreview := False;
   if AnsiUpperCase(ObtemParametro('CaixaDialogo')) = 'S' then lDialog := True
@@ -318,10 +369,84 @@ begin
     RLCaixa.PrintDialog := lDialog;
     RLPrinters.RLPrinter.PrinterName := idPrinter;
     RLPrinters.RLPrinter.Copies := 1;
+    FFRCtle.RLPreviewSetup1.CustomActionText := lstAction;
 
     if lPreview then RLCaixa.Preview
       else for i := 1 to copias
            do RLCaixa.Print;
+
+  end;
+  FuImpressoes.Free;
+
+end;
+
+Procedure ImprimeResumo(pIni,pFim:String; pVlr:array of Currency; pQtd:array of Integer);
+var i: Integer;
+begin
+  idPrinter := ObtemParametro('ResumoPrinter');
+  tmMax := StrToIntDef(ObtemParametro('ResumoTamMax'),300);
+  margEsq := StrToIntDef(ObtemParametro('ResumoMargEsquerda'),5);
+  margDir := StrToIntDef(ObtemParametro('ResumoMargDireita'),5);
+  margTop := StrToIntDef(ObtemParametro('ResumoMargTopo'),5);
+  margBot := StrToIntDef(ObtemParametro('ResumoMargRodape'),5);
+  copias := StrToIntDef(ObtemParametro('ResumoCopias'),1);
+  lstAction := ObtemParametro('ResumoAction');
+  if AnsiUpperCase(ObtemParametro('ResumoPreview')) = 'S' then lPreview := True
+    else lPreview := False;
+  if AnsiUpperCase(ObtemParametro('ResumoDialogo')) = 'S' then lDialog := True
+    else lDialog := False;
+  if not DefineImpressora(True,idPrinter,portaPrt,driverPrt,indexPrt) then
+    lPreview := True;
+  //
+  uDM.Resvendas.First;
+  FuImpressoes := TFuImpressoes.Create(nil);
+  with FuImpressoes
+  do begin
+    if pIni = pFim then
+    begin
+      RLLabTurnoIni.Caption := 'Turno: ' + pIni;
+      RLLabTurnoFim.Visible := False;
+    end
+    else begin
+      RLLabTurnoIni.Caption := 'Turno inicial: ' + pIni;
+      RLLabTurnoFim.Caption := 'Turno final: ' + pFim;
+    end;
+    RLLabReais.Caption := FloatToStrF(pVlr[0],ffNumber,15,2);
+    RLLabCDeb.Caption := FloatToStrF(pVlr[1],ffNumber,15,2);
+    RLLabCCred.Caption := FloatToStrF(pVlr[2],ffNumber,15,2);
+    RLLabPIX.Caption := FloatToStrF(pVlr[3],ffNumber,15,2);
+    RLLabOutros.Caption := FloatToStrF(pVlr[4],ffNumber,15,2);
+    RLLabMisto.Caption := FloatToStrF(pVlr[5],ffNumber,15,2);
+    RLLabTotal.Caption := FloatToStrF(pVlr[6],ffNumber,15,2);
+
+    RLLabQtdReais.Caption := IntToStr(pQtd[0]);
+    RLLabQtdCDeb.Caption := IntToStr(pQtd[1]);
+    RLLabQtdCCred.Caption := IntToStr(pQtd[2]);
+    RLLabQtdPIX.Caption := IntToStr(pQtd[3]);
+    RLLabQtdOutros.Caption := IntToStr(pQtd[4]);
+    RLLabQtdMisto.Caption := IntToStr(pQtd[5]);
+    RLLabQtdTotal.Caption := IntToStr(pQtd[6]);
+
+    nAltura := RLRes_Cabec.Height + RLRes_Cols.Height +
+               (uDM.ResVendas.RecordCount * RLRes_Detal.Height) +
+               RLRes_Sum.Height + 60;
+    tmPagina := Trunc(nAltura / 3.7795) + 1;
+    if tmPagina < 100 then tmPagina := 100;
+    if tmPagina > tmMax then tmPagina := tmMax;
+
+    RLResumo.PageSetup.PaperHeight := tmPagina;
+    RLResumo.Margins.LeftMargin := margEsq;
+    RLResumo.Margins.RightMargin := margDir;
+    RLResumo.Margins.TopMargin := margTop;
+    RLResumo.Margins.BottomMargin := margBot;
+    RLResumo.PrintDialog := lDialog;
+    RLPrinters.RLPrinter.PrinterName := idPrinter;
+    RLPrinters.RLPrinter.Copies := 1;
+    FFRCtle.RLPreviewSetup1.CustomActionText := lstAction;
+
+    if lPreview then RLResumo.Preview
+      else for i := 1 to copias
+           do RLResumo.Print;
 
   end;
   FuImpressoes.Free;

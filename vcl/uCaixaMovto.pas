@@ -92,6 +92,9 @@ type
     sbAnterior: TSpeedButton;
     sbAtual: TSpeedButton;
     sbProximo: TSpeedButton;
+    GroupBox3: TGroupBox;
+    DBEdit18: TDBEdit;
+    DBEdit19: TDBEdit;
     procedure FormShow(Sender: TObject);
     procedure btSairClick(Sender: TObject);
     procedure btProsseguirClick(Sender: TObject);

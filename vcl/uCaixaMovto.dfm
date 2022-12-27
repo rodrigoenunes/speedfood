@@ -1473,6 +1473,32 @@ object FuCaixaMovto: TFuCaixaMovto
         TabOrder = 8
         OnClick = btFecharClick
       end
+      object GroupBox3: TGroupBox
+        Left = 256
+        Top = 163
+        Width = 157
+        Height = 54
+        Caption = 'Pedidos'
+        TabOrder = 9
+        object DBEdit18: TDBEdit
+          Left = 12
+          Top = 20
+          Width = 96
+          Height = 24
+          DataField = 'VlrPedidos'
+          DataSource = uDM.DSRegCaixa
+          TabOrder = 0
+        end
+        object DBEdit19: TDBEdit
+          Left = 112
+          Top = 20
+          Width = 37
+          Height = 24
+          DataField = 'QtdPedidos'
+          DataSource = uDM.DSRegCaixa
+          TabOrder = 1
+        end
+      end
     end
     object PanManutLcto: TPanel
       Left = 518
