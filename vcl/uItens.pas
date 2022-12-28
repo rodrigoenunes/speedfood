@@ -65,6 +65,8 @@ type
     cbAlteraPreco: TDBCheckBox;
     Label18: TLabel;
     DBEdit8: TDBEdit;
+    PanCor: TPanel;
+    ColorDialog1: TColorDialog;
     procedure btSairClick(Sender: TObject);
     procedure btIncluirClick(Sender: TObject);
     procedure btOkClick(Sender: TObject);
@@ -78,6 +80,9 @@ type
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure FormResize(Sender: TObject);
     procedure dbImagemExit(Sender: TObject);
+    procedure PanCorClick(Sender: TObject);
+    procedure GridProdsDrawColumnCell(Sender: TObject; const Rect: TRect;
+      DataCol: Integer; Column: TColumn; State: TGridDrawState);
   private
     { Private declarations }
   public
@@ -152,7 +157,55 @@ procedure TFuItens.FormResize(Sender: TObject);
 begin
   if FuItens.Width < 846 then FuItens.Width := 846;
   if FuItens.Height < 510 then FuItens.Height := 510;
-  DefineGrid(GridProds,[0.11,0.05,0.33,0.11,0.02,0.10,0.04,0.10],2,0);
+  DefineGrid(GridProds,[0.11,0.05,0.33,0.11,0.02,0.04,0.10,0.04,0.10],2,0);
+
+end;
+
+procedure TFuItens.GridProdsDrawColumnCell(Sender: TObject; const Rect: TRect;
+  DataCol: Integer; Column: TColumn; State: TGridDrawState);
+var wColor: TColor;
+begin
+  if (Column.Field.FieldName = 'ZC_Cor')
+     and (uDM.ItensCorItem.AsString <> '') then
+  begin
+    wColor := StringToColor(uDM.ItensCorItem.AsString);
+    GridProds.Canvas.Brush.Color := wColor;
+    GridProds.Canvas.FillRect(Rect);
+    GridProds.DefaultDrawColumnCell(Rect, DataCol, Column, State);
+  end;
+
+end;
+
+procedure TFuItens.PanCorClick(Sender: TObject);
+var corAnt: TColor;
+begin
+  corAnt := PanCor.Color;
+  ColorDialog1.Color := PanCor.Color;
+  ColorDialog1.Execute();
+  if ColorDialog1.Color <> corAnt then
+  begin
+    PanCor.Color := ColorDialog1.Color;
+    uDM.ItensCorItem.AsString := ColorToString(PanCor.Color);
+  end;
+{
+PanCorMouseDown.....
+// var corR,corG,corB: Integer;
+  if Button = mbLeft
+  then begin
+    Randomize;
+    corR := Random(255);
+    corG := Random(255);
+    corB := Random(255);
+    PanCor.color := RGB(corR,corG,corB);
+    Exit;
+  end;
+  if Button = mbRight
+  then begin
+    uDM.ItensCorItem.AsString := ColorToString(PanCor.Color);
+    ShowMessage('Cor adotada');
+    Exit;
+  end;
+}
 
 end;
 
@@ -340,6 +393,7 @@ procedure TFuItens.edZC_KeyChange(Sender: TObject);
 begin
   gbFiscais.Visible := False;
   imgItem.Visible := False;
+  panCor.Visible := False;
   if (uDM.ItensGrupo.AsInteger = 1)       // Lanches
      or (uDM.ItensGrupo.AsInteger = 3)    // Bebidas
      or (uDM.ItensGrupo.AsInteger = 4)    // Diversos
@@ -347,12 +401,21 @@ begin
   if uDM.ItensGrupo.AsInteger = 1
      then cbAlteraPreco.Visible := True
      else cbAlteraPreco.Visible := False;
+  if ((uDM.ItensGrupo.AsInteger = 1)        // Lanches
+      or (uDM.ItensGrupo.AsInteger = 3))    // Bebidas
+      and (uDM.usaCorItem)                  // Usa cor de preenchimento
+  then begin
+    PanCor.Visible := True;
+    if uDM.ItensCorItem.AsString = ''
+       then PanCor.Color := PanManut.Color
+       else PanCor.Color := StringToColor(uDM.ItensCorItem.AsString);
+  end;
   if FileExists(uDM.ItensImagem.AsString)
   then begin
     imgItem.Picture.LoadFromFile(uDM.ItensImagem.AsString);
     imgItem.Visible := True;
   end;
-
+  //
 
 end;
 

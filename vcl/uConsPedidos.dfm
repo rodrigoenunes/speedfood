@@ -22,7 +22,6 @@ object FuConsPedidos: TFuConsPedidos
     Height = 412
     Align = alClient
     TabOrder = 0
-    ExplicitWidth = 714
     object GridPed: TDBGrid
       Left = 1
       Top = 1
@@ -48,8 +47,10 @@ object FuConsPedidos: TFuConsPedidos
           Visible = True
         end
         item
+          Alignment = taCenter
           Expanded = False
           FieldName = 'ZC_DataHora'
+          Title.Alignment = taCenter
           Title.Caption = 'Data/Hora'
           Width = 95
           Visible = True
@@ -125,7 +126,6 @@ object FuConsPedidos: TFuConsPedidos
     Font.Style = []
     ParentFont = False
     TabOrder = 1
-    ExplicitWidth = 714
     DesignSize = (
       671
       73)

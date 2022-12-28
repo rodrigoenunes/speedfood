@@ -172,6 +172,7 @@ end;
 procedure TFuTrataLanche.dbPrecoEnter(Sender: TObject);
 begin
   if not uDM.SisPessoaTecladoVirtual.AsBoolean then Exit;
+  if not imgPreco.Visible then Exit;
   Teclado.Left    := dbPreco.Left - 12;
   Teclado.Top     := PanIdLanche.Top + PanIdLanche.Height;
   Teclado.Width   := 180;

@@ -126,6 +126,10 @@ begin
     FFRCtle.RLPreviewSetup1.ZoomFactor := StrToIntDef(ObtemParametro('FortesZoomFactor'),100);
     ContaExtras;                  // Obtem qtd de ítens 'extras'
     AberturaDeCaixa;
+
+    if ObtemParametro('UsaCorItem') = 'S' then uDM.usaCorItem := True
+    else uDM.usaCorItem := False;
+
   end;
 
 end;

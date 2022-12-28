@@ -569,36 +569,40 @@ begin
   GridBebidas.Canvas.FillRect(Rect);
   GridBebidas.Color := clWhite;
   //
-  if FileExists(uDM.ItensImagem.AsString) then
+  if FileExists(uDM.ItensImagem.AsString) and (not uDM.usaCorItem) then
   begin
     wImagem.Picture.LoadFromFile(uDM.ItensImagem.AsString);
     GridBebidas.Canvas.StretchDraw(Rect,wImagem.Picture.Graphic);
+  end
+  else begin
+    GridBebidas.Canvas.Brush.Color := StringToColor(uDM.ItensCorItem.AsString);
+    GridBebidas.Canvas.FillRect(Rect);
+
+    GridBebidas.Canvas.Font.Size  := 20;
+    GridBebidas.Canvas.Font.Color := clBlack;
+    wTxt := uDM.ItensDescricao.AsString;
+    LabAux1.Caption   := '';
+    LabAux1.Font.Size := GridBebidas.Canvas.Font.Size;
+    LabAux2.Caption   := '';
+    LabAux2.Font.Size := GridBebidas.Canvas.Font.Size;
+    lin2 := False;
+    for i := 1 to Length(wTxt)
+    do begin
+      if wTxt[i] = '#' then lin2 := True
+      else if not lin2 then
+             LabAux1.Caption := LabAux1.Caption + wTxt[i]
+           else
+             LabAux2.Caption := LabAux2.Caption + wTxt[i];
+    end;
+    nTop := Rect.Height - ((LabAux1.Height * 2) + 12);
+    GridBebidas.Canvas.TextOut(Rect.Left+4, Rect.Top+nTop, LabAux1.Caption);
+    nTop := nTop + LabAux1.Height;
+    GridBebidas.Canvas.TextOut(Rect.Left+4, Rect.Top+nTop, LabAux2.Caption);
   end;
-  //
-  GridBebidas.Canvas.Font.Size  := 20;
-  GridBebidas.Canvas.Font.Color := clBlack;
-  wTxt := uDM.ItensDescricao.AsString;
-  LabAux1.Caption   := '';
-  LabAux1.Font.Size := GridBebidas.Canvas.Font.Size;
-  LabAux2.Caption   := '';
-  LabAux2.Font.Size := GridBebidas.Canvas.Font.Size;
-  lin2 := False;
-  for i := 1 to Length(wTxt)
-  do begin
-    if wTxt[i] = '#' then lin2 := True
-    else if not lin2 then
-           LabAux1.Caption := LabAux1.Caption + wTxt[i]
-         else
-           LabAux2.Caption := LabAux2.Caption + wTxt[i];
-  end;
-  nTop := Rect.Height - ((LabAux1.Height * 2) + 4);
-  GridBebidas.Canvas.TextOut(Rect.Left+4, Rect.Top+nTop, LabAux1.Caption);
-  nTop := nTop + LabAux1.Height;
-  GridBebidas.Canvas.TextOut(Rect.Left+4, Rect.Top+nTop, LabAux2.Caption);
   //
   wTxt := IntToStr(wKey);
   if wKey < 10 then wTxt := '0' + wTxt;
-  GridBebidas.Canvas.Font.Color := clBlue;
+  GridBebidas.Canvas.Font.Color := clBlack;
   GridBebidas.Canvas.Font.Size  := 28;
   GridBebidas.Canvas.Font.Style := [fsBold];
   GridBebidas.Canvas.TextOut(Rect.Left+4, Rect.Top+1, wTxt);
@@ -636,12 +640,15 @@ begin
   GridLanches.Canvas.FillRect(Rect);
   GridLanches.Color := clWhite;
   //
-  if FileExists(uDM.ItensImagem.AsString) then
-  begin
+  if FileExists(uDM.ItensImagem.AsString) and (not uDM.usaCorItem)
+  then begin
     wImagem.Picture.LoadFromFile(uDM.ItensImagem.AsString);
     GridLanches.Canvas.StretchDraw(Rect,wImagem.Picture.Graphic);
   end
   else begin      // Se não houver imagem, 'escreve' a identificação do lanche
+    GridLanches.Canvas.Brush.Color := StringToColor(uDM.ItensCorItem.AsString);
+    GridLanches.Canvas.FillRect(Rect);
+
     GridLanches.Canvas.Font.Size  := 18;
     GridLanches.Canvas.Font.Color := clBlack;
     wTxt := uDM.ItensDescricao.AsString;
@@ -658,14 +665,14 @@ begin
            else
              LabAux2.Caption := LabAux2.Caption + wTxt[i];
     end;
-    nTop := Rect.Height - ((LabAux1.Height * 2) + 4);
+    nTop := Rect.Height - ((LabAux1.Height * 2) + 12);
     GridLanches.Canvas.TextOut(Rect.Left+4, Rect.Top+nTop, LabAux1.Caption);
-    nTop := nTop + LabAux1.Height;
+    nTop := nTop + LabAux1.Height + 2;
     GridLanches.Canvas.TextOut(Rect.Left+4, Rect.Top+nTop, LabAux2.Caption);
   end;
   wTxt := IntToStr(wKey);
   if wKey < 10 then wTxt := '0' + wTxt;
-  GridLanches.Canvas.Font.Color := clRed;
+  GridLanches.Canvas.Font.Color := clBlack;
   GridLanches.Canvas.Font.Size  := 28;
   GridLanches.Canvas.Font.Style := [fsBold];
   GridLanches.Canvas.TextOut(Rect.Left+4, Rect.Top, wTxt);

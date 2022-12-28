@@ -226,6 +226,8 @@ type
     ResVendasValor: TCurrencyField;
     ResVendasDescricao: TStringField;
     ResVendasZC_Cod: TStringField;
+    ItensCorItem: TStringField;
+    ItensZC_Cor: TStringField;
     procedure ItensCalcFields(DataSet: TDataSet);
     procedure LctCaixaCalcFields(DataSet: TDataSet);
     procedure PedWrkCalcFields(DataSet: TDataSet);
@@ -246,6 +248,7 @@ type
     wCodExtraTab: array[1..24] of Integer;
     wTxtExtraTab: array[1..24] of String;
     wVlrExtraTab: array[1..24] of Currency;
+    usaCorItem: Boolean;
 
   end;
 
@@ -418,6 +421,7 @@ begin
   uDM.ItensZC_Key.AsString := uDM.ItensGrupo.AsString + uDM.ItensCodigo.AsString;
   if uDM.ItensAlteraPreco.AsBoolean then uDM.ItensZC_AltPreco.AsString := 'P'
   else uDM.ItensZC_AltPreco.AsString := '';
+  uDM.ItensZC_Cor.AsString := '';
 
 end;
 

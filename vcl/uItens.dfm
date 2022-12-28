@@ -12,6 +12,7 @@ object FuItens: TFuItens
   Font.Style = []
   OldCreateOrder = False
   Position = poDesigned
+  ShowHint = True
   OnActivate = FormActivate
   OnClose = FormClose
   OnResize = FormResize
@@ -405,8 +406,8 @@ object FuItens: TFuItens
         end
       end
       object edZC_Key: TDBEdit
-        Left = 625
-        Top = 30
+        Left = 95
+        Top = 48
         Width = 28
         Height = 24
         DataField = 'ZC_Key'
@@ -453,6 +454,24 @@ object FuItens: TFuItens
         DataSource = uDM.DSItens
         TabOrder = 7
       end
+      object PanCor: TPanel
+        Left = 609
+        Top = 6
+        Width = 71
+        Height = 54
+        Hint = 'Bot'#227'o direito define a cor, bot'#227'o esquerdo adota a cor'
+        Caption = 'Cor'
+        Color = clHotLight
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -16
+        Font.Name = 'Tahoma'
+        Font.Style = [fsBold]
+        ParentBackground = False
+        ParentFont = False
+        TabOrder = 14
+        OnClick = PanCorClick
+      end
     end
     object GridProds: TDBGrid
       Left = 1
@@ -470,6 +489,7 @@ object FuItens: TFuItens
       TitleFont.Height = -13
       TitleFont.Name = 'Tahoma'
       TitleFont.Style = []
+      OnDrawColumnCell = GridProdsDrawColumnCell
       Columns = <
         item
           Expanded = False
@@ -510,6 +530,12 @@ object FuItens: TFuItens
           Font.Name = 'Wingdings'
           Font.Style = []
           Title.Caption = 'P'
+          Visible = True
+        end
+        item
+          Expanded = False
+          FieldName = 'ZC_Cor'
+          Title.Caption = 'Cor'
           Visible = True
         end
         item
@@ -661,7 +687,11 @@ object FuItens: TFuItens
   end
   object OpenPictureDialog1: TOpenPictureDialog
     Filter = 'Imagens|*.bmp;*.jpg'
-    Left = 700
-    Top = 144
+    Left = 720
+    Top = 68
+  end
+  object ColorDialog1: TColorDialog
+    Left = 500
+    Top = 88
   end
 end

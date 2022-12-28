@@ -153,6 +153,12 @@ object uDM: TuDM
       Precision = 8
       Size = 5
     end
+    object ItensCorItem: TStringField
+      AutoGenerateValue = arDefault
+      FieldName = 'CorItem'
+      Origin = 'CorItem'
+      Size = 10
+    end
     object ItensZC_Grupo: TStringField
       FieldKind = fkCalculated
       FieldName = 'ZC_Grupo'
@@ -169,6 +175,12 @@ object uDM: TuDM
       FieldKind = fkCalculated
       FieldName = 'ZC_Key'
       Size = 5
+      Calculated = True
+    end
+    object ItensZC_Cor: TStringField
+      FieldKind = fkCalculated
+      FieldName = 'ZC_Cor'
+      Size = 3
       Calculated = True
     end
   end

@@ -42,9 +42,8 @@ begin
   FuConsPedidos := TFuConsPedidos.Create(nil);
   FuConsPedidos.Height := Screen.Height - 60;
   FuConsPedidos.Top := 10;
-  FuConsPedidos.Width := Screen.Width div 2;
+  FuConsPedidos.Width := Trunc(Screen.Width * 0.60);
   FuConsPedidos.Left := 40;
-
   FuConsPedidos.ShowModal;
   FuConsPedidos.Free;
 
@@ -75,7 +74,7 @@ procedure TFuConsPedidos.FormResize(Sender: TObject);
 begin
   if FuConsPedidos.Width < 670 then FuConsPedidos.Width := 670;
   if FuConsPedidos.Height < 480 then FuConsPedidos.Height := 480;
-  GridPed := DefineGrid(GridPed,[0.08,0.13,0.06,0.10,0.33,0.05,0.06,0.08,0.04],4,0);
+  GridPed := DefineGrid(GridPed,[0.08,0.15,0.06,0.10,0.33,0.05,0.06,0.08,0.04],4,0);
 
 end;
 
