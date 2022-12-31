@@ -66,6 +66,13 @@ end;
 
 procedure TFuPrincipal.btPedidosClick(Sender: TObject);
 begin
+  if ObtemParametro('UsaCorItem') = 'S' then uDM.usaCorItem := True
+     else uDM.usaCorItem := False;
+  uDM.topLanche := StrToIntDef(ObtemParametro('TelaPedidoTopLanche'),44);
+  uDM.topBebida := StrToIntDef(ObtemParametro('TelaPedidoTopBebida'),52);
+  uDM.topExtra  := StrToIntDef(ObtemParametro('TelaPedidoTopExtra'),16);
+  uDM.leftExtra := StrToIntDef(ObtemParametro('TelaPedidoLeftExtra'),20);
+
   LancamentoPedidos;
 
 end;
@@ -126,9 +133,6 @@ begin
     FFRCtle.RLPreviewSetup1.ZoomFactor := StrToIntDef(ObtemParametro('FortesZoomFactor'),100);
     ContaExtras;                  // Obtem qtd de ítens 'extras'
     AberturaDeCaixa;
-
-    if ObtemParametro('UsaCorItem') = 'S' then uDM.usaCorItem := True
-    else uDM.usaCorItem := False;
 
   end;
 

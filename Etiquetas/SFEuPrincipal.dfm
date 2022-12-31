@@ -872,6 +872,16 @@ object FuPrincipalEtq: TFuPrincipalEtq
         TabOrder = 6
         OnClick = btSairClick
       end
+      object btHelp: TBitBtn
+        Left = 528
+        Top = 112
+        Width = 75
+        Height = 25
+        Anchors = [akRight, akBottom]
+        Caption = 'btHelp'
+        TabOrder = 7
+        OnClick = btHelpClick
+      end
     end
     object GridItens: TDBGrid
       Left = 1

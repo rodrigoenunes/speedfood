@@ -40,6 +40,7 @@ type
     cbSelItens: TComboBox;
     btPrintAll: TBitBtn;
     btSair2: TBitBtn;
+    btHelp: TBitBtn;
     procedure FormCreate(Sender: TObject);
     procedure FormActivate(Sender: TObject);
     procedure btCarregaClick(Sender: TObject);
@@ -57,6 +58,7 @@ type
     procedure cbSelPedidosClick(Sender: TObject);
     procedure cbSelItensClick(Sender: TObject);
     procedure btPrintAllClick(Sender: TObject);
+    procedure btHelpClick(Sender: TObject);
   private
     { Private declarations }
   public
@@ -109,18 +111,17 @@ end;
 
 procedure TFuPrincipalEtq.btPreviewClick(Sender: TObject);
 var nKey1,nKey2: Integer;
-    filTxtAnt: String;
-    filAnt: Boolean;
 begin
   if uDM.PedItens.RecordCount = 0 then Exit;
   nKey1 := uDM.PedItensNumero.AsInteger;
   nKey2 := uDM.PedItensNrLcto.AsInteger;
-  FFRCtle.RLPreviewSetup1.CustomActionText := '';
   FSFEuPrintFortes := TFSFEuPrintFortes.Create(nil);
-
+  DefinePrinterEtiqueta;
+  //
   if uDM.PedItensTpProd.AsInteger = 1 then
     FSFEuPrintFortes.RLEtiqLanche.Preview
   else begin
+{
     filAnt := uDM.PedItens.Filtered;
     filTxtAnt := uDM.pedItens.Filter;
     uDM.PedItens.Filtered := True;
@@ -130,6 +131,7 @@ begin
     uDM.PedItens.Filtered := filAnt;
     uDM.PedItens.Filter := filTxtAnt;
     uDM.PedItens.Refresh
+}
   end;
   FSFEuPrintFortes.Free;
   uDM.PedItens.FindKey([nKey1,nKey2]);
@@ -149,18 +151,10 @@ procedure TFuPrincipalEtq.btPrintAllClick(Sender: TObject);
 var filAnt: Boolean;
     filTxtAnt: String;
 begin
-  wPrinter := ObtemParametro('EtiquetaPrinter');
-  if not DefineImpressora(True,wPrinter,wPorta,wDriver,nIndex) then
-  begin
-    lDialog := True;
-    if not RetornaImpressoraPadrao(wPrinter,wPorta,wDriver,nIndex) then Exit;
-  end;
-  RLPrinters.RLPrinter.PrinterName := wPrinter;
-  RLPrinters.RLPrinter.Copies := 1;
-  FFRCtle.RLPreviewSetup1.CustomActionText := '';
   FSFEuPrintFortes := TFSFEuPrintFortes.Create(nil);
-  FSFEuPrintFortes.RLEtiqLanche.PrintDialog := lDialog;            // Lanches
-  FSFEuPrintFortes.RLEtiqBebida.PrintDialog := lDialog;            // Bebidas
+  DefinePrinterEtiqueta;
+  //FSFEuPrintFortes.RLEtiqBebida.PrintDialog := lDialog;            // Bebidas
+
   filAnt := uDM.PedItens.Filtered;
   filTxtAnt := uDM.PedItens.Filter;
   uDM.PedItens.Filtered := True;
@@ -168,11 +162,12 @@ begin
   uDM.Pedidos.Refresh;
   if uDM.PedItens.RecordCount > 0 then
   begin
-    SetaRegsEtqLanches(1);       // Todos os registros
+    SetaRecordRangeEtqLanches(1);       // Todos os registros
     uDM.PedItens.First;
     FSFEuPrintFortes.RLEtiqLanche.Print;
-    SetaRegsEtqLanches(0);       // Somente registro atual (Defualt)
+    SetaRecordRangeEtqLanches(0);       // Somente registro atual (Defualt)
   end;
+  {
   uDM.PedItens.Filter := 'TpProd=3';
   uDM.PedItens.Refresh;
   if uDM.Pedidos.RecordCount > 0 then
@@ -180,6 +175,7 @@ begin
     uDM.PedItens.First;
     FSFEuPrintFortes.RLEtiqBebida.Print;    // Imprime TODAS as bebidas em uma etiqueta
   end;
+  }
   FSFEuPrintFortes.Free;
   //
   uDM.PedItens.Filtered := False;
@@ -206,24 +202,13 @@ begin
   if uDM.PedItens.RecordCount = 0 then Exit;
   nKey1 := uDM.PedItensNumero.AsInteger;
   nKey2 := uDM.PedItensNrLcto.AsInteger;
-  tpImpres := 1;
-  lDialog  := False;
-  wPrinter := ObtemParametro('EtiquetaPrinter');
-  if not DefineImpressora(True,wPrinter,wPorta,wDriver,nIndex) then
-  begin
-    lDialog := True;
-    if not RetornaImpressoraPadrao(wPrinter,wPorta,wDriver,nIndex) then Exit;
-  end;
-  RLPrinters.RLPrinter.PrinterName := wPrinter;
-  RLPrinters.RLPrinter.Copies := 1;
-  FFRCtle.RLPreviewSetup1.CustomActionText := '';
-
   FSFEuPrintFortes := TFSFEuPrintFortes.Create(nil);
-    FSFEuPrintFortes.RLEtiqLanche.PrintDialog := lDialog;
+  DefinePrinterEtiqueta;
+  tpImpres := 1;   // Lanche
   if uDM.PedItensTpProd.AsInteger = 1 then
     FSFEuPrintFortes.RLEtiqLanche.Print
   else begin
-    tpImpres := 3;
+    tpImpres := 3;  // Bebidas
     filAnt := uDM.PedItens.Filtered;
     filTxtAnt := uDM.PedItens.Filter;
     uDM.PedItens.Filter := 'TpProd=3';
@@ -252,6 +237,12 @@ begin
       uDM.PedItens.Post;
     end;
   uDM.PedItens.Refresh;
+
+end;
+
+procedure TFuPrincipalEtq.btHelpClick(Sender: TObject);
+begin
+  ShowMessage('Instruções para definição correta da etiqueta');
 
 end;
 

@@ -78,6 +78,7 @@ var
   wCodLanche: array[0..19,0..19] of Integer;
   wCodBebida: array[0..19,0..19] of Integer;
   lrgLanche,altLanche,lrgBebida,altBebida: Integer;
+  wColor: TColor;
 
 implementation
 
@@ -575,7 +576,10 @@ begin
     GridBebidas.Canvas.StretchDraw(Rect,wImagem.Picture.Graphic);
   end
   else begin
-    GridBebidas.Canvas.Brush.Color := StringToColor(uDM.ItensCorItem.AsString);
+    if uDM.ItensCorItem.AsString <> '' then
+      wColor := StringToColor(uDM.ItensCorItem.AsString)
+    else wColor := clAqua;
+    GridBebidas.Canvas.Brush.Color := wColor;
     GridBebidas.Canvas.FillRect(Rect);
 
     GridBebidas.Canvas.Font.Size  := 20;
@@ -594,10 +598,10 @@ begin
            else
              LabAux2.Caption := LabAux2.Caption + wTxt[i];
     end;
-    nTop := Rect.Height - ((LabAux1.Height * 2) + 12);
-    GridBebidas.Canvas.TextOut(Rect.Left+4, Rect.Top+nTop, LabAux1.Caption);
+    nTop := Rect.Top + uDM.topBebida;            // Rect.Height - ((LabAux1.Height * 2) + 12);
+    GridBebidas.Canvas.TextOut(Rect.Left+4, nTop, LabAux1.Caption);
     nTop := nTop + LabAux1.Height;
-    GridBebidas.Canvas.TextOut(Rect.Left+4, Rect.Top+nTop, LabAux2.Caption);
+    GridBebidas.Canvas.TextOut(Rect.Left+4, nTop, LabAux2.Caption);
   end;
   //
   wTxt := IntToStr(wKey);
@@ -629,6 +633,7 @@ var wTxt: String;
     wKey,i,nTop: Integer;
     wImagem: TImage;
     lin2: Boolean;
+
 begin
   // Identifica o lanche na célula
   wKey := wCodLanche[ACol,ARow];
@@ -646,7 +651,10 @@ begin
     GridLanches.Canvas.StretchDraw(Rect,wImagem.Picture.Graphic);
   end
   else begin      // Se não houver imagem, 'escreve' a identificação do lanche
-    GridLanches.Canvas.Brush.Color := StringToColor(uDM.ItensCorItem.AsString);
+    if uDM.ItensCorItem.AsString <> '' then
+      wColor := StringToColor(uDM.ItensCorItem.AsString)
+    else wColor := clTeal;
+    GridLanches.Canvas.Brush.Color := wColor;
     GridLanches.Canvas.FillRect(Rect);
 
     GridLanches.Canvas.Font.Size  := 18;
@@ -665,10 +673,10 @@ begin
            else
              LabAux2.Caption := LabAux2.Caption + wTxt[i];
     end;
-    nTop := Rect.Height - ((LabAux1.Height * 2) + 12);
-    GridLanches.Canvas.TextOut(Rect.Left+4, Rect.Top+nTop, LabAux1.Caption);
+    nTop := Rect.Top + uDM.topLanche;           // Rect.Height - ((LabAux1.Height * 2) + 12);
+    GridLanches.Canvas.TextOut(Rect.Left+4, nTop, LabAux1.Caption);
     nTop := nTop + LabAux1.Height + 2;
-    GridLanches.Canvas.TextOut(Rect.Left+4, Rect.Top+nTop, LabAux2.Caption);
+    GridLanches.Canvas.TextOut(Rect.Left+4, nTop, LabAux2.Caption);
   end;
   wTxt := IntToStr(wKey);
   if wKey < 10 then wTxt := '0' + wTxt;

@@ -228,6 +228,9 @@ type
     ResVendasZC_Cod: TStringField;
     ItensCorItem: TStringField;
     ItensZC_Cor: TStringField;
+    PedidosPlaca: TStringField;
+    PedItensZC_PlacaLcto: TStringField;
+    PedItensZC_CodDescr: TStringField;
     procedure ItensCalcFields(DataSet: TDataSet);
     procedure LctCaixaCalcFields(DataSet: TDataSet);
     procedure PedWrkCalcFields(DataSet: TDataSet);
@@ -249,6 +252,7 @@ type
     wTxtExtraTab: array[1..24] of String;
     wVlrExtraTab: array[1..24] of Currency;
     usaCorItem: Boolean;
+    topLanche,topBebida,topExtra,leftExtra: Integer;
 
   end;
 
@@ -515,15 +519,18 @@ begin
     PedItensZC_Prensado.AsString := 'Prensado'
   else
     PedItensZC_Prensado.AsString := '';
-  if uDM.Itens.FindKey([uDM.PedItensTpProd.AsInteger,uDM.PedItensCodProd.AsInteger]) then
+  if Itens.FindKey([PedItensTpProd.AsInteger,PedItensCodProd.AsInteger]) then
     PedItensZC_Descricao.AsString := stringReplace(ItensDescricao.AsString,'#',' ',[rfIgnoreCase, rfReplaceAll])
   else
     PedItensZC_Descricao.AsString := '';
+  PedItensZC_CodDescr.AsString := '[ ' + PedItensCodProd.AsString + ' ] ' + PedItensZC_Descricao.AsString;
+
   if PedItensEtqImpressa.AsInteger <> 0 then
     PedItensZC_Impresso.ASString := 'P'
   else
     PedItensZC_Impresso.AsString := '';
   PedItensZC_PedLcto.AsString := PedItensNumero.AsString + '/' + PedItensNrLcto.AsString;
+  PedItensZC_PlacaLcto.AsString := PedidosPlaca.AsString + '/' + PedItensNrLcto.AsString;
 
 end;
 

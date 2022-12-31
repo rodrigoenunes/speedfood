@@ -576,6 +576,10 @@ object uDM: TuDM
       FieldName = 'Turno'
       Origin = 'Turno'
     end
+    object PedidosPlaca: TStringField
+      FieldName = 'Placa'
+      Size = 10
+    end
     object PedidosZC_Impresso: TStringField
       FieldKind = fkCalculated
       FieldName = 'ZC_Impresso'
@@ -803,6 +807,18 @@ object uDM: TuDM
       FieldKind = fkCalculated
       FieldName = 'ZC_Tp'
       Size = 1
+      Calculated = True
+    end
+    object PedItensZC_PlacaLcto: TStringField
+      FieldKind = fkCalculated
+      FieldName = 'ZC_PlacaLcto'
+      Size = 10
+      Calculated = True
+    end
+    object PedItensZC_CodDescr: TStringField
+      FieldKind = fkCalculated
+      FieldName = 'ZC_CodDescr'
+      Size = 120
       Calculated = True
     end
   end

@@ -4,29 +4,14 @@ interface
 
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, RLReport;
-  procedure SetaRegsEtqLanches(pmtModo:Integer);
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, RLReport, RLPrinters, RLRichText;
+  procedure DefinePrinterEtiqueta;
+  procedure SetaRecordRangeEtqLanches(pmtModo:Integer);
 
 type
   TFSFEuPrintFortes = class(TForm)
     RLEtiqLanche: TRLReport;
     RLDetLanche: TRLBand;
-    RLDBMemo1: TRLDBMemo;
-    RLPanel3: TRLPanel;
-    RLDBText4: TRLDBText;
-    RLPanel4: TRLPanel;
-    RLPanel5: TRLPanel;
-    RLSem: TRLMemo;
-    RLPanel6: TRLPanel;
-    RLMais: TRLMemo;
-    RLPanel7: TRLPanel;
-    RLMenos: TRLMemo;
-    RLNadaSem: TRLImage;
-    RLNadaMais: TRLImage;
-    RLNadaMenos: TRLImage;
-    RLAngleLabel1: TRLAngleLabel;
-    RLAngleLabel2: TRLAngleLabel;
-    RLAngleLabel3: TRLAngleLabel;
     RLEtiqBebida: TRLReport;
     RLCabBeb: TRLBand;
     RLPanel8: TRLPanel;
@@ -35,41 +20,96 @@ type
     RLPanel9: TRLPanel;
     RLDBText7: TRLDBText;
     RLCabLanche: TRLBand;
-    RLPanel2: TRLPanel;
-    RLDBText1: TRLDBText;
-    RLDBText2: TRLDBText;
-    RLPanel1: TRLPanel;
-    RLDBText3: TRLDBText;
     RLDetBebida: TRLBand;
     RLBebFooter: TRLBand;
     RLBebColFooter: TRLBand;
     RLDBText10: TRLDBText;
     RLDBText11: TRLDBText;
     RLDBText12: TRLDBText;
-    RLLabel1: TRLLabel;
     RLLabel2: TRLLabel;
     RLDBResult1: TRLDBResult;
     RLDBText9: TRLDBText;
-    RLDBText8: TRLDBText;
     RLLabPrensado: TRLLabel;
     RLLabCortado: TRLLabel;
+    RLDBText2: TRLDBText;
+    RLLabel1: TRLLabel;
+    RLDBText4: TRLDBText;
+    RLBand1: TRLBand;
+    RLLabPedido: TRLLabel;
+    RLLabPlaca: TRLLabel;
+    RLDbPedLcto: TRLDBText;
+    RLDBPlacaLcto: TRLDBText;
+    RLDBText3: TRLDBText;
+    RLDbCliente: TRLDBText;
+    RLLabSem: TRLLabel;
+    RLLabMais: TRLLabel;
+    RLLabMenos: TRLLabel;
+    RLSem: TRLMemo;
+    RLMais: TRLMemo;
+    RLMenos: TRLMemo;
     procedure RLEtiqLancheBeforePrint(Sender: TObject; var PrintIt: Boolean);
   private
     { Private declarations }
   public
     { Public declarations }
+
   end;
 
 var
   FSFEuPrintFortes: TFSFEuPrintFortes;
+  idPrinter,portaPrt,driverPrt: String;
+  indexPrt: Integer;
+  lPreview,lDialog: Boolean;
+  etqAlt,etqLrg,etqTop,etqEsq,etqDir,etqBot: Integer;
 
 implementation
 
 {$R *.dfm}
 
-uses uDados;
+uses uDados, uSysPrinters, FortesReportCtle;
 
-procedure SetaRegsEtqLanches(pmtModo:Integer);
+procedure DefinePrinterEtiqueta;
+begin
+  with FSFEuPrintFortes
+  do begin
+    idPrinter := ObtemParametro('EtiquetaPrinter');
+    if ObtemParametro('EtiquetaPreview') = 'S' then
+      lPreview := True
+    else
+      lPreview := False;
+    if ObtemParametro('EtiquetaDialogo') = 'S' then
+      lDialog := True
+    else
+      lDialog := False;
+    etqAlt := StrToIntDef(ObtemParametro('EtiquetaAltura'),53);
+    etqLrg := StrToIntDef(ObtemParametro('EtiquetaLargura'),105);
+    etqTop := StrToIntDef(ObtemParametro('EtiquetaMargTopo'),4);
+    etqEsq := StrToIntDef(ObtemParametro('EtiquetaMargEsquerda'),6);
+    etqDir := StrToIntDef(ObtemParametro('EtiquetaMargDireita'),2);
+    etqBot := StrToIntDef(ObtemParametro('EtiquetaMargRodape'),3);
+    if not DefineImpressora(True,idPrinter,portaPrt,driverPrt,indexPrt) then
+    begin
+      lPreview := True;
+      lDialog := True;
+    end;
+    //
+    FFRCtle.RLPreviewSetup1.CustomActionText := '';
+    RLPrinters.RLPrinter.PrinterName := idPrinter;
+    RLPrinters.RLPrinter.Copies := 1;
+    //
+    RLEtiqLanche.PrintDialog := lDialog;
+    RLEtiqLanche.PageSetup.PaperHeight := etqAlt;
+    RLEtiqLanche.Margins.LeftMargin := etqEsq;
+    RLEtiqLanche.Margins.RightMargin := etqDir;
+    RLEtiqLanche.Margins.TopMargin := etqTop;
+    RLEtiqLanche.Margins.BottomMargin := etqBot;
+    //
+    // Define RLEtiqBebida....
+
+  end;
+end;
+
+procedure SetaRecordRangeEtqLanches(pmtModo:Integer);
 begin
   if pmtModo = 1 then
     FSFEuPrintFortes.RLEtiqLanche.RecordRange := rrAllRecords
@@ -81,20 +121,27 @@ end;
 procedure TFSFEuPrintFortes.RLEtiqLancheBeforePrint(Sender: TObject; var PrintIt: Boolean);
 var i: Integer;
     AllExtras,xExtra: String;
-    wImgVazio: String;
 begin
   with FSFEuPrintFortes
   do begin
-    wImgVazio := ObtemParametro('imgVazio');
-    if FileExists(wImgVazio) then
+    if uDM.PedidosPlaca.AsString <> '' then
     begin
-      RLNadaSem.Picture.LoadFromFile(wImgVazio);
-      RLNadaMais.Picture.LoadFromFile(wImgVazio);
-      RLNadaMenos.Picture.LoadFromFile(wImgVazio);
+      RLDbPedLcto.Top := 2;
+      RLDbPedLcto.Font.Size := 8;
+      RLDbPedLcto.Font.Style := [];
+      RLDbPlacaLcto.Visible := True;
+    end
+    else begin
+      RLDbPedLcto.Top := 0;
+      RLDbPedLcto.Font.Size := 10;
+      RLDbPedLcto.Font.Style := [fsBold];
+      RLDbPlacaLcto.Visible := False;
     end;
-    RLSem.Lines.Clear;
-    RLMais.Lines.Clear;
-    RLMenos.Lines.Clear;
+    if uDM.PedidosNomeCliente.AsString <> '' then
+      RLDbCliente.Visible := True
+    else
+      RLDbCliente.Visible := False;
+    //
     AllExtras := uDM.PedItensExtras.AsString;
     for i := 1 to 24 do
       if AllExtras[i] <> '.' then
@@ -105,12 +152,29 @@ begin
            else if AllExtras[i] = '+' then RLMais.Lines.Add(xExtra)
                 else RLMenos.Lines.Add(xExtra);
          end;
-    if RLSem.Lines.Count = 0 then
-      RLNadaSem.Visible := True;
-    if RLMais.Lines.count = 0 then
-      RLNadaMais.Visible := True;
-    if RLMenos.Lines.Count = 0 then
-      RLNadaMenos.Visible := True;
+
+    RLLabSem.Visible := False;
+    RLSem.Visible := False;
+    if RLSem.Lines.Count > 0 then
+    begin
+      RLLabSem.Visible := True;
+      RLSem.Visible := True;
+    end;
+    RLLabMais.Visible := False;
+    RLMais.Visible := False;
+    if RLMais.Lines.Count > 0 then
+    begin
+      RLLabMais.Visible := True;
+      RLMais.Visible := True;
+    end;
+    RLLabMenos.Visible := False;
+    RLMenos.Visible := False;
+    if RLMenos.Lines.Count > 0 then
+    begin
+      RLLabMenos.Visible := True;
+      RLMenos.Visible := True;
+    end;
+
     if uDM.PedItensPrensado.AsInteger <> 0 then
       RLLabPrensado.Visible := True;
     if uDM.PedItensCortado.AsInteger <> 0 then

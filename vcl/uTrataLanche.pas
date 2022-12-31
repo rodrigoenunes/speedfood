@@ -75,7 +75,7 @@ implementation
 uses uGenericas, uDados;
 
 Procedure MontaTelaExtras;
-var nCols,nLins,nAlt,i,j,dimUtil: Integer;
+var nCols,nLins,nAlt,i,dimUtil: Integer;
     largs: array of real;
     posBarra: String;
     altBarra,lrgBarra,altMaxima,lrgMaxima: Integer;
@@ -237,8 +237,7 @@ end;
 
 procedure TFuTrataLanche.GridExtrasDrawCell(Sender: TObject; ACol,ARow: Integer; Rect: TRect; State: TGridDrawState);
 var wImagem: TImage;
-    nCol,nRow: Integer;
-    wTexto: String;
+    nCol,nRow,nTop,nLeft: Integer;
 begin
   GridExtras.Canvas.Brush.Style := bsClear;
   GridExtras.Canvas.FillRect(Rect);
@@ -262,9 +261,11 @@ begin
     2,7:if uDM.wCodExtra[nCol,nRow] > 0 then
     begin
       GridExtras.Canvas.Font.Size := 14;
-      GridExtras.Canvas.TextOut(Rect.Left+8, Rect.Top+2, uDM.wTxtExtra[nCol,nRow]);
+      nLeft := Rect.Left + uDM.leftExtra;
+      nTop := Rect.Top + uDM.topExtra;
+      GridExtras.Canvas.TextOut(nLeft, nTop, uDM.wTxtExtra[nCol,nRow]);
       if uDM.wVlrExtra[nCol,nRow] > 0 then
-        GridExtras.Canvas.TextOut(Rect.Left+8, Rect.Top+21,
+        GridExtras.Canvas.TextOut(nLeft+8, nTop+18,
                                   'R$' + FloatToStrF(uDM.wVlrExtra[nCol,nRow],ffNumber,15,2));
     end;
     3,8:if uDM.wCodExtra[nCol,nRow] > 0 then
@@ -342,8 +343,7 @@ begin
           begin          // Extra com valor
             if xExtras[wKey] = '-'        // 'Menos'  -> Padrão
                then xExtras[wKey] := '.'
-               else if (xExtras[wKey] = '0') or       // 'SEM' ou
-                       (xExtras[wKey] = '.')          // 'Padrão' -> '1'
+               else if (xExtras[wKey] = '0') or (xExtras[wKey] = '.')  // 'SEM' ou 'Padrao
                        then xExtras[wKey] := '1'
                        else if xExtras[wKey] = '1'        // '1' -> '2'
                                then xExtras[wKey] := '2'
@@ -352,7 +352,10 @@ begin
         end;
     2,7:begin              // SEM
         if uDM.wVlrExtraTab[wKey] > 0 then Exit;
-        xExtras[wKey] := '0';
+        if xExtras[wKey] = '0' then
+           xExtras[wKey] := '.'
+        else
+           xExtras[wKey] := '0';
     end;
     3,8:begin              // Menos
         if xExtras[wKey] = '2'

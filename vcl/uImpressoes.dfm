@@ -798,7 +798,7 @@ object FuImpressoes: TFuImpressoes
       Left = 19
       Top = 19
       Width = 264
-      Height = 48
+      Height = 56
       AutoSize = True
       BandType = btHeader
       Borders.Sides = sdCustom
@@ -835,35 +835,37 @@ object FuImpressoes: TFuImpressoes
           Text = ''
         end
       end
-      object RLDBText32: TRLDBText
-        Left = 42
-        Top = 16
-        Width = 54
-        Height = 16
+      object RLDbNrPedido: TRLDBText
+        Left = 134
+        Top = 17
+        Width = 129
+        Height = 19
+        Align = faRightTop
+        Alignment = taRightJustify
         DataField = 'Numero'
         DataSource = uDM.DSPedidos
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clBlack
-        Font.Height = -13
+        Font.Height = -16
         Font.Name = 'Arial'
         Font.Style = [fsBold]
         ParentFont = False
-        Text = ''
+        Text = 'Pedido: '
       end
       object RLDBText34: TRLDBText
         Left = 168
-        Top = 17
+        Top = 40
         Width = 95
         Height = 14
-        Align = faRightTop
         Alignment = taRightJustify
         DataField = 'ZC_DataHora'
         DataSource = uDM.DSPedidos
         Text = 'Dt/Hr:'
+        Visible = False
       end
       object RLDBText41: TRLDBText
         Left = 42
-        Top = 33
+        Top = 40
         Width = 74
         Height = 14
         DataField = 'NomeCliente'
@@ -876,24 +878,33 @@ object FuImpressoes: TFuImpressoes
         ParentFont = False
         Text = ''
       end
-      object RLLabel29: TRLLabel
-        Left = 1
-        Top = 18
-        Width = 41
-        Height = 14
-        Caption = 'Pedido: '
-      end
       object RLLabel30: TRLLabel
         Left = 4
-        Top = 33
+        Top = 40
         Width = 38
         Height = 14
         Caption = 'Cliente:'
       end
+      object RLDbPlaca: TRLDBText
+        Left = 1
+        Top = 17
+        Width = 98
+        Height = 19
+        Align = faLeftTop
+        DataField = 'Placa'
+        DataSource = uDM.DSPedidos
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clBlack
+        Font.Height = -16
+        Font.Name = 'Arial'
+        Font.Style = [fsBold]
+        ParentFont = False
+        Text = 'Placa: '
+      end
     end
     object RLPedColCab: TRLBand
       Left = 19
-      Top = 67
+      Top = 75
       Width = 264
       Height = 16
       BandType = btColumnHeader
@@ -957,7 +968,7 @@ object FuImpressoes: TFuImpressoes
     end
     object RLPedDetal: TRLBand
       Left = 19
-      Top = 83
+      Top = 91
       Width = 264
       Height = 29
       AutoSize = True
@@ -1042,7 +1053,7 @@ object FuImpressoes: TFuImpressoes
     end
     object RLPedSum: TRLBand
       Left = 19
-      Top = 112
+      Top = 120
       Width = 264
       Height = 42
       BandType = btSummary
@@ -1079,7 +1090,7 @@ object FuImpressoes: TFuImpressoes
     end
     object RLPedFoot: TRLBand
       Left = 19
-      Top = 154
+      Top = 162
       Width = 264
       Height = 17
       BandType = btFooter
@@ -1110,8 +1121,8 @@ object FuImpressoes: TFuImpressoes
     end
   end
   object RLResumo: TRLReport
-    Left = 301
-    Top = 224
+    Left = 297
+    Top = 268
     Width = 302
     Height = 454
     Margins.LeftMargin = 5.000000000000000000

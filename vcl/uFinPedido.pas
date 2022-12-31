@@ -46,7 +46,6 @@ type
     LabReceb: TLabel;
     edTroco: TDBEdit;
     LabTroco: TLabel;
-    edMeioPgto: TDBEdit;
     Teclado: TTouchKeyboard;
     dbSem: TDBMemo;
     dbMais: TDBMemo;
@@ -54,12 +53,17 @@ type
     SBoxPedido: TScrollBox;
     imgPedido: TImage;
     LabTaman: TLabel;
+    PanPlaca: TPanel;
+    Label5: TLabel;
+    dbPlaca: TDBEdit;
+    PanFalta: TPanel;
+    Label6: TLabel;
+    LabFalta: TLabel;
     procedure btGravarClick(Sender: TObject);
     procedure btRetornarClick(Sender: TObject);
     procedure btCancelarClick(Sender: TObject);
     procedure dbCPFExit(Sender: TObject);
     procedure dbCPFEnter(Sender: TObject);
-    procedure edMeioPgtoChange(Sender: TObject);
     procedure dbMeioPagtoClick(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure edRecebExit(Sender: TObject);
@@ -86,7 +90,10 @@ type
     procedure dbCPFKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure dbNomeExit(Sender: TObject);
     procedure MudaPontoVirgula(Sender: TObject; var Key: Char);
-    procedure dbMeioPagtoExit(Sender: TObject);
+    procedure dbPlacaEnter(Sender: TObject);
+    procedure dbPlacaExit(Sender: TObject);
+    procedure dbPlacaKeyDown(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
   private
     { Private declarations }
   public
@@ -330,107 +337,8 @@ begin
     posY := posY + LabTaman.Height;
     wrkImag.Canvas.MoveTo(2,posY);
     wrkImag.Canvas.LineTo(wrkImag.Width-2,posY);
-
     imgPedido.Picture.Assign(wrkImag.Picture);
     wrkImag.Free;
-{
-<     D e s c r i ç ã o     >                                < Total >
-123456789.123456789.123456789.123456789.123456789.123456789. 999999,99
-----------------------------------------------------------------------
-123456789.123456789.123456789.123456789.123456789.123456789.123456789.
-}
-{
-    MemPedido.Lines.Clear;
-    MemPedido.Lines.Add(StringCompleta('<     D e s c r i ç ã o     >','D',' ',60) + ' < Total >');
-    MemPedido.Lines.Add(linHifen);
-    uDM.PedWrk.First;
-    while not uDM.PedWrk.Eof
-    do begin
-      strItem.Clear;
-      tMax := 60;
-      if (uDM.PedWrkTpProd.AsInteger = 3) or                 // Bebidas ou Diversos
-         (uDM.PedWrkTpProd.AsInteger = 4) then tMax := 49;
-      xDescr := Trim(uDM.PedWrkDescricao.AsString);
-      if Length(xDescr) > tMax then xDescr := Copy(xDescr,1,tMax);
-      if (uDM.PedWrkTpProd.AsInteger = 3) or            // Bebidas
-         (uDM.PedWrkTpProd.AsInteger = 4)               // Diversos
-      then xDescr := xDescr + '(' + uDM.PedWrkQuant.AsString + ' X ' +
-                     FloatToStrF(uDM.PedWrkVlrUnit.AsCurrency,ffNumber,6,2) + ')';
-      xDescr := stringCompleta(xDescr,'D','.',60);
-      xTotal := StringCompleta(FloatToStrF(uDM.PedWrkVlrTotal.AsCurrency,ffNumber,8,2),'E','.',10);
-      strItem.Add(xDescr + xTotal);
-      // Textos SEM, Mais e Menos
-      linMax := 0;
-      if dbSem.Lines.Count > 0 then
-      begin
-        linMax := dbSem.Lines.Count;
-        wTxtAux := stringCompleta('< SEM >','D',' ',18);
-      end
-      else wTxtAux := stringFiller(' ',18);
-      if dbMais.Lines.Count > 0 then
-      begin
-        if dbMais.Lines.Count > linMax then
-          linMax := dbMais.Lines.Count;
-        wTxtAux := wTxtAux + stringCompleta('< MAIS >','D',' ',30);
-      end
-      else wTxtAux := wTxtAux + stringFiller(' ',30);
-      if dbMenos.Lines.Count > 0 then
-      begin
-        if dbMenos.Lines.Count > linMax then
-          linMax := dbMenos.Lines.Count;
-        wTxtAux := wTxtAux + stringCompleta('< MENOS >','D',' ',17);
-      end
-      else wTxtAux := wTxtAux + stringFiller(' ',17);
-      if wTxtAux <> '' then
-        strItem.Add(wTxtAux);
-      //
-      for i := 0 to linMax-1 do
-      begin
-        if i <= (dbSem.Lines.Count-1)
-          then wTxtAux := StringCompleta(dbSem.Lines[i],'D',' ',17,True) + ' '
-          else wTxtAux := stringFiller(' ',18);
-        if i <= (dbMais.Lines.Count-1)
-          then wTxtAux := wTxtAux + StringCompleta(dbMais.Lines[i],'D',' ',29,True) + ' '
-          else wTxtAux := wTxtAux + stringFiller(' ',30);
-        if i <= (dbMenos.Lines.Count-1)
-          then wTxtAux := wTxtAux + StringCompleta(dbMenos.Lines[i],'D',' ',17,True)
-          else wTxtAux := wTxtAux + stringFiller(' ',17);
-        strItem.Add(wTxtAux);
-      end;
-      // Observações
-      if uDM.PedWrkObserv.AsString <> '' then
-      begin
-        wTxtAux := uDM.PedWrkObserv.AsString;
-        while Length(wTxtAux) >= 56 do
-        begin
-          strItem.Add(Copy(wTxtAux,1,56));
-          wTxtAux := Copy(wTxtAux,57,Length(wTxtAux)-56);
-        end;
-        if Length(wTxtAux) > 0 then strItem.Add(wTxtAux);
-        //strItem.Add(' ');
-      end;
-      // Cortado / Prensado
-      wTxtAux := '';
-      if uDM.PedWrkCortado.AsBoolean then wTxtAux := '<<  CORTAR  >>   ';
-      if uDM.PedWrkPrensado.AsBoolean then wTxtAux := wTxtAux + '<<  PRENSAR  >>';
-      if wTxtAux <> ''
-      then begin
-        strItem.Add(' ');
-        strItem.Add(stringCompleta(wTxtAux,'C',' ',60));
-        strItem.Add(' ');
-      end;
-      //
-      for i := 0 to strItem.Count-1
-        do MemPedido.Lines.Add(strItem[i]);
-      uDM.PedWrk.Next;
-    end;
-    MemPedido.Lines.Add(linHifen);
-    xDescr := IntToStr(FuPedidos.itensPedido) + ' ítens' +
-              '     Total: R$ ' + FloatToStrF(FuPedidos.totalPedido,ffNumber,15,2);
-    MemPedido.Lines.Add(stringCompleta(xDescr,'C',' ',70));
-    MemPedido.Lines.Add(linHifen);
-    //
-}
     nRetorno := 1;
     ShowModal;
     Result := nRetorno;
@@ -462,6 +370,20 @@ begin
 
 end;
 
+Procedure ExibeValorFaltante;
+var vlrFalta: Currency;
+begin
+  vlrFalta := FuPedidos.totalPedido - (uDM.PedidosVlrReais.AsCurrency + uDM.PedidosVlrCDeb.AsCurrency +
+                                       uDM.PedidosVlrCCred.AsCurrency + uDM.PedidosVlrPIX.AsCurrency +
+                                       uDM.PedidosVlrOutros.AsCurrency);
+  FuFinPedido.LabFalta.Caption := FloatToStrF(vlrFalta,ffNumber,15,2);
+  if vlrFalta < 0 then
+    FuFinPedido.PanFalta.Color := clRed
+  else
+    FuFinPedido.PanFalta.color := clYellow;
+
+end;
+
 
 procedure TFuFinPedido.btCancelarClick(Sender: TObject);
 begin
@@ -477,6 +399,15 @@ var somaVlr,wSaldo: Currency;
     vlrEntradas,vlrSaidas: Currency;
     xImpressao: String;
 begin
+  if uDM.PedidosMeioPagto.AsInteger = 0 then   // Dinheiro
+    if uDM.PedidosVlrRecebido.AsCurrency < uDM.PedidosValor.AsCurrency then
+    begin
+      MessageDlg('Valor recebido insuficiente, menor que total do pedido',mtError,[mbOk],0);
+      edReceb.SetFocus;
+      Exit;
+    end;
+
+
   somaVlr := uDM.PedidosVlrReais.AsCurrency + uDM.PedidosVlrCDeb.AsCurrency +
              uDM.PedidosVlrCCred.AsCurrency + uDM.PedidosVlrPIX.AsCurrency +
              uDM.PedidosVlrOutros.AsCurrency;
@@ -631,6 +562,9 @@ end;
 
 procedure TFuFinPedido.dbMeioPagtoClick(Sender: TObject);
 begin
+  LabFalta.Caption := '';
+  PanFalta.Visible := False;
+
   edReais.Enabled  := False;
   edReceb.Visible  := False;
   LabReceb.Visible := False;
@@ -646,27 +580,26 @@ begin
   uDM.PedidosVlrCCred.Clear;
   uDM.PedidosVlrPIX.Clear;
   uDM.PedidosVlrOutros.Clear;
-  //ShowMessage('1 ' + uDM.PedidosMeioPagto.AsString + '  Index=' + IntToStr(dbMeioPagto.ItemIndex));
   uDM.PedidosMeioPagto.AsInteger := dbMeioPagto.ItemIndex;
-  //ShowMessage('2 ' + uDM.PedidosMeioPagto.AsString + '  Index=' + IntToStr(dbMeioPagto.ItemIndex));
   case dbMeioPagto.ItemIndex of
     0:begin
         uDM.PedidosVlrReais.AsCurrency  := FuPedidos.totalPedido;
         if uDM.PedidosVlrRecebido.AsCurrency = 0 then
            uDM.PedidosVlrRecebido.AsCurrency := FuPedidos.totalPedido;
         uDM.PedidosVlrTroco.AsCurrency := uDM.PedidosVlrRecebido.AsCurrency - uDM.PedidosVlrReais.AsCurrency;
-      edReceb.Visible  := True;
-      LabReceb.Visible := True;
-      edTroco.Visible  := True;
-      LabTroco.Visible := True;
-      edReceb.SetFocus;
+        edReceb.Visible  := True;
+        LabReceb.Visible := True;
+        edTroco.Visible  := True;
+        LabTroco.Visible := True;
+        edReceb.SetFocus;
     end;
     1:uDM.PedidosVlrCDeb.AsCurrency   := FuPedidos.totalPedido;
     2:uDM.PedidosVlrCCred.AsCurrency  := FuPedidos.totalPedido;
     3:uDM.PedidosVlrPIX.AsCurrency    := FuPedidos.totalPedido;
     4:uDM.PedidosVlrOutros.AsCurrency := FuPedidos.totalPedido;
     5:begin
-        uDM.PedidosVlrReais.AsCurrency  := FuPedidos.totalPedido;
+        PanFalta.Visible := True;
+        ExibeValorFaltante;
         edReais.Enabled  := True;
         edCDeb.Enabled   := True;
         edCCred.Enabled  := True;
@@ -676,53 +609,6 @@ begin
       end;
   end;
 
-end;
-
-procedure TFuFinPedido.dbMeioPagtoExit(Sender: TObject);
-begin
-{
-  edReais.Enabled  := False;
-  edReceb.Visible  := False;
-  LabReceb.Visible := False;
-  edTroco.Visible  := False;
-  LabTroco.Visible := False;
-  edCDeb.Enabled   := False;
-  edCCred.Enabled  := False;
-  edPIX.Enabled    := False;
-  edOutros.Enabled := False;
-
-  uDM.PedidosVlrReais.Clear;
-  uDM.PedidosVlrCDeb.Clear;
-  uDM.PedidosVlrCCred.Clear;
-  uDM.PedidosVlrPIX.Clear;
-  uDM.PedidosVlrOutros.Clear;
-  case dbMeioPagto.ItemIndex of
-    0:begin
-        uDM.PedidosVlrReais.AsCurrency  := FuPedidos.totalPedido;
-        if uDM.PedidosVlrRecebido.AsCurrency = 0 then
-           uDM.PedidosVlrRecebido.AsCurrency := FuPedidos.totalPedido;
-        uDM.PedidosVlrTroco.AsCurrency := uDM.PedidosVlrRecebido.AsCurrency - uDM.PedidosVlrReais.AsCurrency;
-      edReceb.Visible  := True;
-      LabReceb.Visible := True;
-      edTroco.Visible  := True;
-      LabTroco.Visible := True;
-      edReceb.SetFocus;
-    end;
-    1:uDM.PedidosVlrCDeb.AsCurrency   := FuPedidos.totalPedido;
-    2:uDM.PedidosVlrCCred.AsCurrency  := FuPedidos.totalPedido;
-    3:uDM.PedidosVlrPIX.AsCurrency    := FuPedidos.totalPedido;
-    4:uDM.PedidosVlrOutros.AsCurrency := FuPedidos.totalPedido;
-    5:begin
-        uDM.PedidosVlrReais.AsCurrency  := FuPedidos.totalPedido;
-        edReais.Enabled  := True;
-        edCDeb.Enabled   := True;
-        edCCred.Enabled  := True;
-        edPIX.Enabled    := True;
-        edOutros.Enabled := True;
-        edReais.SetFocus;
-      end;
-  end;
-}
 end;
 
 procedure TFuFinPedido.dbNomeEnter(Sender: TObject);
@@ -744,15 +630,35 @@ begin
 
 end;
 
+procedure TFuFinPedido.dbPlacaEnter(Sender: TObject);
+begin
+  ExibeTecladoVirtual('NumPad',PanInform.Top+dbPlaca.Top+dbPlaca.Height+4,
+                               FuFinPedido.ClientWidth-400);
+
+end;
+
+procedure TFuFinPedido.dbPlacaExit(Sender: TObject);
+begin
+  Teclado.Visible := False;
+
+end;
+
+procedure TFuFinPedido.dbPlacaKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
+begin
+  if Key = vk_Return then SelectNext((Sender as TwinControl), True, True);
+
+end;
+
 procedure TFuFinPedido.edCCredEnter(Sender: TObject);
 begin
-  ExibeTecladoVirtual('NumPad',PanInform.Top+edCCred.Top+edCCred.Height+4,FuFinPedido.ClientWidth-212);
+  ExibeTecladoVirtual('NumPad',PanInform.Top+PanPlaca.Height+edCCred.Top+edCCred.Height+4,FuFinPedido.ClientWidth-212);
 
 end;
 
 procedure TFuFinPedido.edCCredExit(Sender: TObject);
 begin
   Teclado.Visible := False;
+  ExibeValorFaltante;
 
 end;
 
@@ -764,13 +670,14 @@ end;
 
 procedure TFuFinPedido.edCDebEnter(Sender: TObject);
 begin
-  ExibeTecladoVirtual('NumPad',PanInform.Top+edCDeb.Top+edCDeb.Height+4,FuFinPedido.ClientWidth-212);
+  ExibeTecladoVirtual('NumPad',PanInform.Top+PanPlaca.Height+edCDeb.Top+edCDeb.Height+4,FuFinPedido.ClientWidth-212);
 
 end;
 
 procedure TFuFinPedido.edCDebExit(Sender: TObject);
 begin
   Teclado.Visible := False;
+  ExibeValorFaltante;
 
 end;
 
@@ -780,79 +687,16 @@ begin
 
 end;
 
-procedure TFuFinPedido.edMeioPgtoChange(Sender: TObject);
-begin
-{
-  edReais.Enabled  := False;
-  LabReais.Enabled := False;
-  edReceb.Enabled  := False;
-  LabReceb.Enabled := False;
-  edTroco.Enabled  := False;
-  LabTroco.Enabled := False;
-  edCDeb.Enabled   := False;
-  LabCDeb.Enabled  := False;
-  edCCred.Enabled  := False;
-  LabCCred.Enabled := False;
-  edPIX.Enabled    := False;
-  LabPix.Enabled   := False;
-  edOutros.Enabled := False;
-  LabOutros.Enabled := False;
-
-  case uDM.PedidosMeioPagto.AsInteger of
-    0:begin   // Reais
-        LabReais.Enabled := True;
-        edReais.Enabled  := True;
-        LabReceb.Enabled := True;
-        edReceb.Enabled  := True;
-        LabTroco.Enabled := True;
-        edTroco.Enabled  := True;
-    end;
-    1:begin   // Cartão de débito
-        LabCDeb.Enabled  := True;
-        edCDeb.Enabled   := True;
-    end;
-    2:begin   // Cartão de crébito
-        LabCCred.Enabled := True;
-        edCCred.Enabled  := True;
-    end;
-    3:begin   // PIX
-        LabPIX.Enabled   := True;
-        edPIX.Enabled    := True;
-    end;
-    4:begin   // Outros
-        LabOutros.Enabled := True;
-        edOutros.Enabled := True;
-    end;
-    6:begin                          // Misto (+ de uma forma)
-      edReais.Enabled  := True;
-      LabReais.Enabled := True;
-      edReceb.Enabled  := True;
-      LabReceb.Enabled := True;
-      edTroco.Enabled  := True;
-      LabTroco.Enabled := True;
-      edCDeb.Enabled   := True;
-      LabCDeb.Enabled  := True;
-      edCCred.Enabled  := True;
-      LabCCred.Enabled := True;
-      edPIX.Enabled    := True;
-      LabPix.Enabled   := True;
-      edOutros.Enabled := True;
-      LabOutros.Enabled := True;
-    end;
-  end;
-}
-
-end;
-
 procedure TFuFinPedido.edOutrosEnter(Sender: TObject);
 begin
-  ExibeTecladoVirtual('NumPad',PanInform.Top+edOutros.Top+edOutros.Height+4,FuFinPedido.ClientWidth-212);
+  ExibeTecladoVirtual('NumPad',PanInform.Top+PanPlaca.Height+edOutros.Top+edOutros.Height+4,FuFinPedido.ClientWidth-212);
 
 end;
 
 procedure TFuFinPedido.edOutrosExit(Sender: TObject);
 begin
   Teclado.Visible := False;
+  ExibeValorFaltante;
 
 end;
 
@@ -864,13 +708,14 @@ end;
 
 procedure TFuFinPedido.edPIXEnter(Sender: TObject);
 begin
-  ExibeTecladoVirtual('NumPad',PanInform.Top+edPIX.Top+edPIX.Height+4,FuFinPedido.ClientWidth-212);
+  ExibeTecladoVirtual('NumPad',PanInform.Top+PanPlaca.Height+edPIX.Top+edPIX.Height+4,FuFinPedido.ClientWidth-212);
 
 end;
 
 procedure TFuFinPedido.edPIXExit(Sender: TObject);
 begin
   Teclado.Visible := False;
+  ExibeValorFaltante;
 
 end;
 
@@ -882,13 +727,14 @@ end;
 
 procedure TFuFinPedido.edReaisEnter(Sender: TObject);
 begin
-  ExibeTecladoVirtual('NumPad',PanInform.Top+edReais.Top+edReais.Height+4,FuFinPedido.ClientWidth-212);
+  ExibeTecladoVirtual('NumPad',PanInform.Top+PanPlaca.Height+edReais.Top+edReais.Height+4,FuFinPedido.ClientWidth-212);
 
 end;
 
 procedure TFuFinPedido.edReaisExit(Sender: TObject);
 begin
   Teclado.Visible := False;
+  ExibeValorFaltante;
 
 end;
 
@@ -900,20 +746,23 @@ end;
 
 procedure TFuFinPedido.edRecebEnter(Sender: TObject);
 begin
-  ExibeTecladoVirtual('NumPad',PanInform.Top+edReceb.Top+edReceb.Height+4,FuFinPedido.ClientWidth-212);
+  ExibeTecladoVirtual('NumPad',PanInform.Top+PanPlaca.Height+edReceb.Top+edReceb.Height+4,FuFinPedido.ClientWidth-212);
 
 end;
 
 procedure TFuFinPedido.edRecebExit(Sender: TObject);
 begin
-  if uDM.PedidosVlrRecebido.AsCurrency < uDM.PedidosValor.AsCurrency then
-  begin
-    MessageDlg('Valor recebido insuficiente, reinforme',mtError,[mbOk],0);
-    edReceb.SetFocus;
-    Exit;
-  end;
-  uDM.PedidosVlrTroco.AsCurrency := uDM.PedidosVlrRecebido.AsCurrency - uDM.PedidosValor.AsCurrency;
   Teclado.Visible := False;
+  if uDM.PedidosVlrRecebido.AsCurrency > 0 then
+  begin
+     if uDM.PedidosVlrRecebido.AsCurrency < uDM.PedidosValor.AsCurrency then
+     begin
+       MessageDlg('Valor recebido insuficiente, reinforme',mtError,[mbOk],0);
+      edReceb.SetFocus;
+      Exit;
+    end;
+    uDM.PedidosVlrTroco.AsCurrency := uDM.PedidosVlrRecebido.AsCurrency - uDM.PedidosValor.AsCurrency;
+  end;
 
 end;
 
@@ -939,7 +788,7 @@ end;
 
 procedure TFuFinPedido.FormShow(Sender: TObject);
 begin
-  dbMeioPagto.SetFocus;
+  dbPlaca.SetFocus;
 
 end;
 
