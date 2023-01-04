@@ -73,6 +73,8 @@ var
   wPrinter,wPorta,wDriver: String;
   nIndex: Integer;
   lDialog: Boolean;
+  filAnt: Boolean;
+  filTxtAnt: String;
 
 const
 
@@ -121,7 +123,6 @@ begin
   if uDM.PedItensTpProd.AsInteger = 1 then
     FSFEuPrintFortes.RLEtiqLanche.Preview
   else begin
-{
     filAnt := uDM.PedItens.Filtered;
     filTxtAnt := uDM.pedItens.Filter;
     uDM.PedItens.Filtered := True;
@@ -131,7 +132,6 @@ begin
     uDM.PedItens.Filtered := filAnt;
     uDM.PedItens.Filter := filTxtAnt;
     uDM.PedItens.Refresh
-}
   end;
   FSFEuPrintFortes.Free;
   uDM.PedItens.FindKey([nKey1,nKey2]);
@@ -153,29 +153,23 @@ var filAnt: Boolean;
 begin
   FSFEuPrintFortes := TFSFEuPrintFortes.Create(nil);
   DefinePrinterEtiqueta;
-  //FSFEuPrintFortes.RLEtiqBebida.PrintDialog := lDialog;            // Bebidas
 
   filAnt := uDM.PedItens.Filtered;
   filTxtAnt := uDM.PedItens.Filter;
   uDM.PedItens.Filtered := True;
   uDM.PedItens.Filter := 'TpProd=1';
-  uDM.Pedidos.Refresh;
-  if uDM.PedItens.RecordCount > 0 then
-  begin
-    SetaRecordRangeEtqLanches(1);       // Todos os registros
-    uDM.PedItens.First;
-    FSFEuPrintFortes.RLEtiqLanche.Print;
-    SetaRecordRangeEtqLanches(0);       // Somente registro atual (Defualt)
-  end;
-  {
+  uDM.PedItens.Refresh;
+  uDM.PedItens.First;
+  SetRecordRangeLanche(1);      // rrAllRecords;
+  FSFEuPrintFortes.RLEtiqLanche.Print;
+  SetRecordRangeLanche(0);      // rrCurrentOnly;
   uDM.PedItens.Filter := 'TpProd=3';
   uDM.PedItens.Refresh;
-  if uDM.Pedidos.RecordCount > 0 then
+  if uDM.PedItens.RecordCount > 0 then
   begin
     uDM.PedItens.First;
     FSFEuPrintFortes.RLEtiqBebida.Print;    // Imprime TODAS as bebidas em uma etiqueta
   end;
-  }
   FSFEuPrintFortes.Free;
   //
   uDM.PedItens.Filtered := False;
@@ -191,11 +185,20 @@ begin
   uDM.PedItens.Filtered := filAnt;
   uDM.PedItens.Filter := filTxtAnt;
   uDM.PedItens.Refresh;
+  uDM.Pedidos.Edit;
+  uDM.PedidosEtqImpressas.AsInteger := 1;
+  uDM.Pedidos.Post;
+  //
+  uDM.Pedidos.Refresh;
+  if uDM.Pedidos.RecordCount = 0 then
+    LabNrPeds.Caption := 'Sem pedidos'
+  else
+    LabNrPeds.Caption := IntToStr(uDM.Pedidos.RecordCount) + ' pedidos';
 
 end;
 
 procedure TFuPrincipalEtq.btPrintClick(Sender: TObject);
-var nKey1,nKey2,tpImpres: Integer;
+var nKey1,nKey2: Integer;
     filTxtAnt: String;
     filAnt: Boolean;
 begin
@@ -204,11 +207,17 @@ begin
   nKey2 := uDM.PedItensNrLcto.AsInteger;
   FSFEuPrintFortes := TFSFEuPrintFortes.Create(nil);
   DefinePrinterEtiqueta;
-  tpImpres := 1;   // Lanche
   if uDM.PedItensTpProd.AsInteger = 1 then
-    FSFEuPrintFortes.RLEtiqLanche.Print
+  begin
+    FSFEuPrintFortes.RLEtiqLanche.Print;
+    if uDM.PedItens.FindKey([nKey1,nKey2]) then
+    begin
+      uDM.PedItens.Edit;
+      uDM.PedItensEtqImpressa.AsInteger := 1;
+      uDM.PedItens.Post;
+    end;
+  end
   else begin
-    tpImpres := 3;  // Bebidas
     filAnt := uDM.PedItens.Filtered;
     filTxtAnt := uDM.PedItens.Filter;
     uDM.PedItens.Filter := 'TpProd=3';
@@ -219,7 +228,7 @@ begin
     while not uDM.PedItens.Eof do
     begin
       uDM.PedItens.Edit;
-      uDM.PedItensEtqImpressa.AsInteger := 1;
+      uDM.PedItensEtqImpressa.AsInteger := 1;  // Assinala impressao
       uDM.PedItens.Post;
       uDM.PedItens.Next;
     end;
@@ -228,14 +237,6 @@ begin
     uDM.PedItens.Refresh
   end;
   FSFEuPrintFortes.Free;
-
-  if tpImpres = 1 then
-    if uDM.PedItens.FindKey([nKey1,nKey2]) then
-    begin
-      uDM.PedItens.Edit;
-      uDM.PedItensEtqImpressa.AsInteger := 1;
-      uDM.PedItens.Post;
-    end;
   uDM.PedItens.Refresh;
 
 end;
@@ -292,8 +293,8 @@ begin
 }  //
   PanPedidos.Visible := True;
   PanEtiquetas.Visible := True;
-
   FormResize(nil);
+  //
 
 end;
 procedure TFuPrincipalEtq.btSairClick(Sender: TObject);
@@ -408,10 +409,11 @@ begin
   FuPrincipalEtq.Left := (Screen.Width - FuPrincipalEtq.Width) div 2;
   FuPrincipalEtq.Top := 40;
   //
-  PanPedidos.Width := 255;
-  GridPeds.Columns[0].Width := 80;
-  GridPeds.Columns[1].Width := 46;
-  GridPeds.Columns[2].Width := 84;
+  PanPedidos.Width := 297;
+  GridPeds.Columns[0].Width := 76;
+  GridPeds.Columns[1].Width := 50;
+  GridPeds.Columns[2].Width := 46;
+  GridPeds.Columns[3].Width := 84;
   //
   GridItens := DefineGrid(GridItens,[0.08, 0.08, 0.08, 0.33, 0.08],3,0);
 

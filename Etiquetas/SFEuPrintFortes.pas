@@ -5,8 +5,8 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, RLReport, RLPrinters, RLRichText;
+  procedure SetRecordRangeLanche(pModo:Integer);
   procedure DefinePrinterEtiqueta;
-  procedure SetaRecordRangeEtqLanches(pmtModo:Integer);
 
 type
   TFSFEuPrintFortes = class(TForm)
@@ -14,40 +14,39 @@ type
     RLDetLanche: TRLBand;
     RLEtiqBebida: TRLReport;
     RLCabBeb: TRLBand;
-    RLPanel8: TRLPanel;
-    RLDBText5: TRLDBText;
-    RLDBText6: TRLDBText;
-    RLPanel9: TRLPanel;
-    RLDBText7: TRLDBText;
     RLCabLanche: TRLBand;
     RLDetBebida: TRLBand;
-    RLBebFooter: TRLBand;
     RLBebColFooter: TRLBand;
     RLDBText10: TRLDBText;
     RLDBText11: TRLDBText;
     RLDBText12: TRLDBText;
-    RLLabel2: TRLLabel;
     RLDBResult1: TRLDBResult;
-    RLDBText9: TRLDBText;
-    RLLabPrensado: TRLLabel;
-    RLLabCortado: TRLLabel;
+    RLDbClienteBeb: TRLDBText;
     RLDBText2: TRLDBText;
     RLLabel1: TRLLabel;
-    RLDBText4: TRLDBText;
-    RLBand1: TRLBand;
-    RLLabPedido: TRLLabel;
-    RLLabPlaca: TRLLabel;
-    RLDbPedLcto: TRLDBText;
-    RLDBPlacaLcto: TRLDBText;
     RLDBText3: TRLDBText;
-    RLDbCliente: TRLDBText;
     RLLabSem: TRLLabel;
     RLLabMais: TRLLabel;
     RLLabMenos: TRLLabel;
     RLSem: TRLMemo;
     RLMais: TRLMemo;
     RLMenos: TRLMemo;
+    RLLabel3: TRLLabel;
+    RLPanel1: TRLPanel;
+    RLDBText4: TRLDBText;
+    RLDbCliente: TRLDBText;
+    RLLabel2: TRLLabel;
+    RLLabel5: TRLLabel;
+    RLDBText1: TRLDBText;
+    RLDBText5: TRLDBText;
+    RLDBText6: TRLDBText;
+    RLDBText7: TRLDBText;
+    RLDbPedido: TRLDBText;
+    RLDbPlaca: TRLDBText;
+    RLDBText8: TRLDBText;
+    RLDbPlacaBeb: TRLDBText;
     procedure RLEtiqLancheBeforePrint(Sender: TObject; var PrintIt: Boolean);
+    procedure RLEtiqBebidaBeforePrint(Sender: TObject; var PrintIt: Boolean);
   private
     { Private declarations }
   public
@@ -67,6 +66,15 @@ implementation
 {$R *.dfm}
 
 uses uDados, uSysPrinters, FortesReportCtle;
+
+procedure SetRecordRangeLanche(pModo:Integer);
+begin
+  if pModo = 1 then
+    FSFEuPrintFortes.RLEtiqLanche.RecordRange := rrAllRecords
+  else
+    FSFEuPrintFortes.RLEtiqLanche.RecordRange := rrCurrentOnly;
+
+end;
 
 procedure DefinePrinterEtiqueta;
 begin
@@ -104,17 +112,31 @@ begin
     RLEtiqLanche.Margins.TopMargin := etqTop;
     RLEtiqLanche.Margins.BottomMargin := etqBot;
     //
-    // Define RLEtiqBebida....
+    RLEtiqBebida.PrintDialog := lDialog;
+    RLEtiqBebida.PageSetup.PaperHeight := etqAlt;
+    RLEtiqBebida.Margins.LeftMargin := etqEsq;
+    RLEtiqBebida.Margins.RightMargin := etqDir;
+    RLEtiqBebida.Margins.TopMargin := etqTop;
+    RLEtiqBebida.Margins.BottomMargin := etqBot;
 
   end;
 end;
 
-procedure SetaRecordRangeEtqLanches(pmtModo:Integer);
+
+procedure TFSFEuPrintFortes.RLEtiqBebidaBeforePrint(Sender: TObject;
+  var PrintIt: Boolean);
 begin
-  if pmtModo = 1 then
-    FSFEuPrintFortes.RLEtiqLanche.RecordRange := rrAllRecords
-  else
-    FSFEuPrintFortes.RLEtiqLanche.RecordRange := rrCurrentOnly;
+  with FSFEuPrintFortes
+  do begin
+    if uDM.PedidosNomeCliente.AsString <> '' then
+      RLDbClienteBeb.Visible := True
+    else
+      RLDbClienteBeb.Visible := False;
+    if uDM.PedidosPlaca.AsString <> '' then
+      RLDbPlacaBeb.Visible := True
+    else
+      RLDbPlacaBeb.Visible := False;
+  end;
 
 end;
 
@@ -125,18 +147,10 @@ begin
   with FSFEuPrintFortes
   do begin
     if uDM.PedidosPlaca.AsString <> '' then
-    begin
-      RLDbPedLcto.Top := 2;
-      RLDbPedLcto.Font.Size := 8;
-      RLDbPedLcto.Font.Style := [];
-      RLDbPlacaLcto.Visible := True;
-    end
-    else begin
-      RLDbPedLcto.Top := 0;
-      RLDbPedLcto.Font.Size := 10;
-      RLDbPedLcto.Font.Style := [fsBold];
-      RLDbPlacaLcto.Visible := False;
-    end;
+       RLDbPlaca.Visible := True
+    else
+       RLDbPlaca.Visible := False;
+
     if uDM.PedidosNomeCliente.AsString <> '' then
       RLDbCliente.Visible := True
     else
@@ -174,11 +188,6 @@ begin
       RLLabMenos.Visible := True;
       RLMenos.Visible := True;
     end;
-
-    if uDM.PedItensPrensado.AsInteger <> 0 then
-      RLLabPrensado.Visible := True;
-    if uDM.PedItensCortado.AsInteger <> 0 then
-      RLLabCortado.Visible := True;
 
    end;
 

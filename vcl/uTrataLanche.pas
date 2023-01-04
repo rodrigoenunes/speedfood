@@ -144,6 +144,27 @@ begin
 
 end;
 
+Procedure ExibeTecladoVirtual(pTipo:String; pTop,pLeft:Integer);
+begin
+  if not uDM.SisPessoaTecladoVirtual.AsBoolean then Exit;
+  with FuTrataLanche
+  do begin
+    Teclado.Layout  := pTipo;
+    if pTipo = 'NumPad' then
+    begin
+      Teclado.Width   := 180;
+      Teclado.Height  := 180;
+    end
+    else begin
+      Teclado.Width   := 560;
+      Teclado.Height  := 180;
+    end;
+    Teclado.Top     := pTop;
+    Teclado.Left    := pLeft;
+    Teclado.Visible := True;
+  end;
+
+end;
 
 procedure TFuTrataLanche.btCanLancheClick(Sender: TObject);
 begin
@@ -171,14 +192,17 @@ end;
 
 procedure TFuTrataLanche.dbPrecoEnter(Sender: TObject);
 begin
-  if not uDM.SisPessoaTecladoVirtual.AsBoolean then Exit;
+//  if not uDM.SisPessoaTecladoVirtual.AsBoolean then Exit;
   if not imgPreco.Visible then Exit;
+{
   Teclado.Left    := dbPreco.Left - 12;
   Teclado.Top     := PanIdLanche.Top + PanIdLanche.Height;
   Teclado.Width   := 180;
   Teclado.Height  := 180;
   Teclado.Layout  := 'NumPad';
   Teclado.Visible := True;
+}
+  ExibeTecladoVirtual('NumPad',PanIdLanche.Top+PanIdLanche.Height, dbPreco.Left-12);
 
 end;
 
@@ -204,6 +228,7 @@ end;
 
 procedure TFuTrataLanche.dbObservEnter(Sender: TObject);
 begin
+{
   if not uDM.SisPessoaTecladoVirtual.AsBoolean then Exit;
   Teclado.Left    := 40;
   Teclado.Top     := PanRodape.Top - 50;
@@ -211,6 +236,9 @@ begin
   Teclado.Height  := 180;
   Teclado.Layout  := 'Standard';
   Teclado.Visible := True;
+}
+  ExibeTecladoVirtual('Standard',PanRodape.Top-50,40);
+
 
 end;
 

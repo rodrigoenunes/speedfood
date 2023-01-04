@@ -358,7 +358,26 @@ object FuPrincipalEtq: TFuPrincipalEtq
           FieldName = 'Numero'
           Title.Alignment = taCenter
           Title.Caption = 'Pedido'
+          Title.Font.Charset = DEFAULT_CHARSET
+          Title.Font.Color = clWindowText
+          Title.Font.Height = -16
+          Title.Font.Name = 'Tahoma'
+          Title.Font.Style = []
           Width = 80
+          Visible = True
+        end
+        item
+          Alignment = taCenter
+          Expanded = False
+          FieldName = 'Placa'
+          Title.Alignment = taCenter
+          Title.Caption = 'Senha'
+          Title.Font.Charset = DEFAULT_CHARSET
+          Title.Font.Color = clWindowText
+          Title.Font.Height = -16
+          Title.Font.Name = 'Tahoma'
+          Title.Font.Style = []
+          Width = 56
           Visible = True
         end
         item
@@ -367,6 +386,11 @@ object FuPrincipalEtq: TFuPrincipalEtq
           FieldName = 'Lanctos'
           Title.Alignment = taCenter
           Title.Caption = 'Etiqs'
+          Title.Font.Charset = DEFAULT_CHARSET
+          Title.Font.Color = clWindowText
+          Title.Font.Height = -16
+          Title.Font.Name = 'Tahoma'
+          Title.Font.Style = []
           Width = 46
           Visible = True
         end
@@ -374,6 +398,11 @@ object FuPrincipalEtq: TFuPrincipalEtq
           Expanded = False
           FieldName = 'ZC_Impresso'
           Title.Caption = 'Etiquetas'
+          Title.Font.Charset = DEFAULT_CHARSET
+          Title.Font.Color = clWindowText
+          Title.Font.Height = -16
+          Title.Font.Name = 'Tahoma'
+          Title.Font.Style = []
           Visible = True
         end>
     end

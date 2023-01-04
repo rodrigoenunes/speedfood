@@ -326,6 +326,7 @@ end;
 
 Procedure GeraImprimeNFCe(pNroPedido:Integer);
 begin
+  {
   With uBiblioteca.EmitirNFCeDePV(1, uDM.Pedidos.FieldByName('numero').AsInteger ) Do
   Begin
     if Not Resultado then
@@ -334,7 +335,7 @@ begin
       Exit;
     End;
   End;
-
+  }
 
 end;
 

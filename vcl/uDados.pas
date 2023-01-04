@@ -512,11 +512,11 @@ begin
     else PedItensZC_Tp.AsString := '';
   end;
   if PedItensCortado.AsInteger <> 0 then
-    PedItensZC_Cortado.AsString := 'Cortado'
+    PedItensZC_Cortado.AsString := 'CORTADO'
   else
     PedItensZC_Cortado.AsString := '';
   if PedItensPrensado.AsInteger <> 0 then
-    PedItensZC_Prensado.AsString := 'Prensado'
+    PedItensZC_Prensado.AsString := 'PRENSADO'
   else
     PedItensZC_Prensado.AsString := '';
   if Itens.FindKey([PedItensTpProd.AsInteger,PedItensCodProd.AsInteger]) then
@@ -529,8 +529,16 @@ begin
     PedItensZC_Impresso.ASString := 'P'
   else
     PedItensZC_Impresso.AsString := '';
-  PedItensZC_PedLcto.AsString := PedItensNumero.AsString + '/' + PedItensNrLcto.AsString;
-  PedItensZC_PlacaLcto.AsString := PedidosPlaca.AsString + '/' + PedItensNrLcto.AsString;
+
+  if PedItensTpProd.AsInteger = 1
+  then begin
+    PedItensZC_PedLcto.AsString := PedItensNumero.AsString + '/' + PedItensNrLcto.AsString;
+    PedItensZC_PlacaLcto.AsString := PedidosPlaca.AsString + '/' + PedItensNrLcto.AsString;
+  end
+  else begin
+    PedItensZC_PedLcto.AsString := PedItensNumero.AsString;
+    PedItensZC_PlacaLcto.AsString := PedidosPlaca.AsString
+  end;
 
 end;
 

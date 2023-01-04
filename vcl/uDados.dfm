@@ -775,13 +775,13 @@ object uDM: TuDM
     object PedItensZC_Cortado: TStringField
       FieldKind = fkCalculated
       FieldName = 'ZC_Cortado'
-      Size = 8
+      Size = 12
       Calculated = True
     end
     object PedItensZC_Prensado: TStringField
       FieldKind = fkCalculated
       FieldName = 'ZC_Prensado'
-      Size = 8
+      Size = 12
       Calculated = True
     end
     object PedItensZC_Descricao: TStringField

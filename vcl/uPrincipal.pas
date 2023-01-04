@@ -115,16 +115,13 @@ begin
     uDM.LctCaixa.Active  := True;
     uDM.Pedidos.Active   := True;
     uDM.PedItens.Active  := True;
-    Image1.Visible := False;
-    uDM.pathImagens := uDM.SisPessoaPathImagens.AsString;
-    i := Length(Trim(uDM.PathImagens));
-    if uDM.pathImagens[i] <> '\' then
-      uDM.pathImagens := uDM.pathImagens + '\';
-    arqimg := uDM.pathImagens + 'ImgFundo.BMP';
+    Image1.Visible       := False;
+    uDM.pathImagens      := IncludeTrailingPathDelimiter(uDM.SisPessoaPathImagens.AsString);
+    arqimg               := uDM.pathImagens + 'ImgFundo.BMP';
     if FileExists(arqimg)
     then begin
       Image1.Picture.LoadFromFile(arqimg);
-      Image1.Align := alClient;
+      Image1.Align   := alClient;
       Image1.Stretch := True;
       Image1.Visible := True;
     end;

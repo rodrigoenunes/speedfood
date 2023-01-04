@@ -406,8 +406,6 @@ begin
       edReceb.SetFocus;
       Exit;
     end;
-
-
   somaVlr := uDM.PedidosVlrReais.AsCurrency + uDM.PedidosVlrCDeb.AsCurrency +
              uDM.PedidosVlrCCred.AsCurrency + uDM.PedidosVlrPIX.AsCurrency +
              uDM.PedidosVlrOutros.AsCurrency;
@@ -501,7 +499,7 @@ begin
   uDM.RegCaixa.Post;
   //
   xImpressao := ObtemParametro('PedidoImprimir');
-  if Pos(xImpressao,'SNP')= 0 then xImpressao := 'P';
+  if Pos(xImpressao,'SNP')= 0 then xImpressao := 'P';        // Sim Não Pergunta
   if xImpressao = 'P' then
     if MessageDlg('Imprimir pedido ?',mtConfirmation,[mbYes,mbNo],0,mbNo) = mrYes then
       xImpressao := 'S'
