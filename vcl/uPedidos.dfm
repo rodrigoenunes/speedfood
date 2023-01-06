@@ -31,26 +31,26 @@ object FuPedidos: TFuPedidos
     Left = 467
     Top = 8
     Width = 62
-    Height = 18
+    Height = 19
     Caption = 'LabAux1'
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
     Font.Height = -16
-    Font.Name = 'x'
+    Font.Name = 'Tahoma'
     Font.Style = []
     ParentFont = False
     Visible = False
   end
   object LabAux2: TLabel
-    Left = 603
+    Left = 547
     Top = 8
     Width = 62
-    Height = 18
+    Height = 19
     Caption = 'LabAux2'
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
     Font.Height = -16
-    Font.Name = 'x'
+    Font.Name = 'Tahoma'
     Font.Style = []
     ParentFont = False
     Visible = False
@@ -619,7 +619,7 @@ object FuPedidos: TFuPedidos
       Top = 1
       Width = 589
       Height = 369
-      ActivePage = TSLanches
+      ActivePage = TSBebidas
       Align = alClient
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText

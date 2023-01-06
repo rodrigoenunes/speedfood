@@ -322,7 +322,7 @@ begin
     end;
     k := uDM.ItensCodigo.AsInteger;
     uDM.wCodExtraTab[k] := uDM.ItensCodigo.AsInteger;
-    uDM.wTxtExtraTab[k] := uDM.ItensDescricao.AsString;
+    uDM.wTxtExtraTab[k] := stringReplace(uDM.ItensDescricao.AsString,'#',' ',[rfIgnoreCase, rfReplaceAll]);
     uDM.wVlrExtraTab[k] := uDM.ItensPreco.AsCurrency;
     uDM.Itens.Next;
   end;

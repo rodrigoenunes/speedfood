@@ -387,7 +387,7 @@ object uDM: TuDM
     end
     object PedWrkVlrTotal: TCurrencyField
       FieldName = 'VlrTotal'
-      DisplayFormat = 'R$ ,0.00'
+      DisplayFormat = ',0.00'
       EditFormat = '0.00'
     end
     object PedWrkTxtSem: TMemoField

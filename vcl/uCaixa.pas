@@ -205,13 +205,11 @@ begin
   do begin
     Top    := 60;
     Left   := 60;
-    Height := 284;
+    Height := 320;
     btCancel.Caption := '&Cancelar';
+    btLctCaixa.Visible := lExibe;
     if lExibe then
-    begin
-      Height := 320;
-      btCancel.Caption := '&Sair';
-    end;
+       btCancel.Caption := '&Sair';
     Width  := 284;
     LabRotina.Caption   := 'Abertura de caixa';
     edInicio.Enabled    := True;

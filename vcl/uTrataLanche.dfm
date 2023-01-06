@@ -4,7 +4,7 @@ object FuTrataLanche: TFuTrataLanche
   BorderIcons = [biSystemMenu]
   Caption = 'Especifica'#231#227'o do lanche'
   ClientHeight = 539
-  ClientWidth = 757
+  ClientWidth = 805
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -13,22 +13,37 @@ object FuTrataLanche: TFuTrataLanche
   Font.Style = []
   OldCreateOrder = False
   Position = poDesigned
+  OnResize = FormResize
   OnShow = FormShow
   PixelsPerInch = 96
   TextHeight = 13
   object PanInfoLanche: TPanel
     Left = 0
     Top = 0
-    Width = 757
+    Width = 805
     Height = 539
     Align = alClient
     BevelInner = bvLowered
     BevelWidth = 2
     TabOrder = 0
+    object LabTaman: TLabel
+      Left = 108
+      Top = 327
+      Width = 88
+      Height = 23
+      Caption = 'LabTaman'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -19
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      ParentFont = False
+      Visible = False
+    end
     object PanRodape: TPanel
       Left = 4
       Top = 355
-      Width = 749
+      Width = 797
       Height = 180
       Align = alBottom
       Font.Charset = DEFAULT_CHARSET
@@ -39,21 +54,21 @@ object FuTrataLanche: TFuTrataLanche
       ParentFont = False
       TabOrder = 0
       object PanBtOk: TPanel
-        Left = 633
+        Left = 709
         Top = 1
-        Width = 115
+        Width = 87
         Height = 178
         Align = alClient
         ParentBackground = False
         ParentColor = True
         TabOrder = 1
         DesignSize = (
-          115
+          87
           178)
         object btOkLanche: TBitBtn
           Left = 4
           Top = 4
-          Width = 107
+          Width = 79
           Height = 48
           Anchors = [akLeft, akTop, akRight]
           Caption = '&Ok'
@@ -107,7 +122,7 @@ object FuTrataLanche: TFuTrataLanche
         object btCanLanche: TBitBtn
           Left = 4
           Top = 124
-          Width = 107
+          Width = 79
           Height = 48
           Anchors = [akLeft, akRight, akBottom]
           Caption = '&Cancelar'
@@ -131,7 +146,7 @@ object FuTrataLanche: TFuTrataLanche
         object btExcLanche: TBitBtn
           Left = 4
           Top = 54
-          Width = 107
+          Width = 79
           Height = 48
           Anchors = [akLeft, akTop, akRight]
           Caption = '&Excluir'
@@ -184,7 +199,7 @@ object FuTrataLanche: TFuTrataLanche
           OnClick = btExcLancheClick
         end
       end
-      object PanObserv: TPanel
+      object PanObservacoes: TPanel
         Left = 1
         Top = 1
         Width = 512
@@ -564,10 +579,10 @@ object FuTrataLanche: TFuTrataLanche
           TabOrder = 6
         end
       end
-      object Panel1: TPanel
+      object PanPrensarCortar: TPanel
         Left = 513
         Top = 1
-        Width = 120
+        Width = 110
         Height = 178
         Align = alLeft
         BevelOuter = bvNone
@@ -580,13 +595,10 @@ object FuTrataLanche: TFuTrataLanche
         ParentBackground = False
         ParentFont = False
         TabOrder = 2
-        DesignSize = (
-          120
-          178)
         object Label4: TLabel
           Left = 0
           Top = 0
-          Width = 120
+          Width = 110
           Height = 25
           Align = alTop
           Alignment = taCenter
@@ -601,10 +613,9 @@ object FuTrataLanche: TFuTrataLanche
         end
         object dbCortado: TDBCheckBox
           Left = 6
-          Top = 83
+          Top = 95
           Width = 102
           Height = 24
-          Anchors = [akTop, akRight]
           Caption = 'Cortar'
           DataField = 'Cortado'
           DataSource = uDM.SPedWrk
@@ -615,18 +626,125 @@ object FuTrataLanche: TFuTrataLanche
           Top = 48
           Width = 102
           Height = 17
-          Anchors = [akTop, akRight]
           Caption = 'Prensar'
           DataField = 'Prensado'
           DataSource = uDM.SPedWrk
           TabOrder = 0
         end
       end
+      object PanZerar: TPanel
+        Left = 623
+        Top = 1
+        Width = 86
+        Height = 178
+        Align = alLeft
+        BevelInner = bvRaised
+        BevelKind = bkFlat
+        Color = clTeal
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -21
+        Font.Name = 'Tahoma'
+        Font.Style = [fsBold]
+        ParentBackground = False
+        ParentFont = False
+        TabOrder = 3
+        OnMouseDown = ImgResetMouseDown
+        object LabReset: TLabel
+          Left = 13
+          Top = 115
+          Width = 59
+          Height = 25
+          Caption = 'Reset'
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWhite
+          Font.Height = -21
+          Font.Name = 'Tahoma'
+          Font.Style = [fsBold]
+          ParentFont = False
+          OnMouseDown = imgPrecoMouseDown
+        end
+        object ImgReset: TImage
+          Left = 11
+          Top = 36
+          Width = 60
+          Height = 60
+          Picture.Data = {
+            07544269746D6170F6070000424DF60700000000000076000000280000003C00
+            00003C0000000100040000000000800700000000000000000000100000000000
+            0000000000000000800000800000008080008000000080008000808000008080
+            8000C0C0C0000000FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFF
+            FF00FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+            0000FFFFFFFFFFFFFFFFFFFFFFFFFBBBBBBBBBBFFFFFFFFFFFFFFFFFFFFFFFFF
+            0000FFFFFFFFFFFFFFFFFFFFFBBBBBBBBBBBBBBBBBBFFFFFFFFFFFFFFFFFFFFF
+            0000FFFFFFFFFFFFFFFFFFBBBBBBB8888888888BBBBBBBFFFFFFFFFFFFFFFFFF
+            0000FFFFFFFFFFFFFFFFBBBBB888888888888888888BBBBBFFFFFFFFFFFFFFFF
+            0000FFFFFFFFFFFFFFFBBBB8888888888888888888888BBBBBFFFFFFFFFFFFFF
+            0000FFFFFFFFFFFFFBBBB88888888999999999988888888BBBBFFFFFFFFFFFFF
+            0000FFFFFFFFFFFFBBB888888899999999999999998888888BBBFFFFFFFFFFFF
+            0000FFFFFFFFFFFBBB88888899999999999999999999888888BBBFFFFFFFFFFF
+            0000FFFFFFFFFBBBB8888899999999999999999999999988888BBBBFFFFFFFFF
+            0000FFFFFFFFFBB88888999999999999999999999999999988888BBFFFFFFFFF
+            0000FFFFFFFFBB8888899999999999999999999999999999988888BBFFFFFFFF
+            0000FFFFFFFBBB8888999999999999999999999999999999998888BBBFFFFFFF
+            0000FFFFFFBBB888899999999999999999999999999999999998888BBBFFFFFF
+            0000FFFFFFBB88889999999999999999999999999999999999998888BBBFFFFF
+            0000FFFFFBB8888999999999999999999999999999999999999998888BBFFFFF
+            0000FFFFBBB8889999999999999999999999999999999999999999888BBBFFFF
+            0000FFFFBB888899999999999999999999999999999999999999998888BBFFFF
+            0000FFFBBB888999999999999999999999999999999999999999999888BBBFFF
+            0000FFFBB88889999999999999999999999999999999999999999998888BBFFF
+            0000FFFBB88899999999999999999999999999999999999999999999888BBFFF
+            0000FFBBB888999999999999999999999999999999999999999999998888BBFF
+            0000FFBB8889999999999999999999999999999999999999999999999888BBFF
+            0000FFBB8889999999999999999999999999999999999999999999999888BBFF
+            0000FFBB8889999999999999999999999999999999999999999999999888BBFF
+            0000FBB88899999BB99999BBB99BBBBB999BBBBB9999BBBBB999BBB999888BBF
+            0000FBB88899999BB9999BBB99BB999BB9BB999BB99BB999BB9BBB9999888BBF
+            0000FBB88899999BB999BB999BB999999999999BB9BB9999999BB99999888BBF
+            0000FBB88899999BB99BBB999BB999999999999BB9BB9999999BB99999888BBF
+            0000FBB88899999BBBBBB9999BBBBBBB9999BBBB99BBBBBBB99BB99999888BBF
+            0000FBB88899999BBBBBBB999BB9999BB9BBB99999BB9999BB9BB99999888BBF
+            0000FBB88899999BB9999BB99BBB999BB9BB999999BBB999BB9BB99999888BBF
+            0000FBB88899999BB99999BB99BB99BBB9BB999BB99BB99BBB9BB99999888BBF
+            0000FBB88899999BB99999BB999BBBBB999BBBBB9999BBBBB9BBBBB999888BBF
+            0000FFB88899999BB9999BB9999999999999999999999999999BB99999888BBF
+            0000FFBB8889999BB9999BB9999999999999999999999999999BB9999888BBFF
+            0000FFBB8889999BBBBBBB999999999999999999999999999999B9999888BBFF
+            0000FFBB8889999999999999999999999999999999999999999999999888BBFF
+            0000FFBBB888999999999999999999999999999999999999999999998888BBFF
+            0000FFFBB88899999999999999999999999999999999999999999999888BBFFF
+            0000FFFBB88889999999999999999999999999999999999999999998888BBFFF
+            0000FFFBBB888999999999999999999999999999999999999999999888BBBFFF
+            0000FFFFBB888899999999999999999999999999999999999999998888BBFFFF
+            0000FFFFFBB8889999999999999999999999999999999999999999888BBBFFFF
+            0000FFFFFBB8888999999999999999999999999999999999999998888BBFFFFF
+            0000FFFFFFBB88889999999999999999999999999999999999998888BBFFFFFF
+            0000FFFFFFBBB888899999999999999999999999999999999998888BBBFFFFFF
+            0000FFFFFFFBBB8888999999999999999999999999999999998888BBBFFFFFFF
+            0000FFFFFFFFBBB888899999999999999999999999999999988888BBFFFFFFFF
+            0000FFFFFFFFFBBB8888999999999999999999999999999988888BBFFFFFFFFF
+            0000FFFFFFFFFFBBB8888899999999999999999999999988888BBBFFFFFFFFFF
+            0000FFFFFFFFFFFBBB88888899999999999999999999888888BBBFFFFFFFFFFF
+            0000FFFFFFFFFFFFBBB888888899999999999999998888888BBBFFFFFFFFFFFF
+            0000FFFFFFFFFFFFFBBBB88888888999999999988888888BBBBFFFFFFFFFFFFF
+            0000FFFFFFFFFFFFFFFBBBB8888888888888888888888BBBBFFFFFFFFFFFFFFF
+            0000FFFFFFFFFFFFFFFFFBBBBB8888888888888888BBBBBBFFFFFFFFFFFFFFFF
+            0000FFFFFFFFFFFFFFFFFFBBBBBBB8888888888BBBBBBBFFFFFFFFFFFFFFFFFF
+            0000FFFFFFFFFFFFFFFFFFFFFBBBBBBBBBBBBBBBBBBFFFFFFFFFFFFFFFFFFFFF
+            0000FFFFFFFFFFFFFFFFFFFFFFFFFFBBBBBBBBBFFFFFFFFFFFFFFFFFFFFFFFFF
+            0000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+            0000}
+          Stretch = True
+          Transparent = True
+          OnMouseDown = ImgResetMouseDown
+        end
+      end
     end
     object GridExtras: TDrawGrid
-      Left = 13
-      Top = 75
-      Width = 727
+      Left = 45
+      Top = 87
+      Width = 609
       Height = 238
       FixedCols = 0
       FixedRows = 0
@@ -641,8 +759,8 @@ object FuTrataLanche: TFuTrataLanche
       OnMouseDown = GridExtrasMouseDown
     end
     object Teclado: TTouchKeyboard
-      Left = 509
-      Top = 124
+      Left = 457
+      Top = 108
       Width = 180
       Height = 150
       GradientEnd = clSilver
@@ -653,7 +771,7 @@ object FuTrataLanche: TFuTrataLanche
     object PanIdLanche: TPanel
       Left = 4
       Top = 4
-      Width = 749
+      Width = 797
       Height = 65
       Align = alTop
       Color = clTeal
@@ -666,7 +784,7 @@ object FuTrataLanche: TFuTrataLanche
       ParentFont = False
       TabOrder = 3
       DesignSize = (
-        749
+        797
         65)
       object dbDescricao: TDBText
         Left = 8
@@ -817,7 +935,7 @@ object FuTrataLanche: TFuTrataLanche
         Visible = False
       end
       object imgPreco: TImage
-        Left = 414
+        Left = 462
         Top = 24
         Width = 32
         Height = 32
@@ -893,9 +1011,10 @@ object FuTrataLanche: TFuTrataLanche
           0909}
         Transparent = True
         OnMouseDown = imgPrecoMouseDown
+        ExplicitLeft = 414
       end
       object Label1: TLabel
-        Left = 452
+        Left = 500
         Top = 2
         Width = 46
         Height = 23
@@ -907,9 +1026,10 @@ object FuTrataLanche: TFuTrataLanche
         Font.Name = 'Tahoma'
         Font.Style = []
         ParentFont = False
+        ExplicitLeft = 452
       end
       object Label2: TLabel
-        Left = 550
+        Left = 598
         Top = 2
         Width = 51
         Height = 23
@@ -921,9 +1041,10 @@ object FuTrataLanche: TFuTrataLanche
         Font.Name = 'Tahoma'
         Font.Style = []
         ParentFont = False
+        ExplicitLeft = 550
       end
       object Label3: TLabel
-        Left = 648
+        Left = 696
         Top = 2
         Width = 41
         Height = 23
@@ -935,9 +1056,10 @@ object FuTrataLanche: TFuTrataLanche
         Font.Name = 'Tahoma'
         Font.Style = []
         ParentFont = False
+        ExplicitLeft = 648
       end
       object dbPreco: TDBEdit
-        Left = 452
+        Left = 500
         Top = 25
         Width = 96
         Height = 31
@@ -958,7 +1080,7 @@ object FuTrataLanche: TFuTrataLanche
         OnKeyPress = dbPrecoKeyPress
       end
       object dbExtras: TDBEdit
-        Left = 550
+        Left = 598
         Top = 25
         Width = 96
         Height = 31
@@ -976,7 +1098,7 @@ object FuTrataLanche: TFuTrataLanche
         TabOrder = 1
       end
       object dbTotal: TDBEdit
-        Left = 648
+        Left = 696
         Top = 25
         Width = 96
         Height = 31

@@ -106,6 +106,7 @@ var
   wTop,wLeft: Integer;
   linHifen: String;
   wrkImag: TImage;
+  tvLeft,tvTop: Integer;
 
 implementation
 
@@ -127,7 +128,8 @@ var
   qtdLin,linAux,linMax,i,tMax: Integer;
   posX,posY,posDescr,posSem,posMais,posMenos: Integer;
   xObserv: String;
-
+  posBarra: String;
+  altBarra,lrgBarra,altMaxima,lrgMaxima: Integer;
 begin
   with FuFinPedido
   do begin
@@ -142,10 +144,13 @@ begin
       btCancelar.Caption := '&Cancelar pedido';
       btRetornar.Caption := '&Tela anterior';
     end;
-    Width    := Trunc(Screen.Width * 0.70);
+    posBarra := ObtemConfiguracaoTela(altBarra,lrgBarra,altMaxima,lrgMaxima);
+    Width    := Trunc(lrgMaxima * 0.80);
+    Height   := altMaxima;
+    Top      := 0;
+    if posBarra = 'T' then Top := altBarra + 1;
     Left     := (Screen.Width - Width) div 2;
-    Height   := Trunc(Screen.Height * 0.80);
-    Top      := (Screen.Height - Height) div 2;
+
   //  SBoxPedido.Align := alClient;
     SBoxPedido.VertScrollBar.Visible := True;
     imgPedido.Align := alClient;
@@ -169,8 +174,8 @@ begin
     uDM.PedidosArqXML.Clear;
     uDM.PedidosEtqImpressas.AsInteger := 0;
     uDM.PedidosNomeCliente.Clear;
-    uDM.PedidosVlrRecebido.Clear;
-    uDM.PedidosVlrTroco.Clear;
+    uDM.PedidosVlrRecebido.AsCurrency := FuPedidos.totalPedido;
+    uDM.PedidosVlrTroco.AsCurrency := 0;
     uDM.PedidosCPF_CNPJ.EditMask := '';
     uDM.PedidosTurno.AsInteger := uDM.RegCaixaTurno.AsInteger;
     //
@@ -356,12 +361,12 @@ begin
     Teclado.Layout  := pTipo;
     if pTipo = 'NumPad' then
     begin
-      Teclado.Width   := 180;
-      Teclado.Height  := 180;
+      Teclado.Width   := 300;
+      Teclado.Height  := 300;
     end
     else begin
-      Teclado.Width   := 560;
-      Teclado.Height  := 180;
+      Teclado.Width   := 860;
+      Teclado.Height  := 300;
     end;
     Teclado.Top     := pTop;
     Teclado.Left    := pLeft;
@@ -526,8 +531,9 @@ end;
 
 procedure TFuFinPedido.dbCPFEnter(Sender: TObject);
 begin
-  ExibeTecladoVirtual('NumPad',PanInform.Top+PanCliente.Top+dbCPF.Top+dbCPF.Height+4,FuFinPedido.ClientWidth-212);
-  uDM.PedidosCPF_CNPJ.EditMask := '';
+  tvLeft := PanInform.Left + dbCPF.Left + dbCPF.Width + 8;
+  tvTop := PanInform.Top + PanCliente.Top + dbNome.Top + dbNome.Height + 4;     // Mesma altura do nome
+  ExibeTecladoVirtual('NumPad',tvTop,tvLeft);
 
 end;
 
@@ -611,7 +617,9 @@ end;
 
 procedure TFuFinPedido.dbNomeEnter(Sender: TObject);
 begin
-  ExibeTecladoVirtual('Standard',PanInform.Top+PanCliente.Top+dbNome.Top+dbNome.Height+4,FuFinPedido.ClientWidth-600);
+  tvLeft := PanInform.Left - 400;
+  tvTop := PanInform.Top + PanCliente.Top + dbNome.Top + dbNome.Height + 4;
+  ExibeTecladoVirtual('Standard',tvTop,tvLeft);
 
 end;
 
@@ -630,8 +638,9 @@ end;
 
 procedure TFuFinPedido.dbPlacaEnter(Sender: TObject);
 begin
-  ExibeTecladoVirtual('NumPad',PanInform.Top+dbPlaca.Top+dbPlaca.Height+4,
-                               FuFinPedido.ClientWidth-400);
+  tvLeft := PanInform.Left + dbPlaca.Left - 8;
+  tvTop := PanInform.Top + PanPlaca.Height + 4;
+  ExibeTecladoVirtual('NumPad',tvTop,tvLeft);
 
 end;
 
@@ -649,7 +658,9 @@ end;
 
 procedure TFuFinPedido.edCCredEnter(Sender: TObject);
 begin
-  ExibeTecladoVirtual('NumPad',PanInform.Top+PanPlaca.Height+edCCred.Top+edCCred.Height+4,FuFinPedido.ClientWidth-212);
+  tvLeft := PanInform.Left + PanDetPgto.Left + 20;
+  tvTop := PanInform.Top + PanPlaca.Height + edCCred.Top + edCCred.Height + 4;
+  ExibeTecladoVirtual('NumPad',tvTop,tvLeft);
 
 end;
 
@@ -668,7 +679,9 @@ end;
 
 procedure TFuFinPedido.edCDebEnter(Sender: TObject);
 begin
-  ExibeTecladoVirtual('NumPad',PanInform.Top+PanPlaca.Height+edCDeb.Top+edCDeb.Height+4,FuFinPedido.ClientWidth-212);
+  tvLeft := PanInform.Left + PanDetPgto.Left + 20;
+  tvTop := PanInform.Top + PanPlaca.Height + edCDeb.Top + edCDeb.Height + 4;
+  ExibeTecladoVirtual('NumPad',tvTop,tvLeft);
 
 end;
 
@@ -687,7 +700,9 @@ end;
 
 procedure TFuFinPedido.edOutrosEnter(Sender: TObject);
 begin
-  ExibeTecladoVirtual('NumPad',PanInform.Top+PanPlaca.Height+edOutros.Top+edOutros.Height+4,FuFinPedido.ClientWidth-212);
+  tvLeft := PanInform.Left + PanDetPgto.Left + 20;
+  tvTop := PanInform.Top + PanPlaca.Height + edOutros.Top + edOutros.Height + 4;
+  ExibeTecladoVirtual('NumPad',tvTop,tvLeft);
 
 end;
 
@@ -706,7 +721,9 @@ end;
 
 procedure TFuFinPedido.edPIXEnter(Sender: TObject);
 begin
-  ExibeTecladoVirtual('NumPad',PanInform.Top+PanPlaca.Height+edPIX.Top+edPIX.Height+4,FuFinPedido.ClientWidth-212);
+  tvLeft := PanInform.Left + PanDetPgto.Left + 20;
+  tvTop := PanInform.Top + PanPlaca.Height + edPIX.Top + edPIX.Height + 4;
+  ExibeTecladoVirtual('NumPad',tvTop,tvLeft);
 
 end;
 
@@ -725,7 +742,9 @@ end;
 
 procedure TFuFinPedido.edReaisEnter(Sender: TObject);
 begin
-  ExibeTecladoVirtual('NumPad',PanInform.Top+PanPlaca.Height+edReais.Top+edReais.Height+4,FuFinPedido.ClientWidth-212);
+  tvLeft := PanInform.Left + PanDetPgto.Left + 20;
+  tvTop := PanInform.Top + PanPlaca.Height + edReais.Top + edReais.Height + 4;
+  ExibeTecladoVirtual('NumPad',tvTop,tvLeft);
 
 end;
 
@@ -744,7 +763,9 @@ end;
 
 procedure TFuFinPedido.edRecebEnter(Sender: TObject);
 begin
-  ExibeTecladoVirtual('NumPad',PanInform.Top+PanPlaca.Height+edReceb.Top+edReceb.Height+4,FuFinPedido.ClientWidth-212);
+  tvLeft := PanInform.Left + PanDetPgto.Left + 20;
+  tvTop := PanInform.Top + PanPlaca.Height + edReceb.Top + edReceb.Height + 4;
+  ExibeTecladoVirtual('NumPad',tvTop,tvLeft);
 
 end;
 

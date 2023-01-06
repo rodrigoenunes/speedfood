@@ -424,6 +424,31 @@ begin
 
 end;
 
+procedure AjustaFonteGridLanches;
+begin
+  with FuPedidos
+  do begin
+    GridLanches.Canvas.Font.Name := LabAux1.Font.Name;
+    GridLanches.Canvas.Font.Size := LabAux1.Font.Size;
+    GridLanches.Canvas.Font.Style := LabAux1.Font.Style;
+    GridLanches.Canvas.Font.Color := LabAux1.Font.Color;
+
+  end;
+
+end;
+
+procedure AjustaFonteGridBebidas;
+begin
+  with FuPedidos
+  do begin
+    GridBebidas.Canvas.Font.Name := LabAux1.Font.Name;
+    GridBebidas.Canvas.Font.Size := LabAux1.Font.Size;
+    GridBebidas.Canvas.Font.Style := LabAux1.Font.Style;
+    GridBebidas.Canvas.Font.Color := LabAux1.Font.Color;
+
+  end;
+
+end;
 
 
 procedure TFuPedidos.btCancelarClick(Sender: TObject);
@@ -460,8 +485,8 @@ var nRet: Integer;
 begin
   PanAlteraBebida.Visible := False;
   if FuPedidos.totalPedido = 0
-    then nRet := 2
-    else nRet := FinalizaPedido;
+    then nRet := 2                   // Cancela pedido sem valor
+    else nRet := FinalizaPedido;     // Finalização do pedido
   if nRet = 0
   then begin
     {
@@ -556,64 +581,86 @@ end;
 
 procedure TFuPedidos.GridBebidasDrawCell(Sender: TObject; ACol, ARow: Integer; Rect: TRect; State: TGridDrawState);
 var wTxt: String;
-    wKey,i,nTop: Integer;
+    wKey,nLeft,nTop,nPos: Integer;
     wImagem: TImage;
-    lin2: Boolean;
 begin
-  // Preenche a celula com código, descrição, preço e imagem
+  // Identifica a bebida na célula
   wKey := wCodBebida[ACol,ARow];
   if wKey = 0 then Exit;   // Não há bebida na célula
   if not uDM.Itens.FindKey([3,wKey]) then Exit;   // Bebida não encontrada
+  GridBebidas.Canvas.Brush.Style := bsClear;
+  GridBebidas.Canvas.FillRect(Rect);
+  GridBebidas.Color := clWhite;
   //
-  wImagem := TImage.Create(nil);
   GridBebidas.Canvas.Brush.Style := bsClear;
   GridBebidas.Canvas.FillRect(Rect);
   GridBebidas.Color := clWhite;
   //
   if FileExists(uDM.ItensImagem.AsString) and (not uDM.usaCorItem) then
   begin
+    wImagem := TImage.Create(nil);
     wImagem.Picture.LoadFromFile(uDM.ItensImagem.AsString);
     GridBebidas.Canvas.StretchDraw(Rect,wImagem.Picture.Graphic);
+    wImagem.Free;
   end
   else begin
+    LabAux1.Font.Name := 'Tahoma';
+    LabAux1.Font.Size := 28;
+    LabAux1.Font.Style := [fsBold];
+    LabAux1.Caption := '00';
+    nTop := LabAux1.Height+16; // Obtem 'top' para descrição
     if uDM.ItensCorItem.AsString <> '' then
       wColor := StringToColor(uDM.ItensCorItem.AsString)
     else wColor := clAqua;
     GridBebidas.Canvas.Brush.Color := wColor;
     GridBebidas.Canvas.FillRect(Rect);
-
-    GridBebidas.Canvas.Font.Size  := 20;
-    GridBebidas.Canvas.Font.Color := clBlack;
+    //
     wTxt := uDM.ItensDescricao.AsString;
-    LabAux1.Caption   := '';
-    LabAux1.Font.Size := GridBebidas.Canvas.Font.Size;
-    LabAux2.Caption   := '';
-    LabAux2.Font.Size := GridBebidas.Canvas.Font.Size;
-    lin2 := False;
-    for i := 1 to Length(wTxt)
-    do begin
-      if wTxt[i] = '#' then lin2 := True
-      else if not lin2 then
-             LabAux1.Caption := LabAux1.Caption + wTxt[i]
-           else
-             LabAux2.Caption := LabAux2.Caption + wTxt[i];
+    LabAux1.Caption := '';
+    LabAux2.Caption := '';
+    nPos := Pos('#',wTxt);
+    if nPos = 0 then
+    begin
+      LabAux1.Caption := wTxt;
+      nTop := Trunc(nTop * 1.4);
+    end
+    else begin
+      LabAux1.Caption := Copy(wTxt,1,nPos-1);
+      LabAux2.Caption := Copy(wTxt,nPos+1,Length(wTxt)-nPos);
     end;
-    nTop := Rect.Top + uDM.topBebida;            // Rect.Height - ((LabAux1.Height * 2) + 12);
-    GridBebidas.Canvas.TextOut(Rect.Left+4, nTop, LabAux1.Caption);
-    nTop := nTop + LabAux1.Height;
-    GridBebidas.Canvas.TextOut(Rect.Left+4, nTop, LabAux2.Caption);
+    LabAux1.Font.Name := 'Tahoma';
+    LabAux1.Font.Size := 18;
+    LabAux1.Font.Style := [fsBold];
+    LabAux1.Font.Color := clBlack;
+    LabAux2.Font := LabAux1.Font;
+    AjustaFonteGridBebidas;
+    GridBebidas.Canvas.TextOut(Rect.Left+16,Rect.Top+nTop, LabAux1.Caption);
+    if LabAux2.Caption <> '' then
+    begin
+      nTop := nTop + LabAux1.Height + 6;
+      GridBebidas.Canvas.TextOut(Rect.Left+16,Rect.Top+nTop, LabAux2.Caption);
+    end;
   end;
-  //
+  LabAux1.Font.Name := 'Tahoma';
+  LabAux1.Font.Size := 28;
+  LabAux1.Font.Style := [fsBold];
+  LabAux1.Font.Color := clBlack;
   wTxt := IntToStr(wKey);
   if wKey < 10 then wTxt := '0' + wTxt;
-  GridBebidas.Canvas.Font.Color := clBlack;
-  GridBebidas.Canvas.Font.Size  := 28;
-  GridBebidas.Canvas.Font.Style := [fsBold];
-  GridBebidas.Canvas.TextOut(Rect.Left+4, Rect.Top+1, wTxt);
-
-  wImagem.Free;
+  LabAux1.Caption := wTxt;
+  AjustaFonteGridBebidas;
+  GridBebidas.Canvas.TextOut(Rect.Left+6, Rect.Top+4, wTxt);
+  //
+  GridBebidas.Canvas.Pen.Color := clBlack;
+  GridBebidas.canvas.Pen.Width := 2;
+  GridBebidas.Canvas.MoveTo(Rect.Left+3, Rect.Top+3);
+  GridBebidas.Canvas.LineTo(Rect.Left+LabAux1.Width+10, Rect.Top+3);
+  GridBebidas.Canvas.LineTo(Rect.Left+LabAux1.Width+10, Rect.Top+LabAux1.Height+6);
+  GridBebidas.Canvas.LineTo(Rect.Left+3, Rect.Top+LabAux1.Height+6);
+  GridBebidas.Canvas.LineTo(Rect.Left+3, Rect.Top+2);
 
 end;
+
 
 procedure TFuPedidos.GridBebidasMouseDown(Sender: TObject;
   Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
@@ -630,62 +677,80 @@ end;
 
 procedure TFuPedidos.GridLanchesDrawCell(Sender: TObject; ACol, ARow: Integer; Rect: TRect; State: TGridDrawState);
 var wTxt: String;
-    wKey,i,nTop: Integer;
+    wKey,nLeft,nTop,nPos: Integer;
     wImagem: TImage;
-    lin2: Boolean;
-
 begin
   // Identifica o lanche na célula
   wKey := wCodLanche[ACol,ARow];
   if wKey = 0 then Exit;   // Não há lanche na célula
   if not uDM.Itens.FindKey([1,wKey]) then Exit;   // Lanche não encontrado
-  //
-  wImagem := TImage.Create(nil);
   GridLanches.Canvas.Brush.Style := bsClear;
   GridLanches.Canvas.FillRect(Rect);
   GridLanches.Color := clWhite;
   //
   if FileExists(uDM.ItensImagem.AsString) and (not uDM.usaCorItem)
   then begin
+    wImagem := TImage.Create(nil);
     wImagem.Picture.LoadFromFile(uDM.ItensImagem.AsString);
     GridLanches.Canvas.StretchDraw(Rect,wImagem.Picture.Graphic);
+    wImagem.Free;
   end
-  else begin      // Se não houver imagem, 'escreve' a identificação do lanche
+  else begin      // Se não houver imagem ou utiliza as cores dinamicamente, 'escreve/desenha' a identificação do lanche
+    LabAux1.Font.Name := 'Tahoma';
+    LabAux1.Font.Size := 28;
+    LabAux1.Font.Style := [fsBold];
+    LabAux1.Caption := '00';
+    nTop := LabAux1.Height+16; // Obtem 'top' para descrição
     if uDM.ItensCorItem.AsString <> '' then
       wColor := StringToColor(uDM.ItensCorItem.AsString)
     else wColor := clTeal;
     GridLanches.Canvas.Brush.Color := wColor;
     GridLanches.Canvas.FillRect(Rect);
-
-    GridLanches.Canvas.Font.Size  := 18;
-    GridLanches.Canvas.Font.Color := clBlack;
+    //
     wTxt := uDM.ItensDescricao.AsString;
     LabAux1.Caption := '';
-    LabAux1.Font.Size := GridLanches.Canvas.Font.Size;
     LabAux2.Caption := '';
-    LabAux2.Font.Size := GridLanches.Canvas.Font.Size;
-    lin2 := False;
-    for i := 1 to Length(wTxt)
-    do begin
-      if wTxt[i] = '#' then lin2 := True
-      else if not lin2 then
-             LabAux1.Caption := LabAux1.Caption + wTxt[i]
-           else
-             LabAux2.Caption := LabAux2.Caption + wTxt[i];
+    nPos := Pos('#',wTxt);
+    if nPos = 0 then
+    begin
+      LabAux1.Caption := wTxt;
+      nTop := Trunc(nTop * 1.4);
+    end
+    else begin
+      LabAux1.Caption := Copy(wTxt,1,nPos-1);
+      LabAux2.Caption := Copy(wTxt,nPos+1,Length(wTxt)-nPos);
     end;
-    nTop := Rect.Top + uDM.topLanche;           // Rect.Height - ((LabAux1.Height * 2) + 12);
-    GridLanches.Canvas.TextOut(Rect.Left+4, nTop, LabAux1.Caption);
-    nTop := nTop + LabAux1.Height + 2;
-    GridLanches.Canvas.TextOut(Rect.Left+4, nTop, LabAux2.Caption);
+    LabAux1.Font.Name := 'Tahoma';
+    LabAux1.Font.Size := 18;
+    LabAux1.Font.Style := [fsBold];
+    LabAux1.Font.Color := clBlack;
+    LabAux2.Font := LabAux1.Font;
+    AjustaFonteGridLanches;
+    GridLanches.Canvas.TextOut(Rect.Left+16,Rect.Top+nTop, LabAux1.Caption);
+    if LabAux2.Caption <> '' then
+    begin
+      nTop := nTop + LabAux1.Height + 6;
+      GridLanches.Canvas.TextOut(Rect.Left+16,Rect.Top+nTop, LabAux2.Caption);
+    end;
+
   end;
+  LabAux1.Font.Name := 'Tahoma';
+  LabAux1.Font.Size := 28;
+  LabAux1.Font.Style := [fsBold];
+  LabAux1.Font.Color := clBlack;
   wTxt := IntToStr(wKey);
   if wKey < 10 then wTxt := '0' + wTxt;
-  GridLanches.Canvas.Font.Color := clBlack;
-  GridLanches.Canvas.Font.Size  := 28;
-  GridLanches.Canvas.Font.Style := [fsBold];
-  GridLanches.Canvas.TextOut(Rect.Left+4, Rect.Top, wTxt);
-
-  wImagem.Free;
+  LabAux1.Caption := wTxt;
+  AjustaFonteGridLanches;
+  GridLanches.Canvas.TextOut(Rect.Left+6, Rect.Top+4, wTxt);
+  //
+  GridLanches.Canvas.Pen.Color := clBlack;
+  GridLanches.canvas.Pen.Width := 2;
+  GridLanches.Canvas.MoveTo(Rect.Left+3, Rect.Top+3);
+  GridLanches.Canvas.LineTo(Rect.Left+LabAux1.Width+10, Rect.Top+3);
+  GridLanches.Canvas.LineTo(Rect.Left+LabAux1.Width+10, Rect.Top+LabAux1.Height+6);
+  GridLanches.Canvas.LineTo(Rect.Left+3, Rect.Top+LabAux1.Height+6);
+  GridLanches.Canvas.LineTo(Rect.Left+3, Rect.Top+2);
 
 end;
 

@@ -14,7 +14,7 @@ type
     PanRodape: TPanel;
     PanBtOk: TPanel;
     btOkLanche: TBitBtn;
-    PanObserv: TPanel;
+    PanObservacoes: TPanel;
     dbSEM: TDBMemo;
     btCanLanche: TBitBtn;
     dbObserv: TDBMemo;
@@ -35,13 +35,17 @@ type
     Label3: TLabel;
     dbExtras: TDBEdit;
     dbTotal: TDBEdit;
-    Panel1: TPanel;
+    PanPrensarCortar: TPanel;
     dbCortado: TDBCheckBox;
     dbPrensado: TDBCheckBox;
     Label4: TLabel;
     Panel2: TPanel;
     Panel3: TPanel;
     Panel4: TPanel;
+    PanZerar: TPanel;
+    LabReset: TLabel;
+    ImgReset: TImage;
+    LabTaman: TLabel;
     procedure FormShow(Sender: TObject);
     procedure btOkLancheClick(Sender: TObject);
     procedure btCanLancheClick(Sender: TObject);
@@ -56,6 +60,9 @@ type
     procedure dbPrecoExit(Sender: TObject);
     procedure dbPrecoKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure dbPrecoKeyPress(Sender: TObject; var Key: Char);
+    procedure FormResize(Sender: TObject);
+    procedure ImgResetMouseDown(Sender: TObject; Button: TMouseButton;
+      Shift: TShiftState; X, Y: Integer);
   private
     { Private declarations }
   public
@@ -66,7 +73,7 @@ var
   FuTrataLanche: TFuTrataLanche;
   lInclusao: Boolean;
   altBtn,lrgBtn,lrgImg: Integer;
-
+  tvLeft,tvTop: Integer;
 
 implementation
 
@@ -83,7 +90,7 @@ begin
   with FuTrataLanche
   do begin
     posBarra := ObtemConfiguracaoTela(altBarra,lrgBarra,altMaxima,lrgMaxima);
-    Width  := Trunc(Screen.Width * 0.70);
+    Width  := Trunc(lrgMaxima * 0.80);
     Height := altMaxima;
     Top    := 0;
     if posBarra = 'T' then Top := altBarra + 1;
@@ -91,12 +98,14 @@ begin
     GridExtras.Align := alClient;
     nCols  := 5;
     nLins  := uDM.nExtras;
-    largs  := [0.04, 0.10, 0.76, 0.10, 0.04];
+    largs  := [0.05, 0.10, 0.70, 0.10, 0.05];
+    //          Nr    +     xx     -     L
     if uDM.nExtras > 10
     then begin
       nCols := 9;
       nLins := (uDM.nExtras div 2) + (uDM.nExtras mod 2);
-      largs  := [0.04, 0.05, 0.34, 0.05, 0.04, 0.04, 0.05, 0.34, 0.05];
+      largs  := [0.05, 0.06, 0.31, 0.06, 0.04, 0.05, 0.06, 0.31, 0.06];
+      //           Nr   +     xx     -    L     Nr     +    xx     -
     end;
     GridExtras.RowCount := nLins;
     GridExtras.ColCount := nCols;
@@ -152,12 +161,12 @@ begin
     Teclado.Layout  := pTipo;
     if pTipo = 'NumPad' then
     begin
-      Teclado.Width   := 180;
-      Teclado.Height  := 180;
+      Teclado.Width   := 300;
+      Teclado.Height  := 300;
     end
     else begin
-      Teclado.Width   := 560;
-      Teclado.Height  := 180;
+      Teclado.Width   := 860;
+      Teclado.Height  := 300;
     end;
     Teclado.Top     := pTop;
     Teclado.Left    := pLeft;
@@ -165,6 +174,19 @@ begin
   end;
 
 end;
+
+Procedure AjustaFonteGridExtras(pCol,pRow:Integer);
+begin
+  with FuTrataLanche
+  do begin
+    GridExtras.Canvas.Font.Name := LabTaman.Font.Name;
+    GridExtras.Canvas.Font.Size := LabTaman.Font.Size;
+    GridExtras.Canvas.Font.Style := LabTaman.Font.Style;
+
+  end;
+
+end;
+
 
 procedure TFuTrataLanche.btCanLancheClick(Sender: TObject);
 begin
@@ -192,17 +214,10 @@ end;
 
 procedure TFuTrataLanche.dbPrecoEnter(Sender: TObject);
 begin
-//  if not uDM.SisPessoaTecladoVirtual.AsBoolean then Exit;
   if not imgPreco.Visible then Exit;
-{
-  Teclado.Left    := dbPreco.Left - 12;
-  Teclado.Top     := PanIdLanche.Top + PanIdLanche.Height;
-  Teclado.Width   := 180;
-  Teclado.Height  := 180;
-  Teclado.Layout  := 'NumPad';
-  Teclado.Visible := True;
-}
-  ExibeTecladoVirtual('NumPad',PanIdLanche.Top+PanIdLanche.Height, dbPreco.Left-12);
+  tvLeft := dbPreco.Left - 20;
+  tvTop := PanIdLanche.Top + PanIdLanche.Height;
+  ExibeTecladoVirtual('NumPad',tvTop,tvLeft);
 
 end;
 
@@ -228,17 +243,9 @@ end;
 
 procedure TFuTrataLanche.dbObservEnter(Sender: TObject);
 begin
-{
-  if not uDM.SisPessoaTecladoVirtual.AsBoolean then Exit;
-  Teclado.Left    := 40;
-  Teclado.Top     := PanRodape.Top - 50;
-  Teclado.Width   := 550;
-  Teclado.Height  := 180;
-  Teclado.Layout  := 'Standard';
-  Teclado.Visible := True;
-}
-  ExibeTecladoVirtual('Standard',PanRodape.Top-50,40);
-
+  tvLeft := dbObserv.Left - 20;
+  tvTop := (PanRodape.Top + dbObserv.Top) - 310;
+  ExibeTecladoVirtual('Standard',tvTop,tvLeft);
 
 end;
 
@@ -254,6 +261,15 @@ begin
 
 end;
 
+procedure TFuTrataLanche.FormResize(Sender: TObject);
+begin
+  PanPrensarCortar.Width := (PanRodape.Width - PanObservacoes.Width) div 4;
+  PanZerar.Width := PanPrensarCortar.Width;     // (PanRodape.Width - (PanObservacoes.Width + PanPrensarCortar.Width)) div 3;
+  ImgReset.Left := (PanZerar.Width - ImgReset.Width) div 2;
+  LabReset.Left := (PanZerar.Width - LabReset.Width) div 2;
+
+end;
+
 procedure TFuTrataLanche.FormShow(Sender: TObject);
 var wStrAuxil: String;
 begin
@@ -265,7 +281,9 @@ end;
 
 procedure TFuTrataLanche.GridExtrasDrawCell(Sender: TObject; ACol,ARow: Integer; Rect: TRect; State: TGridDrawState);
 var wImagem: TImage;
-    nCol,nRow,nTop,nLeft: Integer;
+    nCol,nRow,nTop,nLeft,nPos,nLinTxt: Integer;
+    descr1,descr2,descr3: String;
+    naoCabe: Boolean;
 begin
   GridExtras.Canvas.Brush.Style := bsClear;
   GridExtras.Canvas.FillRect(Rect);
@@ -275,8 +293,13 @@ begin
   case ACol of
     0,5:if uDM.wCodExtra[nCol,nRow] > 0 then
     begin
-      GridExtras.Canvas.Font.Size := 14;
-      GridExtras.Canvas.TextOut(Rect.Left+4, Rect.Top+2, IntToStr(uDM.wCodExtra[nCol,nRow]));
+      LabTaman.Font.Size := 18;
+      LabTaman.Font.Style := [fsBold];
+      LabTaman.Caption := IntToStr(uDM.wCodExtra[nCol,nRow]);
+      AjustaFonteGridExtras(ACol,ARow);
+      nTop := (GridExtras.RowHeights[ARow] - LabTaman.Height) div 2;
+      nLeft := (GridExtras.ColWidths[ACol] - LabTaman.Width) div 2;
+      GridExtras.Canvas.TextOut(Rect.Left+nLeft, Rect.Top+nTop, IntToStr(uDM.wCodExtra[nCol,nRow]));
     end;
     1,6:if uDM.wCodExtra[nCol,nRow] > 0 then
     begin
@@ -288,13 +311,58 @@ begin
     end;
     2,7:if uDM.wCodExtra[nCol,nRow] > 0 then
     begin
-      GridExtras.Canvas.Font.Size := 14;
-      nLeft := Rect.Left + uDM.leftExtra;
-      nTop := Rect.Top + uDM.topExtra;
-      GridExtras.Canvas.TextOut(nLeft, nTop, uDM.wTxtExtra[nCol,nRow]);
+      nPos := Pos('#',uDM.wTxtExtra[nCol,nRow]);
+      nLinTxt := 1;
+      descr1 := uDM.wtxtExtra[nCol,nRow];
+      descr2 := '';
+      descr3 := '';
+      if nPos > 0
+      then begin
+        descr1 := Copy(uDM.wTxtExtra[nCol,nRow],1,nPos-1);
+        descr2 := Copy(uDM.wTxtExtra[nCol,nRow],nPos+1,Length(uDM.wTxtExtra[nCol,nRow])-nPos);
+        nLinTxt := nLinTxt + 1;
+      end;
       if uDM.wVlrExtra[nCol,nRow] > 0 then
-        GridExtras.Canvas.TextOut(nLeft+8, nTop+18,
-                                  'R$' + FloatToStrF(uDM.wVlrExtra[nCol,nRow],ffNumber,15,2));
+      begin
+        descr3 := 'R$ ' + FloatToStrF(uDM.wVlrExtra[nCol,nRow],ffNumber,15,2);
+        nLinTxt := nLinTxt + 1;
+      end;
+      LabTaman.Font.Size := 18;
+      LabTaman.Font.Style := [fsBold];
+      if nLinTxt > 2 then
+        LabTaman.Font.Style := [];
+      naoCabe := True;
+      while naoCabe do
+      begin
+        if (LabTaman.Height*nLinTxt)+(nLinTxt-1) >= GridExtras.RowHeights[ARow]
+        then begin
+          LabTaman.Font.Size := LabTaman.Font.Size - 1;
+          if LabTaman.Font.Size < 11 then naoCabe := False;
+        end
+        else naoCabe := False;
+      end;
+      AjustaFonteGridExtras(ACol,ARow);
+      nTop := (GridExtras.RowHeights[ARow]-(LabTaman.Height*nLinTxt)) div 2;
+      LabTaman.Caption := descr1;
+      nLeft := (GridExtras.ColWidths[ACol]-LabTaman.Width) div 2;
+      GridExtras.Canvas.TextOut(Rect.Left+nLeft, Rect.Top+nTop, descr1);
+      if descr2 <> ''
+      then begin
+        nTop := nTop + LabTaman.Height;
+        LabTaman.Caption := descr2;
+        nLeft := (GridExtras.ColWidths[ACol]-LabTaman.Width) div 2;
+        GridExtras.Canvas.TextOut(Rect.Left+nLeft, Rect.Top+nTop, descr2);
+      end;
+      if descr3 <> ''
+      then begin
+        LabTaman.Font.Size := 14;
+        LabTaman.Font.Style := [];
+        AjustaFonteGridExtras(ACol,ARow);
+        nTop := nTop + LabTaman.Height;
+        LabTaman.Caption := descr3;
+        nLeft := GridExtras.ColWidths[ACol]-(LabTaman.Width + 12);
+        GridExtras.Canvas.TextOut(Rect.Left+nLeft, Rect.Top+nTop, descr3);
+      end;
     end;
     3,8:if uDM.wCodExtra[nCol,nRow] > 0 then
     begin
@@ -305,9 +373,8 @@ begin
       wImagem.Free;
     end;
     4:begin
-      GridExtras.Canvas.Brush.Color := clYellow;
+      GridExtras.Canvas.Brush.Color := $00CDCDCD;    // clYellow;
       GridExtras.Canvas.FillRect(Rect);
-      //GridExtras.Canvas.TextOut(Rect.Left+4,Rect.Top+12,'R');
     end;
   end;
 
@@ -324,16 +391,16 @@ var nCol,nLin,wCol,wLin,wKey,nExtVlr,nVezes: Integer;
 
 begin
   GridExtras.MouseToCell(X,Y,nCol,nLin);
-  // Col 0 e 5: Codigo do extra
-  // Col 1 e 6: Indica MAIS
-  // Col 2 e 7: Indica SEM
-  // Col 3 e 8: Indica MENOS
-  // Col 4: Separador - Lanche PADRAO
-  // 'Extras' (1 a 24)    '.' Sem ação
-  //                      '+' Mais
-  //                      '1' ou '2' Mais um ou dois (com valor)
-  //                      '-' Menos
-  //                      '0' SEM
+  {  Col 0 e 5: Codigo do extra
+     Col 1 e 6: Indica MAIS
+     Col 2 e 7: Indica SEM
+     Col 3 e 8: Indica MENOS
+     Col 4: Separador
+     'Extras' (1 a 24)    '.' Sem ação   '+' Mais
+                          '1' ou '2' Mais um ou dois (com valor)
+                          '-' Menos   '0' SEM }
+  if (nCol = 0) or (nCol = 4) or (nCol = 5) then Exit;      // Colunas sem efeito
+  //
   xExtras := uDM.PedWrkExtras.AsString;            // String de 24 posições (24 extras possíveis)
   // Obtem código de extra considerado/lançado
   if nCol < 5 then wCol := 1
@@ -362,10 +429,6 @@ begin
              Exit;            // Não é nenhum dos extras com valor
   //
   case nCol of
-    0,5:begin
-          xExtras[wKey] := '.';
-        end;
-
     1,6:begin              // MAIS
           if uDM.wVlrExtra[wCol,wLin] > 0 then
           begin          // Extra com valor
@@ -392,9 +455,6 @@ begin
                    then xExtras[wKey] := '.'
                    else if uDM.wVlrExtraTab[wKey] = 0
                         then xExtras[wKey] := '-';        // Se '.' ou '+'  vira MENOS, somente se NÃO tiver valor
-    end;
-    4:begin                // Restaura padrão do extra ('.')
-        xExtras := stringFiller('.',24);
     end;
   end;
   //
@@ -439,6 +499,22 @@ begin
   wTxtSem.Free;
   wTxtMais.Free;
   wTxtMenos.Free;
+
+end;
+
+procedure TFuTrataLanche.ImgResetMouseDown(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
+begin
+  uDM.PedWrkExtras.AsString  := stringFiller('.',24);
+  uDM.PedWrkCod01.AsInteger  := 0;
+  uDM.PedWrkVlr01.AsCurrency := 0;
+  uDM.PedWrkCod02.AsInteger  := 0;
+  uDM.PedWrkVlr02.AsCurrency := 0;
+  uDM.PedWrkCod03.AsInteger  := 0;
+  uDM.PedWrkVlr03.AsCurrency := 0;
+  uDM.PedWrkVlrTotal.AsCurrency := uDM.PedWrkVlrUnit.AsCurrency;
+  uDM.PedWrkTxtSem.Clear;
+  uDM.PedWrkTxtMais.Clear;
+  uDM.PedWrkTxtMenos.Clear;
 
 end;
 

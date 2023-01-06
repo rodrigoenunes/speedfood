@@ -231,6 +231,7 @@ object FuFinPedido: TFuFinPedido
         Align = alClient
         BevelOuter = bvNone
         TabOrder = 1
+        ExplicitTop = 0
         object LabReais: TLabel
           Left = 74
           Top = 30
@@ -572,8 +573,8 @@ object FuFinPedido: TFuFinPedido
       Height = 105
     end
     object LabTaman: TLabel
-      Left = 264
-      Top = 266
+      Left = 284
+      Top = 158
       Width = 74
       Height = 19
       Caption = 'LabTaman'
@@ -635,8 +636,8 @@ object FuFinPedido: TFuFinPedido
     Visible = False
   end
   object Teclado: TTouchKeyboard
-    Left = 30
-    Top = 208
+    Left = 170
+    Top = 262
     Width = 180
     Height = 165
     DrawingStyle = dsGradient
