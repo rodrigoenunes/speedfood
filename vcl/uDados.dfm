@@ -15,12 +15,12 @@ object uDM: TuDM
   end
   object FDGUIxWaitCursor1: TFDGUIxWaitCursor
     Provider = 'FMX'
-    Left = 140
+    Left = 120
     Top = 16
   end
   object FDPhysMySQLDriverLink1: TFDPhysMySQLDriverLink
-    Left = 268
-    Top = 16
+    Left = 244
+    Top = 20
   end
   object Itens: TFDTable
     OnCalcFields = ItensCalcFields
@@ -1306,5 +1306,24 @@ object uDM: TuDM
     DataSet = ResVendas
     Left = 552
     Top = 192
+  end
+  object Usuarios: TFDTable
+    IndexFieldNames = 'Nome'
+    Connection = FDC
+    TableName = 'speedfood.sis_usuarios'
+    Left = 216
+    Top = 312
+    object UsuariosNome: TStringField
+      FieldName = 'Nome'
+      Origin = 'Nome'
+      ProviderFlags = [pfInUpdate, pfInWhere, pfInKey]
+      Required = True
+    end
+    object UsuariosSenha: TStringField
+      AutoGenerateValue = arDefault
+      FieldName = 'Senha'
+      Origin = 'Senha'
+      Size = 6
+    end
   end
 end

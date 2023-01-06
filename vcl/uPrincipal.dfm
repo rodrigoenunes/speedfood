@@ -371,6 +371,7 @@ object FuPrincipal: TFuPrincipal
     Color = clGradientInactiveCaption
     ParentBackground = False
     TabOrder = 7
+    Visible = False
     object LabInicio: TLabel
       Left = 12
       Top = 28

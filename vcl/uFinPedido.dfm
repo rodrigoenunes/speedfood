@@ -163,7 +163,7 @@ object FuFinPedido: TFuFinPedido
       end
       object btGravar: TBitBtn
         Left = 5
-        Top = 4
+        Top = 6
         Width = 376
         Height = 56
         Caption = '&Gravar  && Imprimir'
@@ -231,7 +231,6 @@ object FuFinPedido: TFuFinPedido
         Align = alClient
         BevelOuter = bvNone
         TabOrder = 1
-        ExplicitTop = 0
         object LabReais: TLabel
           Left = 74
           Top = 30

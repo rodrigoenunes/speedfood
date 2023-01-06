@@ -326,6 +326,7 @@ end;
 
 Procedure GeraImprimeNFCe(pNroPedido:Integer);
 begin
+  ShowMessage('Geração e emissão de NFCe ou re-emissão/visualização');
   {
   With uBiblioteca.EmitirNFCeDePV(1, uDM.Pedidos.FieldByName('numero').AsInteger ) Do
   Begin

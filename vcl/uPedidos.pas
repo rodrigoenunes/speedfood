@@ -485,23 +485,11 @@ var nRet: Integer;
 begin
   PanAlteraBebida.Visible := False;
   if FuPedidos.totalPedido = 0
-    then nRet := 2                   // Cancela pedido sem valor
+    then nRet := 2                   // Pedido sem valor, cancela o pedido
     else nRet := FinalizaPedido;     // Finalização do pedido
   if nRet = 0
   then begin
-    {
-    With uBiblioteca.EmitirNFCeDePV(1, uDM.Pedidos.FieldByName('numero').AsInteger ) Do
-    Begin
-      if Not Resultado then
-      Begin
-        ShowMessage(Mensagem);
-        Exit;
-      End;
-    End;
-    }
-
-
-    ShowMessage('Gravou pedido, emite pedido, emite NFCe(se for o caso) e atualiza caixa');
+    ShowMessage('Gravou pedido, atualizou caixa, emitiu pedido e emitiu NFCe(se for o caso)');
     nRet := 2;
   end;
   if nRet = 2 then       // Novo pedido ou pedido cancelado

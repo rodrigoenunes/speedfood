@@ -346,6 +346,7 @@ begin
     wrkImag.Free;
     nRetorno := 1;
     ShowModal;
+    // nRetorno 0:Ok, 1:Tela anterior, 2:Cancelado
     Result := nRetorno;
 
   end;
@@ -504,19 +505,39 @@ begin
   uDM.RegCaixa.Post;
   //
   xImpressao := ObtemParametro('PedidoImprimir');
-  if Pos(xImpressao,'SNP')= 0 then xImpressao := 'P';        // Sim Não Pergunta
-  if xImpressao = 'P' then
+  if Pos(xImpressao,'SNQ') = 0 then xImpressao := 'Q';       // Sim  Não  Questiona
+  if xImpressao = 'Q' then
     if MessageDlg('Imprimir pedido ?',mtConfirmation,[mbYes,mbNo],0,mbNo) = mrYes then
       xImpressao := 'S'
     else
       xImpressao := 'N';
-  //
   if xImpressao = 'S' then
     ImprimePedido(uDM.PedidosNumero.AsInteger);
-
-  GeraImprimeNFCe(uDM.PedidosNumero.AsInteger);
   //
   nRetorno := 0;
+  // NFCe: (S)im  (N)ao
+  if ObtemParametro('NFCe_Imprimir') = 'S' then
+  begin
+    case uDM.PedidosMeioPagto.AsInteger of
+      0:xImpressao := ObtemParametro('NFCe_Reais');        // Pagto em Reais
+      1:xImpressao := ObtemParametro('NFCe_CDebito');      // Pagto Cartao de débito
+      2:xImpressao := ObtemParametro('NFCe_CCredito');     // Pagto Cartao de crédito
+      3:xImpressao := ObtemParametro('NFCe_PIX');          // Pagto PIX
+      4:xImpressao := ObtemParametro('NFCe_Outros');       // Pagto Outros
+      5:xImpressao := ObtemParametro('NFCe_Misto');        // Pagto Misto
+    end;
+    if Pos(xImpressao,'SNQ') = 0  then xImpressao := 'Q';
+    if xImpressao = 'Q' then
+      if MessageDlg('Geração / Emissão de NFCe' + #13 +
+                    'Pedido: ' + uDM.PedidosNumero.AsString + #13 +
+                    'Valor: ' + FloatToStrF(uDM.PedidosValor.AsCurrency,ffNumber,15,2) + #13 +
+                    'Meio pagamento: ' + uDM.PedidosZC_MPExtenso.AsString,
+                    mtConfirmation,[mbYes,mbNo],0,mbNo,['Sim','Não']) = mrYes
+        then xImpressao := 'S';
+    if xImpressao = 'S' then
+       GeraImprimeNFCe(uDM.PedidosNumero.AsInteger);
+  end;
+  //
   FuFinPedido.Close;
 
 end;

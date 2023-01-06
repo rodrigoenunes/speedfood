@@ -18,7 +18,8 @@ uses
   uSysPrinters in '..\..\UsoGeral\uSysPrinters.pas' {FuSysPrinters},
   FortesReportCtle in '..\..\uFortesReport\FortesReportCtle.pas' {FFRCtle},
   EnviaEMail in '..\..\uFortesReport\EnviaEMail.pas' {FEnviaEMail},
-  uAdministrativo in 'uAdministrativo.pas' {FuAdministrativo};
+  uAdministrativo in 'uAdministrativo.pas' {FuAdministrativo},
+  uUserPwd in 'uUserPwd.pas' {FuUserPwd};
 
 {$R *.res}
 
@@ -29,6 +30,8 @@ begin
   Application.CreateForm(TFGen, FGen);
   Application.CreateForm(TFFRCtle, FFRCtle);
   Application.CreateForm(TFEnviaEMail, FEnviaEMail);
+  Application.CreateForm(TFuUserPwd, FuUserPwd);
+  Application.CreateForm(TFuUserPwd, FuUserPwd);
   Application.Run;
 
 end.

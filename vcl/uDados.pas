@@ -231,6 +231,9 @@ type
     PedidosPlaca: TStringField;
     PedItensZC_PlacaLcto: TStringField;
     PedItensZC_CodDescr: TStringField;
+    Usuarios: TFDTable;
+    UsuariosNome: TStringField;
+    UsuariosSenha: TStringField;
     procedure ItensCalcFields(DataSet: TDataSet);
     procedure LctCaixaCalcFields(DataSet: TDataSet);
     procedure PedWrkCalcFields(DataSet: TDataSet);
@@ -252,7 +255,7 @@ type
     wTxtExtraTab: array[1..24] of String;
     wVlrExtraTab: array[1..24] of Currency;
     usaCorItem: Boolean;
-    topLanche,topBebida,topExtra,leftExtra: Integer;
+    sysUser: String;
 
   end;
 
@@ -264,7 +267,7 @@ const
   xOperacao: array[0..4] of String = ('Saldo','Receb','Suprim','Pagto','Sangria');
   xOperAbrv: array[0..4] of String = ('Sdo',  'Rec',  'Sup',   'Pgt',  'San');
   xMeioPgto: array[0..5] of String = ('R$', 'CDeb','CCred','PIX','Outros','Misto');
-  xMeioAbrv: array[0..5] of String = ('R$', 'CDb', 'CCr',  'PIX','Ou',    'Mit');
+  xMeioAbrv: array[0..5] of String = ('R$', 'CDb', 'CCr',  'PIX','Ou',    'Mis');
   xMPExtenso: array[0..5] of String = ('Dinheiro', 'Cartão débito','Cartão crédito',
                                        'PIX', 'Outros', 'Misto');
 implementation

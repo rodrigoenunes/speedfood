@@ -4,7 +4,7 @@ interface
 
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Buttons, Vcl.ExtCtrls, Midaslib;
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Buttons, Vcl.ExtCtrls, Midaslib, DateUtils;
 
 type
   TFuPrincipal = class(TForm)
@@ -44,7 +44,7 @@ implementation
 {$R *.dfm}
 
 uses uItens, uDados, uGenericas, uCaixa, uPedidos, uImpressoes, uUsuario,
-  uConsPedidos, FortesReportCtle, uAdministrativo;
+  uConsPedidos, FortesReportCtle, uAdministrativo, uUserPwd;
 
 procedure TFuPrincipal.btAbrirCaixaClick(Sender: TObject);
 begin
@@ -68,11 +68,6 @@ procedure TFuPrincipal.btPedidosClick(Sender: TObject);
 begin
   if ObtemParametro('UsaCorItem') = 'S' then uDM.usaCorItem := True
      else uDM.usaCorItem := False;
-  uDM.topLanche := StrToIntDef(ObtemParametro('TelaPedidoTopLanche'),44);
-  uDM.topBebida := StrToIntDef(ObtemParametro('TelaPedidoTopBebida'),52);
-  uDM.topExtra  := StrToIntDef(ObtemParametro('TelaPedidoTopExtra'),16);
-  uDM.leftExtra := StrToIntDef(ObtemParametro('TelaPedidoLeftExtra'),20);
-
   LancamentoPedidos;
 
 end;
@@ -103,12 +98,50 @@ end;
 
 procedure TFuPrincipal.FormActivate(Sender: TObject);
 var arqimg: String;
-    i: Integer;
+    xValidade: String;
+    AA,MM,DD: word;
+    dtValid,dtHoje: TDateTime;
+    nDias: Integer;
+    lDisponivel: Boolean;
 begin
   if uDM = Nil then
   begin
     uDM := TuDM.Create(nil);
-    uDM.FDC.Connected    := True;
+    uDM.FDC.Connected := True;
+    dtHoje := DateOf(Date);
+    xValidade := ObtemParametro('ValidadeSistema');    // AAAAMMDD
+    AA := StrToIntDef(Copy(xValidade,1,4),2023);
+    MM := StrToIntDef(Copy(xValidade,5,2),12);
+    DD := StrToIntDef(Copy(xValidade,7,2),31);
+    dtValid := EncodeDate(AA,MM,DD);
+    nDias := DaysBetween(dtHoje,dtValid);
+    lDisponivel := True;
+    if dtHoje > dtValid then
+    begin
+      lDisponivel := False;
+      MessageDlg('Validade do sistema expirada (' + intToStr(nDias) + ') dias',mtError,[mbOk],0);
+    end
+    else if nDias < 31 then
+           MessageDlg('A validade do sistema termina em ' + IntToStr(nDias) + ' dias',
+                      mtInformation,[mbOk],0);
+    //
+    if lDisponivel then
+      if not ObtemUsuario(uDM.sysUser) then
+        lDisponivel := False;
+    //
+    PanTurno.Visible := lDisponivel;
+    btAbrirCaixa.Enabled := lDisponivel;
+    btPedidos.Enabled := lDisponivel;
+    btConsPedidos.Enabled := lDisponivel;
+    btSuporte.Enabled := lDisponivel;
+    btAdmin.Enabled := lDisponivel;
+    btUsuario.Enabled := lDisponivel;
+    if not lDisponivel then
+    begin
+      btSair.SetFocus;
+      Exit;
+    end;
+    //
     uDM.SisPessoa.Active := True;
     uDM.Itens.Active     := True;
     uDM.RegCaixa.Active  := True;
@@ -130,7 +163,7 @@ begin
     FFRCtle.RLPreviewSetup1.ZoomFactor := StrToIntDef(ObtemParametro('FortesZoomFactor'),100);
     ContaExtras;                  // Obtem qtd de ítens 'extras'
     AberturaDeCaixa;
-
+    //
   end;
 
 end;

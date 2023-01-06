@@ -50,10 +50,19 @@ begin
 end;
 
 procedure TFuConsPedidos.btEmitirNFCeClick(Sender: TObject);
+var xImpressao: String;
 begin
   if uDM.Pedidos.RecordCount = 0 then Exit;
-  if uDM.PedidosNrNFCe.AsInteger > 0 then ShowMessage('Exibe / Gera NFCe')
-  else ShowMessage('GeraImprimeNFCe(uDM.PedidosNumero.AsInteger);');
+  xImpressao := 'N';
+  if uDM.PedidosNrNFCe.AsInteger > 0 then xImpressao := 'S'
+  else if MessageDlg('Geração / Emissão de NFCe' + #13 +
+                     'Pedido: ' + uDM.PedidosNumero.AsString + #13 +
+                     'Valor: ' + FloatToStrF(uDM.PedidosValor.AsCurrency,ffNumber,15,2) + #13 +
+                     'Meio pagamento: ' + uDM.PedidosZC_MPExtenso.AsString,
+                     mtConfirmation,[mbYes,mbNo],0,mbNo,['Sim','Não']) = mrYes
+       then xImpressao := 'S';
+  if xImpressao = 'S' then
+     GeraImprimeNFCe(uDM.PedidosNumero.AsInteger);
 
 end;
 

@@ -515,6 +515,8 @@ begin
   uDM.PedWrkTxtSem.Clear;
   uDM.PedWrkTxtMais.Clear;
   uDM.PedWrkTxtMenos.Clear;
+  uDM.PedWrkPrensado.AsBoolean := False;
+  uDM.PedWrkCortado.AsBoolean := False;
 
 end;
 
