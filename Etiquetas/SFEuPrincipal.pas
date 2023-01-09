@@ -58,7 +58,8 @@ type
     procedure cbSelPedidosClick(Sender: TObject);
     procedure cbSelItensClick(Sender: TObject);
     procedure btPrintAllClick(Sender: TObject);
-    procedure btHelpClick(Sender: TObject);
+    procedure btHelpMouseDown(Sender: TObject; Button: TMouseButton;
+      Shift: TShiftState; X, Y: Integer);
   private
     { Private declarations }
   public
@@ -85,7 +86,8 @@ implementation
 
 {$R *.dfm}
 
-uses uGenericas, SFEuPrintFortes, FortesReportCtle, uSysPrinters, uDados;
+uses uGenericas, SFEuPrintFortes, FortesReportCtle, uSysPrinters, uDados,
+  SFEuHelp;
 
 procedure CarregaTurnos;
 var lCarrega: Boolean;
@@ -241,9 +243,13 @@ begin
 
 end;
 
-procedure TFuPrincipalEtq.btHelpClick(Sender: TObject);
+procedure TFuPrincipalEtq.btHelpMouseDown(Sender: TObject; Button: TMouseButton;
+  Shift: TShiftState; X, Y: Integer);
 begin
-  ShowMessage('Instruções para definição correta da etiqueta');
+  if Button = mbLeft then
+     AjudaEtiquetas
+  else
+     AjudaEtiquetas(True);
 
 end;
 

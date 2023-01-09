@@ -8,7 +8,8 @@ uses
   FortesReportCtle in '..\..\uFortesReport\FortesReportCtle.pas' {FFRCtle},
   EnviaEMail in '..\..\uFortesReport\EnviaEMail.pas' {FEnviaEMail},
   uSysPrinters in '..\..\UsoGeral\uSysPrinters.pas' {FuSysPrinters},
-  uDados in '..\vcl\uDados.pas' {uDM: TDataModule};
+  uDados in '..\vcl\uDados.pas' {uDM: TDataModule},
+  SFEuHelp in 'SFEuHelp.pas' {FuHelp};
 
 {$R *.res}
 
@@ -20,6 +21,7 @@ begin
   Application.CreateForm(TFFRCtle, FFRCtle);
   Application.CreateForm(TFEnviaEMail, FEnviaEMail);
   Application.CreateForm(TFuSysPrinters, FuSysPrinters);
+  Application.CreateForm(TFuHelp, FuHelp);
   //Application.CreateForm(TFSFEuPrintFortes, FSFEuPrintFortes);
   Application.Run;
 end.
