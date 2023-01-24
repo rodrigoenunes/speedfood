@@ -206,8 +206,6 @@ type
     PedWrkPrensado: TBooleanField;
     PedidosZC_Impresso: TStringField;
     PedItensZC_Tipo: TStringField;
-    PedItensZC_Cortado: TStringField;
-    PedItensZC_Prensado: TStringField;
     PedItensZC_Descricao: TStringField;
     PedItensZC_PedLcto: TStringField;
     PedidosZC_DataHora: TStringField;
@@ -234,6 +232,9 @@ type
     Usuarios: TFDTable;
     UsuariosNome: TStringField;
     UsuariosSenha: TStringField;
+    PedItensZC_SenhaLst: TStringField;
+    PedItensZC_PrensCort: TStringField;
+    PedidosZC_Senha: TStringField;
     procedure ItensCalcFields(DataSet: TDataSet);
     procedure LctCaixaCalcFields(DataSet: TDataSet);
     procedure PedWrkCalcFields(DataSet: TDataSet);
@@ -483,19 +484,24 @@ end;
 procedure TuDM.PedidosCalcFields(DataSet: TDataSet);
 var xData: String;
 begin
-  uDM.PedidosZC_Impresso.AsString := '';
-  if uDM.PedidosEtqImpressas.AsInteger > 0 then
-    uDM.PedidosZC_Impresso.AsString := 'Impresso';
-  xData := uDM.PedidosData.AsString;
-  uDM.PedidosZC_DataHora.AsString := Copy(xData,1,6) + Copy(xData,9,8);
-  if (uDM.PedidosMeioPagto.AsInteger >= 0) and (uDM.PedidosMeioPagto.AsInteger <= 5)
+  if PedidosPlaca.AsString <> '' then
+    PedidosZC_Senha.AsString := PedidosPlaca.AsString
+  else
+    PedidosZC_Senha.AsString := PedidosNumero.AsString;
+
+  PedidosZC_Impresso.AsString := '';
+  if PedidosEtqImpressas.AsInteger > 0 then
+    PedidosZC_Impresso.AsString := 'Impresso';
+  xData := PedidosData.AsString;
+  PedidosZC_DataHora.AsString := Copy(xData,1,6) + Copy(xData,9,8);
+  if (PedidosMeioPagto.AsInteger >= 0) and (PedidosMeioPagto.AsInteger <= 5)
   then begin
-    uDM.PedidosZC_MeioPagto.AsString := xMeioAbrv[uDM.PedidosMeioPagto.AsInteger];
-    uDM.PedidosZC_MPExtenso.AsString := xMPExtenso[uDM.PedidosMeioPagto.AsInteger];
+    PedidosZC_MeioPagto.AsString := xMeioAbrv[PedidosMeioPagto.AsInteger];
+    PedidosZC_MPExtenso.AsString := xMPExtenso[PedidosMeioPagto.AsInteger];
   end
   else begin
-    uDM.PedidosZC_MeioPagto.AsString := '(' + uDM.PedidosMeioPagto.AsString + ')';
-    uDM.PedidosZC_MPExtenso.AsString := '[  ' + uDM.PedidosMeioPagto.AsString + '  ]';
+    PedidosZC_MeioPagto.AsString := '(' + PedidosMeioPagto.AsString + ')';
+    PedidosZC_MPExtenso.AsString := '[  ' + PedidosMeioPagto.AsString + '  ]';
   end;
 
 end;
@@ -514,18 +520,17 @@ begin
     4:PedItensZC_Tp.AsString := 'D';
     else PedItensZC_Tp.AsString := '';
   end;
-  if PedItensCortado.AsInteger <> 0 then
-    PedItensZC_Cortado.AsString := 'CORTADO'
-  else
-    PedItensZC_Cortado.AsString := '';
-  if PedItensPrensado.AsInteger <> 0 then
-    PedItensZC_Prensado.AsString := 'PRENSADO'
-  else
-    PedItensZC_Prensado.AsString := '';
+  PedItensZC_PrensCort.AsString := '';
+  if PedItensPrensado.AsInteger <> 0
+     then PedItensZC_PrensCort.AsString := '< PRENSADO >     ';
+  if PedItensCortado.AsInteger <> 0
+     then PedItensZC_PrensCort.AsString := PedItensZC_PrensCort.AsString + '< CORTADO >';
+  PedItensZC_PrensCort.AsString := Trim(PedItensZC_PrensCort.AsString);
+
   if Itens.FindKey([PedItensTpProd.AsInteger,PedItensCodProd.AsInteger]) then
     PedItensZC_Descricao.AsString := stringReplace(ItensDescricao.AsString,'#',' ',[rfIgnoreCase, rfReplaceAll])
   else
-    PedItensZC_Descricao.AsString := '';
+    PedItensZC_Descricao.AsString := 'Indefinido (' + PedItensCodProd.AsString + ')';
   PedItensZC_CodDescr.AsString := '[ ' + PedItensCodProd.AsString + ' ] ' + PedItensZC_Descricao.AsString;
 
   if PedItensEtqImpressa.AsInteger <> 0 then
@@ -542,6 +547,10 @@ begin
     PedItensZC_PedLcto.AsString := PedItensNumero.AsString;
     PedItensZC_PlacaLcto.AsString := PedidosPlaca.AsString
   end;
+  if PedidosPlaca.AsString <> '' then
+    PedItensZC_SenhaLst.AsString := PedItensZC_PlacaLcto.AsString
+  else
+    PedItensZC_SenhaLst.AsString := PedItensZC_PedLcto.AsString;
 
 end;
 

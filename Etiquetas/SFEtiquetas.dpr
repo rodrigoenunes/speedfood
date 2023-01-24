@@ -9,19 +9,20 @@ uses
   EnviaEMail in '..\..\uFortesReport\EnviaEMail.pas' {FEnviaEMail},
   uSysPrinters in '..\..\UsoGeral\uSysPrinters.pas' {FuSysPrinters},
   uDados in '..\vcl\uDados.pas' {uDM: TDataModule},
-  SFEuHelp in 'SFEuHelp.pas' {FuHelp};
+  uHelpSpeedFood in '..\vcl\uHelpSpeedFood.pas' {FuHelpSpeedFood};
 
 {$R *.res}
 
 begin
   Application.Initialize;
-  Application.MainFormOnTaskbar := True;
+  //Application.MainFormOnTaskbar := True;
   Application.CreateForm(TFuPrincipalEtq, FuPrincipalEtq);
   Application.CreateForm(TFGen, FGen);
   Application.CreateForm(TFFRCtle, FFRCtle);
   Application.CreateForm(TFEnviaEMail, FEnviaEMail);
   Application.CreateForm(TFuSysPrinters, FuSysPrinters);
-  Application.CreateForm(TFuHelp, FuHelp);
+  Application.CreateForm(TFuHelpSpeedFood, FuHelpSpeedFood);
+  Application.CreateForm(TFuHelpSpeedFood, FuHelpSpeedFood);
   //Application.CreateForm(TFSFEuPrintFortes, FSFEuPrintFortes);
   Application.Run;
 end.

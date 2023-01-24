@@ -604,6 +604,12 @@ object uDM: TuDM
       Size = 15
       Calculated = True
     end
+    object PedidosZC_Senha: TStringField
+      FieldKind = fkCalculated
+      FieldName = 'ZC_Senha'
+      Size = 15
+      Calculated = True
+    end
   end
   object DSPedidos: TDataSource
     DataSet = Pedidos
@@ -772,18 +778,6 @@ object uDM: TuDM
       Size = 3
       Calculated = True
     end
-    object PedItensZC_Cortado: TStringField
-      FieldKind = fkCalculated
-      FieldName = 'ZC_Cortado'
-      Size = 12
-      Calculated = True
-    end
-    object PedItensZC_Prensado: TStringField
-      FieldKind = fkCalculated
-      FieldName = 'ZC_Prensado'
-      Size = 12
-      Calculated = True
-    end
     object PedItensZC_Descricao: TStringField
       FieldKind = fkCalculated
       FieldName = 'ZC_Descricao'
@@ -791,9 +785,10 @@ object uDM: TuDM
       Calculated = True
     end
     object PedItensZC_PedLcto: TStringField
+      DisplayWidth = 10
       FieldKind = fkCalculated
       FieldName = 'ZC_PedLcto'
-      Size = 8
+      Size = 10
       Calculated = True
     end
     object PedItensZC_Impresso: TStringField
@@ -819,6 +814,18 @@ object uDM: TuDM
       FieldKind = fkCalculated
       FieldName = 'ZC_CodDescr'
       Size = 120
+      Calculated = True
+    end
+    object PedItensZC_SenhaLst: TStringField
+      FieldKind = fkCalculated
+      FieldName = 'ZC_SenhaLst'
+      Size = 10
+      Calculated = True
+    end
+    object PedItensZC_PrensCort: TStringField
+      FieldKind = fkCalculated
+      FieldName = 'ZC_PrensCort'
+      Size = 50
       Calculated = True
     end
   end

@@ -19,19 +19,21 @@ uses
   FortesReportCtle in '..\..\uFortesReport\FortesReportCtle.pas' {FFRCtle},
   EnviaEMail in '..\..\uFortesReport\EnviaEMail.pas' {FEnviaEMail},
   uAdministrativo in 'uAdministrativo.pas' {FuAdministrativo},
-  uUserPwd in 'uUserPwd.pas' {FuUserPwd};
+  uUserPwd in 'uUserPwd.pas' {FuUserPwd},
+  uHelpSpeedFood in 'uHelpSpeedFood.pas' {FuHelpSpeedFood};
 
 {$R *.res}
 
 begin
   Application.Initialize;
-  Application.MainFormOnTaskbar := True;
+  //Application.MainFormOnTaskbar := True;
   Application.CreateForm(TFuPrincipal, FuPrincipal);
   Application.CreateForm(TFGen, FGen);
   Application.CreateForm(TFFRCtle, FFRCtle);
   Application.CreateForm(TFEnviaEMail, FEnviaEMail);
   Application.CreateForm(TFuUserPwd, FuUserPwd);
   Application.CreateForm(TFuUserPwd, FuUserPwd);
+  Application.CreateForm(TFuHelpSpeedFood, FuHelpSpeedFood);
   Application.Run;
 
 end.

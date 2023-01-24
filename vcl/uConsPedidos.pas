@@ -69,7 +69,7 @@ end;
 procedure TFuConsPedidos.btImprimirClick(Sender: TObject);
 begin
   if uDM.Pedidos.RecordCount = 0 then Exit;
-  ImprimePedido(uDM.PedidosNumero.AsInteger, False);
+  ImprimePedido(uDM.PedidosNumero.AsInteger);  //, False);
 
 end;
 

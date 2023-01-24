@@ -98,7 +98,7 @@ type
     RLDBText38: TRLDBText;
     RLDBText39: TRLDBText;
     RLDBText40: TRLDBText;
-    RLDbNrPedido: TRLDBText;
+    RLDbPedido: TRLDBText;
     RLDBText34: TRLDBText;
     RLDBText41: TRLDBText;
     RLLabel32: TRLLabel;
@@ -151,7 +151,7 @@ type
     RLLabQtdMisto: TRLLabel;
     RLLabQtdTotal: TRLLabel;
     RLLabel38: TRLLabel;
-    RLDbPlaca: TRLDBText;
+    RLDbSenha: TRLDBText;
     procedure RLCaixaBeforePrint(Sender: TObject; var PrintIt: Boolean);
     procedure RLPedDetalBeforePrint(Sender: TObject; var PrintIt: Boolean);
   private
@@ -297,6 +297,7 @@ begin
    // RLPedSum.Borders.DrawTop := False;
    // if not lSeparador then RLPedSum.Borders.DrawTop := True;
 
+{
     if uDM.PedidosPlaca.AsString <> '' then
     begin
       RLDbPlaca.Visible := True;
@@ -308,7 +309,7 @@ begin
       RLDbNrPedido.Font.Size := 12;
       RLDbNrPedido.Font.Style := [fsBold];
     end;
-
+}
     RLPedido.PrintDialog := lDialog;
     RLPrinters.RLPrinter.PrinterName := idPrinter;
     RLPrinters.RLPrinter.Copies := 1;

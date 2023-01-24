@@ -4,7 +4,8 @@ interface
 
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Buttons, Vcl.ExtCtrls, Midaslib, DateUtils;
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Buttons, Vcl.ExtCtrls, Midaslib, DateUtils,
+  System.UITypes;
 
 type
   TFuPrincipal = class(TForm)
@@ -20,6 +21,7 @@ type
     LabFinal: TLabel;
     LabTurno: TLabel;
     btConsPedidos: TBitBtn;
+    btHelpGeral: TBitBtn;
     procedure btSairClick(Sender: TObject);
     procedure btSuporteClick(Sender: TObject);
     procedure FormActivate(Sender: TObject);
@@ -30,6 +32,8 @@ type
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure btConsPedidosClick(Sender: TObject);
     procedure btAdminClick(Sender: TObject);
+    procedure btHelpGeralMouseDown(Sender: TObject; Button: TMouseButton;
+      Shift: TShiftState; X, Y: Integer);
   private
     { Private declarations }
   public
@@ -44,7 +48,7 @@ implementation
 {$R *.dfm}
 
 uses uItens, uDados, uGenericas, uCaixa, uPedidos, uImpressoes, uUsuario,
-  uConsPedidos, FortesReportCtle, uAdministrativo, uUserPwd;
+  uConsPedidos, FortesReportCtle, uAdministrativo, uUserPwd, uHelpSpeedFood;
 
 procedure TFuPrincipal.btAbrirCaixaClick(Sender: TObject);
 begin
@@ -61,6 +65,17 @@ end;
 procedure TFuPrincipal.btConsPedidosClick(Sender: TObject);
 begin
   ConsultarPedidos;
+
+end;
+
+procedure TFuPrincipal.btHelpGeralMouseDown(Sender: TObject;
+  Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
+begin
+  if Button = mbLeft then
+     AjudaSpeedFood(1)
+  else
+     AjudaSpeedFood(1,True);
+
 
 end;
 
@@ -102,45 +117,36 @@ var arqimg: String;
     AA,MM,DD: word;
     dtValid,dtHoje: TDateTime;
     nDias: Integer;
-    lDisponivel: Boolean;
 begin
   if uDM = Nil then
   begin
     uDM := TuDM.Create(nil);
     uDM.FDC.Connected := True;
+    //
+    FFRCtle.RLPreviewSetup1.ZoomFactor := StrToIntDef(ObtemParametro('FortesZoomFactor'),100);
+    FGen.lSalvaForm := True;
+    FGen.pathSalvaForm := ExtractFilePath(Application.ExeName);
+    Form_Define(FuPrincipal);
+    //
+    if ObtemParametro('SistemaUserPwd') = 'S'
+    then if not ObtemUsuario(uDM.sysUser)
+            then btSairClick(nil);
+    //
     dtHoje := DateOf(Date);
-    xValidade := ObtemParametro('ValidadeSistema');    // AAAAMMDD
+    xValidade := ObtemParametro('SistemaValidade');    // AAAAMMDD
     AA := StrToIntDef(Copy(xValidade,1,4),2023);
     MM := StrToIntDef(Copy(xValidade,5,2),12);
     DD := StrToIntDef(Copy(xValidade,7,2),31);
     dtValid := EncodeDate(AA,MM,DD);
     nDias := DaysBetween(dtHoje,dtValid);
-    lDisponivel := True;
     if dtHoje > dtValid then
     begin
-      lDisponivel := False;
       MessageDlg('Validade do sistema expirada (' + intToStr(nDias) + ') dias',mtError,[mbOk],0);
-    end
-    else if nDias < 31 then
-           MessageDlg('A validade do sistema termina em ' + IntToStr(nDias) + ' dias',
-                      mtInformation,[mbOk],0);
-    //
-    if lDisponivel then
-      if not ObtemUsuario(uDM.sysUser) then
-        lDisponivel := False;
-    //
-    PanTurno.Visible := lDisponivel;
-    btAbrirCaixa.Enabled := lDisponivel;
-    btPedidos.Enabled := lDisponivel;
-    btConsPedidos.Enabled := lDisponivel;
-    btSuporte.Enabled := lDisponivel;
-    btAdmin.Enabled := lDisponivel;
-    btUsuario.Enabled := lDisponivel;
-    if not lDisponivel then
-    begin
-      btSair.SetFocus;
-      Exit;
+      btSairClick(nil);
     end;
+    if nDias < 31 then
+      MessageDlg('A validade do sistema termina em ' + IntToStr(nDias) + ' dias',
+                      mtInformation,[mbOk],0);
     //
     uDM.SisPessoa.Active := True;
     uDM.Itens.Active     := True;
@@ -158,9 +164,6 @@ begin
       Image1.Stretch := True;
       Image1.Visible := True;
     end;
-    FGen.lSalvaForm := True;
-    FGen.pathSalvaForm := ExtractFilePath(Application.ExeName);
-    FFRCtle.RLPreviewSetup1.ZoomFactor := StrToIntDef(ObtemParametro('FortesZoomFactor'),100);
     ContaExtras;                  // Obtem qtd de ítens 'extras'
     AberturaDeCaixa;
     //
@@ -178,6 +181,7 @@ begin
   uDM.SisPessoa.Active := False;
   uDM.FDC.Connected    := False;
   //
+  Form_Salva(FuPrincipal);
   Application.Terminate;
 
 end;

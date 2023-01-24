@@ -40,7 +40,8 @@ type
     cbSelItens: TComboBox;
     btPrintAll: TBitBtn;
     btSair2: TBitBtn;
-    btHelp: TBitBtn;
+    btHelpArgox: TBitBtn;
+    btHelpGeral: TBitBtn;
     procedure FormCreate(Sender: TObject);
     procedure FormActivate(Sender: TObject);
     procedure btCarregaClick(Sender: TObject);
@@ -58,7 +59,9 @@ type
     procedure cbSelPedidosClick(Sender: TObject);
     procedure cbSelItensClick(Sender: TObject);
     procedure btPrintAllClick(Sender: TObject);
-    procedure btHelpMouseDown(Sender: TObject; Button: TMouseButton;
+    procedure btHelpArgoxMouseDown(Sender: TObject; Button: TMouseButton;
+      Shift: TShiftState; X, Y: Integer);
+    procedure btHelpGeralMouseDown(Sender: TObject; Button: TMouseButton;
       Shift: TShiftState; X, Y: Integer);
   private
     { Private declarations }
@@ -78,7 +81,6 @@ var
   filTxtAnt: String;
 
 const
-
   txtNoEtiq: String = 'Não há pedidos à imprimir';
   txtEtiqs: String = 'Pedidos à imprimir: ';
 
@@ -86,8 +88,7 @@ implementation
 
 {$R *.dfm}
 
-uses uGenericas, SFEuPrintFortes, FortesReportCtle, uSysPrinters, uDados,
-  SFEuHelp;
+uses uGenericas, SFEuPrintFortes, FortesReportCtle, uSysPrinters, uDados, uHelpSpeedFood;
 
 procedure CarregaTurnos;
 var lCarrega: Boolean;
@@ -123,14 +124,14 @@ begin
   DefinePrinterEtiqueta;
   //
   if uDM.PedItensTpProd.AsInteger = 1 then
-    FSFEuPrintFortes.RLEtiqLanche.Preview
+    FSFEuPrintFortes.RLEtiqLanche.Preview       // Visualiza etiqueta de lanche
   else begin
     filAnt := uDM.PedItens.Filtered;
     filTxtAnt := uDM.pedItens.Filter;
     uDM.PedItens.Filtered := True;
     uDM.PedItens.Filter := 'TpProd=3';
     uDM.PedItens.Refresh;
-    FSFEuPrintFortes.RLEtiqBebida.Preview;    // Visualiza etiqueta com TODAS as bebidas
+    FSFEuPrintFortes.RLEtiqBebida.Preview;      // Visualiza etiqueta com TODAS as bebidas
     uDM.PedItens.Filtered := filAnt;
     uDM.PedItens.Filter := filTxtAnt;
     uDM.PedItens.Refresh
@@ -152,10 +153,15 @@ end;
 procedure TFuPrincipalEtq.btPrintAllClick(Sender: TObject);
 var filAnt: Boolean;
     filTxtAnt: String;
+    lPreview: Boolean;
 begin
   FSFEuPrintFortes := TFSFEuPrintFortes.Create(nil);
   DefinePrinterEtiqueta;
-
+  if AnsiUpperCase(ObtemParametro('EtiquetaPreview')) = 'S' then
+    lPreview := True
+  else
+    lPreview := False;
+  //
   filAnt := uDM.PedItens.Filtered;
   filTxtAnt := uDM.PedItens.Filter;
   uDM.PedItens.Filtered := True;
@@ -163,14 +169,21 @@ begin
   uDM.PedItens.Refresh;
   uDM.PedItens.First;
   SetRecordRangeLanche(1);      // rrAllRecords;
-  FSFEuPrintFortes.RLEtiqLanche.Print;
+  if lPreview then
+    FSFEuPrintFortes.RLEtiqLanche.Preview
+  else
+    FSFEuPrintFortes.RLEtiqLanche.Print;
   SetRecordRangeLanche(0);      // rrCurrentOnly;
   uDM.PedItens.Filter := 'TpProd=3';
   uDM.PedItens.Refresh;
   if uDM.PedItens.RecordCount > 0 then
   begin
+    // Imprime TODAS as bebidas em uma etiqueta
     uDM.PedItens.First;
-    FSFEuPrintFortes.RLEtiqBebida.Print;    // Imprime TODAS as bebidas em uma etiqueta
+    if lPreview then
+      FSFEuPrintFortes.RLEtiqBebida.Preview
+    else
+      FSFEuPrintFortes.RLEtiqBebida.Print;
   end;
   FSFEuPrintFortes.Free;
   //
@@ -243,13 +256,23 @@ begin
 
 end;
 
-procedure TFuPrincipalEtq.btHelpMouseDown(Sender: TObject; Button: TMouseButton;
+procedure TFuPrincipalEtq.btHelpArgoxMouseDown(Sender: TObject; Button: TMouseButton;
   Shift: TShiftState; X, Y: Integer);
 begin
   if Button = mbLeft then
-     AjudaEtiquetas
+     AjudaSpeedFood(2)
   else
-     AjudaEtiquetas(True);
+     AjudaSpeedFood(2,True);
+
+end;
+
+procedure TFuPrincipalEtq.btHelpGeralMouseDown(Sender: TObject;
+  Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
+begin
+  if Button = mbLeft then
+     AjudaSpeedFood(1)
+  else
+     AjudaSpeedFood(1,True);
 
 end;
 
