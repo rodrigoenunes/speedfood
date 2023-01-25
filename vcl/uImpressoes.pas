@@ -6,7 +6,7 @@ uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, RLReport, System.UITypes, RLPrinters;
   Procedure ImprimePedido(pNroPedido:Integer; pSys:Boolean = True);
-  Procedure GeraImprimeNFCe(pNroPedido:Integer);
+  Procedure EmiteNFCe(pNroPedido:Integer);
   Procedure ImprimeCaixa(pSequencia: Integer);
   Procedure ImprimeResumo(pIni,pFim:String;pVlr:array of Currency; pQtd:array of Integer);
 
@@ -325,7 +325,7 @@ begin
 
 end;
 
-Procedure GeraImprimeNFCe(pNroPedido:Integer);
+Procedure EmiteNFCe(pNroPedido:Integer);
 begin
   ShowMessage('Geração e emissão de NFCe ou re-emissão/visualização');
   {

@@ -151,7 +151,7 @@ begin
     if posBarra = 'T' then Top := altBarra + 1;
     Left     := (Screen.Width - Width) div 2;
 
-  //  SBoxPedido.Align := alClient;
+    //SBoxPedido.Align := alClient;
     SBoxPedido.VertScrollBar.Visible := True;
     imgPedido.Align := alClient;
     //
@@ -519,7 +519,7 @@ begin
   if ObtemParametro('NFCe_Imprimir') = 'S' then
   begin
     case uDM.PedidosMeioPagto.AsInteger of
-      0:xImpressao := ObtemParametro('NFCe_Reais');        // Pagto em Reais
+      0:xImpressao := ObtemParametro('NFCe_Reais');        // Pagto em Reais (dinheiro)
       1:xImpressao := ObtemParametro('NFCe_CDebito');      // Pagto Cartao de débito
       2:xImpressao := ObtemParametro('NFCe_CCredito');     // Pagto Cartao de crédito
       3:xImpressao := ObtemParametro('NFCe_PIX');          // Pagto PIX
@@ -535,7 +535,7 @@ begin
                     mtConfirmation,[mbYes,mbNo],0,mbNo,['Sim','Não']) = mrYes
         then xImpressao := 'S';
     if xImpressao = 'S' then
-       GeraImprimeNFCe(uDM.PedidosNumero.AsInteger);
+       EmiteNFCe(uDM.PedidosNumero.AsInteger);
   end;
   //
   FuFinPedido.Close;

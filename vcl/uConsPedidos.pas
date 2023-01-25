@@ -62,7 +62,7 @@ begin
                      mtConfirmation,[mbYes,mbNo],0,mbNo,['Sim','Não']) = mrYes
        then xImpressao := 'S';
   if xImpressao = 'S' then
-     GeraImprimeNFCe(uDM.PedidosNumero.AsInteger);
+     EmiteNFCe(uDM.PedidosNumero.AsInteger);
 
 end;
 

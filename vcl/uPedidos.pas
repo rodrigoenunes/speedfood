@@ -488,10 +488,10 @@ begin
     then nRet := 2                   // Pedido sem valor, cancela o pedido
     else nRet := FinalizaPedido;     // Finalização do pedido
   if nRet = 0
-  then begin
-    ShowMessage('Gravou pedido, atualizou caixa, emitiu pedido e emitiu NFCe(se for o caso)');
-    nRet := 2;
-  end;
+    then begin
+      //ShowMessage('Gravou pedido, atualizou caixa, emitiu pedido e emitiu NFCe(se for o caso)');
+      nRet := 2;
+    end;
   if nRet = 2 then       // Novo pedido ou pedido cancelado
   begin
     PanWork.Visible := False;
