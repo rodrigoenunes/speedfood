@@ -112,7 +112,7 @@ implementation
 
 {$R *.dfm}
 
-uses uDados, uGenericas, uPedidos, uImpressoes;
+uses uDados, uGenericas, uPedidos, uImpressoes, SFEuPrintFortes;
 
 Procedure AjustaFonteImagem;
 begin
@@ -538,6 +538,60 @@ begin
        EmiteNFCe(uDM.PedidosNumero.AsInteger);
   end;
   //
+  xImpressao := ObtemParametro('EtiquetaFinalPedido');
+  if xImpressao = 'Q' then
+    if MessageDlg('Impressão etiquetas do pedido' + #13 +
+                  'Pedido: ' + uDM.PedidosNumero.AsString + #13 +
+                  'Imprimir etiquetas ?',
+                  mtConfirmation,[mbYes,mbNo],0,mbNo,['Sim','Não']) = mrYes
+    then xImpressao := 'S';
+  if xImpressao = 'S' then
+  begin
+    // Imprime as etiquetas do pedido
+    FSFEuPrintFortes := TFSFEuPrintFortes.Create(nil);
+    DefinePrinterEtiqueta;
+    if AnsiUpperCase(ObtemParametro('EtiquetaPreview')) = 'S' then
+      lPreview := True
+    else
+      lPreview := False;
+    uDM.PedItens.Filtered := True;
+    uDM.PedItens.Filter := 'TpProd=1';
+    uDM.PedItens.Refresh;
+    uDM.PedItens.First;
+    SetRecordRangeLanche(1);      // rrAllRecords;
+    if lPreview then
+      FSFEuPrintFortes.RLEtiqLanche.Preview
+    else
+      FSFEuPrintFortes.RLEtiqLanche.Print;
+    SetRecordRangeLanche(0);      // rrCurrentOnly;
+    uDM.PedItens.Filter := 'TpProd=3';
+    uDM.PedItens.Refresh;
+    if uDM.PedItens.RecordCount > 0 then
+    begin
+      // Imprime TODAS as bebidas em uma etiqueta
+      uDM.PedItens.First;
+      if lPreview then
+        FSFEuPrintFortes.RLEtiqBebida.Preview
+      else
+        FSFEuPrintFortes.RLEtiqBebida.Print;
+    end;
+    FSFEuPrintFortes.Free;
+    uDM.PedItens.Filtered := False;
+    uDM.PedItens.Refresh;
+    uDM.PedItens.First;
+    while not uDM.PedItens.Eof do
+    begin
+      uDM.PedItens.Edit;
+      uDM.PedItensEtqImpressa.AsInteger := 1;
+      uDM.PedItens.Post;
+      uDM.PedItens.Next;
+    end;
+    uDM.Pedidos.Edit;
+    uDM.PedidosEtqImpressas.AsInteger := 1;
+    uDM.Pedidos.Post;
+  end;
+  //
+
   FuFinPedido.Close;
 
 end;

@@ -20,7 +20,8 @@ uses
   EnviaEMail in '..\..\uFortesReport\EnviaEMail.pas' {FEnviaEMail},
   uAdministrativo in 'uAdministrativo.pas' {FuAdministrativo},
   uUserPwd in 'uUserPwd.pas' {FuUserPwd},
-  uHelpSpeedFood in 'uHelpSpeedFood.pas' {FuHelpSpeedFood};
+  uHelpSpeedFood in 'uHelpSpeedFood.pas' {FuHelpSpeedFood},
+  SFEuPrintFortes in '..\Etiquetas\SFEuPrintFortes.pas' {FSFEuPrintFortes};
 
 {$R *.res}
 
@@ -34,6 +35,7 @@ begin
   Application.CreateForm(TFuUserPwd, FuUserPwd);
   Application.CreateForm(TFuUserPwd, FuUserPwd);
   Application.CreateForm(TFuHelpSpeedFood, FuHelpSpeedFood);
+  Application.CreateForm(TFSFEuPrintFortes, FSFEuPrintFortes);
   Application.Run;
 
 end.
