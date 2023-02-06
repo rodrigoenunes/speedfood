@@ -38,20 +38,21 @@ type
     RLDBText9: TRLDBText;
     RLDBText6: TRLDBText;
     RLPanSemMaisMenos: TRLPanel;
-    RLLabSem: TRLLabel;
-    RLLabMais: TRLLabel;
-    RLLabMenos: TRLLabel;
-    RLSem: TRLMemo;
-    RLMais: TRLMemo;
-    RLMenos: TRLMemo;
     RLBand1: TRLBand;
     RLDbClienteBeb: TRLDBText;
     RLDBText13: TRLDBText;
     RLColBebida: TRLBand;
     RLLabel4: TRLLabel;
     RLLabel6: TRLLabel;
-    RLDraw1: TRLDraw;
-    RLDraw2: TRLDraw;
+    RLPanSem: TRLPanel;
+    RLPanMais: TRLPanel;
+    RLPanMenos: TRLPanel;
+    RLLabSem: TRLLabel;
+    RLLabMais: TRLLabel;
+    RLLabMenos: TRLLabel;
+    RLSem: TRLMemo;
+    RLMais: TRLMemo;
+    RLMenos: TRLMemo;
     procedure RLEtiqBebidaBeforePrint(Sender: TObject; var PrintIt: Boolean);
     procedure RLDetLancheBeforePrint(Sender: TObject; var PrintIt: Boolean);
   private
@@ -135,8 +136,9 @@ end;
 
 
 procedure TFSFEuPrintFortes.RLDetLancheBeforePrint(Sender: TObject; var PrintIt: Boolean);
-var i,wLeft,nCols: Integer;
+var i,nCols: Integer;
     AllExtras,xExtra: String;
+    wTamFonte,wLargura: Integer;
 begin
   if uDM.PedItensZC_PrensCort.AsString <> '' then
     RLPanDescr.Height := 37
@@ -160,87 +162,81 @@ begin
         else if AllExtras[i] = '+' then RLMais.Lines.Add(xExtra)
              else RLMenos.Lines.Add(xExtra);
       end;
-  nCols := 0;
-  wLeft := 0;
-
   if lEtqFixa then
   begin              // Sempre imprime "SEM" "MAIS" "MENOS"
-    RLLabSem.Left := 0;
-    RLLabSem.Visible := True;
-    RLSem.Left := RLLabSem.Left;
-    RLSem.Visible := True;
-    RLSem.Font.Size := 11;
+    wTamFonte := 11;
+    wLargura := 121;
+    RLPanSem.Borders.DrawRight := True;
+    RLPanMais.Borders.DrawRight := True;
+    RLPanSem.Width := wLargura;
+    RLPanMenos.Width := wLargura;
+    RLPanSem.Visible := True;
+    RLSem.Font.Size := wTamFonte;
     if RLSem.Lines.Count > 8 then
       RLSem.Font.Size := 10;
-    RLDraw1.Visible := True;
-
-    RLLabMais.Left := 122;
-    RLLabMais.Visible := True;
-    RLMais.Left := RLLabMais.Left;
-    RLMais.Visible := True;
-    RLMais.Font.Size := 11;
+    RLPanMais.Visible := True;
+    RLMais.Font.Size := wTamFonte;
     if RLMais.Lines.Count > 8 then
       RLMais.Font.Size := 10;
-    RLDraw2.Visible := True;
-
-    RLLabMenos.Visible := True;
-    RLLabMenos.Left := 244;
-    RLMenos.Visible := True;
-    RLMenos.Left := RLLabMenos.Left;
+    RLPanMenos.Visible := True;
+    RLMenos.Font.Size := wTamFonte;
     if RLMenos.Lines.Count > 8 then
       RLMenos.Font.Size := 10;
+    RLMenos.Width := wLargura;
   end
-  else begin                 // Imprime somente "SEM" "MAIS" "MENOS" necrssários
-    RLLabSem.Visible := False;
-    RLSem.Visible := False;
+  else begin                 // Imprime somente "SEM" "MAIS" "MENOS" necessários
+    nCols := 0;
+    if RLSem.Lines.Count > 0 then nCols := nCols + 1;
+    if RLMais.Lines.Count > 0 then nCols := nCols + 1;
+    if RLMenos.Lines.Count > 0 then nCols := nCols + 1;
+    if nCols = 3 then wTamFonte := 12
+    else if nCols = 2 then wTamFonte := 13
+         else wTamFonte := 14;
+    if nCols > 0 then
+      wLargura := RLPanSemMaisMenos.Width div nCols
+    else
+      wLargura := RLPanSemMaisMenos.Width;
+    RLPanSem.Borders.DrawRight := False;
+    RLPanMais.Borders.DrawRight := False;
+    RLPanMais.Color := clWhite;
+    RLPanSem.Visible := False;
+    RLPanMais.Visible := False;
+    RLPanMenos.Visible := False;
     if RLSem.Lines.Count > 0 then
     begin
-      RLLabSem.Left := wLeft;
-      RLLabSem.Visible := True;
-      RLSem.Left := wLeft;
-      RLSem.Visible := True;
-      wLeft := wLeft + 122;
-      RLSem.Font.Size := 11;
-      if RLSem.Lines.Count > 8 then
-        RLSem.Font.Size := 10;
-      nCols := nCols + 1;
+      RLPanSem.Width := wLargura;
+      RLPanSem.Visible := True;
+      RLSem.Font.Size := wTamFonte;
+      if RLSem.Lines.Count > 8
+      then RLSem.Font.Size := 10
+      else if RLSem.Lines.Count > 6
+           then RLSem.Font.Size := 12;
+      if (RLMais.Lines.Count > 0) or (RLMenos.Lines.Count > 0)
+        then RLPanSem.Borders.DrawRight := True;
     end;
-    RLLabMais.Visible := False;
-    RLMais.Visible := False;
     if RLMais.Lines.Count > 0 then
     begin
-      RLLabMais.Left := wLeft;
-      RLLabMais.Visible := True;
-      RLMais.Left := wLeft;
-      RLMais.Visible := True;
-      wLeft := wLeft + 122;
-      RLMais.Font.Size := 11;
-      if RLMais.Lines.Count > 8 then
-        RLMais.Font.Size := 10;
-      nCols := nCols + 1;
+      RLPanMais.Width := wLargura;
+      RLPanMais.Visible := True;
+      RLMais.Font.Size := wTamFonte;
+      if RLMais.Lines.Count > 8
+      then RLMais.Font.Size := 10
+      else if RLMais.Lines.Count > 6
+           then RLMais.Font.Size := 12;
+      if RLMenos.Lines.Count > 0
+        then RLPanMais.Borders.DrawRight := True;
     end;
-    RLLabMenos.Visible := False;
-    RLMenos.Visible := False;
     if RLMenos.Lines.Count > 0 then
     begin
-      RLLabMenos.Left := wLeft;
-      RLLabMenos.Visible := True;
-      RLMenos.Left := wLeft;
-      RLMenos.Visible := True;
-      RLMenos.Font.Size := 11;
-      if RLMenos.Lines.Count > 8 then
-        RLMenos.Font.Size := 10;
-      nCols := nCols + 1;
+      RLPanMenos.Width := wLargura;
+      RLPanMenos.Visible := True;
+      RLPanMenos.Font.Size := wTamFonte;
+      if RLMenos.Lines.Count > 8
+      then RLMenos.Font.Size := 10
+      else if RLMenos.Lines.Count > 6
+           then RLMenos.Font.Size := 12;
     end;
-    RLDraw1.Visible := False;
-    RLDraw2.Visible := False;
-    if nCols > 0 then
-      RLDraw1.Visible := True;
-    if nCols > 1 then
-      RLDraw2.Visible := True;
   end;
-  RLDraw1.Height := RLPanSemMaisMenos.Height;
-  RLDraw2.Height := RLPanSemMaisMenos.Height;
 
 end;
 

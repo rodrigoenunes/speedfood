@@ -36,19 +36,18 @@ object FSFEuPrintFortes: TFSFEuPrintFortes
       Left = 23
       Top = 47
       Width = 366
-      Height = 88
-      AutoSize = True
+      Height = 200
       Borders.Sides = sdCustom
       Borders.DrawLeft = False
       Borders.DrawTop = False
       Borders.DrawRight = False
-      Borders.DrawBottom = False
+      Borders.DrawBottom = True
       BeforePrint = RLDetLancheBeforePrint
       object RLPanDescr: TRLPanel
         Left = 0
         Top = 0
         Width = 366
-        Height = 40
+        Height = 37
         Align = faTop
         Alignment = taCenter
         Borders.Sides = sdCustom
@@ -75,7 +74,7 @@ object FSFEuPrintFortes: TFSFEuPrintFortes
         end
         object RLDBText6: TRLDBText
           Left = 0
-          Top = 21
+          Top = 18
           Width = 366
           Height = 18
           Align = faBottom
@@ -93,120 +92,144 @@ object FSFEuPrintFortes: TFSFEuPrintFortes
       end
       object RLPanSemMaisMenos: TRLPanel
         Left = 0
-        Top = 40
+        Top = 37
         Width = 366
-        Height = 48
-        Align = faTop
-        AutoExpand = True
-        AutoSize = True
-        object RLLabSem: TRLLabel
+        Height = 162
+        Align = faClient
+        object RLPanSem: TRLPanel
           Left = 0
           Top = 0
-          Width = 32
-          Height = 16
-          Caption = 'SEM'
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clBlack
-          Font.Height = -13
-          Font.Name = 'Arial'
-          Font.Style = [fsBold]
-          ParentFont = False
+          Width = 122
+          Height = 162
+          Align = faLeft
+          object RLLabSem: TRLLabel
+            Left = 0
+            Top = 0
+            Width = 122
+            Height = 16
+            Align = faTop
+            Caption = 'SEM'
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clBlack
+            Font.Height = -13
+            Font.Name = 'Arial'
+            Font.Style = [fsBold]
+            ParentFont = False
+          end
+          object RLSem: TRLMemo
+            Left = 0
+            Top = 16
+            Width = 122
+            Height = 146
+            Align = faClient
+            Behavior = [beSiteExpander]
+            Borders.Sides = sdCustom
+            Borders.DrawLeft = False
+            Borders.DrawTop = True
+            Borders.DrawRight = False
+            Borders.DrawBottom = False
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clBlack
+            Font.Height = -15
+            Font.Name = 'Arial Narrow'
+            Font.Style = []
+            ParentFont = False
+          end
         end
-        object RLLabMais: TRLLabel
+        object RLPanMais: TRLPanel
           Left = 122
           Top = 0
-          Width = 37
-          Height = 16
-          Caption = 'MAIS'
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clBlack
-          Font.Height = -13
-          Font.Name = 'Arial'
-          Font.Style = [fsBold]
-          ParentFont = False
+          Width = 122
+          Height = 162
+          Align = faClient
+          Borders.Sides = sdCustom
+          Borders.DrawLeft = False
+          Borders.DrawTop = False
+          Borders.DrawRight = False
+          Borders.DrawBottom = False
+          Color = clSkyBlue
+          ParentColor = False
+          Transparent = False
+          object RLLabMais: TRLLabel
+            Left = 0
+            Top = 0
+            Width = 122
+            Height = 16
+            Align = faTop
+            Caption = 'MAIS'
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clBlack
+            Font.Height = -13
+            Font.Name = 'Arial'
+            Font.Style = [fsBold]
+            ParentFont = False
+            Transparent = False
+          end
+          object RLMais: TRLMemo
+            Left = 0
+            Top = 16
+            Width = 122
+            Height = 146
+            Align = faClient
+            Behavior = [beSiteExpander]
+            Borders.Sides = sdCustom
+            Borders.DrawLeft = False
+            Borders.DrawTop = True
+            Borders.DrawRight = False
+            Borders.DrawBottom = False
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clBlack
+            Font.Height = -15
+            Font.Name = 'Arial Narrow'
+            Font.Style = []
+            ParentFont = False
+            Transparent = False
+          end
         end
-        object RLLabMenos: TRLLabel
+        object RLPanMenos: TRLPanel
           Left = 244
           Top = 0
-          Width = 51
-          Height = 16
-          Caption = 'MENOS'
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clBlack
-          Font.Height = -13
-          Font.Name = 'Arial'
-          Font.Style = [fsBold]
-          ParentFont = False
-        end
-        object RLSem: TRLMemo
-          Left = 0
-          Top = 16
-          Width = 121
-          Height = 22
-          Behavior = [beSiteExpander]
+          Width = 122
+          Height = 162
+          Align = faRight
           Borders.Sides = sdCustom
           Borders.DrawLeft = False
-          Borders.DrawTop = True
+          Borders.DrawTop = False
           Borders.DrawRight = False
           Borders.DrawBottom = False
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clBlack
-          Font.Height = -15
-          Font.Name = 'Arial Narrow'
-          Font.Style = []
-          ParentFont = False
-        end
-        object RLMais: TRLMemo
-          Left = 122
-          Top = 16
-          Width = 121
-          Height = 22
-          Behavior = [beSiteExpander]
-          Borders.Sides = sdCustom
-          Borders.DrawLeft = False
-          Borders.DrawTop = True
-          Borders.DrawRight = False
-          Borders.DrawBottom = False
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clBlack
-          Font.Height = -15
-          Font.Name = 'Arial Narrow'
-          Font.Style = []
-          ParentFont = False
-        end
-        object RLMenos: TRLMemo
-          Left = 244
-          Top = 16
-          Width = 121
-          Height = 22
-          Behavior = [beSiteExpander]
-          Borders.Sides = sdCustom
-          Borders.DrawLeft = False
-          Borders.DrawTop = True
-          Borders.DrawRight = False
-          Borders.DrawBottom = False
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clBlack
-          Font.Height = -15
-          Font.Name = 'Arial Narrow'
-          Font.Style = []
-          ParentFont = False
-        end
-        object RLDraw1: TRLDraw
-          Left = 121
-          Top = 0
-          Width = 1
-          Height = 48
-          Angle = 90.000000000000000000
-          DrawKind = dkLine
-        end
-        object RLDraw2: TRLDraw
-          Left = 243
-          Top = 0
-          Width = 1
-          Height = 48
-          Angle = 90.000000000000000000
-          DrawKind = dkLine
+          object RLLabMenos: TRLLabel
+            Left = 0
+            Top = 0
+            Width = 122
+            Height = 16
+            Align = faTop
+            Caption = 'MENOS'
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clBlack
+            Font.Height = -13
+            Font.Name = 'Arial'
+            Font.Style = [fsBold]
+            ParentFont = False
+          end
+          object RLMenos: TRLMemo
+            Left = 0
+            Top = 16
+            Width = 122
+            Height = 146
+            Align = faClient
+            Behavior = [beSiteExpander]
+            Borders.Sides = sdCustom
+            Borders.DrawLeft = False
+            Borders.DrawTop = True
+            Borders.DrawRight = False
+            Borders.DrawBottom = False
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clBlack
+            Font.Height = -15
+            Font.Name = 'Arial Narrow'
+            Font.Style = []
+            ParentFont = False
+          end
         end
       end
     end
@@ -308,18 +331,18 @@ object FSFEuPrintFortes: TFSFEuPrintFortes
     end
     object RLRodapeLanche: TRLBand
       Left = 23
-      Top = 135
+      Top = 247
       Width = 366
-      Height = 20
+      Height = 18
       BandType = btFooter
       Borders.Sides = sdCustom
       Borders.DrawLeft = False
-      Borders.DrawTop = True
+      Borders.DrawTop = False
       Borders.DrawRight = False
       Borders.DrawBottom = False
       object RLDbCliente: TRLDBText
         Left = 3
-        Top = 2
+        Top = 1
         Width = 95
         Height = 14
         Anchors = [fkBottom]
@@ -335,7 +358,7 @@ object FSFEuPrintFortes: TFSFEuPrintFortes
       end
       object RLDBText9: TRLDBText
         Left = 285
-        Top = 2
+        Top = 1
         Width = 78
         Height = 14
         Alignment = taRightJustify

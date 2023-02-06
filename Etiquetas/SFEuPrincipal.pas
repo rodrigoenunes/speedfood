@@ -113,6 +113,42 @@ begin
 
 end;
 
+Procedure DefineSelecao;
+begin
+  with FuPrincipalEtq
+  do begin
+    case cbSelPedidos.ItemIndex of
+      0:uDM.Pedidos.Filter := 'Turno=' + xTurno + ' and EtqImpressas = 0';
+      1:uDM.Pedidos.Filter := 'Turno=' + xTurno + ' and EtqImpressas <> 0';
+      2:uDM.Pedidos.Filter := 'Turno=' + xTurno;
+    end;
+    uDM.Pedidos.Refresh;
+    if uDM.Pedidos.RecordCount = 0 then
+       LabNrPeds.Caption := 'Sem pedidos'
+    else
+       LabNrPeds.Caption := IntToStr(uDM.Pedidos.RecordCount) + ' pedidos';
+
+    if cbSelItens.ItemIndex = 2 then
+    begin
+      uDM.PedItens.Filtered := False;
+      uDM.PedItens.Filter := '';
+    end
+    else begin
+      uDM.PedItens.Filtered := True;
+      if cbSelItens.ItemIndex = 0 then
+        uDM.PedItens.Filter := 'EtqImpressa = 0'
+      else
+        uDM.PedItens.Filter := 'EtqImpressa <> 0';
+    end;
+    uDM.PedItens.Refresh;
+    if uDM.PedItens.RecordCount = 0 then
+      LabNrEtqs.Caption := 'Sem ítens'
+    else
+      LabNrEtqs.Caption := IntToStr(uDM.PedItens.RecordCount) + ' ítens';
+
+  end;
+
+end;
 
 procedure TFuPrincipalEtq.btPreviewClick(Sender: TObject);
 var nKey1,nKey2: Integer;
@@ -311,19 +347,10 @@ begin
     LabNrPeds.Caption := IntToStr(uDM.Pedidos.RecordCount) + ' pedidos';
   //
   cbSelItens.ItemIndex := 0;      // À imprimir
-{
-  uDM.PedItens.Filtered := True;
-  uDM.PedItens.Filter := 'EtqImpressa = 0';
-  uDM.PedItens.Refresh;
-  if uDM.PedItens.RecordCount = 0 then
-    LabNrEtqs.Caption := 'Sem ítens'
-  else
-    LabNrEtqs.Caption := IntToStr(uDM.PedItens.RecordCount) + ' ítens';
-}  //
+  DefineSelecao;
   PanPedidos.Visible := True;
   PanEtiquetas.Visible := True;
   FormResize(nil);
-  //
 
 end;
 procedure TFuPrincipalEtq.btSairClick(Sender: TObject);
@@ -347,6 +374,9 @@ end;
 
 procedure TFuPrincipalEtq.cbSelItensClick(Sender: TObject);
 begin
+  DefineSelecao;
+
+{
   if cbSelItens.ItemIndex = 2 then
   begin
     uDM.PedItens.Filtered := False;
@@ -364,29 +394,20 @@ begin
     LabNrEtqs.Caption := 'Sem ítens'
   else
     LabNrEtqs.Caption := IntToStr(uDM.PedItens.RecordCount) + ' ítens';
+}
 
 end;
 
 procedure TFuPrincipalEtq.cbSelPedidosClick(Sender: TObject);
 begin
-  case cbSelPedidos.ItemIndex of
-    0:uDM.Pedidos.Filter := 'Turno=' + xTurno + ' and EtqImpressas = 0';
-    1:uDM.Pedidos.Filter := 'Turno=' + xTurno + ' and EtqImpressas <> 0';
-    2:uDM.Pedidos.Filter := 'Turno=' + xTurno;
-  end;
-  uDM.Pedidos.Refresh;
-  if uDM.Pedidos.RecordCount = 0 then
-    LabNrPeds.Caption := 'Sem pedidos'
-  else
-    LabNrPeds.Caption := IntToStr(uDM.Pedidos.RecordCount) + ' pedidos';
+  DefineSelecao;
 
 end;
 
 procedure TFuPrincipalEtq.dbNroPedidoChange(Sender: TObject);
 begin
   if not uDM.PedItens.Active then Exit;
-  cbSelItens.ItemIndex := 0;
-  cbSelItensClick(nil);
+  DefineSelecao;
 
 end;
 

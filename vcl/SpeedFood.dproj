@@ -97,7 +97,6 @@
         <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
         <VerInfo_Locale>1033</VerInfo_Locale>
         <DCC_ExeOutput>C:\SpeedFood\</DCC_ExeOutput>
-        <DCC_DebugInfoInTds>true</DCC_DebugInfoInTds>
         <Icon_MainIcon>SpeedFood.ico</Icon_MainIcon>
         <AppEnableRuntimeThemes>true</AppEnableRuntimeThemes>
     </PropertyGroup>

@@ -903,7 +903,7 @@ object FuPrincipalEtq: TFuPrincipalEtq
       end
       object btHelpArgox: TBitBtn
         Left = 472
-        Top = 116
+        Top = 112
         Width = 131
         Height = 25
         Anchors = [akRight, akBottom]
@@ -927,7 +927,7 @@ object FuPrincipalEtq: TFuPrincipalEtq
       end
       object btHelpGeral: TBitBtn
         Left = 340
-        Top = 116
+        Top = 112
         Width = 131
         Height = 25
         Anchors = [akRight, akBottom]
