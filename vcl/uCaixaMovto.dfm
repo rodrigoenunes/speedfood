@@ -363,9 +363,6 @@ object FuCaixaMovto: TFuCaixaMovto
       Font.Style = []
       ParentFont = False
       TabOrder = 0
-      DesignSize = (
-        977
-        95)
       object LabNRegs: TLabel
         Left = 7
         Top = 39
@@ -779,11 +776,10 @@ object FuCaixaMovto: TFuCaixaMovto
         OnClick = btExcluirClick
       end
       object BitBtn7: TBitBtn
-        Left = 835
-        Top = 6
+        Left = 700
+        Top = 48
         Width = 135
         Height = 41
-        Anchors = [akTop, akRight]
         Caption = 'Sair'
         Glyph.Data = {
           B60D0000424DB60D000000000000360000002800000030000000180000000100

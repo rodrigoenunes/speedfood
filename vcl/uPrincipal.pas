@@ -22,6 +22,7 @@ type
     LabTurno: TLabel;
     btConsPedidos: TBitBtn;
     btHelpGeral: TBitBtn;
+    btHelpArgox: TBitBtn;
     procedure btSairClick(Sender: TObject);
     procedure btSuporteClick(Sender: TObject);
     procedure FormActivate(Sender: TObject);
@@ -33,6 +34,8 @@ type
     procedure btConsPedidosClick(Sender: TObject);
     procedure btAdminClick(Sender: TObject);
     procedure btHelpGeralMouseDown(Sender: TObject; Button: TMouseButton;
+      Shift: TShiftState; X, Y: Integer);
+    procedure btHelpArgoxMouseDown(Sender: TObject; Button: TMouseButton;
       Shift: TShiftState; X, Y: Integer);
   private
     { Private declarations }
@@ -65,6 +68,16 @@ end;
 procedure TFuPrincipal.btConsPedidosClick(Sender: TObject);
 begin
   ConsultarPedidos;
+
+end;
+
+procedure TFuPrincipal.btHelpArgoxMouseDown(Sender: TObject;
+  Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
+begin
+  if Button = mbLeft then
+     AjudaSpeedFood(2)
+  else
+     AjudaSpeedFood(2,True);
 
 end;
 

@@ -619,7 +619,7 @@ object FuPedidos: TFuPedidos
       Top = 1
       Width = 589
       Height = 369
-      ActivePage = TSBebidas
+      ActivePage = TSEspecial
       Align = alClient
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
@@ -672,6 +672,10 @@ object FuPedidos: TFuPedidos
           OnDrawCell = GridBebidasDrawCell
           OnMouseDown = GridBebidasMouseDown
         end
+      end
+      object TSEspecial: TTabSheet
+        Caption = '  Especial  '
+        ImageIndex = 2
       end
     end
   end

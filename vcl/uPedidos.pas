@@ -43,6 +43,7 @@ type
     btDummy: TBitBtn;
     LabAux1: TLabel;
     LabAux2: TLabel;
+    TSEspecial: TTabSheet;
     procedure btAbrirPedidoClick(Sender: TObject);
     procedure btFinalizarClick(Sender: TObject);
     procedure FormShow(Sender: TObject);
@@ -79,6 +80,7 @@ var
   wCodBebida: array[0..19,0..19] of Integer;
   lrgLanche,altLanche,lrgBebida,altBebida: Integer;
   wColor: TColor;
+  nExec: Integer;
 
 implementation
 
@@ -91,6 +93,7 @@ begin
   FuPedidos := TFuPedidos.Create(nil);
   FuTrataLanche := TFuTrataLanche.Create(nil);
   FuFinPedido := TFuFinPedido.Create(nil);
+  nExec := 0;
   FuPedidos.ShowModal;
   FuFinPedido.Free;
   FuTrataLanche.Free;
@@ -455,7 +458,10 @@ procedure TFuPedidos.btCancelarClick(Sender: TObject);
 begin
   PanAlteraBebida.Visible := False;
   PanWork.Visible := False;
-  btAbrirPedido.SetFocus;
+  if ObtemParametro('LanctoCancelar') = 'N' then
+    btAbrirPedidoClick(nil)
+  else
+    btAbrirPedido.SetFocus;
 
 end;
 
@@ -482,6 +488,7 @@ end;
 
 procedure TFuPedidos.btFinalizarClick(Sender: TObject);
 var nRet: Integer;
+    xAcao: String;
 begin
   PanAlteraBebida.Visible := False;
   if FuPedidos.totalPedido = 0
@@ -495,7 +502,10 @@ begin
   if nRet = 2 then       // Novo pedido ou pedido cancelado
   begin
     PanWork.Visible := False;
-    btAbrirPedido.SetFocus;
+    if ObtemParametro('LanctoFinalizar') = 'N' then
+      btAbrirPedidoClick(nil)
+    else
+      btAbrirPedido.SetFocus;
   end;
 
 end;
@@ -549,6 +559,10 @@ begin
   btSair.Top      := btAbrirPedido.Top + btAbrirPedido.Height + 20;
   btSair.Width    := btAbrirPedido.Width;
   btSair.Height   := btAbrirPedido.Height;
+  if ObtemParametro('LanctoMontarLanche') = 'S' then
+    TSEspecial.TabVisible := True
+  else
+    TSEspecial.TabVisible := False;
 
 end;
 

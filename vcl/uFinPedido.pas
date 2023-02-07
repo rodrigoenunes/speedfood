@@ -591,7 +591,6 @@ begin
     uDM.Pedidos.Post;
   end;
   //
-
   FuFinPedido.Close;
 
 end;

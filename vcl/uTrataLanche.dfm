@@ -126,6 +126,11 @@ object FuTrataLanche: TFuTrataLanche
           Height = 48
           Anchors = [akLeft, akRight, akBottom]
           Caption = '&Cancelar'
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -19
+          Font.Name = 'Tahoma'
+          Font.Style = []
           Glyph.Data = {
             76010000424D7601000000000000760000002800000020000000100000000100
             04000000000000010000120B0000120B00001000000000000000000000000000
@@ -140,6 +145,7 @@ object FuTrataLanche: TFuTrataLanche
             996666887666666788F66691666666661996668766666666788F666666666666
             6199666666666666678866666666666666666666666666666666}
           NumGlyphs = 2
+          ParentFont = False
           TabOrder = 2
           OnClick = btCanLancheClick
         end
