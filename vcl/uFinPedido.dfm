@@ -429,11 +429,15 @@ object FuFinPedido: TFuFinPedido
       Color = clTeal
       ParentBackground = False
       TabOrder = 0
+      DesignSize = (
+        387
+        39)
       object Label5: TLabel
-        Left = 17
-        Top = 10
+        Left = 71
+        Top = 11
         Width = 84
         Height = 19
+        Anchors = [akTop, akRight]
         Caption = 'Placa Nro:'
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clWhite
@@ -443,10 +447,11 @@ object FuFinPedido: TFuFinPedido
         ParentFont = False
       end
       object dbPlaca: TDBEdit
-        Left = 104
+        Left = 158
         Top = 6
         Width = 81
         Height = 27
+        Anchors = [akTop, akRight]
         AutoSize = False
         DataField = 'Placa'
         DataSource = uDM.DSPedidos

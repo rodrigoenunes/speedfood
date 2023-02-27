@@ -619,11 +619,11 @@ object FuPedidos: TFuPedidos
       Top = 1
       Width = 589
       Height = 369
-      ActivePage = TSEspecial
+      ActivePage = TSLanches
       Align = alClient
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
-      Font.Height = -32
+      Font.Height = -37
       Font.Name = 'Tahoma'
       Font.Style = [fsBold]
       ParentFont = False
@@ -674,14 +674,78 @@ object FuPedidos: TFuPedidos
         end
       end
       object TSEspecial: TTabSheet
-        Caption = '  Especial  '
+        Caption = 'Monte o lanche'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -16
+        Font.Name = 'Tahoma'
+        Font.Style = [fsBold]
         ImageIndex = 2
+        ParentFont = False
+        object LabAuxil: TLabel
+          Left = 27
+          Top = 216
+          Width = 71
+          Height = 19
+          Caption = 'LabAuxil'
+          Visible = False
+        end
+        object dbLanche: TDBRadioGroup
+          Left = 8
+          Top = 8
+          Width = 250
+          Height = 202
+          Caption = ' Lanche '
+          DataField = 'CodProd'
+          DataSource = uDM.SPedWrk
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -29
+          Font.Name = 'Tahoma'
+          Font.Style = [fsBold]
+          ParentFont = False
+          TabOrder = 0
+        end
+        object PanRodapeEsp: TPanel
+          Left = 0
+          Top = 260
+          Width = 581
+          Height = 49
+          Align = alBottom
+          Color = clGradientInactiveCaption
+          ParentBackground = False
+          TabOrder = 1
+        end
+        object rgExtras: TRadioGroup
+          Left = 264
+          Top = 8
+          Width = 185
+          Height = 105
+          Caption = 'Extras'
+          TabOrder = 2
+        end
+        object MemExtras: TMemo
+          Left = 268
+          Top = 219
+          Width = 129
+          Height = 30
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -13
+          Font.Name = 'Tahoma'
+          Font.Style = []
+          Lines.Strings = (
+            'MemExtras')
+          ParentFont = False
+          TabOrder = 3
+          Visible = False
+        end
       end
     end
   end
   object PanAlteraBebida: TPanel
-    Left = 304
-    Top = 134
+    Left = 204
+    Top = 195
     Width = 277
     Height = 129
     Color = clAqua

@@ -24,6 +24,7 @@ object uDM: TuDM
   end
   object Itens: TFDTable
     OnCalcFields = ItensCalcFields
+    OnFilterRecord = ItensFilterRecord
     IndexFieldNames = 'Grupo;Codigo'
     Connection = FDC
     TableName = 'com_itens'
@@ -160,9 +161,10 @@ object uDM: TuDM
       Size = 10
     end
     object ItensZC_Grupo: TStringField
+      DisplayWidth = 15
       FieldKind = fkCalculated
       FieldName = 'ZC_Grupo'
-      Size = 12
+      Size = 15
       Calculated = True
     end
     object ItensZC_AltPreco: TStringField
@@ -580,6 +582,16 @@ object uDM: TuDM
       FieldName = 'Placa'
       Size = 10
     end
+    object PedidosLctLanches: TIntegerField
+      AutoGenerateValue = arDefault
+      FieldName = 'LctLanches'
+      Origin = 'LctLanches'
+    end
+    object PedidosLctBebidas: TIntegerField
+      AutoGenerateValue = arDefault
+      FieldName = 'LctBebidas'
+      Origin = 'LctBebidas'
+    end
     object PedidosZC_Impresso: TStringField
       FieldKind = fkCalculated
       FieldName = 'ZC_Impresso'
@@ -714,24 +726,6 @@ object uDM: TuDM
       FixedChar = True
       Size = 24
     end
-    object PedItensTxtSem: TStringField
-      AutoGenerateValue = arDefault
-      FieldName = 'TxtSem'
-      Origin = 'TxtSem'
-      Size = 1024
-    end
-    object PedItensTxtMais: TStringField
-      AutoGenerateValue = arDefault
-      FieldName = 'TxtMais'
-      Origin = 'TxtMais'
-      Size = 1024
-    end
-    object PedItensTxtMenos: TStringField
-      AutoGenerateValue = arDefault
-      FieldName = 'TxtMenos'
-      Origin = 'TxtMenos'
-      Size = 1024
-    end
     object PedItensObservacao: TStringField
       AutoGenerateValue = arDefault
       FieldName = 'Observacao'
@@ -772,6 +766,18 @@ object uDM: TuDM
       FieldName = 'Prensado'
       Origin = 'Prensado'
     end
+    object PedItensTxtMais: TStringField
+      FieldName = 'TxtMais'
+      Size = 1024
+    end
+    object PedItensTxtSem: TStringField
+      FieldName = 'TxtSem'
+      Size = 1024
+    end
+    object PedItensTxtMenos: TStringField
+      FieldName = 'TxtMenos'
+      Size = 1024
+    end
     object PedItensZC_Tipo: TStringField
       FieldKind = fkCalculated
       FieldName = 'ZC_Tipo'
@@ -785,10 +791,9 @@ object uDM: TuDM
       Calculated = True
     end
     object PedItensZC_PedLcto: TStringField
-      DisplayWidth = 10
+      DisplayWidth = 20
       FieldKind = fkCalculated
       FieldName = 'ZC_PedLcto'
-      Size = 10
       Calculated = True
     end
     object PedItensZC_Impresso: TStringField
@@ -807,19 +812,19 @@ object uDM: TuDM
     object PedItensZC_PlacaLcto: TStringField
       FieldKind = fkCalculated
       FieldName = 'ZC_PlacaLcto'
-      Size = 10
       Calculated = True
     end
     object PedItensZC_CodDescr: TStringField
+      DisplayWidth = 120
       FieldKind = fkCalculated
       FieldName = 'ZC_CodDescr'
       Size = 120
       Calculated = True
     end
     object PedItensZC_SenhaLst: TStringField
+      DisplayWidth = 20
       FieldKind = fkCalculated
       FieldName = 'ZC_SenhaLst'
-      Size = 10
       Calculated = True
     end
     object PedItensZC_PrensCort: TStringField

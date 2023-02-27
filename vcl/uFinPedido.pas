@@ -178,6 +178,10 @@ begin
     uDM.PedidosVlrTroco.AsCurrency := 0;
     uDM.PedidosCPF_CNPJ.EditMask := '';
     uDM.PedidosTurno.AsInteger := uDM.RegCaixaTurno.AsInteger;
+    uDM.PedidosPlaca.AsString := IntToStr(uDM.nroPlaca);
+    uDM.PedidosMeioPagto.AsInteger := uDM.meioPgto;
+    uDM.PedidosNomeCliente.AsString := uDM.nomeClie;
+    uDM.PedidosCPF_CNPJ.AsString := uDM.CPFCNPJ;
     //
     qtdLin := 0;
     uDM.PedWrk.First;
@@ -401,10 +405,18 @@ end;
 
 procedure TFuFinPedido.btGravarClick(Sender: TObject);
 var somaVlr,wSaldo: Currency;
-    newSeq: Integer;
+    newSeq,lanSeq,bebSeq: Integer;
     vlrEntradas,vlrSaidas: Currency;
     xImpressao: String;
 begin
+  if ObtemParametro('PedidoPlaca') = 'S' then
+     if StrToIntDef(uDM.PedidosPlaca.AsString,0) = 0 then
+     begin
+       MessageDlg('Nro de placa não informado, dado obrigatorio',mtError,[mbOk],0);
+       dbPlaca.SetFocus;
+       Exit;
+     end;
+
   if uDM.PedidosMeioPagto.AsInteger = 0 then   // Dinheiro
     if uDM.PedidosVlrRecebido.AsCurrency < uDM.PedidosValor.AsCurrency then
     begin
@@ -422,13 +434,37 @@ begin
     Exit;
   end;
   //
-  uDM.Pedidos.Post;
+  lanSeq := 0;     // Qtd de lanches no pedido
+  bebSeq := 0;     // Qtd de bebidas e outros no pedido
   uDM.PedWrk.First;
+  while not uDM.PedWrk.Eof do
+  begin
+    if uDM.PedWrkTpProd.AsInteger = 1 then
+      lanSeq := lanSeq + 1
+    else
+      bebSeq := bebSeq + 1;
+    uDM.PedWrk.Next;
+  end;
+  uDM.PedidosLctLanches.AsInteger := lanSeq;     // Qtd de lanches no pedido
+  uDM.PedidosLctBebidas.AsInteger := bebSeq;     // Qtd de bebidas no pedido
+  uDM.Pedidos.Post;
+  //
+  uDM.PedWrk.First;
+  lanSeq := 0;
+  bebSeq := 100;
   while not uDM.PedWrk.Eof do
   begin
     uDM.PedItens.Append;
     uDM.PedItensNumero.AsInteger       := nrPedido;
-    uDM.PedItensNrLcto.AsInteger       := uDM.PedWrkNrLcto.AsInteger;
+    if uDM.PedWrkTpProd.AsInteger = 1
+    then begin     // Lanches
+      lanSeq := lanSeq + 1;
+      uDM.PedItensNrLcto.AsInteger := lanSeq;
+    end
+    else begin     // Bebidas e outros
+      bebSeq := bebSeq + 1;
+      uDM.PedItensNrLcto.AsInteger := bebSeq;
+    end;
     uDM.PedItensTpProd.AsInteger       := uDM.PedWrkTpProd.AsInteger;
     uDM.PedItensCodProd.AsInteger      := uDM.PedWrkCodProd.AsInteger;
     uDM.PedItensQuant.AsInteger        := uDM.PedWrkQuant.AsInteger;
@@ -458,7 +494,7 @@ begin
        then uDM.PedItensPrensado.AsInteger := 1
        else uDM.PedItensPrensado.AsInteger := 0;
     uDM.PedItens.Post;
-    uDM.Pedwrk.Next;
+    uDM.PedWrk.Next;
   end;
   // Atualiza caixa
   uDM.LctCaixa.Last;
@@ -597,6 +633,10 @@ end;
 
 procedure TFuFinPedido.btRetornarClick(Sender: TObject);
 begin
+  uDM.nroPlaca := StrToIntDef(uDM.PedidosPlaca.AsString,0);
+  uDM.meioPgto := uDM.PedidosMeioPagto.AsInteger;
+  uDM.nomeClie := uDM.PedidosNomeCliente.AsString;
+  uDM.CPFCNPJ := uDM.PedidosCPF_CNPJ.AsString;
   uDM.Pedidos.Cancel;
   nRetorno := 1;
   FuFinPedido.Close;

@@ -167,9 +167,6 @@ type
     PedWrkTxtSem: TMemoField;
     PedWrkTxtMais: TMemoField;
     PedWrkTxtMenos: TMemoField;
-    PedItensTxtSem: TStringField;
-    PedItensTxtMais: TStringField;
-    PedItensTxtMenos: TStringField;
     ItensAlteraPreco: TBooleanField;
     ItensZC_AltPreco: TStringField;
     ItensZC_Key: TStringField;
@@ -235,6 +232,11 @@ type
     PedItensZC_SenhaLst: TStringField;
     PedItensZC_PrensCort: TStringField;
     PedidosZC_Senha: TStringField;
+    PedidosLctLanches: TIntegerField;
+    PedidosLctBebidas: TIntegerField;
+    PedItensTxtMais: TStringField;
+    PedItensTxtSem: TStringField;
+    PedItensTxtMenos: TStringField;
     procedure ItensCalcFields(DataSet: TDataSet);
     procedure LctCaixaCalcFields(DataSet: TDataSet);
     procedure PedWrkCalcFields(DataSet: TDataSet);
@@ -242,6 +244,7 @@ type
     procedure PedidosCalcFields(DataSet: TDataSet);
     procedure PedItensCalcFields(DataSet: TDataSet);
     procedure ResVendasCalcFields(DataSet: TDataSet);
+    procedure ItensFilterRecord(DataSet: TDataSet; var Accept: Boolean);
   private
     { Private declarations }
   public
@@ -257,6 +260,9 @@ type
     wVlrExtraTab: array[1..24] of Currency;
     usaCorItem: Boolean;
     sysUser: String;
+    filGrupoItens: Integer;
+    nroPlaca,meioPgto: Integer;
+    nomeClie,CPFCNPJ: String;
 
   end;
 
@@ -264,7 +270,7 @@ var
   uDM: TuDM;
 
 const
-  xGrupos: array[1..4] of String = ('Lanches','Extras','Bedidas','Diversos');
+  xGrupos: array[1..6] of String = ('Lanches','Extras Lanche','Bedidas','Basicos','Extras Basico','Diversos');
   xOperacao: array[0..4] of String = ('Saldo','Receb','Suprim','Pagto','Sangria');
   xOperAbrv: array[0..4] of String = ('Sdo',  'Rec',  'Sup',   'Pgt',  'San');
   xMeioPgto: array[0..5] of String = ('R$', 'CDeb','CCred','PIX','Outros','Misto');
@@ -356,8 +362,8 @@ begin
     PedWrk.FieldDefs.Add('Cod03',     ftSmallint);
     PedWrk.FieldDefs.Add('Vlr03',     ftCurrency);
     PedWrk.FieldDefs.Add('VlrTotal',  ftCurrency);
+    PedWrk.FieldDefs.Add('TxtMais',   ftMemo, 10);      // Texto 'MAIS'
     PedWrk.FieldDefs.Add('TxtSem',    ftMemo, 10);      // Texto 'SEM'
-    PedWrk.FieldDefs.Add('TxtMais',   ftMemo, 10);
     PedWrk.FieldDefs.Add('TxtMenos',  ftMemo, 10);
     PedWrk.FieldDefs.Add('AltPreco',  ftBoolean);
     PedWrk.FieldDefs.Add('Cortado',   ftBoolean);
@@ -374,6 +380,10 @@ begin
     End;
     PedWrk.Active := True;
     wNroPedido := pNro;
+    nroPlaca := 0;
+    meioPgto := 0;
+    nomeClie := '';
+    CPFCNPJ := '';
 
   end;
 
@@ -423,13 +433,22 @@ procedure TuDM.ItensCalcFields(DataSet: TDataSet);
 begin
   if uDM = Nil then Exit;
   if not uDM.Itens.Active then Exit;
-  if (uDM.ItensGrupo.AsInteger > 0) and (uDM.ItensGrupo.AsInteger < 5)
+  if (uDM.ItensGrupo.AsInteger > 0) and (uDM.ItensGrupo.AsInteger < 6)
      then uDM.ItensZC_Grupo.AsString := xGrupos[uDM.ItensGrupo.AsInteger]
      else uDM.ItensZC_Grupo.AsString := '(' + uDM.ItensGrupo.AsString + ')';
   uDM.ItensZC_Key.AsString := uDM.ItensGrupo.AsString + uDM.ItensCodigo.AsString;
   if uDM.ItensAlteraPreco.AsBoolean then uDM.ItensZC_AltPreco.AsString := 'P'
   else uDM.ItensZC_AltPreco.AsString := '';
   uDM.ItensZC_Cor.AsString := '';
+
+end;
+
+procedure TuDM.ItensFilterRecord(DataSet: TDataSet; var Accept: Boolean);
+begin
+  if (filGrupoItens = 0) or (uDM.ItensGrupo.AsInteger = filGrupoItens) then
+     Accept := True
+  else
+     Accept := False;
 
 end;
 
@@ -540,14 +559,16 @@ begin
 
   if PedItensTpProd.AsInteger = 1
   then begin
-    PedItensZC_PedLcto.AsString := PedItensNumero.AsString + '/' + PedItensNrLcto.AsString;
-    PedItensZC_PlacaLcto.AsString := PedidosPlaca.AsString + '/' + PedItensNrLcto.AsString;
+    PedItensZC_PedLcto.AsString := PedItensNumero.AsString + ' / ' + PedItensNrLcto.AsString +
+                                   ' de ' + uDM.PedidosLctLanches.AsString;
+    PedItensZC_PlacaLcto.AsString := PedidosPlaca.AsString +  ' / ' + PedItensNrLcto.AsString +
+                                   ' de ' + uDM.PedidosLctLanches.AsString;
   end
   else begin
     PedItensZC_PedLcto.AsString := PedItensNumero.AsString;
     PedItensZC_PlacaLcto.AsString := PedidosPlaca.AsString
   end;
-  if PedidosPlaca.AsString <> '' then
+  if StrToIntDef(PedidosPlaca.AsString,0) <> 0 then
     PedItensZC_SenhaLst.AsString := PedItensZC_PlacaLcto.AsString
   else
     PedItensZC_SenhaLst.AsString := PedItensZC_PedLcto.AsString;

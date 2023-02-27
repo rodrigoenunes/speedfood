@@ -6,7 +6,7 @@ uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.DBCtrls, Vcl.Buttons, Vcl.ExtCtrls,
   Vcl.Grids, System.UITypes, Vcl.Touch.Keyboard, Vcl.Mask;
-  Procedure TratativaLanche(pCodLanche:Integer; pInclusao:Boolean);
+  Procedure TratativaLanche(pCodLanche:Integer; pInclusao:Boolean; pMaxExtras:Integer);
 
 type
   TFuTrataLanche = class(TForm)
@@ -15,14 +15,14 @@ type
     PanBtOk: TPanel;
     btOkLanche: TBitBtn;
     PanObservacoes: TPanel;
-    dbSEM: TDBMemo;
+    dbMais: TDBMemo;
     btCanLanche: TBitBtn;
     dbObserv: TDBMemo;
     btExcLanche: TBitBtn;
     imgObs: TImage;
     GridExtras: TDrawGrid;
     dbMenos: TDBMemo;
-    dbMais: TDBMemo;
+    dbSem: TDBMemo;
     Teclado: TTouchKeyboard;
     PanIdLanche: TPanel;
     dbPreco: TDBEdit;
@@ -39,9 +39,9 @@ type
     dbCortado: TDBCheckBox;
     dbPrensado: TDBCheckBox;
     Label4: TLabel;
-    Panel2: TPanel;
-    Panel3: TPanel;
-    Panel4: TPanel;
+    panMais: TPanel;
+    panSem: TPanel;
+    panMenos: TPanel;
     PanZerar: TPanel;
     LabReset: TLabel;
     ImgReset: TImage;
@@ -74,6 +74,7 @@ var
   lInclusao: Boolean;
   altBtn,lrgBtn,lrgImg: Integer;
   tvLeft,tvTop: Integer;
+  maxExtras: Integer;
 
 implementation
 
@@ -122,9 +123,10 @@ begin
 end;
 
 
-Procedure TratativaLanche(pCodLanche:Integer; pInclusao:Boolean);
+Procedure TratativaLanche(pCodLanche:Integer; pInclusao:Boolean; pMaxExtras:Integer);
 begin
   lInclusao := pInclusao;     // True:Inclusão   False:Alteração ou Exclusão
+  maxExtras := pMaxExtras;
   if not uDM.Itens.FindKey([1,pCodLanche]) then
   begin
     MessageDlg('Erro: Lanche inexistente no cadastro',mtError,[mbOk],0);
@@ -262,11 +264,25 @@ begin
 end;
 
 procedure TFuTrataLanche.FormResize(Sender: TObject);
+var nTam: Integer;
 begin
   PanPrensarCortar.Width := (PanRodape.Width - PanObservacoes.Width) div 4;
   PanZerar.Width := PanPrensarCortar.Width;     // (PanRodape.Width - (PanObservacoes.Width + PanPrensarCortar.Width)) div 3;
   ImgReset.Left := (PanZerar.Width - ImgReset.Width) div 2;
   LabReset.Left := (PanZerar.Width - LabReset.Width) div 2;
+  nTam := PanObservacoes.Width - 8;
+  panSem.Width := Trunc(nTam * 0.30);
+  panMenos.Width := panSem.Width;
+  panMais.Width := nTam - (panSem.Width + panMenos.Width);
+  panMais.Left := 0;
+  panSem.Left := panMais.Left + panMais.Width + 4;
+  panMenos.Left := panSem.Left + panSem.Width + 4;
+  dbMais.Left := panMais.Left;
+  dbMais.Width := panMais.Width;
+  dbSem.Left := panSem.Left;
+  dbSem.Width := panSem.Width;
+  dbMenos.Left := panMenos.Left;
+  dbMenos.Width := panMenos.Width;
 
 end;
 
@@ -388,7 +404,7 @@ var nCol,nLin,wCol,wLin,wKey,nExtVlr,nVezes: Integer;
     lctVlrs: array of Currency;
     i,j: Integer;
     wTxtSem,wTxtMais,wTxtMenos: TStringList;
-
+    msgMaxExtras: String;
 begin
   GridExtras.MouseToCell(X,Y,nCol,nLin);
   {  Col 0 e 5: Codigo do extra
@@ -480,22 +496,37 @@ begin
   uDM.PedWrkVlr03.AsCurrency := lctVlrs[3];
   uDM.PedWrkVlrTotal.AsCurrency := uDM.PedWrkVlrUnit.AsCurrency + uDM.PedWrkZC_Extras.AsCurrency;
   //
-  wTxtSem := TStringList.Create;
   wTxtMais := TStringList.Create;
+  wTxtSem := TStringList.Create;
   wTxtMenos := TStringList.Create;
   for i := 1 to 24 do
-    if uDM.Itens.FindKey([2,i]) then
-    begin
-      if xExtras[i] = '0' then wTxtSem.Add(Trim(uDM.ItensDescricao.AsString));
-      if xExtras[i] = '+' then wTxtMais.Add(Trim(uDM.ItensDescricao.AsString));
-      if (xExtras[i] = '1') or (xExtras[i] = '2')
-      then wTxtMais.Add(Trim(uDM.ItensDescricao.AsString) + ' ' + xExtras[i] +
-                        ' X ' + FloatToStrF(uDM.ItensPreco.AsCurrency,ffNumber,15,2));
-      if xExtras[i] = '-' then wTxtMenos.Add(Trim(uDM.ItensDescricao.AsString));
-    end;
-  uDM.PedWrkTxtSem.Assign(wTxtSem);
-  uDM.PedWrkTxtMais.Assign(wTxtMais);
-  uDM.PedWrkTxtMenos.Assign(wTxtMenos);
+  begin
+    if xExtras[i] <> '.'
+    then if uDM.Itens.FindKey([2,i])
+         then begin
+           if xExtras[i] = '0'
+           then wTxtSem.Add(Trim(uDM.ItensDescricao.AsString))
+           else if xExtras[i] = '-'
+                then wTxtMenos.Add(Trim(uDM.ItensDescricao.AsString))
+                else if xExtras[i] = '+'
+                     then wTxtMais.Add(Trim(uDM.ItensDescricao.AsString))
+                     else wTxtMais.Add(Trim(uDM.ItensDescricao.AsString) + ' ' + xExtras[i] +
+                                         ' X ' + FloatToStrF(uDM.ItensPreco.AsCurrency,ffNumber,15,2));  // 1 ou 2
+         end;
+  end;
+  msgMaxExtras := '';
+  if wTxtMais.Count > maxExtras then msgMaxExtras := msgMaxExtras + 'MAIS  ';
+  if wTxtSem.Count > maxExtras then msgMaxExtras := msgMaxExtras + 'SEM  ';
+  if wTxtMenos.Count > maxExtras then msgMaxExtras := msgMaxExtras + 'MENO  ';
+  if msgMaxExtras <> ''
+  then messageDlg(msgMaxExtras + #13 +
+                  'Excesso de "extras" (max:' + IntToStr(maxExtras) + '), reinforme',
+                  mtError,[mbOk],0)
+  else begin
+    uDM.PedWrkTxtSem.Assign(wTxtSem);
+    uDM.PedWrkTxtMais.Assign(wTxtMais);
+    uDM.PedWrkTxtMenos.Assign(wTxtMenos);
+  end;
   wTxtSem.Free;
   wTxtMais.Free;
   wTxtMenos.Free;

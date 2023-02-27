@@ -44,6 +44,11 @@ type
     LabAux1: TLabel;
     LabAux2: TLabel;
     TSEspecial: TTabSheet;
+    dbLanche: TDBRadioGroup;
+    PanRodapeEsp: TPanel;
+    LabAuxil: TLabel;
+    rgExtras: TRadioGroup;
+    MemExtras: TMemo;
     procedure btAbrirPedidoClick(Sender: TObject);
     procedure btFinalizarClick(Sender: TObject);
     procedure FormShow(Sender: TObject);
@@ -80,7 +85,7 @@ var
   wCodBebida: array[0..19,0..19] of Integer;
   lrgLanche,altLanche,lrgBebida,altBebida: Integer;
   wColor: TColor;
-  nExec: Integer;
+  nExec,nMaxExtras: Integer;
 
 implementation
 
@@ -94,6 +99,7 @@ begin
   FuTrataLanche := TFuTrataLanche.Create(nil);
   FuFinPedido := TFuFinPedido.Create(nil);
   nExec := 0;
+  nMaxExtras := StrToIntDef(ObtemParametro('PedidoMaxExtras'),7);
   FuPedidos.ShowModal;
   FuFinPedido.Free;
   FuTrataLanche.Free;
@@ -315,7 +321,7 @@ begin
     PedWrk.Post;
     PedWrk.Edit;
     FuPedidos.FormResize(nil);
-    TratativaLanche(pCodLanche,True);
+    TratativaLanche(pCodLanche,True,nMaxExtras);
     if PedWrk.State = dsEdit
        then PedWrk.Post;
   end;
@@ -330,7 +336,7 @@ begin
   nSeq  := uDM.PedWrkNrLcto.AsInteger;
   nProd := uDM.PedWrkCodProd.AsInteger;
   uDM.PedWrk.Edit;
-  TratativaLanche(nProd,False);
+  TratativaLanche(nProd,False,nMaxExtras);
   if uDM.PedWrk.State = dsEdit
      then uDM.PedWrk.Post;
   TotalizaPedido;
@@ -560,7 +566,46 @@ begin
   btSair.Width    := btAbrirPedido.Width;
   btSair.Height   := btAbrirPedido.Height;
   if ObtemParametro('LanctoMontarLanche') = 'S' then
-    TSEspecial.TabVisible := True
+  begin
+    TSEspecial.TabVisible := True;
+    LabAuxil.Font.Name := dbLanche.Font.Name;
+    LabAuxil.Font.Size := dbLanche.Font.Size;
+    dbLanche.Items.Clear;
+    dbLanche.Values.Clear;
+    uDM.Itens.FindNearest([4,0]);
+    while (uDM.ItensGrupo.AsInteger = 4) and (not uDM.Itens.Eof) do
+    begin
+      LabAuxil.Caption := uDM.ItensDescricao.AsString;
+      if LabAuxil.Width > dbLanche.Width then
+        dbLanche.Width := LabAuxil.Width;
+      dbLanche.Items.Add(uDM.ItensDescricao.AsString);
+      dbLanche.Values.Add(uDM.ItensCodigo.AsString);
+      uDM.Itens.Next;
+    end;
+    dbLanche.Width := dbLanche.Width + 64;
+    dbLanche.Height := dbLanche.Items.Count * 61;
+    //
+    LabAuxil.Font.Name := rgExtras.Font.Name;
+    LabAuxil.Font.Size := rgExtras.font.Size;
+    rgExtras.Items.Clear;
+    memExtras.Lines.Clear;
+    uDM.Itens.FindNearest([2,0]);
+    while (uDM.ItensGrupo.AsInteger = 2) and (not uDM.Itens.Eof) do
+    begin
+      if uDM.ItensPreco.AsCurrency = 0 then
+      begin
+        LabAuxil.Caption := uDM.ItensDescricao.AsString;
+        if LabAuxil.Width > rgExtras.Width then
+           rgExtras.Width := LabAuxil.Width;
+        rgExtras.Items.Add(uDM.ItensDescricao.AsString);
+        memExtras.Lines.Add(uDM.ItensCodigo.AsString);
+      end;
+      uDM.Itens.Next;
+    end;
+    rgExtras.Width := rgExtras.Width + 48;
+    rgExtras.Height := rgExtras.Items.count * 41;
+    rgExtras.Left := dbLanche.Left + dbLanche.Width + 8;
+  end
   else
     TSEspecial.TabVisible := False;
 

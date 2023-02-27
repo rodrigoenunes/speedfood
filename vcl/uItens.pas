@@ -67,6 +67,8 @@ type
     DBEdit8: TDBEdit;
     PanCor: TPanel;
     ColorDialog1: TColorDialog;
+    cbSelec: TComboBox;
+    Label19: TLabel;
     procedure btSairClick(Sender: TObject);
     procedure btIncluirClick(Sender: TObject);
     procedure btOkClick(Sender: TObject);
@@ -83,6 +85,9 @@ type
     procedure PanCorClick(Sender: TObject);
     procedure GridProdsDrawColumnCell(Sender: TObject; const Rect: TRect;
       DataCol: Integer; Column: TColumn; State: TGridDrawState);
+    procedure cbSelecChange(Sender: TObject);
+    procedure btIncluirMouseDown(Sender: TObject; Button: TMouseButton;
+      Shift: TShiftState; X, Y: Integer);
   private
     { Private declarations }
   public
@@ -102,12 +107,26 @@ implementation
 uses uDados, uGenericas;
 
 Procedure ManutencaoProdutos;
+var i: Integer;
 begin
+  uDM.filGrupoItens := 0;
+  uDM.Itens.Filtered := True;
   FuItens := TFuItens.Create(nil);
-  FuItens.Top := 12;
-  FuItens.Height := Screen.Height - 96;
-  FuItens.ShowModal;
-  FuItens.Free;
+  with FuItens
+  do begin
+    Top := 12;
+    Height := Screen.Height - 96;
+    cbSelec.Items.Clear;
+    cbSelec.Items.Add('Sem seleção');
+    for i := 0 to dbTipo.Items.Count-1 do
+       cbSelec.Items.add(dbTipo.Items[i]);
+    cbSelec.ItemIndex := 0;
+    uDM.filGrupoItens := 0;
+    uDM.Itens.Filtered := True;
+    ShowModal;
+    uDM.Itens.Filtered := False;
+    Free;
+  end;
 
 end;
 
@@ -269,17 +288,68 @@ begin
   wAcao := CtleProds(1,True);
   gbFiscais.Visible := False;
   uDM.Itens.Append;
-  uDM.ItensGrupo.AsInteger := 0;
   uDM.ItensDescrCompleta.AsString := '';
   uDM.ItensAlteraPreco.AsBoolean  := False;
-  dbTipo.ItemIndex := -1;
-  dbTipo.SetFocus;
+  if cbSelec.ItemIndex = 0
+  then begin
+    uDM.ItensGrupo.AsInteger := 0;
+    dbTipo.ItemIndex := -1;
+    dbTipo.Enabled := True;
+    dbTipo.SetFocus;
+  end
+  else begin
+    uDM.ItensGrupo.AsInteger := cbSelec.ItemIndex;
+    dbTipo.ItemIndex := cbSelec.ItemIndex - 1;
+    dbTipo.Enabled := False;
+    dbTipoClick(nil);
+    edZC_KeyChange(nil);
+    dbCodigo.SetFocus;
+  end;
+
+end;
+
+procedure TFuItens.btIncluirMouseDown(Sender: TObject; Button: TMouseButton;
+  Shift: TShiftState; X, Y: Integer);
+var wCods: TStringList;
+    wExtras: TStringList;
+    aFiltro: Boolean;
+    i: Integer;
+begin
+  if Button <> mbRight then Exit;
+  wCods := TStringList.Create;
+  wExtras := TStringList.Create;
+  aFiltro := uDM.Itens.Filtered;
+  uDM.Itens.Filtered := False;
+  uDM.Itens.FindNearest([2,0]);
+  while (uDM.ItensGrupo.AsInteger = 2) and (not uDM.Itens.Eof)
+  do begin
+    if uDM.ItensPreco.AsCurrency = 0 then
+    begin
+      wCods.Add(uDM.ItensCodigo.AsString);
+      wExtras.Add(uDM.ItensDescricao.AsString);
+    end;
+    uDM.Itens.Next;
+  end;
+  for i := 0 to wCods.Count-1 do
+    if not uDM.Itens.FindKey([5,StrToInt(wCods[i])]) then
+    begin
+      uDM.Itens.Append;
+      uDM.ItensGrupo.AsInteger := 5;
+      uDM.ItensCodigo.AsInteger := StrToInt(wCods[i]);
+      uDM.ItensDescricao.AsString := wExtras[i];
+      uDM.Itens.Post;
+    end
+    else begin
+      uDM.Itens.Edit;
+      uDM.ItensDescricao.AsString := wExtras[i];
+      uDM.Itens.Post;
+    end;
 
 end;
 
 procedure TFuItens.btOkClick(Sender: TObject);
 begin
-  if (uDM.ItensGrupo.AsInteger = 2) and
+  if ((uDM.ItensGrupo.AsInteger = 2) or (uDM.ItensGrupo.AsInteger = 5)) and
      ((uDM.ItensCodigo.AsInteger < 1) or (uDM.ItensCodigo.AsInteger > 24))
   then begin
     MessageDlg('Extras: código do ítem deve ser entre 1 e 24',mtError,[mbOk],0);
@@ -326,6 +396,14 @@ begin
 
 end;
 
+procedure TFuItens.cbSelecChange(Sender: TObject);
+begin
+  uDM.filGrupoItens := cbSelec.ItemIndex;
+  uDM.Itens.Refresh;
+  LabNRegs.Caption := IntToStr(uDM.Itens.RecordCount) + ' itens';
+
+end;
+
 procedure TFuItens.dbImagemExit(Sender: TObject);
 begin
   imgItem.Visible := False;
@@ -352,7 +430,7 @@ begin
         uDM.ItensPcReduz.AsFloat      := 0;
         uDM.ItensAliqICMS.AsFloat     := 0;
       end;
-    3:begin     // Bebidas
+    2:begin     // Bebidas
         uDM.ItensCFOP.AsInteger       := 5102;
         uDM.ItensNCM.AsString         := '22021000';
         uDM.ItensCSOSN.AsInteger      := 102;
@@ -363,7 +441,7 @@ begin
         uDM.ItensPcReduz.AsFloat      := 0;
         uDM.ItensAliqICMS.AsFloat     := 0;
       end;
-    4:begin     // Diversos
+    5:begin     // Diversos
         uDM.ItensCFOP.AsInteger       := 5102;
         uDM.ItensNCM.AsString         := '22021000';
         uDM.ItensCSOSN.AsInteger      := 102;
@@ -374,7 +452,7 @@ begin
         uDM.ItensPcReduz.AsFloat      := 0;
         uDM.ItensAliqICMS.AsFloat     := 0;
         end;
-    else begin
+    else begin      // Extras para lanches(1), Basicos(3) e Extras para basicos(4)
         uDM.ItensCFOP.Clear;
         uDM.ItensNCM.Clear;
         uDM.ItensCSOSN.Clear;
@@ -396,11 +474,13 @@ begin
   panCor.Visible := False;
   if (uDM.ItensGrupo.AsInteger = 1)       // Lanches
      or (uDM.ItensGrupo.AsInteger = 3)    // Bebidas
-     or (uDM.ItensGrupo.AsInteger = 4)    // Diversos
+     or (uDM.ItensGrupo.AsInteger = 6)    // Diversos
   then gbFiscais.Visible := True;
+
   if uDM.ItensGrupo.AsInteger = 1
      then cbAlteraPreco.Visible := True
      else cbAlteraPreco.Visible := False;
+
   if ((uDM.ItensGrupo.AsInteger = 1)        // Lanches
       or (uDM.ItensGrupo.AsInteger = 3))    // Bebidas
       and (uDM.usaCorItem)                  // Usa cor de preenchimento
@@ -410,6 +490,7 @@ begin
        then PanCor.Color := PanManut.Color
        else PanCor.Color := StringToColor(uDM.ItensCorItem.AsString);
   end;
+
   if FileExists(uDM.ItensImagem.AsString)
   then begin
     imgItem.Picture.LoadFromFile(uDM.ItensImagem.AsString);

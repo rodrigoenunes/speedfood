@@ -483,14 +483,14 @@ object FuTrataLanche: TFuTrataLanche
           Stretch = True
           ExplicitTop = 116
         end
-        object dbSEM: TDBMemo
+        object dbMais: TDBMemo
           Left = 0
           Top = 21
           Width = 152
           Height = 110
           TabStop = False
           Anchors = [akLeft, akTop, akRight]
-          DataField = 'TxtSem'
+          DataField = 'TxtMais'
           DataSource = uDM.SPedWrk
           ReadOnly = True
           TabOrder = 0
@@ -521,22 +521,39 @@ object FuTrataLanche: TFuTrataLanche
           ReadOnly = True
           TabOrder = 2
         end
-        object dbMais: TDBMemo
+        object dbSem: TDBMemo
           Left = 154
           Top = 21
           Width = 200
           Height = 110
           TabStop = False
           Anchors = [akLeft, akTop, akRight]
-          DataField = 'TxtMais'
+          DataField = 'TxtSem'
           DataSource = uDM.SPedWrk
           ReadOnly = True
           TabOrder = 3
         end
-        object Panel2: TPanel
+        object panMais: TPanel
           Left = 0
           Top = 0
           Width = 152
+          Height = 21
+          BevelOuter = bvNone
+          Caption = '+ MAIS'
+          Color = clYellow
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -13
+          Font.Name = 'Tahoma'
+          Font.Style = [fsBold]
+          ParentBackground = False
+          ParentFont = False
+          TabOrder = 4
+        end
+        object panSem: TPanel
+          Left = 154
+          Top = 0
+          Width = 200
           Height = 21
           BevelOuter = bvNone
           Caption = 'SEM'
@@ -548,32 +565,15 @@ object FuTrataLanche: TFuTrataLanche
           Font.Style = [fsBold]
           ParentBackground = False
           ParentFont = False
-          TabOrder = 4
-        end
-        object Panel3: TPanel
-          Left = 154
-          Top = 0
-          Width = 200
-          Height = 21
-          BevelOuter = bvNone
-          Caption = 'MAIS'
-          Color = clYellow
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clWindowText
-          Font.Height = -13
-          Font.Name = 'Tahoma'
-          Font.Style = [fsBold]
-          ParentBackground = False
-          ParentFont = False
           TabOrder = 5
         end
-        object Panel4: TPanel
+        object panMenos: TPanel
           Left = 356
           Top = 0
           Width = 152
           Height = 21
           BevelOuter = bvNone
-          Caption = 'MENOS'
+          Caption = '- MENOS'
           Color = clYellow
           Font.Charset = DEFAULT_CHARSET
           Font.Color = clWindowText

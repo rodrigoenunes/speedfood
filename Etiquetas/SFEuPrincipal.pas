@@ -260,7 +260,9 @@ begin
   DefinePrinterEtiqueta;
   if uDM.PedItensTpProd.AsInteger = 1 then
   begin
-    FSFEuPrintFortes.RLEtiqLanche.Print;
+    if ObtemParametro('EtiquetaPreview') = 'S' then
+      FSFEuPrintFortes.RLEtiqLanche.Preview
+    else FSFEuPrintFortes.RLEtiqLanche.Print;
     if uDM.PedItens.FindKey([nKey1,nKey2]) then
     begin
       uDM.PedItens.Edit;
@@ -274,7 +276,9 @@ begin
     uDM.PedItens.Filter := 'TpProd=3';
     uDM.PedItens.Filtered := True;
     uDM.PedItens.Refresh;
-    FSFEuPrintFortes.RLEtiqBebida.Print;       // Imprime TODAS as bebidas em uma etiqueta
+    if ObtemParametro('EtiquetaPreview') = 'S' then
+      FSFEuPrintFortes.RLEtiqBebida.Preview
+    else FSFEuPrintFortes.RLEtiqBebida.Print;       // Imprime TODAS as bebidas em uma etiqueta
     uDM.PedItens.First;
     while not uDM.PedItens.Eof do
     begin

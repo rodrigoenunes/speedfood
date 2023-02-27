@@ -3,7 +3,7 @@ object FuItens: TFuItens
   Top = 89
   Caption = 'Cadastro geral de '#237'tens / produtos'
   ClientHeight = 475
-  ClientWidth = 830
+  ClientWidth = 856
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -21,48 +21,51 @@ object FuItens: TFuItens
   object PanDados: TPanel
     Left = 0
     Top = 0
-    Width = 830
-    Height = 434
+    Width = 856
+    Height = 416
     Align = alClient
     TabOrder = 0
+    ExplicitWidth = 830
+    ExplicitHeight = 434
     object PanManut: TPanel
       Left = 1
-      Top = 176
-      Width = 828
-      Height = 257
+      Top = 168
+      Width = 854
+      Height = 247
       Align = alBottom
       Enabled = False
       TabOrder = 0
+      ExplicitTop = 186
       object Label2: TLabel
-        Left = 96
+        Left = 124
         Top = 4
         Width = 39
         Height = 16
         Caption = 'Codigo'
       end
       object Label3: TLabel
-        Left = 140
+        Left = 168
         Top = 4
         Width = 55
         Height = 16
         Caption = 'Descri'#231#227'o'
       end
       object Label4: TLabel
-        Left = 192
+        Left = 220
         Top = 44
         Width = 54
         Height = 16
         Caption = 'Tamanho'
       end
       object Label5: TLabel
-        Left = 512
+        Left = 540
         Top = 4
         Width = 32
         Height = 16
         Caption = 'Pre'#231'o'
       end
       object Label1: TLabel
-        Left = 95
+        Left = 122
         Top = 88
         Width = 57
         Height = 32
@@ -70,7 +73,7 @@ object FuItens: TFuItens
         WordWrap = True
       end
       object Label15: TLabel
-        Left = 97
+        Left = 127
         Top = 156
         Width = 52
         Height = 16
@@ -78,7 +81,7 @@ object FuItens: TFuItens
         Caption = 'Imagem:'
       end
       object sbImagem: TSpeedButton
-        Left = 636
+        Left = 664
         Top = 151
         Width = 44
         Height = 25
@@ -101,21 +104,21 @@ object FuItens: TFuItens
         OnClick = sbImagemClick
       end
       object ImgItem: TImage
-        Left = 686
+        Left = 714
         Top = 26
-        Width = 140
-        Height = 140
+        Width = 120
+        Height = 120
         Stretch = True
       end
       object Label16: TLabel
-        Left = 140
+        Left = 168
         Top = 44
         Width = 46
         Height = 16
         Caption = 'Unidade'
       end
       object Label17: TLabel
-        Left = 276
+        Left = 304
         Top = 44
         Width = 98
         Height = 16
@@ -124,28 +127,32 @@ object FuItens: TFuItens
       object dbTipo: TDBRadioGroup
         Left = 1
         Top = 1
-        Width = 88
-        Height = 255
+        Width = 112
+        Height = 245
         Align = alLeft
         Caption = 'Tipo'
         DataField = 'Grupo'
         DataSource = uDM.DSItens
         Items.Strings = (
-          '&Lanches'
-          '&Extras'
-          '&Bebidas'
-          '&Diversos')
+          'Lanches'
+          'Extras lanche'
+          'Bebidas'
+          'B'#225'sicos'
+          'Extras basico'
+          'Diversos')
         TabOrder = 0
         Values.Strings = (
           '1'
           '2'
           '3'
-          '4')
+          '4'
+          '5')
         OnClick = dbTipoClick
         OnExit = edZC_KeyChange
+        ExplicitHeight = 255
       end
       object dbCodigo: TDBEdit
-        Left = 96
+        Left = 124
         Top = 18
         Width = 40
         Height = 24
@@ -154,7 +161,7 @@ object FuItens: TFuItens
         TabOrder = 1
       end
       object dbDescricao: TDBEdit
-        Left = 140
+        Left = 168
         Top = 18
         Width = 368
         Height = 24
@@ -163,7 +170,7 @@ object FuItens: TFuItens
         TabOrder = 2
       end
       object dbTamanho: TDBEdit
-        Left = 192
+        Left = 220
         Top = 58
         Width = 80
         Height = 24
@@ -172,7 +179,7 @@ object FuItens: TFuItens
         TabOrder = 5
       end
       object dbPreco: TDBEdit
-        Left = 512
+        Left = 540
         Top = 18
         Width = 81
         Height = 24
@@ -181,7 +188,7 @@ object FuItens: TFuItens
         TabOrder = 3
       end
       object btOk: TBitBtn
-        Left = 732
+        Left = 761
         Top = 184
         Width = 89
         Height = 25
@@ -205,7 +212,7 @@ object FuItens: TFuItens
         OnClick = btOkClick
       end
       object btCancel: TBitBtn
-        Left = 732
+        Left = 761
         Top = 211
         Width = 89
         Height = 25
@@ -229,7 +236,7 @@ object FuItens: TFuItens
         OnClick = btCancelClick
       end
       object dbDescrCompl: TDBMemo
-        Left = 152
+        Left = 180
         Top = 88
         Width = 528
         Height = 57
@@ -238,7 +245,7 @@ object FuItens: TFuItens
         TabOrder = 8
       end
       object gbFiscais: TGroupBox
-        Left = 95
+        Left = 124
         Top = 178
         Width = 631
         Height = 60
@@ -406,7 +413,7 @@ object FuItens: TFuItens
         end
       end
       object edZC_Key: TDBEdit
-        Left = 95
+        Left = 124
         Top = 48
         Width = 28
         Height = 24
@@ -417,7 +424,7 @@ object FuItens: TFuItens
         OnChange = edZC_KeyChange
       end
       object dbImagem: TDBEdit
-        Left = 152
+        Left = 180
         Top = 151
         Width = 478
         Height = 24
@@ -427,7 +434,7 @@ object FuItens: TFuItens
         OnExit = dbImagemExit
       end
       object dbUnid: TDBEdit
-        Left = 140
+        Left = 168
         Top = 58
         Width = 48
         Height = 24
@@ -436,7 +443,7 @@ object FuItens: TFuItens
         TabOrder = 4
       end
       object dbCodBarras: TDBEdit
-        Left = 276
+        Left = 304
         Top = 58
         Width = 153
         Height = 24
@@ -445,7 +452,7 @@ object FuItens: TFuItens
         TabOrder = 6
       end
       object cbAlteraPreco: TDBCheckBox
-        Left = 440
+        Left = 468
         Top = 62
         Width = 171
         Height = 17
@@ -455,7 +462,7 @@ object FuItens: TFuItens
         TabOrder = 7
       end
       object PanCor: TPanel
-        Left = 609
+        Left = 637
         Top = 6
         Width = 71
         Height = 54
@@ -476,8 +483,8 @@ object FuItens: TFuItens
     object GridProds: TDBGrid
       Left = 1
       Top = 1
-      Width = 828
-      Height = 175
+      Width = 854
+      Height = 167
       Align = alClient
       DataSource = uDM.DSItens
       DrawingStyle = gdsClassic
@@ -562,20 +569,27 @@ object FuItens: TFuItens
   end
   object PanBottom: TPanel
     Left = 0
-    Top = 434
-    Width = 830
-    Height = 41
+    Top = 416
+    Width = 856
+    Height = 59
     Align = alBottom
     TabOrder = 1
     DesignSize = (
-      830
-      41)
+      856
+      59)
     object LabNRegs: TLabel
-      Left = 139
-      Top = 12
+      Left = 9
+      Top = 37
       Width = 56
       Height = 16
       Caption = 'LabNRegs'
+    end
+    object Label19: TLabel
+      Left = 157
+      Top = 4
+      Width = 45
+      Height = 16
+      Caption = 'Sele'#231#227'o'
     end
     object NavProds: TDBNavigator
       Left = 9
@@ -589,8 +603,8 @@ object FuItens: TFuItens
       TabOrder = 0
     end
     object btIncluir: TBitBtn
-      Left = 392
-      Top = 6
+      Left = 418
+      Top = 12
       Width = 103
       Height = 25
       Anchors = [akTop, akRight]
@@ -611,10 +625,11 @@ object FuItens: TFuItens
       NumGlyphs = 2
       TabOrder = 1
       OnClick = btIncluirClick
+      OnMouseDown = btIncluirMouseDown
     end
     object btAlterar: TBitBtn
-      Left = 501
-      Top = 6
+      Left = 527
+      Top = 12
       Width = 99
       Height = 25
       Anchors = [akTop, akRight]
@@ -637,8 +652,8 @@ object FuItens: TFuItens
       OnClick = btAlterarClick
     end
     object btExcluir: TBitBtn
-      Left = 610
-      Top = 6
+      Left = 636
+      Top = 12
       Width = 103
       Height = 25
       Anchors = [akTop, akRight]
@@ -661,8 +676,8 @@ object FuItens: TFuItens
       OnClick = btExcluirClick
     end
     object btSair: TBitBtn
-      Left = 719
-      Top = 6
+      Left = 745
+      Top = 12
       Width = 103
       Height = 25
       Anchors = [akTop, akRight]
@@ -683,6 +698,15 @@ object FuItens: TFuItens
       NumGlyphs = 2
       TabOrder = 4
       OnClick = btSairClick
+    end
+    object cbSelec: TComboBox
+      Left = 157
+      Top = 20
+      Width = 133
+      Height = 24
+      TabOrder = 5
+      Text = 'cbSelec'
+      OnChange = cbSelecChange
     end
   end
   object OpenPictureDialog1: TOpenPictureDialog

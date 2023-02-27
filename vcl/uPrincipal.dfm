@@ -30,7 +30,7 @@ object FuPrincipal: TFuPrincipal
     Top = 170
     Width = 257
     Height = 52
-    Caption = 'Lanches && Bebidas'
+    Caption = 'Lanches, Bebidas, Extras'
     Glyph.Data = {
       36080000424D3608000000000000360400002800000020000000200000000100
       0800000000000004000000000000000000000001000000000000000000000000
