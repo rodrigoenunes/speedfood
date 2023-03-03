@@ -61,6 +61,9 @@ end;
 
 procedure TFuPrincipal.btAdminClick(Sender: TObject);
 begin
+  if ObtemParametro('SistemaUserPwd') = 'S'
+  then if not ObtemUsuario(uDM.sysUser)
+            then btSairClick(nil);
   Administrativo;
 
 end;
@@ -113,6 +116,9 @@ end;
 
 procedure TFuPrincipal.btSuporteClick(Sender: TObject);
 begin
+  if ObtemParametro('SistemaUserPwd') = 'S'
+  then if not ObtemUsuario(uDM.sysUser)
+            then btSairClick(nil);
   ManutencaoProdutos;
   ContaExtras;
 
@@ -120,6 +126,9 @@ end;
 
 procedure TFuPrincipal.btUsuarioClick(Sender: TObject);
 begin
+  if ObtemParametro('SistemaUserPwd') = 'S'
+  then if not ObtemUsuario(uDM.sysUser)
+            then btSairClick(nil);
   ManutencaoUsuario;
 
 end;
@@ -141,9 +150,11 @@ begin
     FGen.pathSalvaForm := ExtractFilePath(Application.ExeName);
     Form_Define(FuPrincipal);
     //
+    {
     if ObtemParametro('SistemaUserPwd') = 'S'
     then if not ObtemUsuario(uDM.sysUser)
             then btSairClick(nil);
+    }
     //
     dtHoje := DateOf(Date);
     xValidade := ObtemParametro('SistemaValidade');    // AAAAMMDD
