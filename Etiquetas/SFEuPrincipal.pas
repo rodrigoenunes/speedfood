@@ -36,8 +36,6 @@ type
     Panel1: TPanel;
     Label2: TLabel;
     cbSelPedidos: TComboBox;
-    Label4: TLabel;
-    cbSelItens: TComboBox;
     btPrintAll: TBitBtn;
     btSair2: TBitBtn;
     btHelpArgox: TBitBtn;
@@ -57,7 +55,6 @@ type
     procedure cbTurnosExit(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure cbSelPedidosClick(Sender: TObject);
-    procedure cbSelItensClick(Sender: TObject);
     procedure btPrintAllClick(Sender: TObject);
     procedure btHelpArgoxMouseDown(Sender: TObject; Button: TMouseButton;
       Shift: TShiftState; X, Y: Integer);
@@ -128,19 +125,7 @@ begin
     else
        LabNrPeds.Caption := IntToStr(uDM.Pedidos.RecordCount) + ' pedidos';
 
-    if cbSelItens.ItemIndex = 2 then
-    begin
-      uDM.PedItens.Filtered := False;
-      uDM.PedItens.Filter := '';
-    end
-    else begin
-      uDM.PedItens.Filtered := True;
-      if cbSelItens.ItemIndex = 0 then
-        uDM.PedItens.Filter := 'EtqImpressa = 0'
-      else
-        uDM.PedItens.Filter := 'EtqImpressa <> 0';
-    end;
-    uDM.PedItens.Refresh;
+    uDM.PedItens.Filtered := False;
     if uDM.PedItens.RecordCount = 0 then
       LabNrEtqs.Caption := 'Sem ítens'
     else
@@ -350,7 +335,6 @@ begin
   else
     LabNrPeds.Caption := IntToStr(uDM.Pedidos.RecordCount) + ' pedidos';
   //
-  cbSelItens.ItemIndex := 0;      // À imprimir
   DefineSelecao;
   PanPedidos.Visible := True;
   PanEtiquetas.Visible := True;
@@ -373,32 +357,6 @@ end;
 procedure TFuPrincipalEtq.cbTurnosExit(Sender: TObject);
 begin
   btProsseguirClick(nil);
-
-end;
-
-procedure TFuPrincipalEtq.cbSelItensClick(Sender: TObject);
-begin
-  DefineSelecao;
-
-{
-  if cbSelItens.ItemIndex = 2 then
-  begin
-    uDM.PedItens.Filtered := False;
-    uDM.PedItens.Filter := '';
-  end
-  else begin
-    uDM.PedItens.Filtered := True;
-    if cbSelItens.ItemIndex = 0 then
-      uDM.PedItens.Filter := 'EtqImpressa = 0'
-    else
-      uDM.PedItens.Filter := 'EtqImpressa <> 0';
-  end;
-  uDM.PedItens.Refresh;
-  if uDM.PedItens.RecordCount = 0 then
-    LabNrEtqs.Caption := 'Sem ítens'
-  else
-    LabNrEtqs.Caption := IntToStr(uDM.PedItens.RecordCount) + ' ítens';
-}
 
 end;
 

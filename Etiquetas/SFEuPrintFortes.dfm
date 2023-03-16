@@ -31,6 +31,7 @@ object FSFEuPrintFortes: TFSFEuPrintFortes
     PageSetup.PaperSize = fpCustom
     PageSetup.PaperWidth = 105.000000000000000000
     PageSetup.PaperHeight = 72.000000000000000000
+    PrintEmpty = False
     RecordRange = rrCurrentOnly
     object RLDetLanche: TRLBand
       Left = 23

@@ -521,19 +521,6 @@ object FuPrincipalEtq: TFuPrincipalEtq
         Font.Style = []
         ParentFont = False
       end
-      object Label4: TLabel
-        Left = 4
-        Top = 48
-        Width = 113
-        Height = 19
-        Caption = 'Sele'#231#227'o de '#237'tens'
-        Font.Charset = DEFAULT_CHARSET
-        Font.Color = clWindowText
-        Font.Height = -16
-        Font.Name = 'Tahoma'
-        Font.Style = []
-        ParentFont = False
-      end
       object NavItens: TDBNavigator
         Left = 6
         Top = 4
@@ -687,20 +674,6 @@ object FuPrincipalEtq: TFuPrincipalEtq
         TabOrder = 3
         OnClick = btPrintClick
       end
-      object cbSelItens: TComboBox
-        Left = 4
-        Top = 66
-        Width = 140
-        Height = 27
-        TabOrder = 4
-        Text = 'cbSelItens'
-        OnChange = cbSelItensClick
-        OnClick = cbSelItensClick
-        Items.Strings = (
-          #192' imprimir'
-          'Impressos'
-          'Todos')
-      end
       object btPrintAll: TBitBtn
         Left = 154
         Top = 52
@@ -770,7 +743,7 @@ object FuPrincipalEtq: TFuPrincipalEtq
           FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF
           00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF}
         ParentFont = False
-        TabOrder = 5
+        TabOrder = 4
         OnClick = btPrintAllClick
       end
       object btSair2: TBitBtn
@@ -898,7 +871,7 @@ object FuPrincipalEtq: TFuPrincipalEtq
           00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF}
         NumGlyphs = 2
         ParentFont = False
-        TabOrder = 6
+        TabOrder = 5
         OnClick = btSairClick
       end
       object btHelpArgox: TBitBtn
@@ -922,7 +895,7 @@ object FuPrincipalEtq: TFuPrincipalEtq
           B333333377F377F3333333FB99FB99FB3333333377FF77333333333FB9999FB3
           333333333777733333333333FBFBFB3333333333333333333333}
         NumGlyphs = 2
-        TabOrder = 7
+        TabOrder = 6
         OnMouseDown = btHelpArgoxMouseDown
       end
       object btHelpGeral: TBitBtn
@@ -946,7 +919,7 @@ object FuPrincipalEtq: TFuPrincipalEtq
           B333333377F377F3333333FB99FB99FB3333333377FF77333333333FB9999FB3
           333333333777733333333333FBFBFB3333333333333333333333}
         NumGlyphs = 2
-        TabOrder = 8
+        TabOrder = 7
         OnMouseDown = btHelpGeralMouseDown
       end
     end
