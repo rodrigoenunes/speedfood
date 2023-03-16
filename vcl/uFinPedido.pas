@@ -94,6 +94,7 @@ type
     procedure dbPlacaExit(Sender: TObject);
     procedure dbPlacaKeyDown(Sender: TObject; var Key: Word;
       Shift: TShiftState);
+    procedure FormResize(Sender: TObject);
   private
     { Private declarations }
   public
@@ -145,7 +146,9 @@ begin
       btRetornar.Caption := '&Tela anterior';
     end;
     posBarra := ObtemConfiguracaoTela(altBarra,lrgBarra,altMaxima,lrgMaxima);
-    Width    := Trunc(lrgMaxima * 0.80);
+    Width    := 920;
+    if Trunc(lrgMaxima * 0.80) < 920 then
+       Width := Trunc(lrgMaxima * 0.80);
     Height   := altMaxima;
     Top      := 0;
     if posBarra = 'T' then Top := altBarra + 1;
@@ -268,24 +271,24 @@ begin
           linMax := dbMais.Lines.Count;
         if dbMenos.Lines.Count > linMax then
           linMax := dbMenos.Lines.Count;
-        posSem := posDescr;
-        posMais := posSem + 120;
-        posMenos := posMais + 120 ;
+        posMais := posDescr;
+        posSem := posMais + 120;
+        posMenos := posSem + 120 ;
         LabTaman.Font.Size := 9;
         LabTaman.Font.Style :=[fsBold,fsUnderline];
         AjustaFonteImagem;
+        wrkImag.Canvas.TextOut(posMais,posY,'[ + MAIS ]');
         wrkImag.Canvas.TextOut(posSem,posY,'[ SEM ]');
-        wrkImag.Canvas.TextOut(posMais,posY,'[ MAIS ]');
-        wrkImag.Canvas.TextOut(posMenos,posY,'[ MENOS ]');
+        wrkImag.Canvas.TextOut(posMenos,posY,'[ - MENOS ]');
         posY := posY + LabTaman.Height;
         LabTaman.Font.Style :=[];
         AjustaFonteImagem;
         for i := 0 to linMax-1 do
         begin
-          if i <= dbSem.Lines.Count-1 then
-            wrkImag.Canvas.TextOut(posSem,posY,dbSem.Lines[i]);
           if i <= dbMais.Lines.Count-1 then
             wrkImag.Canvas.TextOut(posMais,posY,dbMais.Lines[i]);
+          if i <= dbSem.Lines.Count-1 then
+            wrkImag.Canvas.TextOut(posSem,posY,dbSem.Lines[i]);
           if i <= dbMenos.Lines.Count-1 then
             wrkImag.Canvas.TextOut(posMenos,posY,dbMenos.Lines[i]);
           posY := posY + LabTaman.Height;
@@ -336,14 +339,19 @@ begin
     wrkImag.Canvas.MoveTo(2,posY);
     wrkImag.Canvas.LineTo(wrkImag.Width-2,posY);
 
+    LabTaman.Font.Size := 20;
     posX := 20;
-    posY := posY + 2;
+    posY := posY + 12;
     LabTaman.Caption := IntToStr(FuPedidos.itensPedido) + ' ítens';
     wrkImag.Canvas.TextOut(posX,posY,LabTaman.Caption);
     LabTaman.Caption := 'Total  R$ '+ FloatToStrF(FuPedidos.totalPedido,ffNumber,15,2);
-    posX := wrkImag.Width-(LabTaman.Width+5);
+    posX := wrkImag.Width - LabTaman.Width;    // (LabTaman.Width+5);
     wrkImag.Canvas.TextOut(posX,posY,LabTaman.Caption);
     posY := posY + LabTaman.Height;
+
+    LabTaman.Font.Size := 12;
+    AjustaFonteImagem;
+    //posY := posY + LabTaman.Height;
     wrkImag.Canvas.MoveTo(2,posY);
     wrkImag.Canvas.LineTo(wrkImag.Width-2,posY);
     imgPedido.Picture.Assign(wrkImag.Picture);
@@ -593,13 +601,16 @@ begin
     uDM.PedItens.Filtered := True;
     uDM.PedItens.Filter := 'TpProd=1';
     uDM.PedItens.Refresh;
-    uDM.PedItens.First;
-    SetRecordRangeLanche(1);      // rrAllRecords;
-    if lPreview then
-      FSFEuPrintFortes.RLEtiqLanche.Preview
-    else
-      FSFEuPrintFortes.RLEtiqLanche.Print;
-    SetRecordRangeLanche(0);      // rrCurrentOnly;
+    if uDM.PedItens.RecordCount > 0 then
+    begin
+      uDM.PedItens.First;
+      SetRecordRangeLanche(1);      // rrAllRecords;
+      if lPreview then
+        FSFEuPrintFortes.RLEtiqLanche.Preview
+      else
+        FSFEuPrintFortes.RLEtiqLanche.Print;
+      SetRecordRangeLanche(0);      // rrCurrentOnly;
+    end;
     uDM.PedItens.Filter := 'TpProd=3';
     uDM.PedItens.Refresh;
     if uDM.PedItens.RecordCount > 0 then
@@ -646,7 +657,9 @@ end;
 procedure TFuFinPedido.dbCPFEnter(Sender: TObject);
 begin
   tvLeft := PanInform.Left + dbCPF.Left + dbCPF.Width + 8;
-  tvTop := PanInform.Top + PanCliente.Top + dbNome.Top + dbNome.Height + 4;     // Mesma altura do nome
+  if (tvLeft + 300) >= FuFinPedido.Width
+     then tvLeft := FuFinPedido.Width - 328;
+  tvTop := PanInform.Top + PanCliente.Top + dbCPF.Top + dbCPF.Height + 4;
   ExibeTecladoVirtual('NumPad',tvTop,tvLeft);
 
 end;
@@ -753,6 +766,8 @@ end;
 procedure TFuFinPedido.dbPlacaEnter(Sender: TObject);
 begin
   tvLeft := PanInform.Left + dbPlaca.Left - 8;
+  if (tvLeft + 300) >= FuFinPedido.Width
+     then tvLeft := FuFinPedido.Width - 328;
   tvTop := PanInform.Top + PanPlaca.Height + 4;
   ExibeTecladoVirtual('NumPad',tvTop,tvLeft);
 
@@ -773,6 +788,8 @@ end;
 procedure TFuFinPedido.edCCredEnter(Sender: TObject);
 begin
   tvLeft := PanInform.Left + PanDetPgto.Left + 20;
+  if (tvLeft + 300) >= FuFinPedido.Width
+     then tvLeft := FuFinPedido.Width - 328;
   tvTop := PanInform.Top + PanPlaca.Height + edCCred.Top + edCCred.Height + 4;
   ExibeTecladoVirtual('NumPad',tvTop,tvLeft);
 
@@ -794,6 +811,8 @@ end;
 procedure TFuFinPedido.edCDebEnter(Sender: TObject);
 begin
   tvLeft := PanInform.Left + PanDetPgto.Left + 20;
+  if (tvLeft + 300) >= FuFinPedido.Width
+     then tvLeft := FuFinPedido.Width - 328;
   tvTop := PanInform.Top + PanPlaca.Height + edCDeb.Top + edCDeb.Height + 4;
   ExibeTecladoVirtual('NumPad',tvTop,tvLeft);
 
@@ -815,6 +834,8 @@ end;
 procedure TFuFinPedido.edOutrosEnter(Sender: TObject);
 begin
   tvLeft := PanInform.Left + PanDetPgto.Left + 20;
+  if (tvLeft + 300) >= FuFinPedido.Width
+     then tvLeft := FuFinPedido.Width - 328;
   tvTop := PanInform.Top + PanPlaca.Height + edOutros.Top + edOutros.Height + 4;
   ExibeTecladoVirtual('NumPad',tvTop,tvLeft);
 
@@ -836,6 +857,8 @@ end;
 procedure TFuFinPedido.edPIXEnter(Sender: TObject);
 begin
   tvLeft := PanInform.Left + PanDetPgto.Left + 20;
+  if (tvLeft + 300) >= FuFinPedido.Width
+     then tvLeft := FuFinPedido.Width - 328;
   tvTop := PanInform.Top + PanPlaca.Height + edPIX.Top + edPIX.Height + 4;
   ExibeTecladoVirtual('NumPad',tvTop,tvLeft);
 
@@ -857,6 +880,8 @@ end;
 procedure TFuFinPedido.edReaisEnter(Sender: TObject);
 begin
   tvLeft := PanInform.Left + PanDetPgto.Left + 20;
+  if (tvLeft + 300) >= FuFinPedido.Width
+     then tvLeft := FuFinPedido.Width - 328;
   tvTop := PanInform.Top + PanPlaca.Height + edReais.Top + edReais.Height + 4;
   ExibeTecladoVirtual('NumPad',tvTop,tvLeft);
 
@@ -878,6 +903,8 @@ end;
 procedure TFuFinPedido.edRecebEnter(Sender: TObject);
 begin
   tvLeft := PanInform.Left + PanDetPgto.Left + 20;
+  if (tvLeft + 300) >= FuFinPedido.Width
+     then tvLeft := FuFinPedido.Width - 328;
   tvTop := PanInform.Top + PanPlaca.Height + edReceb.Top + edReceb.Height + 4;
   ExibeTecladoVirtual('NumPad',tvTop,tvLeft);
 
@@ -919,8 +946,28 @@ begin
 
 end;
 
+procedure TFuFinPedido.FormResize(Sender: TObject);
+begin
+  btGravar.Top := 6;
+  btGravar.Left := 5;
+  btGravar.Height := Trunc(PanCtle.Height * 0.50);
+  btGravar.Width := PanCtle.Width - 10;
+
+  btCancelar.Left := btGravar.Left;
+  btCancelar.Top := btGravar.Top + btGravar.Height + 12;
+  btCancelar.Height := Trunc(PanCtle.Height * 0.40);
+  btCancelar.Width := Trunc(btGravar.Width * 0.60);
+
+  btRetornar.Left := btCancelar.Left + btCancelar.Width + 8;
+  btRetornar.Top := btCancelar.Top;
+  btRetornar.Height := btCancelar.Height;
+  btRetornar.Width := PanCtle.Width - (btRetornar.Left + 5);
+
+end;
+
 procedure TFuFinPedido.FormShow(Sender: TObject);
 begin
+  FormResize(nil);
   dbPlaca.SetFocus;
 
 end;

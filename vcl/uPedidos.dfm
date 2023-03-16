@@ -167,15 +167,15 @@ object FuPedidos: TFuPedidos
   end
   object PanWork: TPanel
     Left = 0
-    Top = 54
+    Top = 33
     Width = 841
-    Height = 371
+    Height = 428
     TabOrder = 2
     object PanGridPed: TPanel
       Left = 590
       Top = 1
       Width = 250
-      Height = 369
+      Height = 426
       Align = alRight
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
@@ -186,16 +186,16 @@ object FuPedidos: TFuPedidos
       TabOrder = 0
       object PanPedCtle: TPanel
         Left = 1
-        Top = 208
+        Top = 226
         Width = 248
-        Height = 160
+        Height = 199
         Align = alBottom
         TabOrder = 0
         object btEditar: TBitBtn
           Left = 88
           Top = 4
           Width = 78
-          Height = 48
+          Height = 64
           Caption = '&Alterar'
           Font.Charset = DEFAULT_CHARSET
           Font.Color = clWindowText
@@ -224,7 +224,7 @@ object FuPedidos: TFuPedidos
           Left = 172
           Top = 4
           Width = 73
-          Height = 48
+          Height = 64
           Caption = '&Excluir'
           Font.Charset = DEFAULT_CHARSET
           Font.Color = clWindowText
@@ -253,16 +253,16 @@ object FuPedidos: TFuPedidos
           Left = 4
           Top = 4
           Width = 80
-          Height = 48
+          Height = 64
           DataSource = uDM.SPedWrk
           VisibleButtons = [nbFirst, nbPrior, nbNext, nbLast]
           TabOrder = 0
         end
         object btFinalizar: TBitBtn
           Left = 4
-          Top = 60
+          Top = 72
           Width = 237
-          Height = 48
+          Height = 64
           Caption = '&Finalizar pedido'
           Font.Charset = DEFAULT_CHARSET
           Font.Color = clWindowText
@@ -386,10 +386,10 @@ object FuPedidos: TFuPedidos
           OnClick = btFinalizarClick
         end
         object btCancelar: TBitBtn
-          Left = 4
-          Top = 116
+          Left = 5
+          Top = 142
           Width = 161
-          Height = 35
+          Height = 51
           Caption = '&Cancelar '
           Font.Charset = DEFAULT_CHARSET
           Font.Color = clWindowText
@@ -439,8 +439,8 @@ object FuPedidos: TFuPedidos
           OnClick = btCancelarClick
         end
         object btDummy: TBitBtn
-          Left = 182
-          Top = 122
+          Left = 195
+          Top = 160
           Width = 37
           Height = 25
           Caption = '...'
@@ -452,7 +452,7 @@ object FuPedidos: TFuPedidos
         Left = 1
         Top = 97
         Width = 248
-        Height = 111
+        Height = 129
         TabStop = False
         Align = alClient
         DataSource = uDM.SPedWrk
@@ -618,8 +618,8 @@ object FuPedidos: TFuPedidos
       Left = 1
       Top = 1
       Width = 589
-      Height = 369
-      ActivePage = TSLanches
+      Height = 426
+      ActivePage = TSBebidas
       Align = alClient
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
@@ -671,74 +671,6 @@ object FuPedidos: TFuPedidos
           TabOrder = 0
           OnDrawCell = GridBebidasDrawCell
           OnMouseDown = GridBebidasMouseDown
-        end
-      end
-      object TSEspecial: TTabSheet
-        Caption = 'Monte o lanche'
-        Font.Charset = DEFAULT_CHARSET
-        Font.Color = clWindowText
-        Font.Height = -16
-        Font.Name = 'Tahoma'
-        Font.Style = [fsBold]
-        ImageIndex = 2
-        ParentFont = False
-        object LabAuxil: TLabel
-          Left = 27
-          Top = 216
-          Width = 71
-          Height = 19
-          Caption = 'LabAuxil'
-          Visible = False
-        end
-        object dbLanche: TDBRadioGroup
-          Left = 8
-          Top = 8
-          Width = 250
-          Height = 202
-          Caption = ' Lanche '
-          DataField = 'CodProd'
-          DataSource = uDM.SPedWrk
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clWindowText
-          Font.Height = -29
-          Font.Name = 'Tahoma'
-          Font.Style = [fsBold]
-          ParentFont = False
-          TabOrder = 0
-        end
-        object PanRodapeEsp: TPanel
-          Left = 0
-          Top = 260
-          Width = 581
-          Height = 49
-          Align = alBottom
-          Color = clGradientInactiveCaption
-          ParentBackground = False
-          TabOrder = 1
-        end
-        object rgExtras: TRadioGroup
-          Left = 264
-          Top = 8
-          Width = 185
-          Height = 105
-          Caption = 'Extras'
-          TabOrder = 2
-        end
-        object MemExtras: TMemo
-          Left = 268
-          Top = 219
-          Width = 129
-          Height = 30
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clWindowText
-          Font.Height = -13
-          Font.Name = 'Tahoma'
-          Font.Style = []
-          Lines.Strings = (
-            'MemExtras')
-          ParentFont = False
-          TabOrder = 3
-          Visible = False
         end
       end
     end

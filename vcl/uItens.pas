@@ -114,6 +114,24 @@ begin
   FuItens := TFuItens.Create(nil);
   with FuItens
   do begin
+    dbTipo.Items.Clear;
+    dbTipo.Items.Add('Lanches');
+    dbTipo.Items.Add('Extras lanches');
+    dbTipo.Items.Add('Bebidas');
+    dbTipo.Values.Clear;
+    dbTipo.Values.Add('1');
+    dbTipo.Values.Add('2');
+    dbTipo.Values.Add('3');
+    if ObtemParametro('LanctoMontarLanche') = 'S'
+    then begin
+      dbTipo.Items.Add('Básicos');
+      dbTipo.Items.Add('Extras básicos');
+      dbTipo.Values.Add('4');
+      dbTipo.Values.Add('5');
+    end;
+    dbTipo.Items.Add('Diversos');
+    dbTipo.Values.Add('6');
+    //
     Top := 12;
     Height := Screen.Height - 96;
     cbSelec.Items.Clear;
@@ -123,6 +141,9 @@ begin
     cbSelec.ItemIndex := 0;
     uDM.filGrupoItens := 0;
     uDM.Itens.Filtered := True;
+//    uDM.Itens.Refresh;
+    uDM.Itens.Last;
+    uDM.Itens.First;
     ShowModal;
     uDM.Itens.Filtered := False;
     Free;

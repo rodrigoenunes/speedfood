@@ -13,6 +13,7 @@ object FuFinPedido: TFuFinPedido
   OldCreateOrder = False
   Position = poDesigned
   OnCreate = FormCreate
+  OnResize = FormResize
   OnShow = FormShow
   PixelsPerInch = 96
   TextHeight = 19
@@ -48,11 +49,11 @@ object FuFinPedido: TFuFinPedido
       Top = 283
       Width = 387
       Height = 77
-      Align = alClient
+      Align = alTop
       TabOrder = 2
       object Label4: TLabel
         Left = 4
-        Top = 39
+        Top = 47
         Width = 86
         Height = 19
         Alignment = taRightJustify
@@ -60,7 +61,7 @@ object FuFinPedido: TFuFinPedido
       end
       object Label9: TLabel
         Left = 42
-        Top = 9
+        Top = 17
         Width = 48
         Height = 19
         Alignment = taRightJustify
@@ -68,7 +69,7 @@ object FuFinPedido: TFuFinPedido
       end
       object dbCPF: TDBEdit
         Left = 91
-        Top = 34
+        Top = 42
         Width = 169
         Height = 27
         TabStop = False
@@ -81,7 +82,7 @@ object FuFinPedido: TFuFinPedido
       end
       object dbNome: TDBEdit
         Left = 91
-        Top = 4
+        Top = 12
         Width = 290
         Height = 27
         TabStop = False
@@ -99,7 +100,7 @@ object FuFinPedido: TFuFinPedido
       Top = 360
       Width = 387
       Height = 122
-      Align = alBottom
+      Align = alClient
       TabOrder = 3
       object btCancelar: TBitBtn
         Left = 5
@@ -107,6 +108,11 @@ object FuFinPedido: TFuFinPedido
         Width = 168
         Height = 56
         Caption = '&Cancelar pedido'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -19
+        Font.Name = 'Tahoma'
+        Font.Style = []
         Glyph.Data = {
           76020000424D7602000000000000760000002800000020000000200000000100
           0400000000000002000000000000000000001000000000000000000000000000
@@ -128,6 +134,7 @@ object FuFinPedido: TFuFinPedido
           6666666666999996666666666666666666666666666699666666666666666666
           6666666666666666666666666666666666666666666666666666666666666666
           6666666666666666666666666666666666666666666666666666}
+        ParentFont = False
         TabOrder = 1
         OnClick = btCancelarClick
       end
@@ -137,6 +144,11 @@ object FuFinPedido: TFuFinPedido
         Width = 208
         Height = 56
         Caption = '&Tela anterior'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -19
+        Font.Name = 'Tahoma'
+        Font.Style = []
         Glyph.Data = {
           76020000424D7602000000000000760000002800000020000000200000000100
           0400000000000002000000000000000000001000000000000000000000000000
@@ -158,6 +170,7 @@ object FuFinPedido: TFuFinPedido
           F0708FF78FF78FF78FFFFFFFFFFFFFFFFF078FF78FF78FF78FFFFFFFFFFFFFFF
           FFF08FF78FF78FF78FFFFFFFFFFFFFFFFFFF0FF07FF07FF07FFFFFFFFFFFFFFF
           FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}
+        ParentFont = False
         TabOrder = 2
         OnClick = btRetornarClick
       end
@@ -167,6 +180,11 @@ object FuFinPedido: TFuFinPedido
         Width = 376
         Height = 56
         Caption = '&Gravar  && Imprimir'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -19
+        Font.Name = 'Tahoma'
+        Font.Style = []
         Glyph.Data = {
           76050000424D7605000000000000760000002800000040000000280000000100
           0400000000000005000000000000000000001000000000000000000000000000
@@ -212,6 +230,7 @@ object FuFinPedido: TFuFinPedido
           FFFFFFFFFFFFFFFFFFFFF00FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF00000000
           000000000000000000000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
           FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}
+        ParentFont = False
         TabOrder = 0
         OnClick = btGravarClick
       end
@@ -516,23 +535,24 @@ object FuFinPedido: TFuFinPedido
       Caption = 'Pedido:'
     end
     object Label2: TLabel
-      Left = 257
+      Left = 165
       Top = 11
       Width = 41
       Height = 19
       Caption = 'Itens:'
     end
     object Label3: TLabel
-      Left = 421
+      Left = 273
       Top = 11
       Width = 43
       Height = 19
       Caption = 'Valor:'
+      Visible = False
     end
     object dbNro: TDBEdit
       Left = 67
       Top = 8
-      Width = 93
+      Width = 82
       Height = 27
       AutoSize = False
       DataField = 'Numero'
@@ -541,7 +561,7 @@ object FuFinPedido: TFuFinPedido
       TabOrder = 0
     end
     object dbLcts: TDBEdit
-      Left = 300
+      Left = 208
       Top = 8
       Width = 42
       Height = 27
@@ -552,15 +572,16 @@ object FuFinPedido: TFuFinPedido
       TabOrder = 1
     end
     object dbValor: TDBEdit
-      Left = 466
+      Left = 318
       Top = 8
-      Width = 121
+      Width = 111
       Height = 27
       AutoSize = False
       DataField = 'Valor'
       DataSource = uDM.DSPedidos
       ReadOnly = True
       TabOrder = 2
+      Visible = False
     end
   end
   object SBoxPedido: TScrollBox

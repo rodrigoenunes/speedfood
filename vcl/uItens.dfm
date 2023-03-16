@@ -25,8 +25,6 @@ object FuItens: TFuItens
     Height = 416
     Align = alClient
     TabOrder = 0
-    ExplicitWidth = 830
-    ExplicitHeight = 434
     object PanManut: TPanel
       Left = 1
       Top = 168
@@ -35,7 +33,6 @@ object FuItens: TFuItens
       Align = alBottom
       Enabled = False
       TabOrder = 0
-      ExplicitTop = 186
       object Label2: TLabel
         Left = 124
         Top = 4
@@ -146,10 +143,10 @@ object FuItens: TFuItens
           '2'
           '3'
           '4'
-          '5')
+          '5'
+          '6')
         OnClick = dbTipoClick
         OnExit = edZC_KeyChange
-        ExplicitHeight = 255
       end
       object dbCodigo: TDBEdit
         Left = 124
@@ -543,6 +540,7 @@ object FuItens: TFuItens
           Expanded = False
           FieldName = 'ZC_Cor'
           Title.Caption = 'Cor'
+          Width = 64
           Visible = True
         end
         item

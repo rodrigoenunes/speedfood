@@ -124,6 +124,7 @@ end;
 
 
 Procedure TratativaLanche(pCodLanche:Integer; pInclusao:Boolean; pMaxExtras:Integer);
+var nAltura: Integer;
 begin
   lInclusao := pInclusao;     // True:Inclusão   False:Alteração ou Exclusão
   maxExtras := pMaxExtras;
@@ -137,10 +138,30 @@ begin
     imgPreco.Visible := uDM.PedWrkAltPreco.AsBoolean;
     dbPreco.ReadOnly := True;
     if uDM.PedWrkAltPreco.AsBoolean then dbPreco.ReadOnly := False;
-    
-    btExcLanche.Visible := False;
-    if not lInclusao
-       then btExcLanche.Visible := True;
+
+    if lInclusao then
+    begin
+      nAltura := (panBtOk.Height - 15) div 2;
+      btOkLanche.Visible := True;
+      btExcLanche.Visible := False;
+      btCanLanche.Visible := True;
+      btOkLanche.Top := 4;
+      btOkLanche.Height := nAltura;
+      btCanLanche.Top := btOkLanche.Top + btOkLanche.Height + 5;
+      btCanLanche.Height := nAltura;
+    end
+    else begin
+      nAltura := (panBtOk.Height - 15) div 3;
+      btOkLanche.Visible := True;
+      btExcLanche.Visible := True;
+      btCanLanche.Visible := True;
+      btOkLanche.Top := 4;
+      btOkLanche.Height := nAltura;
+      btExcLanche.Top := btOkLanche.Top + btOkLanche.Height + 5;
+      btExcLanche.Height := nAltura;
+      btCanLanche.Top := btExcLanche.Top + btExcLanche.Height + 5;
+      btCanLanche.Height := nAltura;
+    end;
     btOkLanche.Caption  := 'Ok';
     btExcLanche.Caption := 'Excluir';
     btCanLanche.Caption := 'Cancelar';
@@ -150,6 +171,7 @@ begin
       btExcLanche.Caption := '&' + btExcLanche.Caption;
       btCanLanche.Caption := '&' + btCanLanche.Caption;
     end;
+
     ShowModal;
   end;
 
@@ -267,7 +289,7 @@ procedure TFuTrataLanche.FormResize(Sender: TObject);
 var nTam: Integer;
 begin
   PanPrensarCortar.Width := (PanRodape.Width - PanObservacoes.Width) div 4;
-  PanZerar.Width := PanPrensarCortar.Width;     // (PanRodape.Width - (PanObservacoes.Width + PanPrensarCortar.Width)) div 3;
+  PanZerar.Width := PanPrensarCortar.Width - 40;
   ImgReset.Left := (PanZerar.Width - ImgReset.Width) div 2;
   LabReset.Left := (PanZerar.Width - LabReset.Width) div 2;
   nTam := PanObservacoes.Width - 8;
