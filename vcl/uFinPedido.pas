@@ -180,7 +180,7 @@ begin
     uDM.PedidosVlrRecebido.AsCurrency := FuPedidos.totalPedido;
     uDM.PedidosVlrTroco.AsCurrency := 0;
     uDM.PedidosCPF_CNPJ.EditMask := '';
-    uDM.PedidosTurno.AsInteger := uDM.RegCaixaTurno.AsInteger;
+    uDM.PedidosTurno.AsInteger := uDM.turnoCorrente;
     uDM.PedidosPlaca.AsString := IntToStr(uDM.nroPlaca);
     uDM.PedidosMeioPagto.AsInteger := uDM.meioPgto;
     uDM.PedidosNomeCliente.AsString := uDM.nomeClie;
@@ -233,8 +233,7 @@ begin
         LabTaman.Caption := ' ' + LabTaman.Caption;
       wrkImag.Canvas.TextOut(posX,posY,LabTaman.Caption);
       LabTaman.Caption := uDM.PedWrkDescricao.AsString;
-      if (uDM.PedWrkTpProd.AsInteger = 3) or            // Bebidas
-         (uDM.PedWrkTpProd.AsInteger = 4)               // Diversos
+      if uDM.PedWrkTpProd.AsInteger = 3              // Bebidas ou Diversos (6)
       then LabTaman.Caption := LabTaman.Caption + ' (' + uDM.PedWrkQuant.AsString + 'x' +
                                FloatToStrF(uDM.PedWrkVlrUnit.AsCurrency,ffNumber,6,2) + ')';
       wrkImag.Canvas.TextOut(posDescr,posY,LabTaman.Caption);
@@ -277,9 +276,13 @@ begin
         LabTaman.Font.Size := 9;
         LabTaman.Font.Style :=[fsBold,fsUnderline];
         AjustaFonteImagem;
-        wrkImag.Canvas.TextOut(posMais,posY,'[ + MAIS ]');
-        wrkImag.Canvas.TextOut(posSem,posY,'[ SEM ]');
-        wrkImag.Canvas.TextOut(posMenos,posY,'[ - MENOS ]');
+        if uDM.PedWrkTpProd.AsInteger = 1 then
+        begin
+          wrkImag.Canvas.TextOut(posMais,posY,'[ + MAIS ]');
+          wrkImag.Canvas.TextOut(posSem,posY,'[ SEM ]');
+          wrkImag.Canvas.TextOut(posMenos,posY,'[ - MENOS ]');
+        end
+        else wrkImag.Canvas.TextOut(posMais,posY,'[ + INCLUIR ]');
         posY := posY + LabTaman.Height;
         LabTaman.Font.Style :=[];
         AjustaFonteImagem;
@@ -333,19 +336,25 @@ begin
       uDM.PedWrk.Next;
     end;
 
-    LabTaman.Font.Size := 12;
-    LabTaman.Font.Style := [fsBold];
+//    LabTaman.Font.Size := 12;
+//    LabTaman.Font.Style := [fsBold];
     AjustaFonteImagem;
     wrkImag.Canvas.MoveTo(2,posY);
     wrkImag.Canvas.LineTo(wrkImag.Width-2,posY);
 
-    LabTaman.Font.Size := 20;
+    LabTaman.Font.Size := 12;
+    LabTaman.Font.Style := [fsBold];
+    AjustaFonteImagem;
     posX := 20;
     posY := posY + 12;
     LabTaman.Caption := IntToStr(FuPedidos.itensPedido) + ' ítens';
     wrkImag.Canvas.TextOut(posX,posY,LabTaman.Caption);
+
+    LabTaman.Font.Size := 20;
+    AjustaFonteImagem;
+    posY := posY + 20;
     LabTaman.Caption := 'Total  R$ '+ FloatToStrF(FuPedidos.totalPedido,ffNumber,15,2);
-    posX := wrkImag.Width - LabTaman.Width;    // (LabTaman.Width+5);
+    posX := (wrkImag.Width - LabTaman.Width) div 2;    // (LabTaman.Width+5);
     wrkImag.Canvas.TextOut(posX,posY,LabTaman.Caption);
     posY := posY + LabTaman.Height;
 
@@ -447,10 +456,10 @@ begin
   uDM.PedWrk.First;
   while not uDM.PedWrk.Eof do
   begin
-    if uDM.PedWrkTpProd.AsInteger = 1 then
-      lanSeq := lanSeq + 1
-    else
-      bebSeq := bebSeq + 1;
+    case uDM.PedWrkTpProd.AsInteger of
+      1,4:lanSeq := lanSeq + 1;
+        2:bebSeq := bebSeq + 1;
+    end;
     uDM.PedWrk.Next;
   end;
   uDM.PedidosLctLanches.AsInteger := lanSeq;     // Qtd de lanches no pedido
@@ -460,18 +469,24 @@ begin
   uDM.PedWrk.First;
   lanSeq := 0;
   bebSeq := 100;
+  newSeq := 200;
   while not uDM.PedWrk.Eof do
   begin
     uDM.PedItens.Append;
-    uDM.PedItensNumero.AsInteger       := nrPedido;
-    if uDM.PedWrkTpProd.AsInteger = 1
-    then begin     // Lanches
-      lanSeq := lanSeq + 1;
-      uDM.PedItensNrLcto.AsInteger := lanSeq;
-    end
-    else begin     // Bebidas e outros
-      bebSeq := bebSeq + 1;
-      uDM.PedItensNrLcto.AsInteger := bebSeq;
+    uDM.PedItensNumero.AsInteger := nrPedido;
+    case uDM.PedWrkTpProd.AsInteger of
+      1,4:begin     // Lanches
+            lanSeq := lanSeq + 1;
+            uDM.PedItensNrLcto.AsInteger := lanSeq;
+          end;
+        3:begin     // Bebidas e outros
+            bebSeq := bebSeq + 1;
+            uDM.PedItensNrLcto.AsInteger := bebSeq;
+        end;
+        else begin
+            newSeq := newSeq + 1;
+            uDM.PedItensNrLcto.AsInteger := newSeq;
+        end;
     end;
     uDM.PedItensTpProd.AsInteger       := uDM.PedWrkTpProd.AsInteger;
     uDM.PedItensCodProd.AsInteger      := uDM.PedWrkCodProd.AsInteger;
@@ -580,6 +595,7 @@ begin
         then xImpressao := 'S';
     if xImpressao = 'S' then
        EmiteNFCe(uDM.PedidosNumero.AsInteger);
+
   end;
   //
   xImpressao := ObtemParametro('EtiquetaFinalPedido');
@@ -594,12 +610,12 @@ begin
     // Imprime as etiquetas do pedido
     FSFEuPrintFortes := TFSFEuPrintFortes.Create(nil);
     DefinePrinterEtiqueta;
-    if AnsiUpperCase(ObtemParametro('EtiquetaPreview')) = 'S' then
+    if ObtemParametro('EtiquetaPreview') = 'S' then
       lPreview := True
     else
       lPreview := False;
     uDM.PedItens.Filtered := True;
-    uDM.PedItens.Filter := 'TpProd=1';
+    uDM.PedItens.Filter := 'TpProd=1 or TpProd=4';
     uDM.PedItens.Refresh;
     if uDM.PedItens.RecordCount > 0 then
     begin

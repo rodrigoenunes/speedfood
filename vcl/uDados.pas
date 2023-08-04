@@ -237,6 +237,7 @@ type
     PedItensTxtMais: TStringField;
     PedItensTxtSem: TStringField;
     PedItensTxtMenos: TStringField;
+    PedidosZC_NroLst: TStringField;
     procedure ItensCalcFields(DataSet: TDataSet);
     procedure LctCaixaCalcFields(DataSet: TDataSet);
     procedure PedWrkCalcFields(DataSet: TDataSet);
@@ -245,6 +246,8 @@ type
     procedure PedItensCalcFields(DataSet: TDataSet);
     procedure ResVendasCalcFields(DataSet: TDataSet);
     procedure ItensFilterRecord(DataSet: TDataSet; var Accept: Boolean);
+    procedure PedidosFilterRecord(DataSet: TDataSet; var Accept: Boolean);
+    procedure DataModuleCreate(Sender: TObject);
   private
     { Private declarations }
   public
@@ -263,6 +266,8 @@ type
     filGrupoItens: Integer;
     nroPlaca,meioPgto: Integer;
     nomeClie,CPFCNPJ: String;
+    turnoIni,turnoFin,etqImpress: Integer;
+    turnoCorrente: Integer;
 
   end;
 
@@ -278,6 +283,8 @@ const
   xMPExtenso: array[0..5] of String = ('Dinheiro', 'Cartão débito','Cartão crédito',
                                        'PIX', 'Outros', 'Misto');
 implementation
+
+Uses IniFiles;
 
 {%CLASSGROUP 'Vcl.Controls.TControl'}
 
@@ -424,10 +431,28 @@ begin
   Result := '';
   if not uDM.Parametros.Active then
     uDM.Parametros.Active := True;
-  if uDM.Parametros.FindKey([idParam]) then Result := uDM.ParametrosValor.AsString;
+  if uDM.Parametros.FindKey([idParam]) then Result := AnsiUpperCase(uDM.ParametrosValor.AsString);
 
 end;
 
+
+procedure TuDM.DataModuleCreate(Sender: TObject);
+Var
+  vIniFile: TIniFile;
+  sIniFile, sServer: String;
+begin
+  sIniFile:= ChangeFileExt(ParamStr(0), '.ini');
+  if FileExists(sIniFile) then
+  Begin
+    vIniFile:= TIniFile.Create( sIniFile  );
+    sServer:= vIniFile.ReadString('DB', 'Host', '').Trim;
+    if Not sServer.IsEmpty then
+      FDC.Params[ FDC.Params.IndexOfName('server') ]:= 'Server=' + sServer;
+    vIniFile.Free;
+  End;
+
+
+end;
 
 procedure TuDM.ItensCalcFields(DataSet: TDataSet);
 begin
@@ -501,12 +526,14 @@ begin
 end;
 
 procedure TuDM.PedidosCalcFields(DataSet: TDataSet);
-var xData: String;
+var xData,nrAux: String;
 begin
+  nrAux := Copy(FormatFloat('000000',PedidosNumero.AsInteger),4,3);
   if PedidosPlaca.AsString <> '' then
     PedidosZC_Senha.AsString := PedidosPlaca.AsString
   else
-    PedidosZC_Senha.AsString := PedidosNumero.AsString;
+    PedidosZC_Senha.AsString := nrAux;   // PedidosNumero.AsString;
+  PedidosZC_NroLst.AsString := nrAux;
 
   PedidosZC_Impresso.AsString := '';
   if PedidosEtqImpressas.AsInteger > 0 then
@@ -525,18 +552,33 @@ begin
 
 end;
 
+procedure TuDM.PedidosFilterRecord(DataSet: TDataSet; var Accept: Boolean);
+begin
+  Accept := False;
+  if PedidosTurno.AsInteger < uDM.turnoIni then Exit;
+  if PedidosTurno.AsInteger > uDM.TurnoFin then Exit;
+  // uDM.etqImpress 0-Não impressa  1-Impressa  2-Todas (sem selecão)
+  if uDM.etqImpress <> 2 then
+     if uDM.PedidosEtqImpressas.AsInteger <> uDM.etqImpress then Exit;
+  Accept := True;
+
+end;
+
 procedure TuDM.PedItensCalcFields(DataSet: TDataSet);
+var nrAux: String;
 begin
   case PedItensTpProd.AsInteger of
     1:PedItensZC_Tipo.AsString := 'Lan';
     3:PedItensZC_Tipo.AsString := 'Beb';
-    4:PedItensZC_Tipo.AsString := 'Div';
+    4:PedItensZC_Tipo.AsString := 'Mon';
+    6:PedItensZC_Tipo.AsString := 'Div';
     else PedItensZC_Tipo.AsString := '';
   end;
   case PedItensTpProd.AsInteger of
     1:PedItensZC_Tp.AsString := 'L';
     3:PedItensZC_Tp.AsString := 'B';
-    4:PedItensZC_Tp.AsString := 'D';
+    4:PedItensZC_Tp.AsString := 'M';
+    6:PedItensZC_Tp.AsString := 'D';
     else PedItensZC_Tp.AsString := '';
   end;
   PedItensZC_PrensCort.AsString := '';
@@ -550,6 +592,9 @@ begin
     PedItensZC_Descricao.AsString := stringReplace(ItensDescricao.AsString,'#',' ',[rfIgnoreCase, rfReplaceAll])
   else
     PedItensZC_Descricao.AsString := 'Indefinido (' + PedItensCodProd.AsString + ')';
+  if PedItensTpProd.AsInteger = 4 then
+    PedItensZC_Descricao.AsString := '* * * ' + PedItensZC_Descricao.AsString + ' * * *';
+
   PedItensZC_CodDescr.AsString := '[ ' + PedItensCodProd.AsString + ' ] ' + PedItensZC_Descricao.AsString;
 
   if PedItensEtqImpressa.AsInteger <> 0 then
@@ -557,15 +602,16 @@ begin
   else
     PedItensZC_Impresso.AsString := '';
 
-  if PedItensTpProd.AsInteger = 1
+  nrAux := Copy(FormatFloat('000000',PedItensNumero.AsInteger),4,3);
+  if (PedItensTpProd.AsInteger = 1) or (PedItensTpProd.AsInteger = 4)
   then begin
-    PedItensZC_PedLcto.AsString := PedItensNumero.AsString + ' / ' + PedItensNrLcto.AsString +
+    PedItensZC_PedLcto.AsString := nrAux + ' / ' + PedItensNrLcto.AsString +
                                    ' de ' + uDM.PedidosLctLanches.AsString;
     PedItensZC_PlacaLcto.AsString := PedidosPlaca.AsString +  ' / ' + PedItensNrLcto.AsString +
                                    ' de ' + uDM.PedidosLctLanches.AsString;
   end
   else begin
-    PedItensZC_PedLcto.AsString := PedItensNumero.AsString;
+    PedItensZC_PedLcto.AsString := nrAux;
     PedItensZC_PlacaLcto.AsString := PedidosPlaca.AsString
   end;
   if StrToIntDef(PedidosPlaca.AsString,0) <> 0 then

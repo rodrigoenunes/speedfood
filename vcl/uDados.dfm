@@ -1,5 +1,6 @@
 object uDM: TuDM
   OldCreateOrder = False
+  OnCreate = DataModuleCreate
   Height = 419
   Width = 648
   object FDC: TFDConnection
@@ -7,20 +8,20 @@ object uDM: TuDM
       'Database=speedfood'
       'User_Name=speedfood'
       'Password=speed@123'
+      'Server=127.0.0.1'
       'DriverID=MySQL')
-    Connected = True
     LoginPrompt = False
-    Left = 40
-    Top = 16
+    Left = 28
+    Top = 8
   end
   object FDGUIxWaitCursor1: TFDGUIxWaitCursor
     Provider = 'FMX'
-    Left = 120
-    Top = 16
+    Left = 108
+    Top = 12
   end
   object FDPhysMySQLDriverLink1: TFDPhysMySQLDriverLink
-    Left = 244
-    Top = 20
+    Left = 236
+    Top = 12
   end
   object Itens: TFDTable
     OnCalcFields = ItensCalcFields
@@ -435,6 +436,7 @@ object uDM: TuDM
   end
   object Pedidos: TFDTable
     OnCalcFields = PedidosCalcFields
+    OnFilterRecord = PedidosFilterRecord
     IndexFieldNames = 'Numero'
     Connection = FDC
     TableName = 'speedfood.com_pedido'
@@ -620,6 +622,12 @@ object uDM: TuDM
       FieldKind = fkCalculated
       FieldName = 'ZC_Senha'
       Size = 15
+      Calculated = True
+    end
+    object PedidosZC_NroLst: TStringField
+      FieldKind = fkCalculated
+      FieldName = 'ZC_NroLst'
+      Size = 3
       Calculated = True
     end
   end

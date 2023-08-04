@@ -69,13 +69,13 @@ type
 var
   FuPrincipalEtq: TFuPrincipalEtq;
   wPathWork: String;
-  xTurno: String;
   imgEtiq: TImage;
   wPrinter,wPorta,wDriver: String;
   nIndex: Integer;
   lDialog: Boolean;
   filAnt: Boolean;
   filTxtAnt: String;
+  wrkTurno: Integer;
 
 const
   txtNoEtiq: String = 'Não há pedidos à imprimir';
@@ -114,12 +114,13 @@ Procedure DefineSelecao;
 begin
   with FuPrincipalEtq
   do begin
-    case cbSelPedidos.ItemIndex of
-      0:uDM.Pedidos.Filter := 'Turno=' + xTurno + ' and EtqImpressas = 0';
-      1:uDM.Pedidos.Filter := 'Turno=' + xTurno + ' and EtqImpressas <> 0';
-      2:uDM.Pedidos.Filter := 'Turno=' + xTurno;
-    end;
+    uDM.turnoIni := wrkTurno;
+    uDM.turnoFin := wrkTurno;
+    uDM.etqImpress := cbSelPedidos.ItemIndex;
+
+    uDM.Pedidos.Filtered := True;
     uDM.Pedidos.Refresh;
+
     if uDM.Pedidos.RecordCount = 0 then
        LabNrPeds.Caption := 'Sem pedidos'
     else
@@ -144,7 +145,8 @@ begin
   FSFEuPrintFortes := TFSFEuPrintFortes.Create(nil);
   DefinePrinterEtiqueta;
   //
-  if uDM.PedItensTpProd.AsInteger = 1 then
+  if (uDM.PedItensTpProd.AsInteger = 1) or
+     (uDM.PedItensTpProd.AsInteger = 4) then
     FSFEuPrintFortes.RLEtiqLanche.Preview       // Visualiza etiqueta de lanche
   else begin
     filAnt := uDM.PedItens.Filtered;
@@ -186,7 +188,7 @@ begin
   filAnt := uDM.PedItens.Filtered;
   filTxtAnt := uDM.PedItens.Filter;
   uDM.PedItens.Filtered := True;
-  uDM.PedItens.Filter := 'TpProd=1';
+  uDM.PedItens.Filter := 'TpProd=1 or TpProd=4';
   uDM.PedItens.Refresh;
   uDM.PedItens.First;
   SetRecordRangeLanche(1);      // rrAllRecords;
@@ -243,7 +245,8 @@ begin
   nKey2 := uDM.PedItensNrLcto.AsInteger;
   FSFEuPrintFortes := TFSFEuPrintFortes.Create(nil);
   DefinePrinterEtiqueta;
-  if uDM.PedItensTpProd.AsInteger = 1 then
+  if (uDM.PedItensTpProd.AsInteger = 1) or
+     (uDM.PedItensTpProd.AsInteger = 4) then
   begin
     if ObtemParametro('EtiquetaPreview') = 'S' then
       FSFEuPrintFortes.RLEtiqLanche.Preview
@@ -318,24 +321,24 @@ procedure TFuPrincipalEtq.btProsseguirClick(Sender: TObject);
 var nPos: Integer;
 begin
   nPos := Pos(' ',cbTurnos.Text);
-  xTurno := Copy(cbTurnos.Text,1,nPos-1);
-  if StrToIntDef(xTurno,-1) < 0 then
+  wrkTurno := StrToIntDef(Copy(cbTurnos.Text,1,nPos-1), -1);
+  if wrkTurno < 0 then
   begin
     MessageDlg('Erro na informação do turno, reinforme',mtError,[mbOk],0);
     cbTurnos.SetFocus;
     Exit;
   end;
   //
-  cbSelPedidos.ItemIndex := 0;    // À imprimir
+  cbSelPedidos.ItemIndex := 0;
+  cbSelPedidosClick(nil);
+{
   uDM.Pedidos.Filtered := True;
-  uDM.Pedidos.Filter := 'Turno=' + xTurno + ' and EtqImpressas = 0';
   uDM.Pedidos.Refresh;
   if uDM.Pedidos.RecordCount = 0 then
     LabNrPeds.Caption := 'Sem pedidos'
   else
     LabNrPeds.Caption := IntToStr(uDM.Pedidos.RecordCount) + ' pedidos';
-  //
-  DefineSelecao;
+}
   PanPedidos.Visible := True;
   PanEtiquetas.Visible := True;
   FormResize(nil);
@@ -399,7 +402,7 @@ begin
   uDM.Itens.Active      := False;
   uDM.SisPessoa.Active  := False;
   uDM.Parametros.Active := False;
-  Application.Terminate;
+  //Application.Terminate;
 
 end;
 

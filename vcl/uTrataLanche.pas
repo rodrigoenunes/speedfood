@@ -171,7 +171,6 @@ begin
       btExcLanche.Caption := '&' + btExcLanche.Caption;
       btCanLanche.Caption := '&' + btCanLanche.Caption;
     end;
-
     ShowModal;
   end;
 

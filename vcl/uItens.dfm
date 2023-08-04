@@ -540,7 +540,6 @@ object FuItens: TFuItens
           Expanded = False
           FieldName = 'ZC_Cor'
           Title.Caption = 'Cor'
-          Width = 64
           Visible = True
         end
         item

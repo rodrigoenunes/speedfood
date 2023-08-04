@@ -67,7 +67,7 @@ var
   FSFEuPrintFortes: TFSFEuPrintFortes;
   idPrinter,portaPrt,driverPrt: String;
   indexPrt: Integer;
-  lPreview,lDialog,lEtqFixa: Boolean;
+  lPreview,lDialog: Boolean;
   etqAlt,etqLrg,etqTop,etqEsq,etqDir,etqBot: Integer;
 
 implementation
@@ -109,10 +109,6 @@ begin
       lPreview := True;
       lDialog := True;
     end;
-    if AnsiUpperCase(ObtemParametro('EtiquetaFixa')) = 'S'  then
-      lEtqFixa := True
-    else
-      lEtqFixa := False;
     //
     FFRCtle.RLPreviewSetup1.CustomActionText := '';
     RLPrinters.RLPrinter.PrinterName := idPrinter;
@@ -138,8 +134,9 @@ end;
 
 procedure TFSFEuPrintFortes.RLDetLancheBeforePrint(Sender: TObject; var PrintIt: Boolean);
 var i: Integer;
-    AllExtras,xExtra: String;
+    AllExtras,xExtra,xLabMais: String;
     wTamFonte,wLargura: Integer;
+    wTp: Integer;
     //linMais,linSem,linMenos: Integer;
 begin
   if uDM.PedidosNomeCliente.AsString <> '' then
@@ -153,9 +150,23 @@ begin
   RLMais.Lines.Clear;
   RLSem.Lines.Clear;
   RLMenos.Lines.Clear;
+  //
+  if uDM.PedItensTpProd.AsInteger = 1
+  then begin
+    wTp := 2;     // Extras de lanches normais
+    RLLabMais.Caption := 'MAIS';
+    RLLabSem.Caption := 'SEM';
+    RLLabMenos.Caption := 'MENOS';
+  end
+  else begin
+    wTp := 5;
+    RLLabMais.Caption := 'COM ***';
+    RLLabSem.Caption := '';
+    RLLabMenos.Caption := '';
+  end;
   for i := 1 to 24 do
     if AllExtras[i] <> '.' then
-      if uDM.Itens.FindKey([2,i])
+      if uDM.Itens.FindKey([wTp,i])
       then begin
         xExtra := Trim(uDM.ItensDescricao.AsString);
         if AllExtras[i] = '0' then RLSem.Lines.Add(xExtra)
@@ -165,37 +176,23 @@ begin
   RLPanMais.Width := wLargura;
   RLPanMais.Borders.DrawRight := True;
   RLPanMais.Visible := True;
-//  RLMais.Visible := True;
-//  RLMais.Font.Size := wTamFonte;
-//  if RLMais.Lines.Count > 7 then
-//      RLMais.Font.Size := 9;
+  RLMais.Font.Size := wTamFonte;
+  if RLMais.Lines.Count > 7 then
+     RLMais.Font.Size := 9;
 
   RLPanSem.Width := wLargura;
   RLPanSem.Borders.DrawRight := True;
   RLPanSem.Visible := True;
-//  RLSem.Visible := True;
-//  RLSem.Font.Size := wTamFonte;
-//  if RLSem.Lines.Count > 7 then
-//      RLSem.Font.Size := 9;
+  RLSem.Font.Size := wTamFonte;
+  if RLSem.Lines.Count > 7 then
+     RLSem.Font.Size := 9;
 
   RLPanMenos.Width := wLargura;
   RLPanMenos.Visible := True;
-//  RLMenos.Visible := True;
-//  RLMenos.Font.Size := wTamFonte;
-//  if RLMenos.Lines.Count > 7 then
-//      RLMenos.Font.Size := 9;
+  RLMenos.Font.Size := wTamFonte;
+  if RLMenos.Lines.Count > 7 then
+     RLMenos.Font.Size := 9;
 
-{
-  if not lEtqFixa then
-  begin
-    if RLDbMais.Lines.Count = 0 then
-        RLDBMais.Visible := False;
-    if RLSem.Lines.Count = 0 then
-        RLSem.Visible := False;
-    if RLMenos.Lines.Count = 0 then
-        RLMenos.Visible := False;
-  end;
-}
   RLPanMaisSemMenos.Height := 152;
 
 end;

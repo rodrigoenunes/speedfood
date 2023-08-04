@@ -83,7 +83,6 @@ uses uDados, uGenericas, uImpressoes;
 
 Procedure Administrativo;
 var xTurno: String;
-    strFilter: String;
     lFilter: Boolean;
 begin
   if not CriaResumoVendas then
@@ -111,14 +110,11 @@ begin
     cbTurnoIni.ItemIndex := 0;
     cbTurnoFin.ItemIndex := 0;
     lFilter := uDM.Pedidos.Filtered;
-    strFilter := uDM.Pedidos.Filter;
 
     FuAdministrativo.ShowModal;
 
     uDM.Pedidos.Filtered := lFilter;
-    uDM.Pedidos.Filter := strFilter;
     uDM.Pedidos.Refresh;
-
 
   end;
   FuAdministrativo.Free;
@@ -177,7 +173,7 @@ end;
 
 procedure TFuAdministrativo.btNovaClick(Sender: TObject);
 begin
-  gbTurnos.Height := 93;
+  gbTurnos.Height := 101;
   gbTurnos.Enabled := True;
   LabProcess.Visible := False;
   PBar1.Visible := False;
@@ -197,11 +193,13 @@ begin
   begin
     MessageDlg('Erro na informação de Turnos, reinforme',mtError,[mbOk],0);
     cbTurnoIni.SetFocus;
+    Exit;
   end;
   if tIni > tFim then
   begin
     MessageDlg('Turno inicial não pode ser posterior ao turno final, reinforme',mtError,[mbOk],0);
     cbTurnoIni.SetFocus;
+    Exit;
   end;
   //
   uDM.ResVendas.Active := True;
@@ -214,10 +212,12 @@ begin
   ttQtd := 0;
   ttVlr := 0;
 
-  gbTurnos.Height := 145;
+  gbTurnos.Height := 151;
   gbTurnos.Enabled := False;
 
-  uDM.Pedidos.Filtered := False;
+  uDM.turnoIni := tIni;
+  uDM.TurnoFin := tFim;
+  uDM.Pedidos.Filtered := True;
   uDM.Pedidos.Refresh;
   uDM.Pedidos.First;
   PBar1.Min := 0;
@@ -248,7 +248,7 @@ begin
   //
   LabProcess.Visible := False;
   PBar1.Visible := False;
-  gbTurnos.Height := 93;
+  gbTurnos.Height := 101;
   //
   edReais.Text := FloatToStrF(vlrMeioPgto[0],ffNumber,15,2);
   edCDeb.Text := FloatToStrF(vlrMeioPgto[1],ffNumber,15,2);

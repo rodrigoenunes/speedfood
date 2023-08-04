@@ -6,20 +6,33 @@ Type
   TRetorno = Record
     Resultado: Boolean;
     Mensagem: String;
+    ArqXML: String;
+    NroSerie: Integer;
+    NroNF: Integer;
+    ConteudoXML: String;
   End;
 
-  Function EmitirNFCeDePV(pSis_Pessoa_id, pCom_Pedido_Numero: Integer): TRetorno;
+  TICMSTot = Record
+    vProd: Currency;
+    vNF: Currency;
+  End;
+
+  Function EmitirNFCeDePV(pCom_Pedido_Numero: Integer): TRetorno;
   Function getValorParametro(pNome: String): String;
 
 implementation
 
-Uses uDados, FireDAC.Comp.Client, System.SysUtils, Xml.XMLDoc, Xml.XMLIntf,
-     Data.DB, Vcl.Dialogs;
+Uses Winapi.Windows, uDados, FireDAC.Comp.Client, System.SysUtils, Xml.XMLDoc,
+     Xml.XMLIntf, System.Classes, Vcl.Forms,
+     Data.DB, Vcl.Dialogs; // , SysUtils;
 
 Var
   fdqTemp1: TFDQuery;
-  vACNFE_HOME, vACNFE_EXE, vACNFE_TMP, vACNFE_PDF, vACNFE_XML, vACNFE_OUT: String;
+  vACNFE_HOME, vACNFE_EXE, vACNFE_TMP, vACNFE_PDF, vACNFE_XML,
+    vACNFE_OUT: String;
+  vEMISSOR_SIS_PESSOA_ID: Integer;
   vxmld: TXMLDocument;
+  ICMSTot: TICMSTot;
 
 Procedure setfdqTemp1;
 Begin
@@ -31,6 +44,11 @@ Begin
 
 End;
 
+Procedure Zerar_ICMSTot;
+Begin
+  ICMSTot.vProd:= 0;
+  ICMSTot.vNF  := 0;
+End;
 
 Procedure CriarTabela_sis_parametros_se_necessario;
 Var
@@ -79,7 +97,7 @@ Begin
 
 End;
 
-Function TestarSeValorParametroEstaVazio(pNomeParametro: String; Var pValorParametro: String): TRetorno;
+Function TestarSeValorParametroEstaVazio(pNomeParametro: String; Var pValorParametro: String): TRetorno; Overload;
 Begin
 
   pValorParametro:= getValorParametro(pNomeParametro);
@@ -91,6 +109,31 @@ Begin
     Exit;
   End;
 
+End;
+
+Function TestarSeValorParametroEstaVazio(pNomeParametro: String; Var pValorParametro: Integer): TRetorno; Overload;
+Var
+  iValorParametro: Integer;
+  sValorParametro: String;
+Begin
+
+  sValorParametro:= getValorParametro(pNomeParametro);
+  Result.Resultado:= Not sValorParametro.Trim.IsEmpty;
+
+  if Not Result.Resultado then
+  Begin
+    Result.Mensagem:= 'Parâmetro ' + pNomeParametro + ' encontra-se não informado ou vazio!';
+    Exit;
+  End;
+
+  Try
+    iValorParametro:= sValorParametro.ToInteger;
+  Except
+    Result.Mensagem:= 'Parâmetro ' + pNomeParametro + ' possui um valor que não é um nro inteiro!';
+    Exit;
+  End;
+
+  pValorParametro:= iValorParametro;
 End;
 
 Function TestarSeValorParametroEhDiretorioExistente(pNomeParametro: String; pValorParametro: String): TRetorno;
@@ -141,9 +184,10 @@ Begin
 
 End;
 
-
-
-Function ValidarParametrosNFCe: TRetorno;
+Function ValidarParametrosNFCe(pCom_Pedido_Numero: Integer): TRetorno;
+Var
+  sSQL: String;
+  vResultSet: TDataSet;
 Begin
   Result.Resultado:= False;
 
@@ -178,6 +222,14 @@ Begin
     Exit;
   //
 
+  Result:= TestarSeValorParametroEstaVazio('emissor_sis_pessoa_id', vEMISSOR_SIS_PESSOA_ID);
+  if Not Result.Resultado then
+    Exit;
+  //
+
+  // vSIS_PESSOA_ID   emissor_sis_pessoa_id
+
+
   {
   Result:= TSVPE_VazioOuDir('ACNFE_OUT', vACNFE_OUT);
   if Not Result.Resultado then
@@ -185,13 +237,33 @@ Begin
   //
   }
 
+  sSQL:=
+    'select 1 ' +
+    'from com_pedido ' +
+    'where numero = ' + pCom_Pedido_Numero.ToString +
+    '  and NrNFCe is null';
+  udm.FDC.ExecSQL(sSQL, vResultSet);
+  Result.Resultado:= vResultSet.Fields[0].AsInteger = 1;
+  Try
+    if Not Result.Resultado then
+    Begin
+      Result.Mensagem:= 'Pedido já faturado!';
+      Exit;
+    End;
+  Finally
+    vResultSet.Close;
+    vResultSet.Free;
+  End;
+
 End;
 
 Function gerarNodosFilhosDeSelect(
   pNodoAvo: IXMLNode;
   pNomePai, pSQL: String;
   pImprimirConteudoTagSeVazia: Boolean = True;
-  pds: TDataSet = Nil
+  pds: TDataSet = Nil;
+  pIniciarDe: Integer = 0;
+  pIniciarAte: Integer = 999
   ): TRetorno;
 Var
   // vds: TDataSet;
@@ -199,7 +271,9 @@ Var
   vf: TField;
   vNodoPai: IXMLNode;
   vCriouTabela: Boolean;
+  vNodeValue: String;
 Begin
+  Result.Resultado:= False;
 
   vCriouTabela:= pds = Nil;
 
@@ -210,10 +284,39 @@ Begin
   Begin
     vNodoPai:= pNodoAvo.AddChild(pNomePai);
     for vf in pds.Fields Do
-      if
-     Not(vf.AsString.Trim.IsEmpty) or
-        (vf.AsString.Trim.IsEmpty and pImprimirConteudoTagSeVazia) then
-        vNodoPai.AddChild(vf.FieldName).NodeValue:= vf.AsString;
+      If
+       (
+       Not(vf.AsString.Trim.IsEmpty) or
+          (vf.AsString.Trim.IsEmpty and pImprimirConteudoTagSeVazia)
+       )
+       and
+       ( (vf.Index >= pIniciarDe) and (vf.Index <= pIniciarAte) )
+        then
+      Begin
+
+        if pNomePai = 'ide' then
+        Begin
+          if vf.FieldName = 'serie' then
+            Result.NroSerie:= vf.AsInteger
+          Else if vf.FieldName = 'nNF' then
+            Result.NroNF:= vf.AsInteger;
+        End;
+
+        vNodeValue:= vf.AsString;
+
+        {
+        if (vf.FieldName = 'vUnCom') then
+        Begin
+          if vf.Index < pIniciarDe then
+            Continue;
+        End;
+        }
+
+        if vf.DataType in [ftFloat, ftCurrency, ftBCD, ftExtended, ftFMTBcd] then
+          vNodeValue:= vNodeValue.Replace(',', '.');
+        vNodoPai.AddChild(vf.FieldName).NodeValue:= vNodeValue;
+
+      End;
   End;
 
   if vCriouTabela then
@@ -223,43 +326,42 @@ Begin
     pds:= Nil;
   End;
 
+  Result.Resultado:= True;
+
 End;
 
-Function geraride(pSis_Pessoa_id, pCom_Pedido_Numero: Integer; pinfNFe: IXMLNode): TRetorno;
+Function gerar_tag(pCom_Pedido_Numero: Integer; pinfNFe: IXMLNode; nometag: String): TRetorno;
 Var
   sSQL: String;
 Begin
+  Result.Resultado:= False;
 
-  sSQL:=
-    'select ' + #13#10 +
-    '  substring(ibgecidade, 1, 2) "cUF", ' + #13#10 +
-    '  floor(rand()*100000000) "cNF", ' + #13#10 +
-    '  (select valor from sis_parametros where nome = ''natOp'') "natOp", ' + #13#10 +
-    '  65 "mod", ' + #13#10 +
-    '  (select valor from sis_parametros where nome = ''serie'') "serie",  ' + #13#10 +
-    '  ( ' + #13#10 +
-    '    select ' + #13#10 +
-    '      ifnull( ' + #13#10 +
-    '        max(NrNFCe), ' + #13#10 +
-    '        (select valor from sis_parametros where nome = ''ultnNF'') ' + #13#10 +
-    '    ) + 1 ' + #13#10 +
-    '    from com_pedido ' + #13#10 +
-    '    where NrNFCe is not null ' + #13#10 +
-    '  ) "nNF", ' + #13#10 +
-    '  CONCAT(CURDATE(), ''T'', CURTIME(), ifnull((select valor from sis_parametros where nome = ''TZD''), '''')) "dhEmi", ' + #13#10 +
-    '  (select valor from sis_parametros where nome = ''tpNF'') "tpNF", ' + #13#10 +
-    '  (select valor from sis_parametros where nome = ''idDest'') "idDest",' + #13#10 +
-    '  ibgecidade "cMunFG", ' + #13#10 +
-    '  (select valor from sis_parametros where nome = ''tpImp'') "tpImp", ' + #13#10 +
-    '  (select valor from sis_parametros where nome = ''tpEmis'') "tpEmis", ' + #13#10 +
-    '  (select valor from sis_parametros where nome = ''tpAmb'') "tpAmb", ' + #13#10 +
-    '  (select valor from sis_parametros where nome = ''finNFe'') "finNFe", ' + #13#10 +
-    '  (select valor from sis_parametros where nome = ''indFinal'') "indFinal", ' + #13#10 +
-    '  (select valor from sis_parametros where nome = ''indPres'') "indPres", ' + #13#10 +
-    '  (select valor from sis_parametros where nome = ''indIntermed'') "indIntermed", ' + #13#10 +
-    '  (select valor from sis_parametros where nome = ''procEmi'') "procEmi" ' + #13#10 +
-    'from sis_pessoa ' + #13#10 +
-    'where id = (select valor from sis_parametros where nome = ''emissor_sis_pessoa_id'')';
+  sSQL:= getValorParametro('SQL_' + nometag).Trim;
+  if sSQL.IsEmpty then
+  Begin
+    Result.Mensagem:=  'Parametro SQL_' + nometag + ' indefinido!';
+    Exit;
+  End;
+
+  sSQL:= sSQL.Replace(':numero', pCom_Pedido_Numero.ToString );
+
+  Result:= gerarNodosFilhosDeSelect(pinfNFe, nometag, sSQL);
+
+End;
+
+
+Function geraride(pCom_Pedido_Numero: Integer; pinfNFe: IXMLNode): TRetorno;
+Var
+  sSQL: String;
+Begin
+  Result.Resultado:= False;
+
+  sSQL:= getValorParametro('SQL_ide').Trim;
+  if sSQL.IsEmpty then
+  Begin
+    Result.Mensagem:=  'Parametro SQL_ide indefinido!';
+    Exit;
+  End;
 
   Result:= gerarNodosFilhosDeSelect(pinfNFe, 'ide', sSQL);
 
@@ -270,22 +372,16 @@ Function gerarenderEmit(pemit: IXMLNode): TRetorno;
 Var
   sSQL: String;
 Begin
+  Result.Resultado:= False;
 
-  sSQL:=
-    'select ' +
-    '  logradouro "xLgr", ' +
-    '  nro, ' +
-    '  complemento "xCompl", ' +
-    '  bairro "xBairro", ' +
-    '  ibgecidade "cMun", ' +
-    '  cidade "xMun", ' +
-    '  uf "UF", ' +
-    '  cep "CEP", ' +
-    '  telefone "fone" ' +
-    'from sis_pessoa ' +
-    'where id = (select valor from sis_parametros where nome = ''emissor_sis_pessoa_id'') ';
+  sSQL:= getValorParametro('SQL_enderEmit').Trim;
+  if sSQL.IsEmpty then
+  Begin
+    Result.Mensagem:=  'Parametro SQL_enderEmit indefinido!';
+    Exit;
+  End;
 
-  Result:= gerarNodosFilhosDeSelect(pemit, 'enderemit', sSQL);
+  Result:= gerarNodosFilhosDeSelect(pemit, 'enderEmit', sSQL, False);
 
 End;
 
@@ -297,19 +393,18 @@ Var
   vds: TDataSet;
   vi: Integer;
 Begin
+  Result.Resultado:= False;
+
+  sSQL:= getValorParametro('SQL_emit').Trim;
+  if sSQL.IsEmpty then
+  Begin
+    Result.Mensagem:=  'Parametro SQL_emit indefinido!';
+    Exit;
+  End;
 
   nemit:= pinfNFe.AddChild('emit');
 
-  sSQL:=
-    'select ' +
-    '  cnpj "CNPJ", ' +
-    '  nome "xNome", ' +
-    '  fantasia "xFant", ' +
-    '  IE "IE", ' +
-    '  (select valor from sis_parametros where nome = ''CRT'') "CRT" ' +
-    'from sis_pessoa ' +
-    'where id = (select valor from sis_parametros where nome = ''emissor_sis_pessoa_id'') ';
-
+  // InputQuery('emit', 'SQL', sSQL);
   vi:= uDados.uDM.FDC.ExecSQL(sSQL, vds);
 
   nemit.AddChild('CNPJ').NodeValue := vds.FieldByName('CNPJ').AsString;
@@ -320,39 +415,114 @@ Begin
   if Not Result.Resultado then
     Exit;
 
-End;
+  nemit.AddChild('IE').NodeValue := vds.FieldByName('IE').AsString;
+  nemit.AddChild('CRT').NodeValue:= vds.FieldByName('CRT').AsString;
 
+End;
 
 Function gerardest(pCom_Pedido_Numero: Integer; pninfNFe: IXMLNode): TRetorno;
 Var
   sSQL: String;
 Begin
+  Result.Resultado:= False;
 
+  sSQL:= getValorParametro('SQL_dest').Trim;
+  if sSQL.IsEmpty then
+  Begin
+    Result.Mensagem:=  'Parametro SQL_dest indefinido!';
+    Exit;
+  End;
+
+  {
   sSQL:=
-    'select ' +
-    '  ( ' +
-    '    CASE WHEN CHAR_LENGTH(IFNULL(CPF_CNPJ, '''')) <= 11 THEN ' +
-    '      IFNULL(CPF_CNPJ, '''') ' +
-    '  ELSE ' +
-    '      '''' ' +
-    '    END ' +
-    '  ) "CPF", ' +
-    '  ( ' +
-    '    CASE WHEN CHAR_LENGTH(IFNULL(CPF_CNPJ, '''')) > 11 THEN ' +
-    '      IFNULL(CPF_CNPJ, '''') ' +
-    '  ELSE ' +
-    '      '''' ' +
-    '    END ' +
-    '  ) "CNPJ" ' +
-    'from com_pedido ' +
-    'where CPF_CNPJ is not null ' +
-    '  and numero = ' + pCom_Pedido_Numero.ToString;
+    'select ' + #13#10 +
+    '  ( ' + #13#10 +
+    '    CASE WHEN CHAR_LENGTH(IFNULL(CPF_CNPJ, '''')) <= 11 THEN ' + #13#10 +
+    '      IFNULL(CPF_CNPJ, '''') ' + #13#10 +
+    '  ELSE ' + #13#10 +
+    '      '''' ' + #13#10 +
+    '    END ' + #13#10 +
+    '  ) "CPF", ' + #13#10 +
+    '  ( ' + #13#10 +
+    '    CASE WHEN CHAR_LENGTH(IFNULL(CPF_CNPJ, '''')) > 11 THEN ' + #13#10 +
+    '      IFNULL(CPF_CNPJ, '''') ' + #13#10 +
+    '  ELSE ' + #13#10 +
+    '      '''' ' + #13#10 +
+    '    END ' + #13#10 +
+    '  ) "CNPJ" ' + #13#10 +
+    'from com_pedido ' + #13#10 +
+    'where CPF_CNPJ is not null ' + #13#10 +
+    '  and numero = :numero';
 
+  InputQuery('', '', sSQL);
+  }
+
+  sSQL:= sSQL.Replace(':numero', pCom_Pedido_Numero.ToString);
 
   Result:= gerarNodosFilhosDeSelect(pninfNFe, 'dest', sSQL, False);
 
 End;
 
+
+Function gerardetImposto(pdet: IXMLNode; pCSOSN: Integer; Var pds: TDataSet): TRetorno;
+Var
+  vimposto, vICMS, vCSOSN: IXMLNode;
+Begin
+  vimposto:= pdet.AddChild('imposto');
+  vICMS   := vimposto.AddChild('ICMS');
+
+  // ICMS
+  case pCSOSN of
+    102:
+    Begin
+      vCSOSN:= vICMS.AddChild('ICMSSN102');
+      vCSOSN.AddChild('orig').NodeValue := 0;
+      vCSOSN.AddChild('CSOSN').NodeValue:= pCSOSN;
+    End;
+
+    202:
+    Begin
+      vCSOSN:= vICMS.AddChild('ICMSSN202');
+      vCSOSN.AddChild('orig').NodeValue   := 0;
+      vCSOSN.AddChild('CSOSN').NodeValue  := pCSOSN;
+      vCSOSN.AddChild('modBCST').NodeValue:= 5; // valor
+      // vCSOSN.AddChild('pMVAST').NodeValue := 0; // valor
+      vCSOSN.AddChild('vBCST').NodeValue  := 0; // 0.7 * valor total do item
+      vCSOSN.AddChild('pICMSST').NodeValue:= pds.FieldByName('AliqICMS').AsFloat;
+      vCSOSN.AddChild('vICMSST').NodeValue:=
+        pds.FieldByName('AliqICMS').AsFloat/100; // * vBCST
+    End;
+
+    500:
+    Begin
+      vCSOSN:= vICMS.AddChild('ICMSSN500');
+      vCSOSN.AddChild('orig').NodeValue   := 0;
+      vCSOSN.AddChild('CSOSN').NodeValue  := pCSOSN;
+      vCSOSN.AddChild('modBCST').NodeValue:= 5; // valor
+      // vCSOSN.AddChild('pMVAST').NodeValue := 0; // valor
+      vCSOSN.AddChild('vBCST').NodeValue  := 0; // 0.7 * valor total do item
+      vCSOSN.AddChild('pICMSST').NodeValue:= pds.FieldByName('AliqICMS').AsFloat;
+      vCSOSN.AddChild('vICMSST').NodeValue:=
+        pds.FieldByName('AliqICMS').AsFloat/100; // * vBCST
+    End;
+
+
+    // IPI 53
+    // PIS e COFINS 49
+
+  end;
+
+
+{
+102 - Trib. Simples Nacional, SEM permissão de crédito
+202 - Trib. SImples Nacional, SEM permissão de crédito, COM cobrança ICMS ST
+300 - Imune
+400 - Não tributado
+500 - ICMS cobrado anteriormente....
+}
+
+
+End;
 
 Function gerardet(pCom_Pedido_Numero: Integer; pninfNFe: IXMLNode): TRetorno;
 Var
@@ -361,34 +531,16 @@ Var
   vi: Integer;
   pdet: IXMLNode;
 Begin
+  Result.Resultado:= False;
 
-  sSQL:=
-    'select ' +
-    '  (@row_number := @row_number + 1) "nItem", ' +
-    '  i.* ' +
-    'from ' +
-    '(' +
-    'select ' +
-    '   CodProd "cProd", ' +
-    '   ''SEM GTIN'' as "cEAN", ' +
-    '   Descricao "xProd", ' +
-    '   NCM "NCM", ' +
-    '   CFOP "CFOP", ' +
-    '   Unidade "uCom", ' +
-    '   Quant "qCom", ' +
-    '   VlrUnitario "vUnCom", ' +
-    '   VlrTotal "vProd", ' +
-    '   ''SEM GTIN'' as "cEANTrib", ' +
-    '   Unidade "uTrib",' +
-    '   Quant "qTrib", ' +
-    '   VlrUnitario "vUnTrib", ' +
-    '   1 as "indTot" ' +
-    'from com_pedidoitem ' +
-    'left join com_itens on com_pedidoitem.CodProd = com_itens.codigo ' +
-    'where numero = ' + pCom_Pedido_Numero.ToString + ' ' +
-    'order by NrLcto ' +
-    ') as i ' +
-    'inner join (SELECT @row_number := 0) rn on 1=1 ';
+  sSQL:= getValorParametro('SQL_det').Trim;
+  if sSQL.IsEmpty then
+  Begin
+    Result.Mensagem:=  'Parametro SQL_det indefinido!';
+    Exit;
+  End;
+
+  sSQL:= sSQL.Replace(':numero', pCom_Pedido_Numero.ToString);
 
   vi:= uDados.uDM.FDC.ExecSQL(sSQL, vds);
 
@@ -399,15 +551,25 @@ Begin
     Exit;
   End;
 
+  Zerar_ICMSTot;
+
   vds.First;
   while Not vds.Eof do
   Begin
     pdet:= pninfNFe.AddChild('det');
     pdet.Attributes['nItem']:= vds.FieldByName('nItem').AsString;
-    Result:= gerarNodosFilhosDeSelect(pdet, 'prod', EmptyStr, True, vds);
-
+    Result:= gerarNodosFilhosDeSelect(pdet, 'prod', EmptyStr, True, vds, 0, 14);
     if Not Result.Resultado then
       Break;
+
+    ICMSTot.vProd:= ICMSTot.vProd + vds.FieldByName('vProd').AsCurrency;
+    ICMSTot.vNF  := ICMSTot.vNF   + vds.FieldByName('vProd').AsCurrency;
+
+    gerardetImposto(
+      pdet,
+      vds.FieldByName('CSOSN').AsInteger,
+      vds
+    );
 
     vds.Next;
   End;
@@ -419,16 +581,124 @@ Begin
 
 End;
 
-Function gerarInfNFe(pSis_Pessoa_id, pCom_Pedido_Numero: Integer; pNFe: IXMLNode): TRetorno;
+Function gerartot(pninfNFe: IXMLNode): TRetorno;
+Var
+  vtotal, vICMSTot: IXMLNode;
+Begin
+  Result.Resultado:= False;
+
+  vtotal:= pninfNFe.AddChild('total');
+
+  vICMSTot:= vtotal.AddChild('ICMSTot');
+
+  vICMSTot.AddChild('vBC').NodeValue         := 0;
+  vICMSTot.AddChild('vICMS').NodeValue       := 0;
+  vICMSTot.AddChild('vICMSDeson').NodeValue  := 0;
+  vICMSTot.AddChild('vFCPUFDest').NodeValue  := 0;
+  vICMSTot.AddChild('vICMSUFDest').NodeValue := 0;
+  vICMSTot.AddChild('vICMSUFRemet').NodeValue:= 0;
+  vICMSTot.AddChild('vFCP').NodeValue        := 0;
+  vICMSTot.AddChild('vBCST').NodeValue       := 0;
+  vICMSTot.AddChild('vST').NodeValue         := 0;
+  vICMSTot.AddChild('vFCPST').NodeValue      := 0;
+  vICMSTot.AddChild('vFCPSTRet').NodeValue   := 0;
+  vICMSTot.AddChild('vProd').NodeValue       := ICMSTot.vProd;
+  vICMSTot.AddChild('vFrete').NodeValue      := 0;
+  vICMSTot.AddChild('vSeg').NodeValue        := 0;
+  vICMSTot.AddChild('vDesc').NodeValue       := 0;
+  vICMSTot.AddChild('vII').NodeValue         := 0;
+  vICMSTot.AddChild('vIPI').NodeValue        := 0;
+  vICMSTot.AddChild('vIPIDevol').NodeValue   := 0;
+  vICMSTot.AddChild('vPIS').NodeValue        := 0;
+  vICMSTot.AddChild('vCOFINS').NodeValue     := 0;
+  vICMSTot.AddChild('vOutro').NodeValue      := 0;
+  vICMSTot.AddChild('vNF').NodeValue         := ICMSTot.vNF;
+
+  Result.Resultado:= True;
+End;
+
+Function gerartransp(pninfNFe: IXMLNode): TRetorno;
+Var
+  vtransp: IXMLNode;
+Begin
+  Result.Resultado:= False;
+
+  vtransp:= pninfNFe.AddChild('transp');
+  vtransp.AddChild('modFrete').NodeValue:= 9;
+
+  Result.Resultado:= True;
+End;
+
+Function gerarpag(pCom_Pedido_Numero: Integer; pninfNFe: IXMLNode): TRetorno;
+Var
+  sSQL: String;
+  vpag: IXMLNode;
+  vds: TDataset;
+Begin
+  Result.Resultado:= False;
+
+  sSQL:= getValorParametro('SQL_pag').Trim;
+  if sSQL.IsEmpty then
+  Begin
+    Result.Mensagem:=  'Parametro SQL_pag indefinido!';
+    Exit;
+  End;
+
+  sSQL:= sSQL.Replace(':numero', pCom_Pedido_Numero.ToString);
+
+  vpag:= pninfNFe.AddChild('pag');
+
+  uDados.uDM.FDC.ExecSQL(sSQL, vds);
+  vds.First;
+
+  while Not vds.Eof do
+  Begin
+    Result:= gerarNodosFilhosDeSelect(vpag, 'detPag', sSQL, False, vds);
+
+    if Not Result.Resultado then
+      Break;
+
+    vds.Next;
+  End;
+
+  If not Result.Resultado Then
+    Result.Mensagem:= 'Não foram encontrados valores de pgtos para o pedido';
+
+End;
+
+Function gerarinfAdic(pninfNFe: IXMLNode): TRetorno;
+Var
+  vinfAdic: IXMLNode;
+  sinfAdFisco: String;
+Begin
+  Result.Resultado:= False;
+
+  sinfAdFisco:= getValorParametro('infAdFisco').Trim;
+
+  if Not sinfAdFisco.IsEmpty then
+  Begin
+    vinfAdic:= pninfNFe.AddChild('infAdic');
+    vinfAdic.AddChild('infAdFisco').NodeValue:= sinfAdFisco;
+  end;
+
+  Result.Resultado:= True;
+End;
+
+Function gerarInfNFe(pCom_Pedido_Numero: Integer; pNFe: IXMLNode): TRetorno;
 Var
   ninfNFe: IXMLNode;
+  vNroSerie, vNroNF: Integer;
 Begin
 
   ninfNFe:= pNFe.AddChild('infNFe');
+  ninfNFe.Attributes['Id']:= '';
 
-  Result:= geraride(pSis_Pessoa_id, pCom_Pedido_Numero, ninfNFe);
-  if Not Result.Resultado then
+  Result:= gerar_tag(pCom_Pedido_Numero, ninfNFe, 'ide');
+  If Not Result.Resultado then
     Exit;
+
+  vNroSerie:= Result.NroSerie;
+  vNroNF   := Result.NroNF;
 
   Result:= geraremit(ninfNFe);
   if Not Result.Resultado then
@@ -442,13 +712,28 @@ Begin
   if Not Result.Resultado then
     Exit;
 
+  Result:= gerartot(ninfNFe);
+  if Not Result.Resultado then
+    Exit;
 
+  Result:= gerartransp(ninfNFe);
+  if Not Result.Resultado then
+    Exit;
 
+  Result:= gerarpag(pCom_Pedido_Numero, ninfNFe);
+  if Not Result.Resultado then
+    Exit;
+
+  Result:= gerarinfAdic(ninfNFe);
+  if Not Result.Resultado then
+    Exit;
+
+  Result.NroSerie:= vNroSerie;
+  Result.NroNF   := vNroNF;
 
 End;
 
-
-Function gerarNFe(pSis_Pessoa_id, pCom_Pedido_Numero: Integer): TRetorno;
+Function gerarNFe(pCom_Pedido_Numero: Integer): TRetorno;
 Var
   nNFe: IXMLNode;
 Begin
@@ -461,37 +746,185 @@ Begin
 
   nNFe:= vxmld.AddChild('NFe');
 
-  Result:= gerarInfNFe(pSis_Pessoa_id, pCom_Pedido_Numero, nNFe);
-
-
+  Result:= gerarInfNFe(pCom_Pedido_Numero, nNFe);
 
 End;
 
 
 
-Function getGerarArqXML(pSis_Pessoa_id, pCom_Pedido_Numero: Integer): TRetorno;
+Function getGerarArqXML(pCom_Pedido_Numero: Integer): TRetorno;
 Begin
-  Result:= gerarNFe(pSis_Pessoa_id, pCom_Pedido_Numero);
+  Result:= gerarNFe(pCom_Pedido_Numero);
 
   if Not Result.Resultado then
     Exit;
 
-  vxmld.XML.SaveToFile( IncludeTrailingPathDelimiter(vACNFE_TMP) + pCom_Pedido_Numero.ToString + '.xml'  );
+  Result.ArqXML:=
+    IncludeTrailingPathDelimiter(vACNFE_TMP) +
+    pCom_Pedido_Numero.ToString + '.xml';
+
+  Result.ConteudoXML:= vxmld.XML.Text;
+
+  vxmld.XML.SaveToFile(Result.ArqXML);
+
   vxmld.Active:= False;
 
+End;
+
+procedure ChamarExecutavel(ProgramName : String; Estado: Integer = SW_HIDE);
+var
+  StartInfo  : TStartupInfo;
+  ProcInfo   : TProcessInformation;
+  CreateOK   : Boolean;
+  // S: String;
+begin
+  // S:= GetCurrentDir; InputQuery('Info', 'GetCurrentDir', S);
+  // S:= ProgramName; InputQuery('Info', 'ProgramName', S);
+  { fill with known state }
+  FillChar(StartInfo, SizeOf(TStartupInfo),        #0);
+  FillChar(ProcInfo,  SizeOf(TProcessInformation), #0);
+  StartInfo.cb          := SizeOf(TStartupInfo);
+  StartInfo.dwFlags     := STARTF_USESHOWWINDOW;
+  StartInfo.wShowWindow := Estado; // SW_MINIMIZE; // SW_HIDE;
+  CreateOK := CreateProcess(nil,
+                            PWideChar(WideString(ProgramName)),
+                            // PChar(ProgramName),
+                            nil,
+                            nil,
+                            False,
+                            0, // CREATE_NEW_PROCESS_GROUP+NORMAL_PRIORITY_CLASS,
+                            nil,
+                            nil,
+                            StartInfo,
+                            ProcInfo);
+  { check to see if successful }
+  // if CreateOK then
+    //may or may not be needed. Usually wait for child processes
+    // WaitForSingleObject(ProcInfo.hProcess, INFINITE); // 10000); //
+end;
+
+Function EmitirNFCeDeArqXML(ArqXML: String): TRetorno;
+Const
+  T: Integer = 300;
+Var
+  I: Integer;
+  ExecComando, sArqSaida: String;
+  sl: TStringList;
+Begin
+  Result.Resultado:= False;
+
+  sArqSaida:= IncludeTrailingPathDelimiter(GetEnvironmentVariable('TEMP'));
+  if Not DirectoryExists(sArqSaida) then
+    ForceDirectories(sArqSaida);
+
+  sArqSaida:= sArqSaida + ChangeFileExt( ExtractFileName(ArqXML), '.txt');
+
+  ExecComando:=
+    '"' + vACNFE_EXE + '"' +
+    ' /emitirnf ' +
+    '"' + ArqXML + '" -as ' +
+    '"' + sArqSaida +  '"';
+
+  // InputQuery('', '',  ExecComando);
+
+  DeleteFile(sArqSaida);
+
+  ChamarExecutavel( ExecComando );
+
+  I:= 0;
+  while Not FileExists(sArqSaida) do
+  Begin
+    Application.ProcessMessages;
+    Sleep(100);
+    Inc(I);
+    if I > T then
+      Break;
+  End;
+
+  if Not FileExists(sArqSaida) then
+  Begin
+    Result.Mensagem:= 'Arquivo de saída não encontrado: ' + sArqSaida;
+    Exit;
+  End;
+
+  sl:= TStringList.Create;
+  sl.LoadFromFile(sArqSaida);
+  // ShowMessage(ExecComando);
+  Result.Mensagem:= sl.Text;
+  Result.Resultado:= Copy(Result.Mensagem, 84, 3) = '100';
 
 End;
 
-Function EmitirNFCeDePV(pSis_Pessoa_id, pCom_Pedido_Numero: Integer): TRetorno;
+Function AtualizarSituacaoPV(pCom_Pedido_Numero: Integer; Retorno: TRetorno): TRetorno;
+Var
+  vAtualizou: Boolean;
+  sSQL: String;
 Begin
-  Result:= ValidarParametrosNFCe;
+  Result:= Retorno;
+  vAtualizou:= False;
+
+  if uDM.Pedidos.Active then
+  Begin
+    if uDM.Pedidos.Locate('Numero', pCom_Pedido_Numero, []) then
+    Begin
+      uDM.Pedidos.Edit;
+      uDM.Pedidos['SrNFCe']:= Retorno.NroSerie;
+      uDM.Pedidos['NrNFCe']:= Retorno.NroNF;
+
+      uDM.Pedidos['ArqXML']:= Retorno.ArqXML;
+
+      uDM.Pedidos.Post;
+
+      vAtualizou:= True;
+    End;
+  End;
+
+  if Not vAtualizou then
+  Begin
+    sSQL:=
+      'update com_pedido ' +
+      'set SrNFCe = :SrNFCe, ' +
+      '    NrNFCe = :NrNFCe, ' +
+      '    ArqXML = :ArqXML ' +
+      'where numero = :numero ';
+
+    sSQL:= sSQL.Replace(':SrNFCe', Retorno.NroSerie.ToString );
+    sSQL:= sSQL.Replace(':NrNFCe', Retorno.NroNF.ToString );
+    sSQL:= sSQL.Replace(':ArqXML', Retorno.ConteudoXML.QuotedString  );
+    sSQL:= sSQL.Replace(':numero', pCom_Pedido_Numero.ToString );
+
+    uDM.FDC.ExecSQL(sSQL);
+
+
+  End;
+
+End;
+
+Function EmitirNFCeDePV(pCom_Pedido_Numero: Integer): TRetorno;
+Var
+  vNroSerie, vNroNF: Integer;
+  vDataXML: String;
+Begin
+  Result:= ValidarParametrosNFCe(pCom_Pedido_Numero);
   if Not Result.Resultado then
     Exit;
 
-  Result:= getGerarArqXML(pSis_Pessoa_id, pCom_Pedido_Numero);
+  Result:= getGerarArqXML(pCom_Pedido_Numero);
+  if Not Result.Resultado then
+    Exit;
+  vNroSerie:= Result.NroSerie;
+  vNroNF   := Result.NroNF;
+  vDataXML := Result.ConteudoXML;
+
+  Result:= EmitirNFCeDeArqXML(Result.ArqXML);
   if Not Result.Resultado then
     Exit;
 
+  Result.NroSerie   := vNroSerie;
+  Result.NroNF      := vNroNF;
+  Result.ConteudoXML:= vDataXML;
+
+  AtualizarSituacaoPV(pCom_Pedido_Numero, Result);
 
 End;
 

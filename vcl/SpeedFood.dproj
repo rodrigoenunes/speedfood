@@ -4,7 +4,7 @@
         <ProjectVersion>19.2</ProjectVersion>
         <FrameworkType>VCL</FrameworkType>
         <Base>True</Base>
-        <Config Condition="'$(Config)'==''">Release</Config>
+        <Config Condition="'$(Config)'==''">Debug</Config>
         <Platform Condition="'$(Platform)'==''">Win32</Platform>
         <TargetedPlatforms>1</TargetedPlatforms>
         <AppType>Application</AppType>
@@ -149,7 +149,6 @@
             <Form>FuCaixaMovto</Form>
             <FormType>dfm</FormType>
         </DCCReference>
-        <DCCReference Include="uBiblioteca.pas"/>
         <DCCReference Include="uConsPedidos.pas">
             <Form>FuConsPedidos</Form>
             <FormType>dfm</FormType>
@@ -182,6 +181,11 @@
             <Form>FSFEuPrintFortes</Form>
             <FormType>dfm</FormType>
         </DCCReference>
+        <DCCReference Include="uMontarLanche.pas">
+            <Form>FuMontarLanche</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="uBiblioteca.pas"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>

@@ -6,7 +6,7 @@ uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, DateUtils, Vcl.DBCtrls, Vcl.StdCtrls,
   Vcl.Mask, Vcl.Buttons;
-  Function AberturaDeCaixa(lExibe:Boolean=False): Boolean;
+  Function AberturaDeCaixa(lExibe:Boolean=False): Integer;
   Function FechamentoDeCaixa: Boolean;
   Procedure CalculaSaldoCaixa(pTurno:Integer);
 
@@ -196,10 +196,10 @@ begin
 end;
 
 
-Function AberturaDeCaixa(lExibe:Boolean=False): Boolean;
-var nTurno: Integer;
+Function AberturaDeCaixa(lExibe:Boolean=False): Integer;
+var wTurno: Integer;
 begin
-  Result  := False;
+  Result  := 0;
   FuCaixa := TFuCaixa.Create(nil);
   with FuCaixa
   do begin
@@ -220,37 +220,31 @@ begin
     //
     DecodeDateTime(Now,AA,MM,DD,Hr,Mi,Se,Ms);
     dhIni  := EncodeDateTime(AA,MM,DD,Hr,Mi,Se,0);
-    nTurno := 0;
+    wTurno := 0;
     uDM.RegCaixa.First;
-    while (not uDM.RegCaixa.Eof) and (nTurno = 0)
+    while (not uDM.RegCaixa.Eof) and (wTurno = 0)
     do if (dhIni >= uDM.RegCaixaDtHrInicio.AsDateTime) and (dhIni <= uDM.RegCaixaDtHrFim.AsDateTime)
-         then nTurno := uDM.RegCaixaTurno.AsInteger          // Registro de caixa já existe
+         then wTurno := uDM.RegCaixaTurno.AsInteger          // Registro de caixa já existe
          else uDM.RegCaixa.Next;
     //
-    if nTurno = 0
+    if wTurno = 0
     then begin        // Não existe o registro de caixa do turno (Turno de 1 a .....)
       uDM.RegCaixa.Last;
-      nTurno := uDM.RegCaixaTurno.AsInteger + 1;
-      AdicionaRegCaixa(nTurno);
+      wTurno := uDM.RegCaixaTurno.AsInteger + 1;
+      AdicionaRegCaixa(wTurno);
       lExibe := True;
     end;
     if lExibe
     then begin
-      uDM.RegCaixa.FindKey([nTurno]);
+      uDM.RegCaixa.FindKey([wTurno]);
       uDM.RegCaixa.Edit;
       wrkOperacao := 1;           // Abertura do caixa ou correção de saldo inicial
       ShowModal;
     end;
-    Result := True;
+    Result := wTurno;
+
   end;
 
-  with FuPrincipal
-  do begin
-    LabTurno.Caption  := 'Turno atual (' + uDM.RegCaixaTurno.AsString + ')';
-    LabInicio.Caption := '> ' + uDM.RegCaixaDtHrInicio.AsString;
-    LabFinal.Caption  := '> ' + uDM.RegCaixaDtHrFim.AsString;
-    PanTurno.Visible  := True;
-  end;
 
   FuCaixa.Free;
 

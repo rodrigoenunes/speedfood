@@ -7,6 +7,7 @@ uses
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ExtCtrls, Vcl.Buttons, Vcl.CheckLst,
   Data.DB, Vcl.DBCtrls, Vcl.Grids, Vcl.DBGrids, Vcl.ComCtrls, Vcl.Mask, System.UITypes;
   Procedure LancamentoPedidos;
+  Procedure TotalizaPedido;
 
 type
   TFuPedidos = class(TForm)
@@ -43,6 +44,7 @@ type
     btDummy: TBitBtn;
     LabAux1: TLabel;
     LabAux2: TLabel;
+    btMontarLanche: TBitBtn;
     procedure btAbrirPedidoClick(Sender: TObject);
     procedure btFinalizarClick(Sender: TObject);
     procedure FormShow(Sender: TObject);
@@ -64,6 +66,7 @@ type
     procedure GridPedidoDblClick(Sender: TObject);
     procedure FormResize(Sender: TObject);
     procedure btCancelarClick(Sender: TObject);
+    procedure btMontarLancheClick(Sender: TObject);
   private
     { Private declarations }
   public
@@ -85,17 +88,19 @@ implementation
 
 {$R *.dfm}
 
-uses uDados, uGenericas, uFinPedido, uTrataLanche, uBiblioteca;
+uses uDados, uGenericas, uFinPedido, uTrataLanche, uBiblioteca, uMontarLanche;
 
 Procedure LancamentoPedidos;
 begin
   FuPedidos := TFuPedidos.Create(nil);
   FuTrataLanche := TFuTrataLanche.Create(nil);
+  FuMontarLanche := TFuMontarLanche.Create(nil);
   FuFinPedido := TFuFinPedido.Create(nil);
   nExec := 0;
   nMaxExtras := StrToIntDef(ObtemParametro('PedidoMaxExtras'),7);
   FuPedidos.ShowModal;
   FuFinPedido.Free;
+  FuMontarLanche.Free;
   FuTrataLanche.Free;
   FuPedidos.Free;
 
@@ -106,17 +111,23 @@ Procedure MontaTelaPedidos;
 var i,j: Integer;
     nCol,nRow,nColBeb,nRowBeb: Integer;
     nAltura,nLargura: Integer;
-    nLanches,nExtras,nBebidas,nDiversos:Integer;
+    nLanches,nExtras,nBebidas,nBasicos,nBasExtra,nDiversos:Integer;
 begin
   // Monta tela de pedidos (FuPedidos) e tratativa de lanches (FuTrataLanche)
   with FuPedidos
   do begin
     for i := 0 to 19
-    do for j := 0 to 19
+    do begin
+       for j := 0 to 19
        do begin
          wCodLanche[i,j] := 0;
          wCodBebida[i,j] := 0;
        end;
+       FuMontarLanche.wCodBas[i] := 0;
+       FuMontarLanche.wSelBas[i] := '';
+       FuMontarLanche.wCodExt[i] := 0;
+       FuMontarLanche.wSelExt[i] := '';
+    end;
     FuPedidos.Align := alClient;
     //
     imgFundo.Visible := False;
@@ -145,6 +156,8 @@ begin
     nLanches  := 0;
     nExtras   := 0;
     nBebidas  := 0;
+    nBasicos  := 0;
+    nBasExtra := 0;
     nDiversos := 0;
     uDM.Itens.First;
     while not uDM.Itens.Eof do
@@ -153,7 +166,9 @@ begin
         1:nLanches  := nLanches + 1;
         2:nExtras   := nExtras + 1;
         3:nBebidas  := nBebidas + 1;
-        4:nDiversos := nDiversos + 1;
+        4:nBasicos  := nBasicos +1;
+        5:nBasExtra := nBasExtra + 1;
+        6:nDiversos := nDiversos + 1;
       end;
       uDM.Itens.Next;
     end;
@@ -161,6 +176,8 @@ begin
     // Celulas ... COL, ROW
     // Montagem dos grids
     // Define largura das células, para LANCHES, de 2 a 4 COLUNAS ..............
+    TSLanches.Caption := ObtemParametro('LanctoLanches');
+    if TSLanches.Caption = '' then TSLanches.Caption := 'Lanches';
     if TSLanches.Width > 1000
     then nCol := 4
     else if TSLanches.Width > 800
@@ -186,6 +203,8 @@ begin
     altLanche := nAltura - 6;     // Altura máxima para colocação do texto no grid
     //
     // Define largura das células, para Bebidas, de 2 a 5 COLUNAS ..............
+    TSBebidas.Caption := ObtemParametro('LanctoBebidas');
+    if TSBebidas.Caption = '' then TSBebidas.Caption := 'Bebidas';
     if TSBebidas.Width > 1000
     then nCol := 5
     else if TSBebidas.Width > 800
@@ -195,7 +214,7 @@ begin
               else nCol := 2;
     nLargura := (TSBebidas.Width div nCol) - 2;          // Largura da célula
     nRow := nBebidas div nCol;                           // Qtd necessária de linhas
-    if nRow < 1 
+    if nRow < 1
     then nRow := 1
     else if (nBebidas mod nCol) > 0
          then nRow := nRow + 1;
@@ -212,10 +231,17 @@ begin
     lrgBebida := nLargura - 12;
     altBebida := nAltura - 6;
     //
+    // Define 'Montar lanche'
+    if ObtemParametro('LanctoMontarLanche') = 'S'
+       then btMontarLanche.Visible := True
+       else btMontarLanche.Visible := False;
+    //
     nRow := 0;
     nCol := 0;
     nRowBeb := 0;
     nColBeb := 0;
+    FuMontarLanche.nRowBas := 0;
+    FuMontarLanche.nRowExt := 0;
     uDM.Itens.First;
     while not uDM.Itens.Eof do
     begin
@@ -238,6 +264,14 @@ begin
               nColBeb := 0;
             end;
         end;
+        4:begin    // Basicos
+            FuMontarLanche.wCodBas[FuMontarLanche.nRowBas] := uDM.ItensCodigo.AsInteger;
+            FuMontarLanche.nRowBas := FuMontarLanche.nRowBas + 1;
+        end;
+        5:begin    // Complementos (montar lanche)
+            FuMontarLanche.wCodExt[FuMontarLanche.nRowExt] := uDM.ItensCodigo.AsInteger;
+            FuMontarLanche.nRowExt := FuMontarLanche.nRowExt + 1;
+        end;
       end;
       uDM.Itens.Next;
     end;
@@ -254,6 +288,9 @@ begin
     btFinalizar.Left    := 4;
     btFinalizar.Width   := NavPedido.Width + btEditar.Width + btExcluir.Width + 8;
     btFinalizar.Caption := 'Finalizar pedido';
+    btMontarLanche.Left := 4;
+    btMontarLanche.Width := btFinalizar.Width;
+    btMontarLanche.Caption := 'Montar lanche';
     btCancelar.Left     := 4;
     btCancelar.Width    := (btFinalizar.Width - btDummy.Width) - 16;
     btCancelar.Caption  := 'Cancelar';
@@ -292,34 +329,57 @@ begin
 
 end;
 
-Procedure InclueLanche(pCodLanche:Integer);
+
+Procedure InclueLanche(pTipo:Integer;pCodLanche:Integer);
 var nLct: Integer;
+    wDescr: String;
+    wValor: Currency;
+    wAltPr: Boolean;
 begin
-  if not uDM.Itens.FindKey([1,pCodLanche]) then Exit;
   with uDM
   do begin
+    case pTipo  of
+      1:begin
+          if not uDM.Itens.FindKey([1,pCodLanche]) then Exit;
+          wDescr := stringReplace(uDM.ItensDescricao.AsString,'#',' ',[rfIgnoreCase, rfReplaceAll]);
+          wValor := uDM.ItensPreco.AsCurrency;
+          wAltPr := uDM.ItensAlteraPreco.AsBoolean;
+        end;
+      4:begin
+          wDescr := 'Montar lanche - ';
+          wValor := 0;
+          wAltPr := False;
+        end;
+      else Exit;
+    end;
+    //
     PedWrk.Last;
     nLct := PedWrkNrLcto.AsInteger + 1;
     PedWrk.Append;
     PedWrkNrLcto.AsInteger    := nLct;
-    PedWrkTpProd.AsInteger    := 1;
+    PedWrkTpProd.AsInteger    := pTipo;            // 1-Lanche, 2-Bebida, 4-Lanche montado
     PedWrkCodProd.AsInteger   := pCodLanche;
-    PedWrkDescricao.AsString  := stringReplace(ItensDescricao.AsString,'#',' ',[rfIgnoreCase, rfReplaceAll]);
+    PedWrkDescricao.AsString  := wDescr;
     PedWrkQuant.AsInteger     := 1;
-    PedWrkVlrUnit.AsCurrency  := ItensPreco.AsCurrency;
-    PedWrkVlrTotal.AsCurrency := ItensPreco.AsCurrency;
+    PedWrkVlrUnit.AsCurrency  := wValor;
+    PedWrkVlrTotal.AsCurrency := wValor;
     PedWrkExtras.AsString     := stringFiller('.',24);
-    PedWrkAltPreco.AsBoolean  := ItensAlteraPreco.AsBoolean;
+    PedWrkAltPreco.AsBoolean  := wAltPr;
     PedWrkCortado.AsBoolean   := False;
     PedWrkPrensado.AsBoolean  := False;
     PedWrk.Post;
     PedWrk.Edit;
-    FuPedidos.FormResize(nil);
-    TratativaLanche(pCodLanche,True,nMaxExtras);
-    if PedWrk.State = dsEdit
-       then PedWrk.Post;
+
+    if pTipo = 1
+    then begin
+      FuPedidos.FormResize(nil);
+      TratativaLanche(pCodLanche,True,nMaxExtras);
+      if PedWrk.State = dsEdit
+         then PedWrk.Post;
+      TotalizaPedido;
+    end;
+
   end;
-  TotalizaPedido;
 
 end;
 
@@ -344,6 +404,19 @@ begin
     PanAlteraBebida.Visible := True;
     btNada.SetFocus;
   end;
+
+end;
+
+Procedure AlteraMontagem;
+var nSeq,nProd: Integer;
+begin
+  nSeq  := uDM.PedWrkNrLcto.AsInteger;
+  nProd := uDM.PedWrkCodProd.AsInteger;
+  uDM.PedWrk.Edit;
+  MontagemDoLanche(True);
+  if uDM.PedWrk.State = dsEdit
+     then uDM.PedWrk.Post;
+  TotalizaPedido;
 
 end;
 
@@ -468,9 +541,11 @@ end;
 procedure TFuPedidos.btEditarClick(Sender: TObject);
 begin
   if uDM.PedWrk.RecordCount = 0 then Exit;
-  if uDM.PedWrkTpProd.AsInteger = 1
-     then AlteraLanche
-     else AlteraBebida;
+  case uDM.PedWrkTpProd.AsInteger of
+    1:AlteraLanche;
+    3:AlteraBebida;
+    4:AlteraMontagem;
+  end;
 
 end;
 
@@ -488,7 +563,6 @@ end;
 
 procedure TFuPedidos.btFinalizarClick(Sender: TObject);
 var nRet: Integer;
-    xAcao: String;
 begin
   PanAlteraBebida.Visible := False;
   if FuPedidos.totalPedido = 0
@@ -520,6 +594,14 @@ procedure TFuPedidos.btMenosClick(Sender: TObject);
 begin
   BebidaMaisMenos(False);
   if uDM.PedWrkQuant.AsInteger = 0 then btNadaClick(nil);
+
+end;
+
+procedure TFuPedidos.btMontarLancheClick(Sender: TObject);
+begin
+  InclueLanche(4,0);
+  MontagemDoLanche(True);
+  TotalizaPedido;
 
 end;
 
@@ -576,10 +658,9 @@ begin
 
 end;
 
-
 procedure TFuPedidos.GridBebidasDrawCell(Sender: TObject; ACol, ARow: Integer; Rect: TRect; State: TGridDrawState);
 var wTxt: String;
-    wKey,nLeft,nTop,nPos: Integer;
+    wKey,nTop,nPos: Integer;
     wImagem: TImage;
 begin
   // Identifica a bebida na célula
@@ -675,7 +756,7 @@ end;
 
 procedure TFuPedidos.GridLanchesDrawCell(Sender: TObject; ACol, ARow: Integer; Rect: TRect; State: TGridDrawState);
 var wTxt: String;
-    wKey,nLeft,nTop,nPos: Integer;
+    wKey,nTop,nPos: Integer;
     wImagem: TImage;
 begin
   // Identifica o lanche na célula
@@ -743,7 +824,7 @@ begin
   GridLanches.Canvas.TextOut(Rect.Left+6, Rect.Top+4, wTxt);
   //
   GridLanches.Canvas.Pen.Color := clBlack;
-  GridLanches.canvas.Pen.Width := 2;
+  GridLanches.Canvas.Pen.Width := 2;
   GridLanches.Canvas.MoveTo(Rect.Left+3, Rect.Top+3);
   GridLanches.Canvas.LineTo(Rect.Left+LabAux1.Width+10, Rect.Top+3);
   GridLanches.Canvas.LineTo(Rect.Left+LabAux1.Width+10, Rect.Top+LabAux1.Height+6);
@@ -760,7 +841,7 @@ begin
   GridLanches.MouseToCell(X,Y,nCol,nLin);
   wKey := wCodLanche[nCol,nLin];
   if wKey = 0 then Exit;
-  InclueLanche(wKey);
+  InclueLanche(1,wKey);
 
 end;
 

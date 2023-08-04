@@ -4,9 +4,9 @@ interface
 
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, RLReport, System.UITypes, RLPrinters;
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, RLReport, System.UITypes, RLPrinters, uBiblioteca;
   Procedure ImprimePedido(pNroPedido:Integer; pSys:Boolean = True);
-  Procedure EmiteNFCe(pNroPedido:Integer);
+  Function EmiteNFCe(pNroPedido:Integer): TRetorno;
   Procedure ImprimeCaixa(pSequencia: Integer);
   Procedure ImprimeResumo(pIni,pFim:String;pVlr:array of Currency; pQtd:array of Integer);
 
@@ -26,23 +26,23 @@ type
     RLCx_Detal: TRLBand;
     RLDBText4: TRLDBText;
     RLDBText5: TRLDBText;
-    RLDBText6: TRLDBText;
-    RLDBText7: TRLDBText;
+    RLDbCxHist: TRLDBText;
+    RLDbCxVlr: TRLDBText;
     RLLabel3: TRLLabel;
-    RLDBText8: TRLDBText;
-    RLLabel4: TRLLabel;
-    RLLabel5: TRLLabel;
+    RLDbCxSdo: TRLDBText;
+    RLLabCxSdo: TRLLabel;
+    RLLabCxVlr: TRLLabel;
     RLLabel6: TRLLabel;
     RLCx_Sum: TRLBand;
     RLPanel3: TRLPanel;
     RLLabel8: TRLLabel;
     RLDBText9: TRLDBText;
-    RLDBText10: TRLDBText;
-    RLDBText11: TRLDBText;
-    RLDBText12: TRLDBText;
-    RLDBText13: TRLDBText;
-    RLLabel11: TRLLabel;
-    RLDBText14: TRLDBText;
+    RLDbCxVlrEnt: TRLDBText;
+    RLDbCxQtdEnt: TRLDBText;
+    RLDbCxVlrSai: TRLDBText;
+    RLDbCxQtdSai: TRLDBText;
+    RLLabCxSdoFin: TRLLabel;
+    RLDbCxSdoFin: TRLDBText;
     RLLabel7: TRLLabel;
     RLPanel2: TRLPanel;
     RLLabel12: TRLLabel;
@@ -55,8 +55,8 @@ type
     RLLabel15: TRLLabel;
     RLLabel16: TRLLabel;
     RLLabel17: TRLLabel;
-    RLLabel18: TRLLabel;
-    RLLabel19: TRLLabel;
+    RLLabCxEnt: TRLLabel;
+    RLLabCxSai: TRLLabel;
     RLDBText15: TRLDBText;
     RLDBText16: TRLDBText;
     RLDBText17: TRLDBText;
@@ -90,20 +90,20 @@ type
     RLLabel24: TRLLabel;
     RLLabel25: TRLLabel;
     RLLabel26: TRLLabel;
-    RLLabel27: TRLLabel;
-    RLLabel28: TRLLabel;
+    RLLabUnitItem: TRLLabel;
+    RLLabTotalItem: TRLLabel;
     RLDBText35: TRLDBText;
     RLDBText36: TRLDBText;
     RLDBText37: TRLDBText;
-    RLDBText38: TRLDBText;
-    RLDBText39: TRLDBText;
-    RLDBText40: TRLDBText;
+    RLDbDescrItem: TRLDBText;
+    RLDbUnitItem: TRLDBText;
+    RLDbTotalItem: TRLDBText;
     RLDbPedido: TRLDBText;
-    RLDBText34: TRLDBText;
+    RLDbDataPedido: TRLDBText;
     RLDBText41: TRLDBText;
     RLLabel32: TRLLabel;
-    RLMemo1: TRLMemo;
-    RLDBText42: TRLDBText;
+    RLMemoItem: TRLMemo;
+    RLDbTotalPed: TRLDBText;
     RLDBText43: TRLDBText;
     RLLabel30: TRLLabel;
     RLPanel6: TRLPanel;
@@ -122,12 +122,12 @@ type
     RLRes_Sum: TRLBand;
     RLLabel34: TRLLabel;
     RLLabel35: TRLLabel;
-    RLLabel36: TRLLabel;
-    RLLabel37: TRLLabel;
+    RLLabResQtd: TRLLabel;
+    RLLabResTotal: TRLLabel;
     RLDBText47: TRLDBText;
-    RLDBText48: TRLDBText;
-    RLDBText49: TRLDBText;
-    RLDBText50: TRLDBText;
+    RLDbResDescr: TRLDBText;
+    RLDbResQtd: TRLDBText;
+    RLDbResTotal: TRLDBText;
     RLLabel39: TRLLabel;
     RLLabel40: TRLLabel;
     RLLabel41: TRLLabel;
@@ -152,6 +152,10 @@ type
     RLLabQtdTotal: TRLLabel;
     RLLabel38: TRLLabel;
     RLDbSenha: TRLDBText;
+    RLBand1: TRLBand;
+    RLLabel27: TRLLabel;
+    RLBand2: TRLBand;
+    RLLabel28: TRLLabel;
     procedure RLCaixaBeforePrint(Sender: TObject; var PrintIt: Boolean);
     procedure RLPedDetalBeforePrint(Sender: TObject; var PrintIt: Boolean);
   private
@@ -159,6 +163,7 @@ type
   public
     { Public declarations }
   end;
+
 
 var
   FuImpressoes: TFuImpressoes;
@@ -169,65 +174,82 @@ var
   tmMax,margEsq,margDir,margTop,margBot,copias: Integer;
   lstAction: String;
   lPreview,lDialog: Boolean;
-
+  nPontos,nDesloc: Integer;
 
 implementation
 
 {$R *.dfm}
 
-uses uDados, uBiblioteca, uGenericas, uSysPrinters, FortesReportCtle;
+uses uDados, uGenericas, uSysPrinters, FortesReportCtle;
 
 Function MontaTextoImpressao: Integer;
 var xExtra,txtAux: String;
     i:Integer;
 begin
   Result := 0;
-  FuImpressoes.RLMemo1.Lines.Clear;
-  FuImpressoes.RLMemo1.Visible := False;
-  if uDM.PedItensTpProd.AsInteger <> 1 then Exit;
+  FuImpressoes.RLMemoItem.Lines.Clear;
+  FuImpressoes.RLMemoItem.Visible := False;
+  if (uDM.PedItensTpProd.AsInteger <> 1) and
+     (uDM.PedItensTpProd.AsInteger <> 4) then Exit;
   if uDM.PedItensExtras.AsString = stringFiller('.',24) then Exit;
   xExtra := uDM.PedItensExtras.AsString;
-  if Pos('0',xExtra) > 0 then
-  begin       // Há indicação SEM
-    txtAux := 'SEM ';
-    for i := 1 to 24 do
-    if xExtra[i] = '0' then
-      if uDM.Itens.FindKey([2,i]) then
-        txtAux := txtAux + uDM.ItensDescricao.AsString + '; ';
-    FuImpressoes.RLMemo1.Lines.Add(txtAux);
+
+  if uDM.PedItensTpProd.AsInteger= 1 then
+  begin
+    if Pos('0',xExtra) > 0 then
+    begin       // Há indicação SEM
+      txtAux := 'SEM ';
+      for i := 1 to 24 do
+      if xExtra[i] = '0' then
+        if uDM.Itens.FindKey([2,i]) then
+          txtAux := txtAux + uDM.ItensDescricao.AsString + '; ';
+      FuImpressoes.RLMemoItem.Lines.Add(txtAux);
+    end;
+    if (Pos('+',xExtra) > 0) or (Pos('1',xExtra) > 0) or (Pos('2',xExtra) > 0)
+    then begin       // Há indicação MAIS
+      txtAux := 'MAIS ';
+      for i := 1 to 24 do
+      if (xExtra[i] = '+') or (xExtra[i] = '1') or (xExtra[i] = '2') then
+        if uDM.Itens.FindKey([2,i]) then
+          txtAux := txtAux + uDM.ItensDescricao.AsString + '; ';
+      FuImpressoes.RLMemoItem.Lines.Add(txtAux);
+    end;
+    if Pos('-',xExtra) > 0 then
+    begin       // Há indicação MENOS
+      txtAux := 'MENOS ';
+      for i := 1 to 24 do
+      if xExtra[i] = '-' then
+        if uDM.Itens.FindKey([2,i]) then
+          txtAux := txtAux + uDM.ItensDescricao.AsString + '; ';
+        FuImpressoes.RLMemoItem.Lines.Add(txtAux);
+    end;
+  end
+  else begin
+    if Pos('+',xExtra) > 0
+    then begin       // Há indicação MAIS
+      txtAux := 'COM ';
+      for i := 1 to 24 do
+      if xExtra[i] = '+' then
+        if uDM.Itens.FindKey([5,i]) then
+          txtAux := txtAux + uDM.ItensDescricao.AsString + '; ';
+      FuImpressoes.RLMemoItem.Lines.Add(txtAux);
+    end;
   end;
-  if (Pos('+',xExtra) > 0) or (Pos('1',xExtra) > 0) or (Pos('2',xExtra) > 0)
-  then begin       // Há indicação MAIS
-    txtAux := 'MAIS ';
-    for i := 1 to 24 do
-    if (xExtra[i] = '+') or (xExtra[i] = '1') or (xExtra[i] = '2') then
-      if uDM.Itens.FindKey([2,i]) then
-        txtAux := txtAux + uDM.ItensDescricao.AsString + '; ';
-    FuImpressoes.RLMemo1.Lines.Add(txtAux);
-  end;
-  if Pos('-',xExtra) > 0 then
-  begin       // Há indicação MENOS
-    txtAux := 'MENOS ';
-    for i := 1 to 24 do
-    if xExtra[i] = '-' then
-      if uDM.Itens.FindKey([2,i]) then
-        txtAux := txtAux + uDM.ItensDescricao.AsString + '; ';
-      FuImpressoes.RLMemo1.Lines.Add(txtAux);
-  end;
+
   if uDM.PedItensObservacao.AsString <> '' then
-    FuImpressoes.RLMemo1.Lines.Add(uDM.PedItensObservacao.AsString);
+    FuImpressoes.RLMemoItem.Lines.Add(uDM.PedItensObservacao.AsString);
   txtAux := '';
   if uDM.PedItensPrensado.AsInteger > 0 then
     txtAux := '     PRENSADO';
   if uDM.PedItensCortado.AsInteger > 0 then
     txtAux := txtAux + '     CORTADO';
   if txtAux <> '' then
-    FuImpressoes.RLMemo1.Lines.Add(txtAux);
+    FuImpressoes.RLMemoItem.Lines.Add(txtAux);
   //
-  if FuImpressoes.RLMemo1.Lines.Count > 0
+  if FuImpressoes.RLMemoItem.Lines.Count > 0
   then begin
-    FuImpressoes.RLMemo1.Visible := True;
-    Result := FuImpressoes.RLMemo1.Lines.Count * 15;
+    FuImpressoes.RLMemoItem.Visible := True;
+    Result := FuImpressoes.RLMemoItem.Lines.Count * 15;
   end;
 
 end;
@@ -240,8 +262,7 @@ var filTxtAnt: String;
     lSeparador: Boolean;
 begin
   if not uDM.Pedidos.FindKey([pNroPedido]) then Exit;
-
-  if AnsiUpperCase(ObtemParametro('PedidoLinhaSep')) = 'S' then lSeparador := True
+  if ObtemParametro('PedidoLinhaSep') = 'S' then lSeparador := True
     else lSeparador := False;
   idPrinter := ObtemParametro('PedidoPrinter');
   tmMax := StrToIntDef(ObtemParametro('PedidoTamMax'),300);
@@ -251,36 +272,50 @@ begin
   margBot := StrToIntDef(ObtemParametro('PedidoMargRodape'),5);
   copias := StrToIntDef(ObtemParametro('PedidoCopias'),1);
   lstAction := ObtemParametro('PedidoAction');
-  if AnsiUpperCase(ObtemParametro('PedidoPreview')) = 'S' then lPreview := True
+  if ObtemParametro('PedidoPreview') = 'S' then lPreview := True
     else lPreview := False;
-  if AnsiUpperCase(ObtemParametro('PedidoDialogo')) = 'S' then lDialog := True
+  if ObtemParametro('PedidoDialogo') = 'S' then lDialog := True
     else lDialog := False;
   if not DefineImpressora(True,idPrinter,portaPrt,driverPrt,indexPrt) then
     lPreview := True;
-
+  nDesloc := 0;
+  nPontos := StrToIntDef(ObtemParametro('PixelHorizontal'),4);
+  if (margEsq+margDir) > 10 then
+    nDesloc := ((margEsq+margDir)-10) * nPontos;
+  //
   if not pSys then lPreview := True;
-
 
   uDM.PedItens.Filtered := False;
   uDM.PedItens.Refresh;
   FuImpressoes := TFuImpressoes.Create(nil);
   with FuImpressoes
   do begin
+    //RLDbPedido.Left := 185 - nDesloc;
+    //RLDbDataPedido.Left := 168 - nDesloc;
+    RLLabUnitItem.Left := 180 - nDesloc;
+    RLLabTotalItem.Left := 220 - nDesloc;
+    RLDbDescrItem.Width := 132 - nDesloc;     // WIDTH está correto !!!!!
+    RLDbUnitItem.Left := 180 - nDesloc;
+    RLDbTotalItem.Left := 220 - nDesloc;
+    RLMemoItem.Width := 261 - nDesloc;        // WIDTH está correto !!!!!
+    RLDbTotalPed.Left := 186 - nDesloc;
     nAltura := RLPedCab.Height + RLPedColCab.Height + RLPedSum.Height + RLPedFoot.Height +
                (uDM.PedItens.RecordCount * 16);
-    filTxtAnt := uDM.PedItens.Filter;
-    filAnt := uDM.PedItens.Filtered;
-    uDM.PedItens.Filter := 'TpProd=1';
-    uDM.PedItens.Filtered := True;
+    //filTxtAnt := uDM.PedItens.Filter;
+    //filAnt := uDM.PedItens.Filtered;
+    //uDM.PedItens.Filter := 'TpProd=1';
+    //uDM.PedItens.Filtered := True;
     uDM.PedItens.First;
     while not uDM.PedItens.Eof do
     begin
       nAltura := nAltura + MontaTextoImpressao;
+      if uDM.PedItensTpProd.AsInteger = 2
+         then nAltura := nAltura + 15;
       uDM.PedItens.Next;
     end;
-    uDM.PedItens.Filter :='';
-    uDM.PedItens.Filtered := False;
-    uDM.PedItens.First;
+    //uDM.PedItens.Filter :='';
+    //uDM.PedItens.Filtered := False;
+    //uDM.PedItens.First;
     //
     nAltura := nAltura + 60;
     tmPagina := Trunc(nAltura / 3.7795) + 1;
@@ -293,6 +328,8 @@ begin
     RLPedido.Margins.BottomMargin := margBot;
     RLPedDetal.Borders.DrawBottom := lSeparador;
     FFRCtle.RLPreviewSetup1.CustomActionText := lstAction;
+
+
 
    // RLPedSum.Borders.DrawTop := False;
    // if not lSeparador then RLPedSum.Borders.DrawTop := True;
@@ -325,19 +362,21 @@ begin
 
 end;
 
-Procedure EmiteNFCe(pNroPedido:Integer);
+Function EmiteNFCe(pNroPedido:Integer): TRetorno;
 begin
-  ShowMessage('Geração e emissão de NFCe ou re-emissão/visualização');
-  {
-  With uBiblioteca.EmitirNFCeDePV(1, uDM.Pedidos.FieldByName('numero').AsInteger ) Do
-  Begin
-    if Not Resultado then
-    Begin
-      ShowMessage(Mensagem);
-      Exit;
-    End;
-  End;
-  }
+  Result := EmitirNFCeDePV(pNroPedido);
+  if Not Result.Resultado then
+    Application.MessageBox(
+     PChar(Result.Mensagem),
+      'Erro',
+      16
+    )
+  Else
+    Application.MessageBox(
+     'Cupom Fiscal Emitido com sucesso!',
+      'Info',
+      64
+    );
 
 end;
 
@@ -349,7 +388,6 @@ begin
     MessageDlg('Registro de caixa Turno ' + IntToStr(pSequencia) + ' não encontrado',mtError,[mbOk],0);
     Exit;
   end;
-
   idPrinter := ObtemParametro('CaixaPrinter');
   tmMax := StrToIntDef(ObtemParametro('CaixaTamMax'),300);
   margEsq := StrToIntDef(ObtemParametro('CaixaMargEsquerda'),5);
@@ -358,9 +396,9 @@ begin
   margBot := StrToIntDef(ObtemParametro('CaixaMargRodape'),5);
   copias := StrToIntDef(ObtemParametro('CaixaCopias'),1);
   lstAction := ObtemParametro('CaixaAction');
-  if AnsiUpperCase(ObtemParametro('CaixaPreview')) = 'S' then lPreview := True
+  if ObtemParametro('CaixaPreview') = 'S' then lPreview := True
     else lPreview := False;
-  if AnsiUpperCase(ObtemParametro('CaixaDialogo')) = 'S' then lDialog := True
+  if ObtemParametro('CaixaDialogo') = 'S' then lDialog := True
     else lDialog := False;
   if not DefineImpressora(True,idPrinter,portaPrt,driverPrt,indexPrt) then
     lPreview := True;
@@ -375,6 +413,16 @@ begin
     tmPagina := Trunc(nAltura / 3.7795) + 1;
     if tmPagina < 100 then tmPagina := 100;
     if tmPagina > tmMax then tmPagina := tmMax;
+
+    nDesloc := 0;
+    nPontos := StrToIntDef(ObtemParametro('PixelHorizontal'),4);
+    if (margEsq+margDir) > 10 then
+       nDesloc := ((margEsq+margDir)-10) * nPontos;
+    RLLabCxVlr.Left := 154 - nDesloc;
+    RLLabCxSdo.Left := 209 - nDesloc;
+    RLDbCxHist.Width := 111 - nDesloc;      // WIDTH está correto
+    RLDbCxVlr.Left := 154 - nDesloc;
+    RLDbCxSdo.Left := 209 - nDesloc;
 
     RLCaixa.PageSetup.PaperHeight := tmPagina;
     RLCaixa.Margins.LeftMargin := margEsq;
@@ -406,9 +454,9 @@ begin
   margBot := StrToIntDef(ObtemParametro('ResumoMargRodape'),5);
   copias := StrToIntDef(ObtemParametro('ResumoCopias'),1);
   lstAction := ObtemParametro('ResumoAction');
-  if AnsiUpperCase(ObtemParametro('ResumoPreview')) = 'S' then lPreview := True
+  if ObtemParametro('ResumoPreview') = 'S' then lPreview := True
     else lPreview := False;
-  if AnsiUpperCase(ObtemParametro('ResumoDialogo')) = 'S' then lDialog := True
+  if ObtemParametro('ResumoDialogo') = 'S' then lDialog := True
     else lDialog := False;
   if not DefineImpressora(True,idPrinter,portaPrt,driverPrt,indexPrt) then
     lPreview := True;
@@ -448,6 +496,17 @@ begin
     tmPagina := Trunc(nAltura / 3.7795) + 1;
     if tmPagina < 100 then tmPagina := 100;
     if tmPagina > tmMax then tmPagina := tmMax;
+
+    nDesloc := 0;
+    nPontos := StrToIntDef(ObtemParametro('PixelHorizontal'),4);
+    if (margEsq+margDir) > 10 then
+       nDesloc := ((margEsq+margDir)-10) * nPontos;
+
+    RLLabResQtd.Left := 174 - nDesloc;
+    RLLabResTotal.Left := 204 - nDesloc;
+    RLDbResDescr.Width := 144 - nDesloc;      // WIDTH está correto !!!!!
+    RLDbResQtd.Left := 174 - nDesloc;
+    RLDbResTotal.Left := 204 - nDesloc;
 
     RLResumo.PageSetup.PaperHeight := tmPagina;
     RLResumo.Margins.LeftMargin := margEsq;

@@ -2,8 +2,8 @@ object FuAdministrativo: TFuAdministrativo
   Left = 0
   Top = 0
   Caption = 'Administrativo'
-  ClientHeight = 535
-  ClientWidth = 677
+  ClientHeight = 553
+  ClientWidth = 718
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -18,93 +18,134 @@ object FuAdministrativo: TFuAdministrativo
   object gbTurnos: TGroupBox
     Left = 0
     Top = 0
-    Width = 677
-    Height = 145
+    Width = 718
+    Height = 151
     Align = alTop
     Caption = 'Per'#237'odo (Turnos) '#224' considerar'
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -16
+    Font.Name = 'Tahoma'
+    Font.Style = []
+    ParentFont = False
     TabOrder = 0
     object Label1: TLabel
       Left = 8
       Top = 30
-      Width = 75
-      Height = 16
+      Width = 109
+      Height = 23
       Caption = 'Turno inicial:'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -19
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      ParentFont = False
     end
     object Label2: TLabel
       Left = 18
-      Top = 62
-      Width = 67
-      Height = 16
+      Top = 70
+      Width = 98
+      Height = 23
       Caption = 'Turno final:'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -19
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      ParentFont = False
     end
     object LabProcess: TLabel
       Left = 18
-      Top = 92
+      Top = 104
       Width = 64
       Height = 16
       Caption = 'LabProcess'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -13
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      ParentFont = False
       Visible = False
     end
     object cbTurnoIni: TComboBox
-      Left = 84
+      Left = 120
       Top = 27
       Width = 460
-      Height = 24
+      Height = 31
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -19
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      ParentFont = False
       TabOrder = 0
       Text = 'cbTurnoIni'
     end
     object cbTurnoFin: TComboBox
-      Left = 84
-      Top = 59
+      Left = 120
+      Top = 67
       Width = 460
-      Height = 24
+      Height = 31
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -19
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      ParentFont = False
       TabOrder = 1
       Text = 'cbTurnoFin'
     end
     object btProcessar: TBitBtn
-      Left = 550
+      Left = 592
       Top = 27
       Width = 112
-      Height = 25
+      Height = 31
       Caption = 'Processar'
       TabOrder = 2
       OnClick = btProcessarClick
     end
     object btSair: TBitBtn
-      Left = 550
-      Top = 59
+      Left = 592
+      Top = 67
       Width = 112
-      Height = 25
+      Height = 31
       Caption = 'Sair/Cancelar'
       TabOrder = 3
       OnClick = btSairClick
     end
     object PBar1: TProgressBar
       Left = 18
-      Top = 108
-      Width = 644
-      Height = 29
+      Top = 120
+      Width = 686
+      Height = 25
       TabOrder = 4
       Visible = False
     end
   end
   object PanResultado: TPanel
     Left = 0
-    Top = 145
-    Width = 677
-    Height = 390
+    Top = 151
+    Width = 718
+    Height = 402
     Align = alClient
     TabOrder = 1
     Visible = False
+    ExplicitTop = 145
+    ExplicitWidth = 677
+    ExplicitHeight = 390
     object Panel1: TPanel
       Left = 1
-      Top = 348
-      Width = 675
+      Top = 360
+      Width = 716
       Height = 41
       Align = alBottom
       TabOrder = 0
+      ExplicitTop = 348
+      ExplicitWidth = 675
       DesignSize = (
-        675
+        716
         41)
       object btNova: TBitBtn
         Left = 6
@@ -125,7 +166,7 @@ object FuAdministrativo: TFuAdministrativo
         OnClick = btImprimirClick
       end
       object btSair2: TBitBtn
-        Left = 527
+        Left = 568
         Top = 6
         Width = 138
         Height = 25
@@ -133,15 +174,17 @@ object FuAdministrativo: TFuAdministrativo
         Caption = 'Sair/Cancelar'
         TabOrder = 2
         OnClick = btSairClick
+        ExplicitLeft = 527
       end
     end
     object PanValores: TPanel
       Left = 1
       Top = 1
       Width = 176
-      Height = 347
+      Height = 359
       Align = alLeft
       TabOrder = 1
+      ExplicitHeight = 347
       object Label3: TLabel
         Left = 8
         Top = 26
@@ -489,14 +532,16 @@ object FuAdministrativo: TFuAdministrativo
     object Panel3: TPanel
       Left = 177
       Top = 1
-      Width = 499
-      Height = 347
+      Width = 540
+      Height = 359
       Align = alClient
       TabOrder = 2
+      ExplicitWidth = 499
+      ExplicitHeight = 347
       object Panel4: TPanel
         Left = 1
         Top = 1
-        Width = 497
+        Width = 538
         Height = 24
         Align = alTop
         Color = clTeal
@@ -508,6 +553,7 @@ object FuAdministrativo: TFuAdministrativo
         ParentBackground = False
         ParentFont = False
         TabOrder = 0
+        ExplicitWidth = 497
         object Label11: TLabel
           Left = 8
           Top = 4
@@ -524,11 +570,13 @@ object FuAdministrativo: TFuAdministrativo
       end
       object Panel5: TPanel
         Left = 1
-        Top = 305
-        Width = 497
+        Top = 317
+        Width = 538
         Height = 41
         Align = alBottom
         TabOrder = 1
+        ExplicitTop = 305
+        ExplicitWidth = 497
         object NavItens: TDBNavigator
           Left = 8
           Top = 6
@@ -542,8 +590,8 @@ object FuAdministrativo: TFuAdministrativo
       object GridItens: TDBGrid
         Left = 1
         Top = 25
-        Width = 497
-        Height = 280
+        Width = 538
+        Height = 292
         Align = alClient
         DataSource = uDM.SResVendas
         DrawingStyle = gdsClassic

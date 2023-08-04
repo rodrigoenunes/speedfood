@@ -48,6 +48,7 @@ object FuImpressoes: TFuImpressoes
         Top = 16
         Width = 60
         Height = 15
+        Align = faRightTop
         Alignment = taRightJustify
         DataField = 'ZC_IniFim'
         DataSource = uDM.DSRegCaixa
@@ -61,9 +62,10 @@ object FuImpressoes: TFuImpressoes
       end
       object RLLabEmis: TRLLabel
         Left = 208
-        Top = 31
+        Top = 32
         Width = 56
         Height = 14
+        Align = faRightBottom
         Alignment = taRightJustify
       end
       object RLDBText3: TRLDBText
@@ -112,6 +114,7 @@ object FuImpressoes: TFuImpressoes
           Top = 0
           Width = 35
           Height = 15
+          Align = faRightTop
           Alignment = taRightJustify
           Caption = 'Caixa'
           Font.Charset = DEFAULT_CHARSET
@@ -152,7 +155,7 @@ object FuImpressoes: TFuImpressoes
         AutoSize = False
         Caption = 'Op'
       end
-      object RLLabel4: TRLLabel
+      object RLLabCxSdo: TRLLabel
         Left = 209
         Top = 0
         Width = 55
@@ -161,7 +164,7 @@ object FuImpressoes: TFuImpressoes
         AutoSize = False
         Caption = 'Saldo'
       end
-      object RLLabel5: TRLLabel
+      object RLLabCxVlr: TRLLabel
         Left = 154
         Top = 0
         Width = 55
@@ -205,17 +208,17 @@ object FuImpressoes: TFuImpressoes
         DataSource = uDM.DSLctCaixa
         Text = ''
       end
-      object RLDBText6: TRLDBText
+      object RLDbCxHist: TRLDBText
         Left = 43
         Top = 0
-        Width = 110
+        Width = 111
         Height = 14
         AutoSize = False
         DataField = 'Historico'
         DataSource = uDM.DSLctCaixa
         Text = ''
       end
-      object RLDBText7: TRLDBText
+      object RLDbCxVlr: TRLDBText
         Left = 154
         Top = 0
         Width = 55
@@ -226,7 +229,7 @@ object FuImpressoes: TFuImpressoes
         DataSource = uDM.DSLctCaixa
         Text = ''
       end
-      object RLDBText8: TRLDBText
+      object RLDbCxSdo: TRLDBText
         Left = 209
         Top = 0
         Width = 55
@@ -263,11 +266,11 @@ object FuImpressoes: TFuImpressoes
         object RLLabel8: TRLLabel
           Left = 1
           Top = 16
-          Width = 60
+          Width = 56
           Height = 14
           Alignment = taRightJustify
           AutoSize = False
-          Caption = 'Saldo inicial'
+          Caption = 'Sdo Inicial'
           Font.Charset = DEFAULT_CHARSET
           Font.Color = clBlack
           Font.Height = -11
@@ -278,7 +281,7 @@ object FuImpressoes: TFuImpressoes
         object RLDBText9: TRLDBText
           Left = 1
           Top = 31
-          Width = 60
+          Width = 56
           Height = 14
           Alignment = taRightJustify
           AutoSize = False
@@ -286,8 +289,8 @@ object FuImpressoes: TFuImpressoes
           DataSource = uDM.DSRegCaixa
           Text = ''
         end
-        object RLDBText10: TRLDBText
-          Left = 68
+        object RLDbCxVlrEnt: TRLDBText
+          Left = 58
           Top = 31
           Width = 60
           Height = 14
@@ -297,8 +300,8 @@ object FuImpressoes: TFuImpressoes
           DataSource = uDM.DSRegCaixa
           Text = ''
         end
-        object RLDBText11: TRLDBText
-          Left = 68
+        object RLDbCxQtdEnt: TRLDBText
+          Left = 58
           Top = 45
           Width = 60
           Height = 14
@@ -308,8 +311,8 @@ object FuImpressoes: TFuImpressoes
           DataSource = uDM.DSRegCaixa
           Text = '[ # ]'
         end
-        object RLDBText12: TRLDBText
-          Left = 136
+        object RLDbCxVlrSai: TRLDBText
+          Left = 120
           Top = 31
           Width = 60
           Height = 14
@@ -319,8 +322,8 @@ object FuImpressoes: TFuImpressoes
           DataSource = uDM.DSRegCaixa
           Text = ''
         end
-        object RLDBText13: TRLDBText
-          Left = 136
+        object RLDbCxQtdSai: TRLDBText
+          Left = 120
           Top = 45
           Width = 60
           Height = 14
@@ -330,8 +333,8 @@ object FuImpressoes: TFuImpressoes
           DataSource = uDM.DSRegCaixa
           Text = '[ # ]'
         end
-        object RLLabel11: TRLLabel
-          Left = 204
+        object RLLabCxSdoFin: TRLLabel
+          Left = 182
           Top = 16
           Width = 60
           Height = 14
@@ -345,12 +348,11 @@ object FuImpressoes: TFuImpressoes
           Font.Style = [fsUnderline]
           ParentFont = False
         end
-        object RLDBText14: TRLDBText
-          Left = 204
+        object RLDbCxSdoFin: TRLDBText
+          Left = 182
           Top = 31
           Width = 60
           Height = 14
-          Align = faRightOnly
           Alignment = taRightJustify
           AutoSize = False
           DataField = 'SaldoFinal'
@@ -371,8 +373,8 @@ object FuImpressoes: TFuImpressoes
           Font.Style = [fsBold, fsUnderline]
           ParentFont = False
         end
-        object RLLabel18: TRLLabel
-          Left = 68
+        object RLLabCxEnt: TRLLabel
+          Left = 58
           Top = 16
           Width = 60
           Height = 14
@@ -386,8 +388,8 @@ object FuImpressoes: TFuImpressoes
           Font.Style = [fsUnderline]
           ParentFont = False
         end
-        object RLLabel19: TRLLabel
-          Left = 136
+        object RLLabCxSai: TRLLabel
+          Left = 120
           Top = 16
           Width = 60
           Height = 14
@@ -668,7 +670,7 @@ object FuImpressoes: TFuImpressoes
           ParentFont = False
         end
         object RLLabel21: TRLLabel
-          Left = 9
+          Left = 8
           Top = 24
           Width = 39
           Height = 14
@@ -676,7 +678,7 @@ object FuImpressoes: TFuImpressoes
           Caption = 'Sa'#237'das:'
         end
         object RLDBText28: TRLDBText
-          Left = 18
+          Left = 8
           Top = 40
           Width = 30
           Height = 14
@@ -687,7 +689,7 @@ object FuImpressoes: TFuImpressoes
           Text = '[#]'
         end
         object RLDBText29: TRLDBText
-          Left = 48
+          Left = 39
           Top = 40
           Width = 65
           Height = 14
@@ -698,7 +700,7 @@ object FuImpressoes: TFuImpressoes
           Text = ''
         end
         object RLLabel22: TRLLabel
-          Left = 5
+          Left = 8
           Top = 68
           Width = 43
           Height = 14
@@ -706,7 +708,7 @@ object FuImpressoes: TFuImpressoes
           Caption = 'Sangria:'
         end
         object RLDBText30: TRLDBText
-          Left = 19
+          Left = 8
           Top = 84
           Width = 30
           Height = 14
@@ -717,7 +719,7 @@ object FuImpressoes: TFuImpressoes
           Text = '[#]'
         end
         object RLDBText31: TRLDBText
-          Left = 48
+          Left = 39
           Top = 84
           Width = 65
           Height = 14
@@ -773,6 +775,38 @@ object FuImpressoes: TFuImpressoes
           DataSource = uDM.DSRegCaixa
           Text = 'R$ '
         end
+      end
+    end
+    object RLBand2: TRLBand
+      Left = 19
+      Top = 346
+      Width = 264
+      Height = 17
+      BandType = btFooter
+      Borders.Sides = sdCustom
+      Borders.DrawLeft = False
+      Borders.DrawTop = True
+      Borders.DrawRight = False
+      Borders.DrawBottom = False
+      object RLLabel28: TRLLabel
+        Left = 175
+        Top = 1
+        Width = 89
+        Height = 10
+        Align = faRightTop
+        Alignment = taRightJustify
+        Borders.Sides = sdCustom
+        Borders.DrawLeft = False
+        Borders.DrawTop = False
+        Borders.DrawRight = False
+        Borders.DrawBottom = False
+        Caption = 'RLCaixa - SpeedFood 1.0'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clBlack
+        Font.Height = -8
+        Font.Name = 'Arial'
+        Font.Style = []
+        ParentFont = False
       end
     end
   end
@@ -836,12 +870,13 @@ object FuImpressoes: TFuImpressoes
         end
       end
       object RLDbPedido: TRLDBText
-        Left = 185
-        Top = 20
-        Width = 78
+        Left = 170
+        Top = 23
+        Width = 93
         Height = 14
         Alignment = taRightJustify
-        DataField = 'Numero'
+        Anchors = [fkRight]
+        DataField = 'ZC_NroLst'
         DataSource = uDM.DSPedidos
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clBlack
@@ -851,17 +886,16 @@ object FuImpressoes: TFuImpressoes
         ParentFont = False
         Text = 'Pedido: '
       end
-      object RLDBText34: TRLDBText
-        Left = 168
+      object RLDbDataPedido: TRLDBText
+        Left = 178
         Top = 37
-        Width = 95
+        Width = 85
         Height = 14
-        Align = faRightBottom
         Alignment = taRightJustify
+        Anchors = [fkRight]
         DataField = 'ZC_DataHora'
         DataSource = uDM.DSPedidos
-        Text = 'Dt/Hr:'
-        Visible = False
+        Text = 'DH:'
       end
       object RLDBText41: TRLDBText
         Left = 39
@@ -947,7 +981,7 @@ object FuImpressoes: TFuImpressoes
         Height = 14
         Caption = 'Descri'#231#227'o'
       end
-      object RLLabel27: TRLLabel
+      object RLLabUnitItem: TRLLabel
         Left = 180
         Top = 0
         Width = 40
@@ -956,7 +990,7 @@ object FuImpressoes: TFuImpressoes
         AutoSize = False
         Caption = 'Unit'
       end
-      object RLLabel28: TRLLabel
+      object RLLabTotalItem: TRLLabel
         Left = 220
         Top = 0
         Width = 44
@@ -1011,7 +1045,7 @@ object FuImpressoes: TFuImpressoes
         DataSource = uDM.DSPedItens
         Text = ''
       end
-      object RLDBText38: TRLDBText
+      object RLDbDescrItem: TRLDBText
         Left = 48
         Top = 0
         Width = 132
@@ -1021,7 +1055,7 @@ object FuImpressoes: TFuImpressoes
         DataSource = uDM.DSPedItens
         Text = ''
       end
-      object RLDBText39: TRLDBText
+      object RLDbUnitItem: TRLDBText
         Left = 180
         Top = 0
         Width = 40
@@ -1032,7 +1066,7 @@ object FuImpressoes: TFuImpressoes
         DataSource = uDM.DSPedItens
         Text = ''
       end
-      object RLDBText40: TRLDBText
+      object RLDbTotalItem: TRLDBText
         Left = 220
         Top = 0
         Width = 44
@@ -1043,7 +1077,7 @@ object FuImpressoes: TFuImpressoes
         DataSource = uDM.DSPedItens
         Text = ''
       end
-      object RLMemo1: TRLMemo
+      object RLMemoItem: TRLMemo
         Left = 0
         Top = 15
         Width = 261
@@ -1062,7 +1096,7 @@ object FuImpressoes: TFuImpressoes
       Borders.DrawTop = False
       Borders.DrawRight = False
       Borders.DrawBottom = True
-      object RLDBText42: TRLDBText
+      object RLDbTotalPed: TRLDBText
         Left = 186
         Top = 3
         Width = 78
@@ -1104,6 +1138,7 @@ object FuImpressoes: TFuImpressoes
         Top = 1
         Width = 92
         Height = 10
+        Align = faRightTop
         Alignment = taRightJustify
         Borders.Sides = sdCustom
         Borders.DrawLeft = False
@@ -1243,7 +1278,7 @@ object FuImpressoes: TFuImpressoes
         Height = 14
         Caption = 'Descri'#231#227'o'
       end
-      object RLLabel36: TRLLabel
+      object RLLabResQtd: TRLLabel
         Left = 174
         Top = 0
         Width = 30
@@ -1252,7 +1287,7 @@ object FuImpressoes: TFuImpressoes
         AutoSize = False
         Caption = 'Qtd'
       end
-      object RLLabel37: TRLLabel
+      object RLLabResTotal: TRLLabel
         Left = 204
         Top = 0
         Width = 60
@@ -1278,17 +1313,17 @@ object FuImpressoes: TFuImpressoes
         DataSource = uDM.SResVendas
         Text = ''
       end
-      object RLDBText48: TRLDBText
+      object RLDbResDescr: TRLDBText
         Left = 30
         Top = 1
-        Width = 143
+        Width = 144
         Height = 14
         AutoSize = False
         DataField = 'Descricao'
         DataSource = uDM.SResVendas
         Text = ''
       end
-      object RLDBText49: TRLDBText
+      object RLDbResQtd: TRLDBText
         Left = 174
         Top = 1
         Width = 30
@@ -1299,7 +1334,7 @@ object FuImpressoes: TFuImpressoes
         DataSource = uDM.SResVendas
         Text = ''
       end
-      object RLDBText50: TRLDBText
+      object RLDbResTotal: TRLDBText
         Left = 204
         Top = 1
         Width = 60
@@ -1520,6 +1555,38 @@ object FuImpressoes: TFuImpressoes
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clBlack
         Font.Height = -9
+        Font.Name = 'Arial'
+        Font.Style = []
+        ParentFont = False
+      end
+    end
+    object RLBand1: TRLBand
+      Left = 19
+      Top = 225
+      Width = 264
+      Height = 17
+      BandType = btFooter
+      Borders.Sides = sdCustom
+      Borders.DrawLeft = False
+      Borders.DrawTop = True
+      Borders.DrawRight = False
+      Borders.DrawBottom = False
+      object RLLabel27: TRLLabel
+        Left = 166
+        Top = 1
+        Width = 98
+        Height = 10
+        Align = faRightTop
+        Alignment = taRightJustify
+        Borders.Sides = sdCustom
+        Borders.DrawLeft = False
+        Borders.DrawTop = False
+        Borders.DrawRight = False
+        Borders.DrawBottom = False
+        Caption = 'RLResumo - SpeedFood 1.0'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clBlack
+        Font.Height = -8
         Font.Name = 'Arial'
         Font.Style = []
         ParentFont = False

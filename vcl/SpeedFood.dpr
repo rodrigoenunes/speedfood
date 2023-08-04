@@ -13,7 +13,6 @@ uses
   uImpressoes in 'uImpressoes.pas' {FuImpressoes},
   uUsuario in 'uUsuario.pas' {FuUsuario},
   uCaixaMovto in 'uCaixaMovto.pas' {FuCaixaMovto},
-  uBiblioteca in 'uBiblioteca.pas',
   uConsPedidos in 'uConsPedidos.pas' {FuConsPedidos},
   uSysPrinters in '..\..\UsoGeral\uSysPrinters.pas' {FuSysPrinters},
   FortesReportCtle in '..\..\uFortesReport\FortesReportCtle.pas' {FFRCtle},
@@ -21,7 +20,9 @@ uses
   uAdministrativo in 'uAdministrativo.pas' {FuAdministrativo},
   uUserPwd in 'uUserPwd.pas' {FuUserPwd},
   uHelpSpeedFood in 'uHelpSpeedFood.pas' {FuHelpSpeedFood},
-  SFEuPrintFortes in '..\Etiquetas\SFEuPrintFortes.pas' {FSFEuPrintFortes};
+  SFEuPrintFortes in '..\Etiquetas\SFEuPrintFortes.pas' {FSFEuPrintFortes},
+  uMontarLanche in 'uMontarLanche.pas' {FuMontarLanche},
+  uBiblioteca in 'uBiblioteca.pas';
 
 {$R *.res}
 
@@ -36,6 +37,7 @@ begin
   Application.CreateForm(TFuUserPwd, FuUserPwd);
   Application.CreateForm(TFuHelpSpeedFood, FuHelpSpeedFood);
   Application.CreateForm(TFSFEuPrintFortes, FSFEuPrintFortes);
+  Application.CreateForm(TFuMontarLanche, FuMontarLanche);
   Application.Run;
 
 end.

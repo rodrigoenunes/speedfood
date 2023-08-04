@@ -119,6 +119,8 @@ begin
   if ObtemParametro('SistemaUserPwd') = 'S'
   then if not ObtemUsuario(uDM.sysUser)
             then btSairClick(nil);
+  if ObtemParametro('UsaCorItem') = 'S' then uDM.usaCorItem := True
+     else uDM.usaCorItem := False;
   ManutencaoProdutos;
   ContaExtras;
 
@@ -143,7 +145,14 @@ begin
   if uDM = Nil then
   begin
     uDM := TuDM.Create(nil);
-    uDM.FDC.Connected := True;
+    uDM.FDC.Connected:= True;
+    uDM.SisPessoa.Active := True;
+    uDM.Itens.Active     := True;
+    uDM.RegCaixa.Active  := True;
+    uDM.LctCaixa.Active  := True;
+    uDM.Pedidos.Active   := True;
+    uDM.PedItens.Active  := True;
+    uDM.etqImpress := 2;        // Compatibilização com "Etiquetas"
     //
     FFRCtle.RLPreviewSetup1.ZoomFactor := StrToIntDef(ObtemParametro('FortesZoomFactor'),100);
     FGen.lSalvaForm := True;
@@ -172,12 +181,6 @@ begin
       MessageDlg('A validade do sistema termina em ' + IntToStr(nDias) + ' dias',
                       mtInformation,[mbOk],0);
     //
-    uDM.SisPessoa.Active := True;
-    uDM.Itens.Active     := True;
-    uDM.RegCaixa.Active  := True;
-    uDM.LctCaixa.Active  := True;
-    uDM.Pedidos.Active   := True;
-    uDM.PedItens.Active  := True;
     Image1.Visible       := False;
     uDM.pathImagens      := IncludeTrailingPathDelimiter(uDM.SisPessoaPathImagens.AsString);
     arqimg               := uDM.pathImagens + 'ImgFundo.BMP';
@@ -189,7 +192,12 @@ begin
       Image1.Visible := True;
     end;
     ContaExtras;                  // Obtem qtd de ítens 'extras'
-    AberturaDeCaixa;
+    uDM.turnoCorrente := AberturaDeCaixa;
+    //
+    LabTurno.Caption  := 'Turno atual (' + IntToStr(uDM.turnoCorrente) + ')';
+    LabInicio.Caption := '> ' + uDM.RegCaixaDtHrInicio.AsString;
+    LabFinal.Caption  := '> ' + uDM.RegCaixaDtHrFim.AsString;
+    PanTurno.Visible  := True;
     //
   end;
 
@@ -212,6 +220,7 @@ end;
 
 procedure TFuPrincipal.FormCreate(Sender: TObject);
 begin
+
   FuPrincipal.Width  := (Screen.Width div 5) * 2;
   FuPrincipal.Height := FuPrincipal.Width;
   FuPrincipal.Top    := 20;

@@ -273,6 +273,8 @@ begin
   if uDM.Itens.RecordCount = 0 then Exit;
   Try
     uDM.Itens.Edit;
+    if (uDM.ItensGrupo.AsInteger = 4) and
+       (uDM.ItensCFOP.AsInteger = 0) then dbTipoClick(nil);
   Except
     MessageDlg(wMsgRegEmUso,mtError,[mbOk],0);
     Exit;
@@ -440,7 +442,7 @@ end;
 procedure TFuItens.dbTipoClick(Sender: TObject);
 begin
   case dbTipo.ItemIndex of
-    0:begin     // Lanches
+    0,3:begin     // Lanches
         uDM.ItensCFOP.AsInteger       := 5101;
         uDM.ItensNCM.AsString         := '21069090';
         uDM.ItensCSOSN.AsInteger      := 102;
@@ -473,7 +475,7 @@ begin
         uDM.ItensPcReduz.AsFloat      := 0;
         uDM.ItensAliqICMS.AsFloat     := 0;
         end;
-    else begin      // Extras para lanches(1), Basicos(3) e Extras para basicos(4)
+    else begin      // Extras para lanches(1) e Extras para basicos(4)
         uDM.ItensCFOP.Clear;
         uDM.ItensNCM.Clear;
         uDM.ItensCSOSN.Clear;
@@ -493,17 +495,19 @@ begin
   gbFiscais.Visible := False;
   imgItem.Visible := False;
   panCor.Visible := False;
-  if (uDM.ItensGrupo.AsInteger = 1)       // Lanches
-     or (uDM.ItensGrupo.AsInteger = 3)    // Bebidas
-     or (uDM.ItensGrupo.AsInteger = 6)    // Diversos
+  if (uDM.ItensGrupo.AsInteger = 1)         // Lanches
+     or (uDM.ItensGrupo.AsInteger = 3)      // Bebidas
+     or (uDM.ItensGrupo.AsInteger = 4)      // Basicos (Montar lanche)
+     or (uDM.ItensGrupo.AsInteger = 6)      // Diversos
   then gbFiscais.Visible := True;
 
   if uDM.ItensGrupo.AsInteger = 1
      then cbAlteraPreco.Visible := True
      else cbAlteraPreco.Visible := False;
-
   if ((uDM.ItensGrupo.AsInteger = 1)        // Lanches
-      or (uDM.ItensGrupo.AsInteger = 3))    // Bebidas
+      or (uDM.ItensGrupo.AsInteger = 3)     // Bebidas
+      or (uDM.ItensGrupo.AsInteger = 4)     // Basicos
+      or (uDM.ItensGrupo.AsInteger = 5))    // Complementos de basicos
       and (uDM.usaCorItem)                  // Usa cor de preenchimento
   then begin
     PanCor.Visible := True;
