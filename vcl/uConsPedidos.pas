@@ -11,17 +11,19 @@ uses
 type
   TFuConsPedidos = class(TForm)
     Panel1: TPanel;
-    Panel2: TPanel;
+    PanCtle: TPanel;
     GridPed: TDBGrid;
     NavPed: TDBNavigator;
     btImprimir: TBitBtn;
     btEmitirNFCe: TBitBtn;
     btSair: TBitBtn;
+    btEtiquetas: TBitBtn;
     procedure FormShow(Sender: TObject);
     procedure btImprimirClick(Sender: TObject);
     procedure FormResize(Sender: TObject);
     procedure btSairClick(Sender: TObject);
     procedure btEmitirNFCeClick(Sender: TObject);
+    procedure btEtiquetasClick(Sender: TObject);
   private
     { Private declarations }
   public
@@ -35,7 +37,7 @@ implementation
 
 {$R *.dfm}
 
-uses uDados, uImpressoes, uGenericas;
+uses uDados, uImpressoes, uGenericas, SFEuPrintFortes;
 
 Procedure ConsultarPedidos;
 begin
@@ -48,6 +50,17 @@ begin
   FuConsPedidos.Free;
 
 end;
+
+procedure TFuConsPedidos.btEtiquetasClick(Sender: TObject);
+begin
+  if MessageDlg('Emissão de etiquetas' + #13 +
+                'Pedido: ' + uDM.PedidosNumero.AsString + #13 +
+                'Confirme a emissão das etiquetas do pedido',
+                mtConfirmation,[mbYes,mbNo],0,mbNo,['Sim','Não']) = mrYes then
+    EmiteEtiquetas(uDM.PedidosNumero.AsInteger, 0);   // Imprime TODAS as etiquetas do pedido
+
+end;
+
 
 procedure TFuConsPedidos.btEmitirNFCeClick(Sender: TObject);
 var xImpressao: String;

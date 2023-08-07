@@ -1049,4 +1049,10 @@ object FuPrincipalEtq: TFuPrincipalEtq
       TabOrder = 3
     end
   end
+  object Timer1: TTimer
+    Interval = 30000
+    OnTimer = Timer1Timer
+    Left = 323
+    Top = 209
+  end
 end

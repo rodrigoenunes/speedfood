@@ -40,6 +40,7 @@ type
     btSair2: TBitBtn;
     btHelpArgox: TBitBtn;
     btHelpGeral: TBitBtn;
+    Timer1: TTimer;
     procedure FormCreate(Sender: TObject);
     procedure FormActivate(Sender: TObject);
     procedure btCarregaClick(Sender: TObject);
@@ -60,6 +61,7 @@ type
       Shift: TShiftState; X, Y: Integer);
     procedure btHelpGeralMouseDown(Sender: TObject; Button: TMouseButton;
       Shift: TShiftState; X, Y: Integer);
+    procedure Timer1Timer(Sender: TObject);
   private
     { Private declarations }
   public
@@ -140,33 +142,19 @@ procedure TFuPrincipalEtq.btPreviewClick(Sender: TObject);
 var nKey1,nKey2: Integer;
 begin
   if uDM.PedItens.RecordCount = 0 then Exit;
+  Timer1.Enabled := False;
   nKey1 := uDM.PedItensNumero.AsInteger;
   nKey2 := uDM.PedItensNrLcto.AsInteger;
-  FSFEuPrintFortes := TFSFEuPrintFortes.Create(nil);
-  DefinePrinterEtiqueta;
-  //
-  if (uDM.PedItensTpProd.AsInteger = 1) or
-     (uDM.PedItensTpProd.AsInteger = 4) then
-    FSFEuPrintFortes.RLEtiqLanche.Preview       // Visualiza etiqueta de lanche
-  else begin
-    filAnt := uDM.PedItens.Filtered;
-    filTxtAnt := uDM.pedItens.Filter;
-    uDM.PedItens.Filtered := True;
-    uDM.PedItens.Filter := 'TpProd=3';
-    uDM.PedItens.Refresh;
-    FSFEuPrintFortes.RLEtiqBebida.Preview;      // Visualiza etiqueta com TODAS as bebidas
-    uDM.PedItens.Filtered := filAnt;
-    uDM.PedItens.Filter := filTxtAnt;
-    uDM.PedItens.Refresh
-  end;
-  FSFEuPrintFortes.Free;
+  EmiteEtiquetas(nKey1,nKey2,True);
   uDM.PedItens.FindKey([nKey1,nKey2]);
+  Timer1.Enabled := True;
 
 end;
 
 
 procedure TFuPrincipalEtq.btCarregaClick(Sender: TObject);
 begin
+  Timer1.Enabled := False;
   CarregaTurnos;
   btProsseguirClick(nil);
   btProsseguir.SetFocus;
@@ -174,42 +162,9 @@ begin
 end;
 
 procedure TFuPrincipalEtq.btPrintAllClick(Sender: TObject);
-var filAnt: Boolean;
-    filTxtAnt: String;
-    lPreview: Boolean;
 begin
-  FSFEuPrintFortes := TFSFEuPrintFortes.Create(nil);
-  DefinePrinterEtiqueta;
-  if AnsiUpperCase(ObtemParametro('EtiquetaPreview')) = 'S' then
-    lPreview := True
-  else
-    lPreview := False;
-  //
-  filAnt := uDM.PedItens.Filtered;
-  filTxtAnt := uDM.PedItens.Filter;
-  uDM.PedItens.Filtered := True;
-  uDM.PedItens.Filter := 'TpProd=1 or TpProd=4';
-  uDM.PedItens.Refresh;
-  uDM.PedItens.First;
-  SetRecordRangeLanche(1);      // rrAllRecords;
-  if lPreview then
-    FSFEuPrintFortes.RLEtiqLanche.Preview
-  else
-    FSFEuPrintFortes.RLEtiqLanche.Print;
-  SetRecordRangeLanche(0);      // rrCurrentOnly;
-  uDM.PedItens.Filter := 'TpProd=3';
-  uDM.PedItens.Refresh;
-  if uDM.PedItens.RecordCount > 0 then
-  begin
-    // Imprime TODAS as bebidas em uma etiqueta
-    uDM.PedItens.First;
-    if lPreview then
-      FSFEuPrintFortes.RLEtiqBebida.Preview
-    else
-      FSFEuPrintFortes.RLEtiqBebida.Print;
-  end;
-  FSFEuPrintFortes.Free;
-  //
+  Timer1.Enabled := False;
+  EmiteEtiquetas(uDM.PedidosNumero.AsInteger,0);
   uDM.PedItens.Filtered := False;
   uDM.PedItens.Refresh;
   uDM.PedItens.First;
@@ -220,13 +175,12 @@ begin
     uDM.PedItens.Post;
     uDM.PedItens.Next;
   end;
-  uDM.PedItens.Filtered := filAnt;
-  uDM.PedItens.Filter := filTxtAnt;
   uDM.PedItens.Refresh;
   uDM.Pedidos.Edit;
   uDM.PedidosEtqImpressas.AsInteger := 1;
   uDM.Pedidos.Post;
   //
+  Timer1.Enabled := True;
   uDM.Pedidos.Refresh;
   if uDM.Pedidos.RecordCount = 0 then
     LabNrPeds.Caption := 'Sem pedidos'
@@ -237,50 +191,22 @@ end;
 
 procedure TFuPrincipalEtq.btPrintClick(Sender: TObject);
 var nKey1,nKey2: Integer;
-    filTxtAnt: String;
-    filAnt: Boolean;
+//    filTxtAnt: String;
+//    filAnt: Boolean;
 begin
   if uDM.PedItens.RecordCount = 0 then Exit;
+  Timer1.Enabled := False;
   nKey1 := uDM.PedItensNumero.AsInteger;
   nKey2 := uDM.PedItensNrLcto.AsInteger;
-  FSFEuPrintFortes := TFSFEuPrintFortes.Create(nil);
-  DefinePrinterEtiqueta;
-  if (uDM.PedItensTpProd.AsInteger = 1) or
-     (uDM.PedItensTpProd.AsInteger = 4) then
-  begin
-    if ObtemParametro('EtiquetaPreview') = 'S' then
-      FSFEuPrintFortes.RLEtiqLanche.Preview
-    else FSFEuPrintFortes.RLEtiqLanche.Print;
-    if uDM.PedItens.FindKey([nKey1,nKey2]) then
-    begin
-      uDM.PedItens.Edit;
-      uDM.PedItensEtqImpressa.AsInteger := 1;
-      uDM.PedItens.Post;
-    end;
-  end
-  else begin
-    filAnt := uDM.PedItens.Filtered;
-    filTxtAnt := uDM.PedItens.Filter;
-    uDM.PedItens.Filter := 'TpProd=3';
-    uDM.PedItens.Filtered := True;
-    uDM.PedItens.Refresh;
-    if ObtemParametro('EtiquetaPreview') = 'S' then
-      FSFEuPrintFortes.RLEtiqBebida.Preview
-    else FSFEuPrintFortes.RLEtiqBebida.Print;       // Imprime TODAS as bebidas em uma etiqueta
-    uDM.PedItens.First;
-    while not uDM.PedItens.Eof do
-    begin
-      uDM.PedItens.Edit;
-      uDM.PedItensEtqImpressa.AsInteger := 1;  // Assinala impressao
-      uDM.PedItens.Post;
-      uDM.PedItens.Next;
-    end;
-    uDM.PedItens.Filtered := filAnt;
-    uDM.PedItens.Filter := filTxtAnt;
-    uDM.PedItens.Refresh
-  end;
-  FSFEuPrintFortes.Free;
+  EmiteEtiquetas(nKey1,nKey2);
   uDM.PedItens.Refresh;
+  if uDM.PedItens.FindKey([nKey1,nKey2]) then
+  begin
+    uDM.PedItens.Edit;
+    uDM.PedItensEtqImpressa.AsInteger := 1;
+    uDM.PedItens.Post;
+  end;
+  Timer1.Enabled := True;
 
 end;
 
@@ -306,7 +232,8 @@ end;
 
 procedure TFuPrincipalEtq.btNoEtiqClick(Sender: TObject);
 begin
- if MessageDlg('Excluir da relação de etiquetas à imprimir ?',
+  Timer1.Enabled := False;
+  if MessageDlg('Excluir da relação de etiquetas à imprimir ?',
                 mtConfirmation,[mbYes,mbNo],0,mbNo,['Sim','Não']) = mrYes then
   begin
     uDM.PedItens.Edit;
@@ -314,6 +241,7 @@ begin
     uDM.PedItens.Post;
   end;
   uDM.PedItens.Refresh;
+  Timer1.Enabled := True;
 
 end;
 
@@ -342,6 +270,7 @@ begin
   PanPedidos.Visible := True;
   PanEtiquetas.Visible := True;
   FormResize(nil);
+  Timer1.Enabled := True;
 
 end;
 procedure TFuPrincipalEtq.btSairClick(Sender: TObject);
@@ -447,6 +376,20 @@ end;
 procedure TFuPrincipalEtq.GridPedsDblClick(Sender: TObject);
 begin
   btPrintClick(nil);
+
+end;
+
+procedure TFuPrincipalEtq.Timer1Timer(Sender: TObject);
+begin
+  uDM.Pedidos.Refresh;
+  if uDM.Pedidos.RecordCount = 0 then
+     LabNrPeds.Caption := 'Sem pedidos'
+  else
+     LabNrPeds.Caption := IntToStr(uDM.Pedidos.RecordCount) + ' pedidos';
+  if uDM.PedItens.RecordCount = 0 then
+     LabNrEtqs.Caption := 'Sem ítens'
+  else
+     LabNrEtqs.Caption := IntToStr(uDM.PedItens.RecordCount) + ' ítens';
 
 end;
 

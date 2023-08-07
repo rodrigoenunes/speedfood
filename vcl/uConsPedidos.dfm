@@ -2,7 +2,7 @@ object FuConsPedidos: TFuConsPedidos
   Left = 0
   Top = 0
   Caption = 'Consultar pedidos'
-  ClientHeight = 485
+  ClientHeight = 487
   ClientWidth = 671
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -19,14 +19,14 @@ object FuConsPedidos: TFuConsPedidos
     Left = 0
     Top = 0
     Width = 671
-    Height = 412
+    Height = 406
     Align = alClient
     TabOrder = 0
     object GridPed: TDBGrid
       Left = 1
       Top = 1
       Width = 669
-      Height = 410
+      Height = 404
       Align = alClient
       DataSource = uDM.DSPedidos
       DrawingStyle = gdsClassic
@@ -113,11 +113,11 @@ object FuConsPedidos: TFuConsPedidos
         end>
     end
   end
-  object Panel2: TPanel
+  object PanCtle: TPanel
     Left = 0
-    Top = 412
+    Top = 406
     Width = 671
-    Height = 73
+    Height = 81
     Align = alBottom
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
@@ -128,7 +128,7 @@ object FuConsPedidos: TFuConsPedidos
     TabOrder = 1
     DesignSize = (
       671
-      73)
+      81)
     object NavPed: TDBNavigator
       Left = 8
       Top = 6
@@ -143,6 +143,7 @@ object FuConsPedidos: TFuConsPedidos
       Top = 5
       Width = 123
       Height = 35
+      Hint = 'Imprimir pedido'
       Anchors = [akTop, akRight]
       Caption = 'Imprimir'
       Glyph.Data = {
@@ -206,6 +207,8 @@ object FuConsPedidos: TFuConsPedidos
         BEBEBEBEBEBEBEBEBEBEBEBEBEBEBEBEBEBEBEBEBEBEBEBEBEBEBEBEBEBEBEBE
         BEBEBEBEB9B9B99D9D9D949494929292B2B2B2B8B8B8BEBEBEBEBEBEBEBEBEBE
         BEBEBEBEBEBEBEBE0000}
+      ParentShowHint = False
+      ShowHint = True
       TabOrder = 1
       OnClick = btImprimirClick
     end
@@ -214,6 +217,7 @@ object FuConsPedidos: TFuConsPedidos
       Top = 5
       Width = 123
       Height = 35
+      Hint = 'Emitr Nota Fiscal Consumidor'
       Anchors = [akTop, akRight]
       Caption = 'NFCe'
       Glyph.Data = {
@@ -273,14 +277,17 @@ object FuConsPedidos: TFuConsPedidos
         00030C000000000208021D850338FEFF00FFFF00FFFF00FFFF00FFFF00FFFF00
         FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF
         00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF0231E60336FF}
+      ParentShowHint = False
+      ShowHint = True
       TabOrder = 2
       OnClick = btEmitirNFCeClick
     end
     object btSair: TBitBtn
-      Left = 541
-      Top = 5
-      Width = 123
+      Left = 384
+      Top = 41
+      Width = 185
       Height = 35
+      Hint = 'Fechar janela atual'
       Anchors = [akTop, akRight]
       Caption = 'Sair'
       Glyph.Data = {
@@ -297,8 +304,44 @@ object FuConsPedidos: TFuConsPedidos
         0333338F3F8F38888F333301E10BB9999933338F8F8F388888333301EE0BBBBB
         0333338F888FFFFF8F3333000000000003333388888888888333}
       NumGlyphs = 2
-      TabOrder = 3
+      ParentShowHint = False
+      ShowHint = True
+      TabOrder = 4
       OnClick = btSairClick
+    end
+    object btEtiquetas: TBitBtn
+      Left = 541
+      Top = 6
+      Width = 123
+      Height = 35
+      Hint = 'Imprimir etiquetas do pedido'
+      Anchors = [akTop, akRight]
+      Caption = 'Etiquetas'
+      Glyph.Data = {
+        76020000424D7602000000000000760000002800000020000000200000000100
+        0400000000000002000000000000000000001000000000000000000000000000
+        8000008000000080800080000000800080008080000080808000C0C0C0000000
+        FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFFFF00666666666666
+        6666666666666666666666666666666666666666666666666666666600000000
+        000000000000000066666660FFFFFFFFFFFFFFFFFFFFFFFF0666660FFFFFFFFF
+        FFFFFFFFFFFFFFFFF066660FFFFFFFFFFFFFFFFFFFFFFFFFF066660FFFFF00FF
+        FF0F00FF00F000FFF066660FFF00FFF00F0FFF0F0FFFFF0FF066660FFFFFFFFF
+        FFFFFFFFFFFFFFFFF066660FFFFFFFFFFFFFFFFFFFFFFFFFF066660FFF00F0FF
+        FF00F0FF00FFF0FFF066660FFF0FF00F00FFFFF00FF00FFFF066660FFFFFFFFF
+        FFFFFFFFFFFFFFFFF0666660FFFFFFFFFFFFFFFFFFFFFFFF0666666600000000
+        0000000000000000666666666666666666666666666666666666666600000000
+        000000000000000066666660FFFFFFFFFFFFFFFFFFFFFFFF0666660FFFFFFFFF
+        FFFFFFFFFFFFFFFFF066660FFFFFFFFFFFFFFFFFFFFFFFFFF066660FFFFF00FF
+        FF0F000F00F0000FF066660FFF00FFF0000FFF0F0FFFFF0FF066660FFFFFFFFF
+        FFFFFFFFFFFFFFFFF066660FFFFFFFFFFFFFFFFFFFFFFFFFF066660FFF0000FF
+        FF0000FF000FF0FFF066660FFF0FF00F000FFFF00FF00FFFF066660FFFFFFFFF
+        FFFFFFFFFFFFFFFFF0666660FFFFFFFFFFFFFFFFFFFFFFFF0666666600000000
+        0000000000000000666666666666666666666666666666666666666666666666
+        6666666666666666666666666666666666666666666666666666}
+      ParentShowHint = False
+      ShowHint = True
+      TabOrder = 3
+      OnClick = btEtiquetasClick
     end
   end
 end

@@ -7,6 +7,7 @@ uses
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, RLReport, RLPrinters, RLRichText;
   procedure SetRecordRangeLanche(pModo:Integer);
   procedure DefinePrinterEtiqueta;
+  procedure EmiteEtiquetas(pmtPedido:Integer; pmtItem:Integer; pmtPreview:Boolean=False);
 
 type
   TFSFEuPrintFortes = class(TForm)
@@ -132,9 +133,76 @@ begin
 end;
 
 
+Procedure EmiteEtiquetas(pmtPedido:Integer; pmtItem:Integer; pmtPreview:Boolean=False);
+var filAnt: Boolean;
+    filTxtAnt: String;
+begin
+  FSFEuPrintFortes := TFSFEuPrintFortes.Create(nil);
+  DefinePrinterEtiqueta;
+  if AnsiUpperCase(ObtemParametro('EtiquetaPreview')) = 'S' then
+    lPreview := True
+  else
+    lPreview := False;
+  //
+  if pmtPreview then lPreview := True;
+  //
+  if pmtItem <> 0
+  then begin
+    if uDM.PedItens.FindKey([pmtPedido,pmtItem])
+    then begin
+      SetRecordRangeLanche(0);      // rrCurrentOnly;
+      case uDM.PedItensTpProd.AsInteger of
+        1,4:if lPreview then
+               FSFEuPrintFortes.RLEtiqLanche.Preview
+            else
+               FSFEuPrintFortes.RLEtiqLanche.Print;
+          3:if lPreview then
+               FSFEuPrintFortes.RLEtiqBebida.Preview
+            else
+               FSFEuPrintFortes.RLEtiqBebida.Print;
+      end;
+    end
+    else MessageDlg('Item não encontrado' + #13 +
+                    'Pedido: ' + IntToStr(pmtPedido) + ' item: ' + IntToStr(pmtItem) + #13 +
+                    'Emissão impossibilitada',mtError,[mbOk],0);
+  end
+  else begin     // Todas as etiquetas
+    filAnt := uDM.PedItens.Filtered;
+    filTxtAnt := uDM.PedItens.Filter;
+    uDM.PedItens.Filtered := True;
+    uDM.PedItens.Filter := 'TpProd=1 or TpProd=4';
+    uDM.PedItens.Refresh;
+    uDM.PedItens.First;
+    SetRecordRangeLanche(1);      // rrAllRecords;
+    if lPreview then
+      FSFEuPrintFortes.RLEtiqLanche.Preview
+    else
+      FSFEuPrintFortes.RLEtiqLanche.Print;
+    SetRecordRangeLanche(0);      // rrCurrentOnly;
+    uDM.PedItens.Filter := 'TpProd=3';
+    uDM.PedItens.Refresh;
+    if uDM.PedItens.RecordCount > 0 then
+    begin      // Imprime TODAS as bebidas em uma etiqueta
+      uDM.PedItens.First;
+      if lPreview then
+        FSFEuPrintFortes.RLEtiqBebida.Preview
+      else
+        FSFEuPrintFortes.RLEtiqBebida.Print;
+    end;
+    uDM.PedItens.Filtered := filAnt;
+    uDM.PedItens.Filter := filTxtAnt;
+    uDM.PedItens.Refresh;
+  end;
+  FSFEuPrintFortes.Free;
+
+end;
+
+
+
+
 procedure TFSFEuPrintFortes.RLDetLancheBeforePrint(Sender: TObject; var PrintIt: Boolean);
 var i: Integer;
-    AllExtras,xExtra,xLabMais: String;
+    AllExtras,xExtra: String;
     wTamFonte,wLargura: Integer;
     wTp: Integer;
     //linMais,linSem,linMenos: Integer;
