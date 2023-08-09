@@ -363,12 +363,12 @@ object FSFEuPrintFortes: TFSFEuPrintFortes
         Text = 'Nome: '
       end
       object RLDBText9: TRLDBText
-        Left = 285
-        Top = 1
-        Width = 78
+        Left = 270
+        Top = 3
+        Width = 93
         Height = 14
         Alignment = taRightJustify
-        DataField = 'Numero'
+        DataField = 'ZC_NroLst'
         DataSource = uDM.DSPedidos
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clBlack
@@ -505,7 +505,7 @@ object FSFEuPrintFortes: TFSFEuPrintFortes
       object RLDBText10: TRLDBText
         Left = 8
         Top = 1
-        Width = 39
+        Width = 40
         Height = 16
         Alignment = taCenter
         AutoSize = False
@@ -516,7 +516,7 @@ object FSFEuPrintFortes: TFSFEuPrintFortes
       object RLDBText11: TRLDBText
         Left = 52
         Top = 1
-        Width = 169
+        Width = 106
         Height = 18
         DataField = 'ZC_Descricao'
         DataSource = uDM.DSPedItens
@@ -590,12 +590,12 @@ object FSFEuPrintFortes: TFSFEuPrintFortes
         Text = 'Nome: '
       end
       object RLDBText13: TRLDBText
-        Left = 285
+        Left = 270
         Top = 2
-        Width = 78
+        Width = 93
         Height = 14
         Alignment = taRightJustify
-        DataField = 'Numero'
+        DataField = 'ZC_NroLst'
         DataSource = uDM.DSPedidos
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clBlack
