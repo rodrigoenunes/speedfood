@@ -1025,6 +1025,13 @@ object uDM: TuDM
       FieldName = 'QtdPedidos'
       Origin = 'QtdPedidos'
     end
+    object RegCaixaSituacao: TStringField
+      AutoGenerateValue = arDefault
+      FieldName = 'Situacao'
+      Origin = 'Situacao'
+      FixedChar = True
+      Size = 1
+    end
     object RegCaixaZC_IniFim: TStringField
       FieldKind = fkCalculated
       FieldName = 'ZC_IniFim'
@@ -1051,6 +1058,12 @@ object uDM: TuDM
     object RegCaixaZC_QtdSaidas: TIntegerField
       FieldKind = fkCalculated
       FieldName = 'ZC_QtdSaidas'
+      Calculated = True
+    end
+    object RegCaixaZC_Situacao: TStringField
+      FieldKind = fkCalculated
+      FieldName = 'ZC_Situacao'
+      Size = 10
       Calculated = True
     end
   end

@@ -102,17 +102,21 @@ object FuFinPedido: TFuFinPedido
       Height = 122
       Align = alClient
       TabOrder = 3
+      DesignSize = (
+        387
+        122)
       object btCancelar: TBitBtn
         Left = 5
-        Top = 61
-        Width = 168
-        Height = 56
+        Top = 68
+        Width = 162
+        Height = 49
+        Anchors = [akLeft, akBottom]
         Caption = '&Cancelar pedido'
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clWindowText
-        Font.Height = -19
+        Font.Height = -13
         Font.Name = 'Tahoma'
-        Font.Style = []
+        Font.Style = [fsBold]
         Glyph.Data = {
           76020000424D7602000000000000760000002800000020000000200000000100
           0400000000000002000000000000000000001000000000000000000000000000

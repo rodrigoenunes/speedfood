@@ -6,16 +6,17 @@ uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, DateUtils, Vcl.DBCtrls, Vcl.StdCtrls,
   Vcl.Mask, Vcl.Buttons;
-  Function AberturaDeCaixa(lExibe:Boolean=False): Integer;
-  Function FechamentoDeCaixa: Boolean;
-  Procedure CalculaSaldoCaixa(pTurno:Integer);
+  Function VerificaStatusCaixa: Integer;
+  Function AberturaDeCaixa: Integer;
+  Function FechamentoDeCaixa: Integer;
+  Procedure CalculaSaldoCaixa(pTurno:Integer; pFinaliza:Boolean=False);
 
 type
   TFuCaixa = class(TForm)
     Label1: TLabel;
-    Label2: TLabel;
-    Label3: TLabel;
-    Label4: TLabel;
+    LabInicio: TLabel;
+    LabFim: TLabel;
+    LabSaldoIni: TLabel;
     dbTurno: TDBText;
     edInicio: TDBEdit;
     edFinal: TDBEdit;
@@ -25,14 +26,14 @@ type
     btCancel: TBitBtn;
     LabSaldoFim: TLabel;
     edSaldoFim: TDBEdit;
-    btLctCaixa: TBitBtn;
     procedure btOkClick(Sender: TObject);
     procedure btCancelClick(Sender: TObject);
     procedure edInicioKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure edFinalKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure edSaldoIniKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure edSaldoFimKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
-    procedure btLctCaixaClick(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
+    procedure FormActivate(Sender: TObject);
   private
     { Private declarations }
   public
@@ -44,12 +45,13 @@ var
   dhIni,dhFim: TDateTime;
   AA,MM,DD,Hr,Mi,Se,Ms: Word;
   wrkOperacao: Integer;
+  wStatusCaixa: Integer;
 
 implementation
 
 {$R *.dfm}
 
-uses uDados, uPrincipal, uCaixaMovto;
+uses uDados, uPrincipal;
 {
     O 'Caixa' é considerado por sequencia de abertura, compreendendo um período entre
     uma data/hora de abertura e uma data/hora de encerramento
@@ -72,18 +74,18 @@ Procedure AdicionaRegCaixa(pSeq:Integer);
 begin
   DecodeDateTime(Now,AA,MM,DD,Hr,Mi,Se,Ms);
   dhIni := EncodeDateTime(AA,MM,DD,Hr,Mi,Se,0);
-  dhFim := dhIni + 1;
-  dhFim := IncSecond(dhFim, -1);
+  //dhFim := dhIni + 1;
+  //dhFim := IncSecond(dhFim, -1);
   uDM.RegCaixa.Append;
   uDM.RegCaixaTurno.AsInteger         := pSeq;
   uDM.RegCaixaDtHrInicio.AsDateTime   := dhIni;
-  uDM.RegCaixaDtHrFim.AsDateTime      := dhFim;    // Registro de caixa para 24 h
+  uDM.RegCaixaDtHrFim.Clear;
   uDM.RegCaixaSaldoInicial.AsCurrency := 0;
   uDM.RegCaixa.Post;
 
 end;
 
-Procedure CalculaSaldoCaixa(pTurno:Integer);
+Procedure CalculaSaldoCaixa(pTurno:Integer; pFinaliza:Boolean=False);
 var nMeioPgt: array[0..4] of integer;        // R$, CDeb, cCred, PIX, Outros
     vMeioPgt: array[0..4] of Currency;
     nMisto: Integer;
@@ -191,87 +193,102 @@ begin
   uDM.RegCaixaQtd_Sangria.AsInteger       := nOper[4];
   uDM.RegCaixaVlrPedidos.AsCurrency       := vOper[1];
   uDM.RegCaixaQtdPedidos.AsInteger        := nOper[1];
+  if pFinaliza then
+  begin
+    uDM.RegCaixaDtHrFim.AsDateTime := Now;
+    uDM.RegCaixaSituacao.AsString := 'F';
+  end;
   uDM.RegCaixa.Post;
 
 end;
 
+Function VerificaStatusCaixa: Integer;
+begin
+{  Retorno:  0=Abrir novo turno
+             1=Prosseguir com o turno atual      }
+  uDM.RegCaixa.Last;
+  if uDM.RegCaixaSituacao.AsString = 'F' then
+  begin                // Turno 'F'inalizado
+    Result := 0;       // Abrir novo caixa/turno
+    Exit;
+  end;
+  FuCaixa := TFuCaixa.Create(nil);
+  with FuCaixa
+  do begin
+    LabRotina.Caption := 'Turno aberto';
+    LabFim.Visible := False;
+    edFinal.Visible := False;
+    LabSaldoFim.Visible := False;
+    edSaldoFim.Visible := False;
+    btOk.Caption := 'Prosseguir' + #13 + 'com o turno';
+    btCancel.Caption := 'Fechar turno' + #13 + 'e iniciar novo';
+    wrkOperacao := 3;           // Caixa aberto
+    ShowModal;
+    Result := wStatusCaixa;     // 0-Abrir novo; 1-Prosseguir
+  end;
+  FuCaixa.Free;
 
-Function AberturaDeCaixa(lExibe:Boolean=False): Integer;
+end;
+
+
+Function AberturaDeCaixa: Integer;
 var wTurno: Integer;
 begin
   Result  := 0;
   FuCaixa := TFuCaixa.Create(nil);
   with FuCaixa
   do begin
-    Top    := 60;
-    Left   := 60;
-    Height := 320;
-    btCancel.Caption := '&Cancelar';
-    btLctCaixa.Visible := lExibe;
-    if lExibe then
-       btCancel.Caption := '&Sair';
-    Width  := 284;
-    LabRotina.Caption   := 'Abertura de caixa';
-    edInicio.Enabled    := True;
-    edFinal.Enabled     := True;
+    LabRotina.Caption := 'Abertura de turno';
+    edInicio.Enabled := True;
     edSaldoIni.Enabled  := True;
+    LabFim.Visible := False;
+    edFinal.Visible := False;
     LabSaldoFim.Visible := False;
-    edSaldoFim.Visible  := False;
+    edSaldoFim.Visible := False;
+    btOk.Caption := 'Abrir turno';
+    btCancel.Caption := 'Cancelar' + #13 + 'abertura';
     //
-    DecodeDateTime(Now,AA,MM,DD,Hr,Mi,Se,Ms);
-    dhIni  := EncodeDateTime(AA,MM,DD,Hr,Mi,Se,0);
-    wTurno := 0;
-    uDM.RegCaixa.First;
-    while (not uDM.RegCaixa.Eof) and (wTurno = 0)
-    do if (dhIni >= uDM.RegCaixaDtHrInicio.AsDateTime) and (dhIni <= uDM.RegCaixaDtHrFim.AsDateTime)
-         then wTurno := uDM.RegCaixaTurno.AsInteger          // Registro de caixa já existe
-         else uDM.RegCaixa.Next;
-    //
-    if wTurno = 0
-    then begin        // Não existe o registro de caixa do turno (Turno de 1 a .....)
-      uDM.RegCaixa.Last;
-      wTurno := uDM.RegCaixaTurno.AsInteger + 1;
-      AdicionaRegCaixa(wTurno);
-      lExibe := True;
-    end;
-    if lExibe
-    then begin
-      uDM.RegCaixa.FindKey([wTurno]);
-      uDM.RegCaixa.Edit;
-      wrkOperacao := 1;           // Abertura do caixa ou correção de saldo inicial
-      ShowModal;
-    end;
-    Result := wTurno;
-
+    uDM.RegCaixa.Last;
+    wTurno := uDM.RegCaixaTurno.AsInteger + 1;
+    uDM.RegCaixa.Append;
+    uDM.RegCaixaTurno.AsInteger := wTurno;
+    uDM.RegCaixaDtHrInicio.AsDateTime := Now;
+    uDM.RegCaixaDtHrFim.Clear;
+    uDM.RegCaixaSituacao.AsString := 'A';
+    wrkOperacao := 1;           // Abertura do caixa ou correção de saldo inicial
+    ShowModal;
+    if wStatusCaixa > 0 then
+      Result := wTurno
+    else
+      Result := -1;
   end;
-
-
   FuCaixa.Free;
 
 end;
 
-Function FechamentoDeCaixa: Boolean;
+Function FechamentoDeCaixa: Integer;
 begin
-  Result := False;
   FuCaixa := TFuCaixa.Create(nil);
-  with FuCaixa
-  do begin
-    Top    := 60;
-    Left   := 200;
-    Width  := 284;
-    Height := 284;
-    LabRotina.Caption   := 'Fechamento de caixa';
-    edInicio.Enabled    := False;
-    edFinal.Enabled     := False;
-    edSaldoIni.Enabled  := True;
+  with FuCaixa do
+  begin
+    uDM.RegCaixa.Edit;
+    uDM.RegCaixaDtHrFim.AsDateTime := Now;
+    uDM.RegCaixa.Post;
+    LabRotina.Caption := 'Fechamento de Turno/Caixa';
+    edInicio.Enabled := False;
+    edFinal.Enabled := False;
+    edSaldoIni.Enabled := False;
+    LabFim.Visible := True;
+    edFinal.Visible := True;
     LabSaldoFim.Visible := True;
-    edSaldoFim.Visible  := True;
-    edSaldoFim.Enabled  := False;
-    //
+    edSaldoFim.Visible := True;
+    edSaldoFim.Enabled := False;
+    btOk.Caption := 'Fechar';
+    btCancel.Caption := 'Não fechar';
     wrkOperacao := 2;      // Fechamento do caixa
     ShowModal;
-    Result := True;
-  end;             
+    Result := wStatusCaixa;
+  end;
   FuCaixa.Free;
 
 end;
@@ -279,49 +296,69 @@ end;
 
 procedure TFuCaixa.btCancelClick(Sender: TObject);
 begin
-  uDM.RegCaixa.Cancel;
-  FuCaixa.Close;
-
-end;
-
-procedure TFuCaixa.btLctCaixaClick(Sender: TObject);
-begin
-  CaixaMovimentacao;
+  case wrkOperacao of
+    1:begin     // Abertura de turno
+        uDM.RegCaixa.Cancel;
+        wStatusCaixa := -1;
+      end;
+    2:begin     // Fechamento de turno
+        uDM.RegCaixa.Edit;
+        uDM.RegCaixaDtHrFim.Clear;
+        uDM.RegCaixaSituacao.Clear;
+        uDM.RegCaixa.Post;
+        MessageDlg('Fechamento de turno cancelado' + #13 +
+                   'prosseguindo com o turno atual [' + uDM.RegCaixaTurno.AsString + ' ]',
+                   mtInformation,[mbOk],0);
+        wStatusCaixa := 1;       // Fechamento cancelado, segue com turno atual
+      end;
+    3:begin     // Verificação do Status atual do caixa
+        wStatusCaixa := 0;       // Fechar o caixa e abrir novo
+      end;
+  end;
   FuCaixa.Close;
 
 end;
 
 procedure TFuCaixa.btOkClick(Sender: TObject);
 begin
-  if wrkOperacao = 1 then
-  begin                 // Abertura do caixa ou correção de saldo inicial
-    uDM.RegCaixa.Post;
-    uDM.LctCaixa.Refresh;
-    if uDM.LctCaixa.RecordCount = 0 then
-    begin             // Se não há lançamentos para o dia (sequencia), cria o registro de saldo inicial
-      uDM.LctCaixa.Append;
-      uDM.LctCaixaTurno.AsInteger     := uDM.RegCaixaTurno.AsInteger;
-      uDM.LctCaixaSequencia.AsInteger := 0;
-      uDM.LctCaixaOperacao.AsInteger  := 0;         // Informação de saldo
-      uDM.LctCaixaValor.AsCurrency    := uDM.RegCaixaSaldoInicial.AsCurrency;
-      uDM.LctCaixaMeioPgt.AsInteger   := 0;         // R$
-      uDM.LctCaixaSaldo.AsCurrency    := uDM.RegCaixaSaldoInicial.AsCurrency;
-      uDM.LctCaixaHistorico.AsString  := 'Saldo inicial';
-      uDM.LctCaixaDtHrLcto.AsDateTime := Now;
-      uDM.LctCaixa.Post;
-    end
-    else begin        // Corrige o registro de saldo inicial
-      uDM.LctCaixa.First;
-      uDM.LctCaixa.Edit;
-      uDM.LctCaixaValor.AsCurrency := uDM.RegCaixaSaldoInicial.AsCurrency;
-      uDM.LctCaixaSaldo.AsCurrency := uDM.RegCaixaSaldoInicial.AsCurrency;
-      uDM.LctCaixa.Post;
-    end;
-    CalculaSaldoCaixa(uDM.RegCaixaTurno.AsInteger);
-  end
-  else begin                 // Fechamento do caixa
-    ShowMessage('Fechamento do caixa, emite relatorio de fechamento');
-    CalculaSaldoCaixa(uDM.RegCaixaTurno.AsInteger);
+  case wrkOperacao of
+    1:begin                 // Abertura do caixa ou correção de saldo inicial
+        uDM.RegCaixa.Post;
+        uDM.LctCaixa.Refresh;
+        if uDM.LctCaixa.RecordCount = 0 then
+        begin             // Se não há lançamentos para o turno, cria o registro de saldo inicial
+          uDM.LctCaixa.Append;
+          uDM.LctCaixaTurno.AsInteger     := uDM.RegCaixaTurno.AsInteger;
+          uDM.LctCaixaSequencia.AsInteger := 0;
+          uDM.LctCaixaOperacao.AsInteger  := 0;         // Informação de saldo
+          uDM.LctCaixaValor.AsCurrency    := uDM.RegCaixaSaldoInicial.AsCurrency;
+          uDM.LctCaixaMeioPgt.AsInteger   := 0;         // R$
+          uDM.LctCaixaSaldo.AsCurrency    := uDM.RegCaixaSaldoInicial.AsCurrency;
+          uDM.LctCaixaHistorico.AsString  := 'Saldo inicial';
+          uDM.LctCaixaDtHrLcto.AsDateTime := Now;
+          uDM.LctCaixa.Post;
+        end
+        else begin        // Corrige o registro de saldo inicial
+          uDM.LctCaixa.First;
+          uDM.LctCaixa.Edit;
+          uDM.LctCaixaValor.AsCurrency := uDM.RegCaixaSaldoInicial.AsCurrency;
+          uDM.LctCaixaSaldo.AsCurrency := uDM.RegCaixaSaldoInicial.AsCurrency;
+          uDM.LctCaixa.Post;
+        end;
+        CalculaSaldoCaixa(uDM.RegCaixaTurno.AsInteger);
+        wStatusCaixa := 1;
+      end;
+    2:begin                 // Fechamento do caixa
+        CalculaSaldoCaixa(uDM.RegCaixaTurno.AsInteger,True);
+        uDM.RegCaixa.Edit;
+        uDM.RegCaixaDtHrFim.AsDateTime := Now;
+        uDM.RegCaixaSituacao.AsString := 'F';     // Finalizado
+        uDM.RegCaixa.Post;
+        wStatusCaixa := 0;      // Indica 'abrir' novo turno
+      end;
+    3:begin           // Prosseguir com o caixa/turno aberto
+        wStatusCaixa := 1;
+      end;
   end;
   FuCaixa.Close;
 
@@ -348,6 +385,28 @@ end;
 procedure TFuCaixa.edSaldoIniKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
 begin
   if Key = vk_Return then SelectNext((Sender as TwinControl), True, True);
+
+end;
+
+procedure TFuCaixa.FormActivate(Sender: TObject);
+begin
+  case wrkOperacao of
+    2:begin      // Fechamento de caixa
+        btOk.SetFocus;   // Fechamento de caixa
+      end;
+    3:begin
+        btOk.SetFocus;   // Caixa aberto
+      end;
+  end;
+
+end;
+
+procedure TFuCaixa.FormCreate(Sender: TObject);
+begin
+    Height := 370;
+    Width := 375;
+    Top := (Screen.Height - Height) div 2;
+    Left := (Screen.Width - Width) div 2;
 
 end;
 

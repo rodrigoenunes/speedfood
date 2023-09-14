@@ -172,12 +172,15 @@ begin
     uDM.PedItens.Filtered := True;
     uDM.PedItens.Filter := 'TpProd=1 or TpProd=4';
     uDM.PedItens.Refresh;
-    uDM.PedItens.First;
-    SetRecordRangeLanche(1);      // rrAllRecords;
-    if lPreview then
-      FSFEuPrintFortes.RLEtiqLanche.Preview
-    else
-      FSFEuPrintFortes.RLEtiqLanche.Print;
+    if uDM.PedItens.RecordCount > 0 then
+    begin
+      uDM.PedItens.First;
+      SetRecordRangeLanche(1);      // rrAllRecords;
+      if lPreview then
+        FSFEuPrintFortes.RLEtiqLanche.Preview
+      else
+        FSFEuPrintFortes.RLEtiqLanche.Print;
+    end;
     SetRecordRangeLanche(0);      // rrCurrentOnly;
     uDM.PedItens.Filter := 'TpProd=3';
     uDM.PedItens.Refresh;

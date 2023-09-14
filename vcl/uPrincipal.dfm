@@ -366,9 +366,9 @@ object FuPrincipal: TFuPrincipal
     OnClick = btAdminClick
   end
   object PanTurno: TPanel
-    Left = 291
+    Left = 275
     Top = 22
-    Width = 198
+    Width = 221
     Height = 79
     BevelInner = bvLowered
     Color = clGradientInactiveCaption
@@ -377,7 +377,7 @@ object FuPrincipal: TFuPrincipal
     Visible = False
     object LabInicio: TLabel
       Left = 12
-      Top = 28
+      Top = 33
       Width = 64
       Height = 19
       Caption = 'LabInicio'
@@ -390,7 +390,7 @@ object FuPrincipal: TFuPrincipal
     end
     object LabFinal: TLabel
       Left = 12
-      Top = 52
+      Top = 57
       Width = 58
       Height = 19
       Caption = 'LabFinal'
@@ -400,21 +400,22 @@ object FuPrincipal: TFuPrincipal
       Font.Name = 'Tahoma'
       Font.Style = []
       ParentFont = False
+      Visible = False
     end
     object LabTurno: TLabel
       Left = 2
       Top = 2
-      Width = 194
-      Height = 19
+      Width = 217
+      Height = 25
       Align = alTop
       Caption = '  Turno atual'
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
-      Font.Height = -16
+      Font.Height = -21
       Font.Name = 'Tahoma'
       Font.Style = [fsBold]
       ParentFont = False
-      ExplicitWidth = 105
+      ExplicitWidth = 133
     end
   end
   object btConsPedidos: TBitBtn

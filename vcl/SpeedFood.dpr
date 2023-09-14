@@ -34,7 +34,7 @@ begin
   Application.CreateForm(TFFRCtle, FFRCtle);
   Application.CreateForm(TFEnviaEMail, FEnviaEMail);
   Application.CreateForm(TFuUserPwd, FuUserPwd);
-  Application.CreateForm(TFuUserPwd, FuUserPwd);
+  //Application.CreateForm(TFuUserPwd, FuUserPwd);
   Application.CreateForm(TFuHelpSpeedFood, FuHelpSpeedFood);
   Application.CreateForm(TFSFEuPrintFortes, FSFEuPrintFortes);
   Application.CreateForm(TFuMontarLanche, FuMontarLanche);

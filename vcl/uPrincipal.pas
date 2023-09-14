@@ -51,11 +51,12 @@ implementation
 {$R *.dfm}
 
 uses uItens, uDados, uGenericas, uCaixa, uPedidos, uImpressoes, uUsuario,
-  uConsPedidos, FortesReportCtle, uAdministrativo, uUserPwd, uHelpSpeedFood;
+  uConsPedidos, FortesReportCtle, uAdministrativo, uUserPwd, uHelpSpeedFood,
+  uCaixaMovto;
 
 procedure TFuPrincipal.btAbrirCaixaClick(Sender: TObject);
 begin
-  AberturaDeCaixa(True);
+  CaixaMovimentacao;
 
 end;
 
@@ -141,6 +142,7 @@ var arqimg: String;
     AA,MM,DD: word;
     dtValid,dtHoje: TDateTime;
     nDias: Integer;
+    wAcaoTurno: Integer;
 begin
   if uDM = Nil then
   begin
@@ -159,11 +161,9 @@ begin
     FGen.pathSalvaForm := ExtractFilePath(Application.ExeName);
     Form_Define(FuPrincipal);
     //
-    {
     if ObtemParametro('SistemaUserPwd') = 'S'
     then if not ObtemUsuario(uDM.sysUser)
             then btSairClick(nil);
-    }
     //
     dtHoje := DateOf(Date);
     xValidade := ObtemParametro('SistemaValidade');    // AAAAMMDD
@@ -178,8 +178,7 @@ begin
       btSairClick(nil);
     end;
     if nDias < 31 then
-      MessageDlg('A validade do sistema termina em ' + IntToStr(nDias) + ' dias',
-                      mtInformation,[mbOk],0);
+      MessageDlg('A validade do sistema termina em ' + IntToStr(nDias) + ' dias',mtInformation,[mbOk],0);
     //
     Image1.Visible       := False;
     uDM.pathImagens      := IncludeTrailingPathDelimiter(uDM.SisPessoaPathImagens.AsString);
@@ -192,19 +191,50 @@ begin
       Image1.Visible := True;
     end;
     ContaExtras;                  // Obtem qtd de ítens 'extras'
-    uDM.turnoCorrente := AberturaDeCaixa;
     //
-    LabTurno.Caption  := 'Turno atual (' + IntToStr(uDM.turnoCorrente) + ')';
-    LabInicio.Caption := '> ' + uDM.RegCaixaDtHrInicio.AsString;
-    LabFinal.Caption  := '> ' + uDM.RegCaixaDtHrFim.AsString;
+    wAcaoTurno := VerificaStatusCaixa;               // Sempre posiciona no ULTIMO registro
+    if wAcaoTurno = 0 then
+    begin          // Encerra turno e abre novo
+      if uDM.RegCaixaSituacao.AsString <> 'F'
+      then begin
+        wAcaoTurno := FechamentoDeCaixa;
+        if wAcaoTurno = 0 then
+        begin
+          CaixaMovimentacao;
+          uDM.turnoCorrente := AberturaDeCaixa;
+        end
+        else uDM.turnoCorrente := uDM.RegCaixaTurno.AsInteger;
+      end
+      else uDM.turnoCorrente := AberturaDeCaixa;
+    end
+    else begin     // Prossegue o turno
+      uDM.RegCaixa.Last;
+      uDM.turnoCorrente := uDM.RegCaixaTurno.AsInteger;
+    end;
+    //
+    if uDM.turnoCorrente < 0 then
+    begin
+      MessageDlg('Abertura de turno cancelada' + #13#13 +
+                 'Aplicação finalizada',mtInformation,[mbOk],0);
+      Application.Terminate;
+    end;
+    LabTurno.Caption  := '  Turno: ' + IntToStr(uDM.turnoCorrente);
+    LabInicio.Caption := 'Início:' + uDM.RegCaixaDtHrInicio.AsString;
+    LabFinal.Caption  := 'Final:' + uDM.RegCaixaDtHrFim.AsString;
     PanTurno.Visible  := True;
     //
+    FuPrincipal.Visible := True;
   end;
 
 end;
 
 procedure TFuPrincipal.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
+  if MessageDlg('Encerrar turno atual',mtConfirmation,[mbYes,mbNo],0,mbNo,['Sim','Não']) = mrYes
+  then begin
+    if FechamentoDeCaixa = 0
+       then CaixaMovimentacao;
+  end;
   uDM.PedItens.Active  := False;
   uDM.Pedidos.Active   := False;
   uDM.LctCaixa.Active  := False;

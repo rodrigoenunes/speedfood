@@ -9,7 +9,7 @@ uses
   FireDAC.Phys.MySQL, FireDAC.Phys.MySQLDef, FireDAC.FMXUI.Wait,
   FireDAC.Stan.Param, FireDAC.DatS, FireDAC.DApt.Intf, FireDAC.DApt,
   FireDAC.Comp.DataSet, FireDAC.Comp.Client, FireDAC.Comp.UI, FireDAC.Stan.ExprFuncs,
-  FireDAC.Stan.Expr, Datasnap.DBClient;
+  FireDAC.Stan.Expr, Datasnap.DBClient, Dialogs;
   Procedure ContaExtras;
   Procedure CarregaExtras(pCols,pLins: Integer);
   Function CriaAbrePedidoWrk(pNro:Integer): Integer;
@@ -238,6 +238,8 @@ type
     PedItensTxtSem: TStringField;
     PedItensTxtMenos: TStringField;
     PedidosZC_NroLst: TStringField;
+    RegCaixaSituacao: TStringField;
+    RegCaixaZC_Situacao: TStringField;
     procedure ItensCalcFields(DataSet: TDataSet);
     procedure LctCaixaCalcFields(DataSet: TDataSet);
     procedure PedWrkCalcFields(DataSet: TDataSet);
@@ -440,17 +442,21 @@ procedure TuDM.DataModuleCreate(Sender: TObject);
 Var
   vIniFile: TIniFile;
   sIniFile, sServer: String;
-begin
-  sIniFile:= ChangeFileExt(ParamStr(0), '.ini');
-  if FileExists(sIniFile) then
-  Begin
-    vIniFile:= TIniFile.Create( sIniFile  );
-    sServer:= vIniFile.ReadString('DB', 'Host', '').Trim;
-    if Not sServer.IsEmpty then
-      FDC.Params[ FDC.Params.IndexOfName('server') ]:= 'Server=' + sServer;
-    vIniFile.Free;
-  End;
 
+begin
+  sIniFile := ChangeFileExt(ParamStr(0), '.ini');
+  vIniFile := TIniFile.Create(sIniFile);
+  if not FileExists(sIniFile) then
+  Begin
+    vIniFile.WriteString('DB', 'Host', '');
+  End;
+  //
+  sServer := vIniFile.ReadString('DB', 'Host', '').Trim;
+  if Not sServer.IsEmpty then
+    FDC.Params[ FDC.Params.IndexOfName('server') ]:= 'Server=' + sServer;
+  vIniFile.Free;
+  //
+  FDC.Connected := True;
 
 end;
 
@@ -633,10 +639,20 @@ end;
 
 procedure TuDM.RegCaixaCalcFields(DataSet: TDataSet);
 begin
-  RegCaixaZC_IniFim.AsString := Copy(RegCaixaDtHrInicio.AsString,1,6) +
-                                Copy(RegCaixaDtHrInicio.AsString,9,8) + ' - ' +
-                                Copy(RegCaixaDtHrFim.AsString,1,6) +
-                                Copy(RegCaixaDtHrFim.AsString,9,8);
+  if RegCaixaSituacao.AsString = 'E' then
+  begin
+    RegCaixaZC_Situacao.AsString := 'Encerrado';
+    RegCaixaZC_IniFim.AsString := Copy(RegCaixaDtHrInicio.AsString,1,6) +
+                                  Copy(RegCaixaDtHrInicio.AsString,9,8) + ' - ' +
+                                  Copy(RegCaixaDtHrFim.AsString,1,6) +
+                                  Copy(RegCaixaDtHrFim.AsString,9,8);
+  end
+  else begin
+    RegCaixaZC_Situacao.AsString := 'Aberto';
+    RegCaixaZC_IniFim.AsString := Copy(RegCaixaDtHrInicio.AsString,1,6) +
+                                  Copy(RegCaixaDtHrInicio.AsString,9,8) + ' - ' +
+                                  '......' + '........';
+  end;
   RegCaixaZC_VlrEntradas.AsCurrency := RegCaixaE_Dinheiro.AsCurrency + RegCaixaE_CartaoDebito.AsCurrency +
                                        RegCaixaE_CartaoCredito.AsCurrency + RegCaixaE_PIX.AsCurrency +
                                        RegCaixaE_Outros.AsCurrency + RegCaixaE_Suprimento.AsCurrency;

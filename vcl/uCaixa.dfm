@@ -3,8 +3,8 @@ object FuCaixa: TFuCaixa
   Top = 0
   BorderIcons = [biSystemMenu]
   Caption = 'Caixa'
-  ClientHeight = 253
-  ClientWidth = 261
+  ClientHeight = 331
+  ClientWidth = 357
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -13,51 +13,53 @@ object FuCaixa: TFuCaixa
   Font.Style = []
   OldCreateOrder = False
   Position = poDesigned
+  OnActivate = FormActivate
+  OnCreate = FormCreate
   PixelsPerInch = 96
   TextHeight = 16
   object Label1: TLabel
-    Left = 45
-    Top = 36
+    Left = 64
+    Top = 37
     Width = 39
     Height = 16
     Alignment = taRightJustify
     Caption = 'Turno:'
   end
-  object Label2: TLabel
-    Left = 50
-    Top = 61
+  object LabInicio: TLabel
+    Left = 68
+    Top = 77
     Width = 35
     Height = 16
     Alignment = taRightJustify
     Caption = 'In'#237'cio:'
   end
-  object Label3: TLabel
-    Left = 59
-    Top = 91
+  object LabFim: TLabel
+    Left = 77
+    Top = 107
     Width = 26
     Height = 16
     Alignment = taRightJustify
     Caption = 'Fim:'
   end
-  object Label4: TLabel
-    Left = 12
-    Top = 121
+  object LabSaldoIni: TLabel
+    Left = 30
+    Top = 137
     Width = 73
     Height = 16
     Alignment = taRightJustify
     Caption = 'Saldo inicial:'
   end
   object dbTurno: TDBText
-    Left = 85
-    Top = 33
-    Width = 61
-    Height = 19
+    Left = 108
+    Top = 29
+    Width = 79
+    Height = 25
     AutoSize = True
     DataField = 'Turno'
     DataSource = uDM.DSRegCaixa
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
-    Font.Height = -16
+    Font.Height = -21
     Font.Name = 'Tahoma'
     Font.Style = []
     ParentFont = False
@@ -65,7 +67,7 @@ object FuCaixa: TFuCaixa
   object LabRotina: TLabel
     Left = 0
     Top = 0
-    Width = 261
+    Width = 357
     Height = 23
     Align = alTop
     Alignment = taCenter
@@ -79,16 +81,16 @@ object FuCaixa: TFuCaixa
     ExplicitWidth = 282
   end
   object LabSaldoFim: TLabel
-    Left = 20
-    Top = 151
+    Left = 38
+    Top = 167
     Width = 65
     Height = 16
     Alignment = taRightJustify
     Caption = 'Saldo final:'
   end
   object edInicio: TDBEdit
-    Left = 85
-    Top = 58
+    Left = 108
+    Top = 74
     Width = 160
     Height = 24
     DataField = 'DtHrInicio'
@@ -97,8 +99,8 @@ object FuCaixa: TFuCaixa
     OnKeyDown = edInicioKeyDown
   end
   object edFinal: TDBEdit
-    Left = 85
-    Top = 88
+    Left = 108
+    Top = 104
     Width = 159
     Height = 24
     DataField = 'DtHrFim'
@@ -107,8 +109,8 @@ object FuCaixa: TFuCaixa
     OnKeyDown = edFinalKeyDown
   end
   object edSaldoIni: TDBEdit
-    Left = 85
-    Top = 118
+    Left = 108
+    Top = 134
     Width = 121
     Height = 24
     DataField = 'SaldoInicial'
@@ -117,10 +119,10 @@ object FuCaixa: TFuCaixa
     OnKeyDown = edSaldoIniKeyDown
   end
   object btOk: TBitBtn
-    Left = 8
-    Top = 182
-    Width = 115
-    Height = 29
+    Left = 20
+    Top = 218
+    Width = 153
+    Height = 57
     Caption = '&Ok'
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
@@ -146,10 +148,10 @@ object FuCaixa: TFuCaixa
     OnClick = btOkClick
   end
   object btCancel: TBitBtn
-    Left = 130
-    Top = 181
-    Width = 115
-    Height = 29
+    Left = 180
+    Top = 217
+    Width = 153
+    Height = 57
     Caption = '&Cancelar'
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
@@ -175,42 +177,13 @@ object FuCaixa: TFuCaixa
     OnClick = btCancelClick
   end
   object edSaldoFim: TDBEdit
-    Left = 85
-    Top = 148
+    Left = 108
+    Top = 164
     Width = 121
     Height = 24
     DataField = 'SaldoFinal'
     DataSource = uDM.DSRegCaixa
     TabOrder = 3
     OnKeyDown = edSaldoFimKeyDown
-  end
-  object btLctCaixa: TBitBtn
-    Left = 28
-    Top = 216
-    Width = 197
-    Height = 29
-    Caption = 'Lan'#231'amentos de caixa'
-    Font.Charset = DEFAULT_CHARSET
-    Font.Color = clWindowText
-    Font.Height = -16
-    Font.Name = 'Tahoma'
-    Font.Style = []
-    Glyph.Data = {
-      76010000424D7601000000000000760000002800000020000000100000000100
-      04000000000000010000120B0000120B00001000000000000000000000000000
-      800000800000008080008000000080008000808000007F7F7F00BFBFBF000000
-      FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFFFF00500000000055
-      555557777777775F55550FFFFFFFFF0555557F5555555F7FFF5F0FEEEEEE0000
-      05007F555555777775770FFFFFF0BFBFB00E7F5F5557FFF557770F0EEEE000FB
-      FB0E7F75FF57775555770FF00F0FBFBFBF0E7F57757FFFF555770FE0B00000FB
-      FB0E7F575777775555770FFF0FBFBFBFBF0E7F5575FFFFFFF5770FEEE0000000
-      FB0E7F555777777755770FFFFF0B00BFB0007F55557577FFF7770FEEEEE0B000
-      05557F555557577775550FFFFFFF0B0555557FF5F5F57575F55500F0F0F0F0B0
-      555577F7F7F7F7F75F5550707070700B055557F7F7F7F7757FF5507070707050
-      9055575757575757775505050505055505557575757575557555}
-    NumGlyphs = 2
-    ParentFont = False
-    TabOrder = 6
-    OnClick = btLctCaixaClick
   end
 end

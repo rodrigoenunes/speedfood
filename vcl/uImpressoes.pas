@@ -364,6 +364,9 @@ end;
 
 Function EmiteNFCe(pNroPedido:Integer): TRetorno;
 begin
+  Application.MessageBox('Emissão NFCe desativada','Info',64);
+  Exit;
+
   Result := EmitirNFCeDePV(pNroPedido);
   if Not Result.Resultado then
     Application.MessageBox(

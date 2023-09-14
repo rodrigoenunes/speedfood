@@ -40,12 +40,25 @@ implementation
 uses uDados, uImpressoes, uGenericas, SFEuPrintFortes;
 
 Procedure ConsultarPedidos;
+var xEmissoes: String;
+    lDisp: Boolean;
 begin
+  lDisp := False;
+  xEmissoes := ObtemParametro('NFCe_Reais') +     // Pagto em Reais (dinheiro)
+               ObtemParametro('NFCe_CDebito') +   // Pagto Cartao de débito
+               ObtemParametro('NFCe_CCredito') +  // Pagto Cartao de crédito
+               ObtemParametro('NFCe_PIX') +       // Pagto PIX
+               ObtemParametro('NFCe_Outros') +    // Pagto Outros
+               ObtemParametro('NFCe_Misto');      // Pagto Misto
+  if (Pos('S',xEmissoes) > 0) or (Pos('Q',xEmissoes) > 0) then
+    lDisp := True;
+
   FuConsPedidos := TFuConsPedidos.Create(nil);
   FuConsPedidos.Height := Screen.Height - 60;
   FuConsPedidos.Top := 10;
   FuConsPedidos.Width := Trunc(Screen.Width * 0.60);
   FuConsPedidos.Left := 40;
+  FuConsPedidos.btEmitirNFCe.Enabled := lDisp;
   FuConsPedidos.ShowModal;
   FuConsPedidos.Free;
 

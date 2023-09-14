@@ -6,7 +6,7 @@ uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ExtCtrls, Vcl.StdCtrls, Vcl.Buttons,
   Data.DB, Vcl.DBCtrls, Vcl.Grids, Vcl.DBGrids, Vcl.Mask, System.UITypes;
-  Procedure CaixaMovimentacao(pAtual:Boolean=False);
+  Procedure CaixaMovimentacao;    //(pAtual:Boolean=True);
 
 type
   TFuCaixaMovto = class(TForm)
@@ -134,7 +134,7 @@ implementation
 
 uses uDados, uGenericas, uCaixa, uImpressoes;
 
-Procedure CaixaMovimentacao(pAtual:Boolean=False);
+Procedure CaixaMovimentacao;    //(pAtual:Boolean=True);
 begin
   FuCaixaMovto := TFuCaixaMovto.Create(nil);
   with FuCaixaMovto
@@ -143,16 +143,21 @@ begin
     uDM.RegCaixa.Last;
     while not uDM.RegCaixa.Bof do
     begin
-      xTurno := uDM.RegCaixaTurno.AsString + '  ' +
-                uDM.RegCaixaDtHrInicio.AsString + ' - ' + uDM.RegCaixaDtHrFim.AsString;
+      xTurno := uDM.RegCaixaTurno.AsString + '  ' + uDM.RegCaixaDtHrInicio.AsString + ' - ';
+      if uDM.RegCaixaSituacao.AsString <> 'F' then
+        xTurno := xTurno + '... aberto ...'
+      else
+        xTurno := xTurno + uDM.RegCaixaDtHrFim.AsString;
       cbTurnos.AddItem(xTurno,nil);
       uDM.RegCaixa.Prior;
     end;
     cbTurnos.ItemIndex := 0;
+  {
     if pAtual then
       cbTurnos.Enabled := False             // Somente movto do dia
     else
       cbTurnos.Enabled := True;             // Todas as datas disponiveis
+  }
     ShowModal;
   end;
   FuCaixaMovto.Free;

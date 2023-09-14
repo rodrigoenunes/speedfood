@@ -414,6 +414,8 @@ end;
 
 procedure TFuFinPedido.btCancelarClick(Sender: TObject);
 begin
+  if MessageDlg('Cancelar pedido ?',mtConfirmation,
+                [mbYes,mbNo],0,mbNo,['Sim','Não']) <> mrYes then Exit;
   uDM.Pedidos.Cancel;
   nRetorno := 2;
   FuFinPedido.Close;
@@ -941,6 +943,7 @@ begin
   btGravar.Height := Trunc(PanCtle.Height * 0.50);
   btGravar.Width := PanCtle.Width - 10;
 
+{
   btCancelar.Left := btGravar.Left;
   btCancelar.Top := btGravar.Top + btGravar.Height + 12;
   btCancelar.Height := Trunc(PanCtle.Height * 0.40);
@@ -950,6 +953,11 @@ begin
   btRetornar.Top := btCancelar.Top;
   btRetornar.Height := btCancelar.Height;
   btRetornar.Width := PanCtle.Width - (btRetornar.Left + 5);
+}
+  btRetornar.Left := PanCtle.Width div 2;
+  btRetornar.Top := btGravar.Top + btGravar.Height + 12;
+  btRetornar.Height := Trunc(PanCtle.Height * 0.40);
+  btRetornar.Width := Trunc(PanCtle.Width * 0.45);
 
 end;
 
