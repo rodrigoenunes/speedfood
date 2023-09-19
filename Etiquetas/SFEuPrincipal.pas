@@ -41,6 +41,9 @@ type
     btHelpArgox: TBitBtn;
     btHelpGeral: TBitBtn;
     Timer1: TTimer;
+    btReload: TBitBtn;
+    PanReload: TPanel;
+    LabTmp: TLabel;
     procedure FormCreate(Sender: TObject);
     procedure FormActivate(Sender: TObject);
     procedure btCarregaClick(Sender: TObject);
@@ -62,6 +65,7 @@ type
     procedure btHelpGeralMouseDown(Sender: TObject; Button: TMouseButton;
       Shift: TShiftState; X, Y: Integer);
     procedure Timer1Timer(Sender: TObject);
+    procedure btReloadClick(Sender: TObject);
   private
     { Private declarations }
   public
@@ -112,31 +116,57 @@ begin
 
 end;
 
+Procedure ReloadPedidos;
+begin
+  FuPrincipalEtq.PanReload.Visible := True;
+  Application.ProcessMessages;
+  Sleep(500);
+  uDM.Pedidos.Refresh;
+  if uDM.Pedidos.RecordCount = 0 then
+     FuPrincipalEtq.LabNrPeds.Caption := 'Sem pedidos'
+  else
+     FuPrincipalEtq.LabNrPeds.Caption := IntToStr(uDM.Pedidos.RecordCount) + ' pedidos';
+  if uDM.PedItens.RecordCount = 0 then
+     FuPrincipalEtq.LabNrEtqs.Caption := 'Sem ítens'
+  else
+     FuPrincipalEtq.LabNrEtqs.Caption := IntToStr(uDM.PedItens.RecordCount) + ' ítens';
+  FuPrincipalEtq.PanReload.Visible := False;
+
+end;
+
+
 Procedure DefineSelecao;
 begin
   with FuPrincipalEtq
   do begin
+    Timer1.Enabled := False;
     uDM.turnoIni := wrkTurno;
     uDM.turnoFin := wrkTurno;
     uDM.etqImpress := cbSelPedidos.ItemIndex;
 
     uDM.Pedidos.Filtered := True;
-    uDM.Pedidos.Refresh;
+    uDM.PedItens.Filtered := False;
 
+    ReloadPedidos;
+
+    Timer1.Enabled := True;
+
+{
+    uDM.Pedidos.Refresh;
     if uDM.Pedidos.RecordCount = 0 then
        LabNrPeds.Caption := 'Sem pedidos'
     else
        LabNrPeds.Caption := IntToStr(uDM.Pedidos.RecordCount) + ' pedidos';
-
-    uDM.PedItens.Filtered := False;
     if uDM.PedItens.RecordCount = 0 then
       LabNrEtqs.Caption := 'Sem ítens'
     else
       LabNrEtqs.Caption := IntToStr(uDM.PedItens.RecordCount) + ' ítens';
+}
 
   end;
 
 end;
+
 
 procedure TFuPrincipalEtq.btPreviewClick(Sender: TObject);
 var nKey1,nKey2: Integer;
@@ -157,7 +187,7 @@ begin
   Timer1.Enabled := False;
   CarregaTurnos;
   btProsseguirClick(nil);
-  btProsseguir.SetFocus;
+  //btProsseguir.SetFocus;
 
 end;
 
@@ -180,19 +210,13 @@ begin
   uDM.PedidosEtqImpressas.AsInteger := 1;
   uDM.Pedidos.Post;
   //
+  ReloadPedidos;
   Timer1.Enabled := True;
-  uDM.Pedidos.Refresh;
-  if uDM.Pedidos.RecordCount = 0 then
-    LabNrPeds.Caption := 'Sem pedidos'
-  else
-    LabNrPeds.Caption := IntToStr(uDM.Pedidos.RecordCount) + ' pedidos';
 
 end;
 
 procedure TFuPrincipalEtq.btPrintClick(Sender: TObject);
 var nKey1,nKey2: Integer;
-//    filTxtAnt: String;
-//    filAnt: Boolean;
 begin
   if uDM.PedItens.RecordCount = 0 then Exit;
   Timer1.Enabled := False;
@@ -259,20 +283,22 @@ begin
   //
   cbSelPedidos.ItemIndex := 0;
   cbSelPedidosClick(nil);
-{
-  uDM.Pedidos.Filtered := True;
-  uDM.Pedidos.Refresh;
-  if uDM.Pedidos.RecordCount = 0 then
-    LabNrPeds.Caption := 'Sem pedidos'
-  else
-    LabNrPeds.Caption := IntToStr(uDM.Pedidos.RecordCount) + ' pedidos';
-}
   PanPedidos.Visible := True;
   PanEtiquetas.Visible := True;
   FormResize(nil);
   Timer1.Enabled := True;
+  btReload.SetFocus;
 
 end;
+procedure TFuPrincipalEtq.btReloadClick(Sender: TObject);
+begin
+  Timer1.Enabled := False;
+  ReloadPedidos;
+  Timer1.Enabled := True;
+
+end;
+
+
 procedure TFuPrincipalEtq.btSairClick(Sender: TObject);
 begin
   FuPrincipalEtq.Close;
@@ -306,6 +332,7 @@ begin
 end;
 
 procedure TFuPrincipalEtq.FormActivate(Sender: TObject);
+var nTempo: Integer;
 begin
   if uDM = Nil then
   begin
@@ -316,6 +343,11 @@ begin
     uDM.RegCaixa.Active   := True;
     uDM.Pedidos.Active    := True;
     uDM.PedItens.Active   := True;
+    uDM.Parametros.Active := True;
+    nTempo := StrToIntDef(ObtemParametro('EtiquetaTimer'),10);
+    if nTempo = 0 then nTempo := 11;
+    LabTmp.Caption := IntToStr(nTempo);
+    Timer1.Interval := nTempo * 1000;
     FFRCtle.RLPreviewSetup1.ZoomFactor := StrToIntDef(ObtemParametro('FortesZoomFactor'),100);
     CarregaTurnos;
     cbTurnos.SetFocus;
@@ -381,15 +413,7 @@ end;
 
 procedure TFuPrincipalEtq.Timer1Timer(Sender: TObject);
 begin
-  uDM.Pedidos.Refresh;
-  if uDM.Pedidos.RecordCount = 0 then
-     LabNrPeds.Caption := 'Sem pedidos'
-  else
-     LabNrPeds.Caption := IntToStr(uDM.Pedidos.RecordCount) + ' pedidos';
-  if uDM.PedItens.RecordCount = 0 then
-     LabNrEtqs.Caption := 'Sem ítens'
-  else
-     LabNrEtqs.Caption := IntToStr(uDM.PedItens.RecordCount) + ' ítens';
+  ReloadPedidos;
 
 end;
 

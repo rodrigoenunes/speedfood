@@ -483,6 +483,34 @@ object FuPrincipalEtq: TFuPrincipalEtq
           'Impressos'
           'Todos')
       end
+      object btReload: TBitBtn
+        Left = 92
+        Top = 99
+        Width = 140
+        Height = 34
+        Caption = '&Atualizar'
+        Glyph.Data = {
+          06020000424D0602000000000000760000002800000028000000140000000100
+          0400000000009001000000000000000000001000000000000000000000000000
+          8000008000000080800080000000800080008080000080808000C0C0C0000000
+          FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFFFF00333333333333
+          33333333333333333333333333333333333333333333333333333333333F3333
+          333333333333330033333333333333333377FF33333333333333330900333333
+          3333FFFFFF7877FF3333333000000009990033333337777777788877FF333309
+          9999999999990033337888FFFFFF888F77333099900000099900333337F88777
+          777F8F7733333099033333090033333337F87333337F77333333309033333300
+          3333333337F7F33333773333FFF33090333333333330003337F7F33333333337
+          77F33090333333333330903337F7F33333333337F7F330003333333333309033
+          37773333FF333337F7F333333330033333309033333333F77F33333787F33333
+          30090333330990333333F7787FFFFF7887F33330099900000099903333F77888
+          77777788873330099999999999990333377FF8888FFFFFFF7333333009990000
+          0000333333377FF8777777773333333330090333333333333333377F7F333333
+          3333333333300333333333333333333773333333333333333333333333333333
+          33333333333333333333}
+        NumGlyphs = 2
+        TabOrder = 3
+        OnClick = btReloadClick
+      end
     end
   end
   object PanEtiquetas: TPanel
@@ -492,6 +520,7 @@ object FuPrincipalEtq: TFuPrincipalEtq
     Height = 456
     Align = alClient
     TabOrder = 2
+    ExplicitLeft = 300
     object PanRodapeItens: TPanel
       Left = 1
       Top = 312
@@ -1049,8 +1078,36 @@ object FuPrincipalEtq: TFuPrincipalEtq
       TabOrder = 3
     end
   end
+  object PanReload: TPanel
+    Left = 176
+    Top = 256
+    Width = 281
+    Height = 53
+    BevelInner = bvRaised
+    BevelKind = bkSoft
+    Caption = 'Atualizando...'
+    Color = clHotLight
+    ParentBackground = False
+    TabOrder = 3
+    Visible = False
+    object LabTmp: TLabel
+      Left = 223
+      Top = 28
+      Width = 46
+      Height = 16
+      Alignment = taRightJustify
+      Caption = 'LabTmp'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -13
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      ParentFont = False
+    end
+  end
   object Timer1: TTimer
-    Interval = 30000
+    Enabled = False
+    Interval = 20000
     OnTimer = Timer1Timer
     Left = 323
     Top = 209
