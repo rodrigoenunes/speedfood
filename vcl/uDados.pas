@@ -240,6 +240,27 @@ type
     PedidosZC_NroLst: TStringField;
     RegCaixaSituacao: TStringField;
     RegCaixaZC_Situacao: TStringField;
+    PedDetpag: TFDTable;
+    PedDetpagNumero: TIntegerField;
+    PedDetpagSeq: TIntegerField;
+    PedDetpagindPag: TIntegerField;
+    PedDetpagtPag: TStringField;
+    PedDetpagValor: TBCDField;
+    PedDetpagtpIntegra: TIntegerField;
+    PedDetpagCNPJ: TStringField;
+    PedDetpagBandeira: TStringField;
+    PedDetpagcAut: TStringField;
+    PedDetpagnrCartao: TStringField;
+    PedDetpagAfiliacao: TStringField;
+    PedDetpagNrParcelas: TIntegerField;
+    PedDetpagvTroco: TBCDField;
+    DSPedDetpag: TDataSource;
+    DetpagWrk: TClientDataSet;
+    SDetpagWrk: TDataSource;
+    DetpagWrkSeq: TSmallintField;
+    DetpagWrkValor: TCurrencyField;
+    DetpagWrkZC_tPag: TStringField;
+    DetpagWrktPag: TStringField;
     procedure ItensCalcFields(DataSet: TDataSet);
     procedure LctCaixaCalcFields(DataSet: TDataSet);
     procedure PedWrkCalcFields(DataSet: TDataSet);
@@ -250,6 +271,7 @@ type
     procedure ItensFilterRecord(DataSet: TDataSet; var Accept: Boolean);
     procedure PedidosFilterRecord(DataSet: TDataSet; var Accept: Boolean);
     procedure DataModuleCreate(Sender: TObject);
+    procedure DetpagWrkCalcFields(DataSet: TDataSet);
   private
     { Private declarations }
   public
@@ -387,7 +409,25 @@ begin
       Result := 2;
       Exit;
     End;
+    //
+    DetpagWrk.Active := False;
+    DetpagWrk.FieldDefs.Clear;
+    DetpagWrk.FieldDefs.Add('Seq',    ftSmallint);
+    DetpagWrk.FieldDefs.Add('Valor',  ftCurrency);
+    DetpagWrk.FieldDefs.Add('tPag',   ftString, 2);
+    DetpagWrk.IndexDefs.Clear;
+    DetpagWrk.IndexDefs.Add('','Seq',[ixPrimary,ixUnique]);
+    DetpagWrk.CreateDataSet;
+    Try
+      DetpagWrk.Active := True;
+      DetpagWrk.Active := False;
+    Except
+      Result := 3;
+      Exit;
+    End;
+    //
     PedWrk.Active := True;
+    DetpagWrk.Active := True;
     wNroPedido := pNro;
     nroPlaca := 0;
     meioPgto := 0;
@@ -459,6 +499,22 @@ begin
   FDC.Connected := True;
 
 end;
+
+procedure TuDM.DetpagWrkCalcFields(DataSet: TDataSet);
+var ntPag: Integer;
+begin
+  ntPag := StrToIntDef(uDM.DetpagWrktPag.AsString,0);
+  case ntPag of
+    1:uDM.DetpagWrkZC_tPag.AsString := 'Dinheiro';        // '01-Dinheiro';
+    3:uDM.DetpagWrkZC_tPag.AsString := 'C.Crédito';       // '03-C.Crédito';
+    4:uDM.DetpagWrkZC_tPag.AsString := 'C.Débito';        // '04-C.Débito';
+    17:uDM.DetpagWrkZC_tPag.AsString := 'PIX';            // '17-PIX';
+    99:uDM.DetpagWrkZC_tPag.AsString := 'Outros';         // '99-Outros';
+    else uDM.DetpagWrkZC_tPag.AsString := '---';
+  end;
+
+end;
+
 
 procedure TuDM.ItensCalcFields(DataSet: TDataSet);
 begin

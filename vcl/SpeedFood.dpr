@@ -22,7 +22,8 @@ uses
   uHelpSpeedFood in 'uHelpSpeedFood.pas' {FuHelpSpeedFood},
   SFEuPrintFortes in '..\Etiquetas\SFEuPrintFortes.pas' {FSFEuPrintFortes},
   uMontarLanche in 'uMontarLanche.pas' {FuMontarLanche},
-  uBiblioteca in 'uBiblioteca.pas';
+  uBiblioteca in 'uBiblioteca.pas',
+  uPagtoMisto in 'uPagtoMisto.pas' {FuPagtoMisto};
 
 {$R *.res}
 
@@ -34,6 +35,7 @@ begin
   Application.CreateForm(TFFRCtle, FFRCtle);
   Application.CreateForm(TFEnviaEMail, FEnviaEMail);
   Application.CreateForm(TFuUserPwd, FuUserPwd);
+  Application.CreateForm(TFuPagtoMisto, FuPagtoMisto);
   //Application.CreateForm(TFuUserPwd, FuUserPwd);
   Application.CreateForm(TFuHelpSpeedFood, FuHelpSpeedFood);
   Application.CreateForm(TFSFEuPrintFortes, FSFEuPrintFortes);

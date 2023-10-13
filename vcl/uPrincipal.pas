@@ -154,6 +154,7 @@ begin
     uDM.LctCaixa.Active  := True;
     uDM.Pedidos.Active   := True;
     uDM.PedItens.Active  := True;
+    uDM.PedDetPag.Active := True;
     uDM.etqImpress := 2;        // Compatibilização com "Etiquetas"
     //
     FFRCtle.RLPreviewSetup1.ZoomFactor := StrToIntDef(ObtemParametro('FortesZoomFactor'),100);
@@ -235,6 +236,7 @@ begin
     if FechamentoDeCaixa = 0
        then CaixaMovimentacao;
   end;
+  uDM.PedDetpag.Active := False;
   uDM.PedItens.Active  := False;
   uDM.Pedidos.Active   := False;
   uDM.LctCaixa.Active  := False;

@@ -113,7 +113,7 @@ implementation
 
 {$R *.dfm}
 
-uses uDados, uGenericas, uPedidos, uImpressoes, SFEuPrintFortes;
+uses uDados, uGenericas, uPedidos, uImpressoes, SFEuPrintFortes, uPagtoMisto;
 
 Procedure AjustaFonteImagem;
 begin
@@ -397,6 +397,7 @@ begin
 
 end;
 
+
 Procedure ExibeValorFaltante;
 var vlrFalta: Currency;
 begin
@@ -521,6 +522,61 @@ begin
     uDM.PedItens.Post;
     uDM.PedWrk.Next;
   end;
+  // Pagtos
+  if uDM.DetpagWrk.RecordCount > 0 then
+  begin         // Grava n registros Detpag partindo de detpagWRK
+    uDM.DetpagWrk.First;
+    newSeq := 0;
+    while not uDM.DetpagWrk.eof do
+    begin
+      newSeq := newSeq + 1;
+      uDM.PedDetpag.Append;
+      uDM.PedDetpagNumero.AsInteger := uDM.PedidosNumero.AsInteger;
+      uDM.PedDetpagSeq.AsInteger := newSeq;
+      uDM.PedDetpagindPag.AsInteger := 0;      // Sempre 0 (A vista) (1-Prazo)
+      uDM.PedDetpagtPag.AsString := uDM.DetpagWrktPag.AsString;
+      uDM.PedDetpagValor.AsCurrency := uDM.DetpagWrkValor.AsCurrency;
+      uDM.PedDetpag.Post;
+      uDM.DetpagWrk.Next;
+    end;
+    uDM.DetpagWrk.EmptyDataSet;
+  end
+  else begin    // Grava 1 registro detpag
+    uDM.PedDetpag.Append;
+    uDM.PedDetpagNumero.AsInteger := uDM.PedidosNumero.AsInteger;
+    uDM.PedDetpagSeq.AsInteger := 1;
+    uDM.PedDetpagindPag.AsInteger := 0;      // Sempre 0 (A vista) (1-Prazo)
+    if uDM.PedidosVlrReais.AsCurrency > 0 then
+    begin
+      uDM.PedDetpagtPag.AsString := '01';       // Reais
+      uDM.PedDetpagValor.AsCurrency := uDM.PedidosVlrReais.AsCurrency;
+      uDM.PedDetpagvTroco.AsCurrency := uDM.PedidosVlrTroco.AsCurrency;
+    end
+    else begin
+      if uDM.PedidosVlrCCred.AsCurrency > 0 then
+      begin
+        uDM.PedDetpagValor.AsCurrency := uDM.PedidosVlrCCred.AsCurrency;
+        uDM.PedDetpagtPag.AsString := '03';
+      end;
+      if uDM.PedidosVlrCDeb.AsCurrency > 0 then
+      begin
+        uDM.PedDetpagValor.AsCurrency := uDM.PedidosVlrCDeb.AsCurrency;
+        uDM.PedDetpagtPag.AsString := '04';
+      end;
+      if uDM.PedidosVlrPIX.AsCurrency > 0 then
+      begin
+        uDM.PedDetpagValor.AsCurrency := uDM.PedidosVlrPIX.AsCurrency;
+        uDM.PedDetpagtPag.AsString := '17';
+      end;
+      if uDM.PedidosVlrOutros.AsCurrency > 0 then
+      begin
+        uDM.PedDetpagValor.AsCurrency := uDM.PedidosVlrOutros.AsCurrency;
+        uDM.PedDetpagtPag.AsString := '99';
+      end;
+    end;
+    uDM.PedDetpag.Post;
+  end;
+
   // Atualiza caixa
   uDM.LctCaixa.Last;
   wSaldo := uDM.LctCaixaSaldo.AsCurrency;
@@ -682,10 +738,10 @@ begin
 end;
 
 procedure TFuFinPedido.dbMeioPagtoClick(Sender: TObject);
+var nTop,nLeft,nWidth,nHeight: Integer;
+    vlReais,vlCCred,vlCDeb,vlPIX,vlOutros: Currency;
 begin
-  LabFalta.Caption := '';
-  PanFalta.Visible := False;
-
+  ExibeValorFaltante;
   edReais.Enabled  := False;
   edReceb.Visible  := False;
   LabReceb.Visible := False;
@@ -719,16 +775,20 @@ begin
     3:uDM.PedidosVlrPIX.AsCurrency    := FuPedidos.totalPedido;
     4:uDM.PedidosVlrOutros.AsCurrency := FuPedidos.totalPedido;
     5:begin
-        PanFalta.Visible := True;
-        ExibeValorFaltante;
-        edReais.Enabled  := True;
-        edCDeb.Enabled   := True;
-        edCCred.Enabled  := True;
-        edPIX.Enabled    := True;
-        edOutros.Enabled := True;
-        edReais.SetFocus;
-      end;
+        nTop := FuFinPedido.Top + PanInform.Top;
+        nLeft := FuFinPedido.Left + PanInform.Left;
+        nHeight := FuFinPedido.Height - (PanInform.Top * 2);
+        nWidth := PanInform.Width + 20;
+        PagamentoMisto(nTop,nLeft,nHeight,nWidth,
+                       vlReais,vlCCred,vlCDeb,vlPIX,vlOutros);
+        uDM.PedidosVlrReais.AsCurrency := vlReais;
+        uDM.PedidosVlrCCred.AsCurrency := vlCCred;
+        uDM.PedidosVlrCDeb.AsCurrency := vlCDeb;
+        uDM.PedidosVlrPIX.AsCurrency := vlPIX;
+        uDM.PedidosVlrOutros.AsCurrency := vlOutros;
+    end;
   end;
+  ExibeValorFaltante;
 
 end;
 
@@ -938,22 +998,17 @@ end;
 
 procedure TFuFinPedido.FormResize(Sender: TObject);
 begin
+  if FuFinPedido.Width < 1000 then
+     FuFinPedido.Width := 1000;
+  if FuFinPedido.Width > Screen.Width then
+     FuFinPedido.Width := Screen.Width;
+  SBoxPedido.Width := Trunc(FuFinPedido.Width * 0.45);
+
   btGravar.Top := 6;
   btGravar.Left := 5;
   btGravar.Height := Trunc(PanCtle.Height * 0.50);
   btGravar.Width := PanCtle.Width - 10;
 
-{
-  btCancelar.Left := btGravar.Left;
-  btCancelar.Top := btGravar.Top + btGravar.Height + 12;
-  btCancelar.Height := Trunc(PanCtle.Height * 0.40);
-  btCancelar.Width := Trunc(btGravar.Width * 0.60);
-
-  btRetornar.Left := btCancelar.Left + btCancelar.Width + 8;
-  btRetornar.Top := btCancelar.Top;
-  btRetornar.Height := btCancelar.Height;
-  btRetornar.Width := PanCtle.Width - (btRetornar.Left + 5);
-}
   btRetornar.Left := PanCtle.Width div 2;
   btRetornar.Top := btGravar.Top + btGravar.Height + 12;
   btRetornar.Height := Trunc(PanCtle.Height * 0.40);
@@ -965,6 +1020,7 @@ procedure TFuFinPedido.FormShow(Sender: TObject);
 begin
   FormResize(nil);
   dbPlaca.SetFocus;
+  ExibeValorFaltante;
 
 end;
 

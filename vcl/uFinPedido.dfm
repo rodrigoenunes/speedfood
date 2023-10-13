@@ -3,7 +3,7 @@ object FuFinPedido: TFuFinPedido
   Top = 0
   Caption = 'Finaliza'#231#227'o do pedido'
   ClientHeight = 547
-  ClientWidth = 834
+  ClientWidth = 984
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -20,7 +20,7 @@ object FuFinPedido: TFuFinPedido
   object PanRodape: TPanel
     Left = 0
     Top = 524
-    Width = 834
+    Width = 984
     Height = 23
     Align = alBottom
     Font.Charset = DEFAULT_CHARSET
@@ -34,9 +34,9 @@ object FuFinPedido: TFuFinPedido
   object PanInform: TPanel
     Left = 445
     Top = 41
-    Width = 389
+    Width = 539
     Height = 483
-    Align = alRight
+    Align = alClient
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
     Font.Height = -16
@@ -47,7 +47,7 @@ object FuFinPedido: TFuFinPedido
     object PanCliente: TPanel
       Left = 1
       Top = 283
-      Width = 387
+      Width = 537
       Height = 77
       Align = alTop
       TabOrder = 2
@@ -98,12 +98,12 @@ object FuFinPedido: TFuFinPedido
     object PanCtle: TPanel
       Left = 1
       Top = 360
-      Width = 387
+      Width = 537
       Height = 122
       Align = alClient
       TabOrder = 3
       DesignSize = (
-        387
+        537
         122)
       object btCancelar: TBitBtn
         Left = 5
@@ -242,14 +242,14 @@ object FuFinPedido: TFuFinPedido
     object PanPagto: TPanel
       Left = 1
       Top = 40
-      Width = 387
+      Width = 537
       Height = 243
       Align = alTop
       TabOrder = 1
       object PanDetPgto: TPanel
-        Left = 152
+        Left = 161
         Top = 1
-        Width = 234
+        Width = 375
         Height = 241
         Align = alClient
         BevelOuter = bvNone
@@ -320,7 +320,7 @@ object FuFinPedido: TFuFinPedido
         object edReais: TDBEdit
           Left = 100
           Top = 26
-          Width = 129
+          Width = 121
           Height = 27
           DataField = 'VlrReais'
           DataSource = uDM.DSPedidos
@@ -334,7 +334,7 @@ object FuFinPedido: TFuFinPedido
         object edCDeb: TDBEdit
           Left = 100
           Top = 116
-          Width = 129
+          Width = 121
           Height = 27
           DataField = 'VlrCDeb'
           DataSource = uDM.DSPedidos
@@ -348,7 +348,7 @@ object FuFinPedido: TFuFinPedido
         object edCCred: TDBEdit
           Left = 100
           Top = 146
-          Width = 129
+          Width = 121
           Height = 27
           DataField = 'VlrCCred'
           DataSource = uDM.DSPedidos
@@ -362,7 +362,7 @@ object FuFinPedido: TFuFinPedido
         object edPIX: TDBEdit
           Left = 100
           Top = 176
-          Width = 129
+          Width = 121
           Height = 27
           DataField = 'VlrPIX'
           DataSource = uDM.DSPedidos
@@ -376,7 +376,7 @@ object FuFinPedido: TFuFinPedido
         object edOutros: TDBEdit
           Left = 100
           Top = 206
-          Width = 129
+          Width = 121
           Height = 27
           DataField = 'VlrOutros'
           DataSource = uDM.DSPedidos
@@ -390,7 +390,7 @@ object FuFinPedido: TFuFinPedido
         object edReceb: TDBEdit
           Left = 100
           Top = 56
-          Width = 129
+          Width = 121
           Height = 27
           DataField = 'VlrRecebido'
           DataSource = uDM.DSPedidos
@@ -403,7 +403,7 @@ object FuFinPedido: TFuFinPedido
         object edTroco: TDBEdit
           Left = 100
           Top = 86
-          Width = 129
+          Width = 121
           Height = 27
           DataField = 'VlrTroco'
           DataSource = uDM.DSPedidos
@@ -416,7 +416,7 @@ object FuFinPedido: TFuFinPedido
       object dbMeioPagto: TDBRadioGroup
         Left = 1
         Top = 1
-        Width = 151
+        Width = 160
         Height = 241
         Align = alLeft
         BiDiMode = bdLeftToRight
@@ -429,7 +429,7 @@ object FuFinPedido: TFuFinPedido
           'Cart'#227'o Cr'#233'dito'
           'PIX'
           'Outros'
-          '<<  Misto  >>')
+          '<Misto/Multiplo>')
         ParentBackground = False
         ParentBiDiMode = False
         TabOrder = 0
@@ -446,7 +446,7 @@ object FuFinPedido: TFuFinPedido
     object PanPlaca: TPanel
       Left = 1
       Top = 1
-      Width = 387
+      Width = 537
       Height = 39
       Align = alTop
       Color = clTeal
@@ -479,7 +479,7 @@ object FuFinPedido: TFuFinPedido
         OnKeyDown = dbPlacaKeyDown
       end
       object PanFalta: TPanel
-        Left = 248
+        Left = 398
         Top = 1
         Width = 138
         Height = 37
@@ -488,7 +488,6 @@ object FuFinPedido: TFuFinPedido
         Color = clYellow
         ParentBackground = False
         TabOrder = 1
-        Visible = False
         object Label6: TLabel
           Left = 0
           Top = 0
@@ -521,7 +520,7 @@ object FuFinPedido: TFuFinPedido
   object PanTopo: TPanel
     Left = 0
     Top = 0
-    Width = 834
+    Width = 984
     Height = 41
     Align = alTop
     Enabled = False
@@ -588,7 +587,7 @@ object FuFinPedido: TFuFinPedido
     Top = 41
     Width = 445
     Height = 483
-    Align = alClient
+    Align = alLeft
     TabOrder = 7
     object imgPedido: TImage
       Left = 28

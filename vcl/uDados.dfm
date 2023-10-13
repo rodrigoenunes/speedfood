@@ -10,6 +10,7 @@ object uDM: TuDM
       'Password=speed@123'
       'Server=127.0.0.1'
       'DriverID=MySQL')
+    Connected = True
     LoginPrompt = False
     Left = 28
     Top = 8
@@ -338,8 +339,8 @@ object uDM: TuDM
     Aggregates = <>
     Params = <>
     OnCalcFields = PedWrkCalcFields
-    Left = 540
-    Top = 16
+    Left = 472
+    Top = 20
     object PedWrkNrLcto: TSmallintField
       FieldName = 'NrLcto'
     end
@@ -431,8 +432,8 @@ object uDM: TuDM
   end
   object SPedWrk: TDataSource
     DataSet = PedWrk
-    Left = 540
-    Top = 64
+    Left = 472
+    Top = 68
   end
   object Pedidos: TFDTable
     OnCalcFields = PedidosCalcFields
@@ -1309,8 +1310,8 @@ object uDM: TuDM
     Aggregates = <>
     Params = <>
     OnCalcFields = ResVendasCalcFields
-    Left = 548
-    Top = 140
+    Left = 480
+    Top = 144
     object ResVendasTpProd: TSmallintField
       FieldName = 'TpProd'
     end
@@ -1337,15 +1338,15 @@ object uDM: TuDM
   end
   object SResVendas: TDataSource
     DataSet = ResVendas
-    Left = 552
-    Top = 192
+    Left = 484
+    Top = 196
   end
   object Usuarios: TFDTable
     IndexFieldNames = 'Nome'
     Connection = FDC
     TableName = 'speedfood.sis_usuarios'
     Left = 216
-    Top = 312
+    Top = 368
     object UsuariosNome: TStringField
       FieldName = 'Nome'
       Origin = 'Nome'
@@ -1358,5 +1359,125 @@ object uDM: TuDM
       Origin = 'Senha'
       Size = 6
     end
+  end
+  object PedDetpag: TFDTable
+    IndexFieldNames = 'Numero;Seq'
+    MasterSource = DSPedidos
+    Connection = FDC
+    TableName = 'speedfood.com_pedidodetpag'
+    Left = 216
+    Top = 292
+    object PedDetpagNumero: TIntegerField
+      FieldName = 'Numero'
+      Origin = 'Numero'
+      ProviderFlags = [pfInUpdate, pfInWhere, pfInKey]
+      Required = True
+    end
+    object PedDetpagSeq: TIntegerField
+      FieldName = 'Seq'
+      Origin = 'Seq'
+      ProviderFlags = [pfInUpdate, pfInWhere, pfInKey]
+      Required = True
+    end
+    object PedDetpagindPag: TIntegerField
+      FieldName = 'indPag'
+      Origin = 'indPag'
+      Required = True
+    end
+    object PedDetpagtPag: TStringField
+      AutoGenerateValue = arDefault
+      FieldName = 'tPag'
+      Origin = 'tPag'
+      Size = 2
+    end
+    object PedDetpagValor: TBCDField
+      AutoGenerateValue = arDefault
+      FieldName = 'Valor'
+      Origin = 'Valor'
+      Precision = 15
+      Size = 2
+    end
+    object PedDetpagtpIntegra: TIntegerField
+      AutoGenerateValue = arDefault
+      FieldName = 'tpIntegra'
+      Origin = 'tpIntegra'
+    end
+    object PedDetpagCNPJ: TStringField
+      AutoGenerateValue = arDefault
+      FieldName = 'CNPJ'
+      Origin = 'CNPJ'
+      Size = 14
+    end
+    object PedDetpagBandeira: TStringField
+      AutoGenerateValue = arDefault
+      FieldName = 'Bandeira'
+      Origin = 'Bandeira'
+      Size = 45
+    end
+    object PedDetpagcAut: TStringField
+      AutoGenerateValue = arDefault
+      FieldName = 'cAut'
+      Origin = 'cAut'
+      Size = 45
+    end
+    object PedDetpagnrCartao: TStringField
+      AutoGenerateValue = arDefault
+      FieldName = 'nrCartao'
+      Origin = 'nrCartao'
+      Size = 45
+    end
+    object PedDetpagAfiliacao: TStringField
+      AutoGenerateValue = arDefault
+      FieldName = 'Afiliacao'
+      Origin = 'Afiliacao'
+      Size = 45
+    end
+    object PedDetpagNrParcelas: TIntegerField
+      AutoGenerateValue = arDefault
+      FieldName = 'NrParcelas'
+      Origin = 'NrParcelas'
+    end
+    object PedDetpagvTroco: TBCDField
+      AutoGenerateValue = arDefault
+      FieldName = 'vTroco'
+      Origin = 'vTroco'
+      Precision = 15
+      Size = 2
+    end
+  end
+  object DSPedDetpag: TDataSource
+    DataSet = PedDetpag
+    Left = 264
+    Top = 308
+  end
+  object DetpagWrk: TClientDataSet
+    Aggregates = <>
+    Params = <>
+    OnCalcFields = DetpagWrkCalcFields
+    Left = 552
+    Top = 56
+    object DetpagWrkSeq: TSmallintField
+      FieldName = 'Seq'
+    end
+    object DetpagWrkValor: TCurrencyField
+      FieldName = 'Valor'
+      DisplayFormat = ',0.00'
+      EditFormat = '0.00'
+    end
+    object DetpagWrktPag: TStringField
+      FieldName = 'tPag'
+      Size = 2
+    end
+    object DetpagWrkZC_tPag: TStringField
+      FieldKind = fkCalculated
+      FieldName = 'ZC_tPag'
+      Size = 15
+      Calculated = True
+    end
+  end
+  object SDetpagWrk: TDataSource
+    DataSet = DetpagWrk
+    Left = 552
+    Top = 108
   end
 end
