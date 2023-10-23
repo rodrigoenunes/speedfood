@@ -697,6 +697,7 @@ begin
   uDM.Pedidos.Cancel;
   nRetorno := 1;
   FuFinPedido.Close;
+  //
 
 end;
 
