@@ -632,8 +632,9 @@ End;
 Function gerarpag(pCom_Pedido_Numero: Integer; pninfNFe: IXMLNode): TRetorno;
 Var
   sSQL: String;
-  vpag: IXMLNode;
+  vpag, vdetPag, vcard: IXMLNode;
   vds: TDataset;
+  I: Integer;
 Begin
   Result.Resultado:= False;
 
@@ -649,14 +650,35 @@ Begin
   vpag:= pninfNFe.AddChild('pag');
 
   uDados.uDM.FDC.ExecSQL(sSQL, vds);
+
+  Result.Resultado:= Not vds.IsEmpty;
+
   vds.First;
 
   while Not vds.Eof do
   Begin
-    Result:= gerarNodosFilhosDeSelect(vpag, 'detPag', sSQL, False, vds);
+    vcard:= Nil;
+    vdetPag:= vpag.AddChild('detPag');
+    for I:= 0 to vds.FieldCount-1 do
+    Begin
+      if vds.Fields[I].FieldName.Contains('card.') then
+      Begin
+        if vcard = Nil then
+          vcard:= vdetPag.AddChild('card');
 
+        // if Not vds.Fields[I].AsString.IsEmpty then
+          vcard.AddChild( vds.Fields[I].FieldName.Replace('card.', '') ).NodeValue:=
+            vds.Fields[I].AsString;
+      End
+      Else
+        vdetPag.AddChild(vds.Fields[I].FieldName).NodeValue:= vds.Fields[I].AsString;
+    End;
+
+    {
+    Result:= gerarNodosFilhosDeSelect(vpag, 'detPag', sSQL, False, vds);
     if Not Result.Resultado then
       Break;
+    }
 
     vds.Next;
   End;
@@ -666,20 +688,41 @@ Begin
 
 End;
 
-Function gerarinfAdic(pninfNFe: IXMLNode): TRetorno;
+Function gerarinfAdic(pCom_Pedido_Numero: Integer; pninfNFe: IXMLNode): TRetorno;
 Var
-  vinfAdic: IXMLNode;
-  sinfAdFisco: String;
+  vinfAdic, vobsCont: IXMLNode;
+  sinfAdFisco, sSQL: String;
+  vds: TDataset;
+  I: Integer;
 Begin
   Result.Resultado:= False;
 
   sinfAdFisco:= getValorParametro('infAdFisco').Trim;
 
-  if Not sinfAdFisco.IsEmpty then
+  vinfAdic:= pninfNFe.AddChild('infAdic');
+  vinfAdic.AddChild('infAdFisco').NodeValue:= sinfAdFisco;
+
+  sSQL:= getValorParametro('SQL_obsCont').Trim;
+  if sSQL.IsEmpty then
   Begin
-    vinfAdic:= pninfNFe.AddChild('infAdic');
-    vinfAdic.AddChild('infAdFisco').NodeValue:= sinfAdFisco;
-  end;
+    Result.Mensagem:=  'Parametro SQL_obsCont indefinido!';
+    Exit;
+  End;
+
+  sSQL:= sSQL.Replace(':numero', pCom_Pedido_Numero.ToString);
+
+  uDados.uDM.FDC.ExecSQL(sSQL, vds);
+  vds.First;
+  while Not vds.Eof do
+  Begin
+    vobsCont:= vinfAdic.AddChild('obsCont');
+    vobsCont.Attributes['xCampo']:= vds.FieldByName('xCampo').AsString;
+    vobsCont.AddChild('xTexto').NodeValue:= vds.FieldByName('xTexto').AsString;
+    vds.Next;
+  End;
+  vds.Close;
+  vds.Free;
+
 
   Result.Resultado:= True;
 End;
@@ -724,7 +767,7 @@ Begin
   if Not Result.Resultado then
     Exit;
 
-  Result:= gerarinfAdic(ninfNFe);
+  Result:= gerarinfAdic(pCom_Pedido_Numero, ninfNFe);
   if Not Result.Resultado then
     Exit;
 
