@@ -6,7 +6,7 @@ uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, RLReport, System.UITypes, RLPrinters, uBiblioteca;
   Procedure ImprimePedido(pNroPedido:Integer; pSys:Boolean = True);
-  Function EmiteNFCe(pNroPedido:Integer): TRetorno;
+  Function EmiteNFCe(pNroPedido:Integer;pImprimir:Boolean): TRetorno;
   Procedure ImprimeCaixa(pSequencia: Integer);
   Procedure ImprimeResumo(pIni,pFim:String;pVlr:array of Currency; pQtd:array of Integer);
 
@@ -288,6 +288,8 @@ begin
   uDM.PedItens.Filtered := False;
   uDM.PedItens.Refresh;
   FuImpressoes := TFuImpressoes.Create(nil);
+  //if FuImpressoes = Nil then
+  //  Application.CreateForm(TFuImpressoes, FuImpressoes);
   with FuImpressoes
   do begin
     //RLDbPedido.Left := 185 - nDesloc;
@@ -305,6 +307,7 @@ begin
     //filAnt := uDM.PedItens.Filtered;
     //uDM.PedItens.Filter := 'TpProd=1';
     //uDM.PedItens.Filtered := True;
+
     uDM.PedItens.First;
     while not uDM.PedItens.Eof do
     begin
@@ -330,7 +333,6 @@ begin
     FFRCtle.RLPreviewSetup1.CustomActionText := lstAction;
 
 
-
    // RLPedSum.Borders.DrawTop := False;
    // if not lSeparador then RLPedSum.Borders.DrawTop := True;
 
@@ -351,7 +353,7 @@ begin
     RLPrinters.RLPrinter.PrinterName := idPrinter;
     RLPrinters.RLPrinter.Copies := 1;
 
-    if lPreview then RLPedido.Preview
+   if lPreview then RLPedido.Preview
       else for i := 1 to copias
            do RLPedido.Print;
   end;
@@ -362,12 +364,12 @@ begin
 
 end;
 
-Function EmiteNFCe(pNroPedido:Integer): TRetorno;
+Function EmiteNFCe(pNroPedido:Integer;pImprimir:Boolean): TRetorno;
 begin
-  Application.MessageBox('Emissão NFCe desativada','Info',64);
-  Exit;
+//  Application.MessageBox('Emissão NFCe desativada','Info',64);
+//  Exit;
 
-  Result := EmitirNFCeDePV(pNroPedido);
+  Result := EmitirNFCeDePV(pNroPedido,pImprimir);
   if Not Result.Resultado then
     Application.MessageBox(
      PChar(Result.Mensagem),

@@ -139,7 +139,7 @@ object FuFinPedido: TFuFinPedido
           6666666666666666666666666666666666666666666666666666666666666666
           6666666666666666666666666666666666666666666666666666}
         ParentFont = False
-        TabOrder = 1
+        TabOrder = 2
         OnClick = btCancelarClick
       end
       object btRetornar: TBitBtn
@@ -175,14 +175,14 @@ object FuFinPedido: TFuFinPedido
           FFF08FF78FF78FF78FFFFFFFFFFFFFFFFFFF0FF07FF07FF07FFFFFFFFFFFFFFF
           FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}
         ParentFont = False
-        TabOrder = 2
+        TabOrder = 3
         OnClick = btRetornarClick
       end
       object btGravar: TBitBtn
         Left = 5
-        Top = 6
+        Top = 38
         Width = 376
-        Height = 56
+        Height = 36
         Caption = '&Gravar  && Imprimir'
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clWindowText
@@ -235,8 +235,22 @@ object FuFinPedido: TFuFinPedido
           000000000000000000000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
           FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}
         ParentFont = False
-        TabOrder = 0
+        TabOrder = 1
         OnClick = btGravarClick
+      end
+      object cbImprimeNFCe: TCheckBox
+        Left = 10
+        Top = 2
+        Width = 239
+        Height = 36
+        Caption = 'Imprimir NFCe'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -32
+        Font.Name = 'Tahoma'
+        Font.Style = []
+        ParentFont = False
+        TabOrder = 0
       end
     end
     object PanPagto: TPanel

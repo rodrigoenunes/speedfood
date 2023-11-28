@@ -17,7 +17,7 @@ Type
     vNF: Currency;
   End;
 
-  Function EmitirNFCeDePV(pCom_Pedido_Numero: Integer): TRetorno;
+  Function EmitirNFCeDePV(pCom_Pedido_Numero: Integer; pCom_Imprimir:Boolean): TRetorno;
   Function getValorParametro(pNome: String): String;
 
 implementation
@@ -846,9 +846,9 @@ begin
     // WaitForSingleObject(ProcInfo.hProcess, INFINITE); // 10000); //
 end;
 
-Function EmitirNFCeDeArqXML(ArqXML: String): TRetorno;
+Function EmitirNFCeDeArqXML(ArqXML: String; pCom_Imprimir: Boolean): TRetorno;
 Const
-  T: Integer = 300;
+  T: Integer = 1200;
 Var
   I: Integer;
   ExecComando, sArqSaida: String;
@@ -866,7 +866,13 @@ Begin
     '"' + vACNFE_EXE + '"' +
     ' /emitirnf ' +
     '"' + ArqXML + '" -as ' +
-    '"' + sArqSaida +  '"';
+    '"' + sArqSaida +  '"' +
+    ' -nroimp ';
+
+  if pCom_Imprimir then
+    ExecComando:= ExecComando + '1'
+  Else
+    ExecComando:= ExecComando + '0';
 
   // InputQuery('', '',  ExecComando);
 
@@ -943,7 +949,7 @@ Begin
 
 End;
 
-Function EmitirNFCeDePV(pCom_Pedido_Numero: Integer): TRetorno;
+Function EmitirNFCeDePV(pCom_Pedido_Numero: Integer; pCom_Imprimir: Boolean): TRetorno;
 Var
   vNroSerie, vNroNF: Integer;
   vDataXML: String;
@@ -959,7 +965,7 @@ Begin
   vNroNF   := Result.NroNF;
   vDataXML := Result.ConteudoXML;
 
-  Result:= EmitirNFCeDeArqXML(Result.ArqXML);
+  Result:= EmitirNFCeDeArqXML(Result.ArqXML, pCom_Imprimir);
   if Not Result.Resultado then
     Exit;
 

@@ -96,7 +96,7 @@ object FuConsPedidos: TFuConsPedidos
         item
           Alignment = taCenter
           Expanded = False
-          FieldName = 'NFCe'
+          FieldName = 'NrNFCe'
           Title.Alignment = taCenter
           Title.Caption = 'Nr NFCe'
           Width = 60

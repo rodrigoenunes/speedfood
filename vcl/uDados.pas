@@ -261,6 +261,8 @@ type
     DetpagWrkValor: TCurrencyField;
     DetpagWrkZC_tPag: TStringField;
     DetpagWrktPag: TStringField;
+    PedidosTpIntegra: TIntegerField;
+    SisPessoaTefPos: TIntegerField;
     procedure ItensCalcFields(DataSet: TDataSet);
     procedure LctCaixaCalcFields(DataSet: TDataSet);
     procedure PedWrkCalcFields(DataSet: TDataSet);

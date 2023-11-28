@@ -184,7 +184,6 @@ object FuPedidos: TFuPedidos
       Font.Style = []
       ParentFont = False
       TabOrder = 0
-      ExplicitHeight = 511
       object PanPedCtle: TPanel
         Left = 1
         Top = 200
@@ -192,7 +191,6 @@ object FuPedidos: TFuPedidos
         Height = 342
         Align = alBottom
         TabOrder = 0
-        ExplicitTop = 168
         object btEditar: TBitBtn
           Left = 88
           Top = 4
@@ -719,7 +717,6 @@ object FuPedidos: TFuPedidos
       Font.Style = [fsBold]
       ParentFont = False
       TabOrder = 1
-      ExplicitHeight = 511
       object TSLanches: TTabSheet
         Caption = '   Lanches   '
         Font.Charset = DEFAULT_CHARSET

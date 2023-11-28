@@ -194,10 +194,11 @@ object uDM: TuDM
     Top = 176
   end
   object SisPessoa: TFDTable
+    Active = True
     IndexFieldNames = 'id'
     Connection = FDC
     TableName = 'speedfood.sis_pessoa'
-    Left = 40
+    Left = 44
     Top = 80
     object SisPessoaid: TLongWordField
       FieldName = 'id'
@@ -333,6 +334,11 @@ object uDM: TuDM
       FieldName = 'PathImagens'
       Origin = 'PathImagens'
       Size = 200
+    end
+    object SisPessoaTefPos: TIntegerField
+      AutoGenerateValue = arDefault
+      FieldName = 'TefPos'
+      Origin = 'TefPos'
     end
   end
   object PedWrk: TClientDataSet
@@ -594,6 +600,11 @@ object uDM: TuDM
       AutoGenerateValue = arDefault
       FieldName = 'LctBebidas'
       Origin = 'LctBebidas'
+    end
+    object PedidosTpIntegra: TIntegerField
+      AutoGenerateValue = arDefault
+      FieldName = 'TpIntegra'
+      Origin = 'TpIntegra'
     end
     object PedidosZC_Impresso: TStringField
       FieldKind = fkCalculated

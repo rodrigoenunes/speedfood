@@ -61,6 +61,7 @@ type
     EditPathImg: TDBEdit;
     sbImagens: TSpeedButton;
     ODImagens: TOpenDialog;
+    DbTefPos: TDBRadioGroup;
     procedure FormActivate(Sender: TObject);
     procedure btGravarClick(Sender: TObject);
     procedure btCancelarClick(Sender: TObject);

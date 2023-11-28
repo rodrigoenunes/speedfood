@@ -59,6 +59,7 @@ type
     PanFalta: TPanel;
     Label6: TLabel;
     LabFalta: TLabel;
+    cbImprimeNFCe: TCheckBox;
     procedure btGravarClick(Sender: TObject);
     procedure btRetornarClick(Sender: TObject);
     procedure btCancelarClick(Sender: TObject);
@@ -134,6 +135,7 @@ var
 begin
   with FuFinPedido
   do begin
+    cbImprimeNFCe.Checked := False;
     if uDM.SisPessoaTecladoVirtual.AsBoolean then
     begin
       btGravar.Caption   := 'Gravar && imprimir';
@@ -536,6 +538,11 @@ begin
       uDM.PedDetpagindPag.AsInteger := 0;      // Sempre 0 (A vista) (1-Prazo)
       uDM.PedDetpagtPag.AsString := uDM.DetpagWrktPag.AsString;
       uDM.PedDetpagValor.AsCurrency := uDM.DetpagWrkValor.AsCurrency;
+      if (uDM.DetpagWrktPag.AsString = '03')         // Cartao crédito
+         or (uDM.DetpagWrktPag.AsString = '04')      // Cartao debito
+         //or (uDM.DetpagWrktPag.ASString = '17')
+         then uDM.PedDetpagtpIntegra.AsInteger := uDM.SisPessoaTefPos.ASInteger
+         else uDM.PedDetpagtpIntegra.AsInteger := 0;
       uDM.PedDetpag.Post;
       uDM.DetpagWrk.Next;
     end;
@@ -546,6 +553,7 @@ begin
     uDM.PedDetpagNumero.AsInteger := uDM.PedidosNumero.AsInteger;
     uDM.PedDetpagSeq.AsInteger := 1;
     uDM.PedDetpagindPag.AsInteger := 0;      // Sempre 0 (A vista) (1-Prazo)
+    uDM.PedDetpagtpIntegra.AsInteger := 1;
     if uDM.PedidosVlrReais.AsCurrency > 0 then
     begin
       uDM.PedDetpagtPag.AsString := '01';       // Reais
@@ -557,11 +565,13 @@ begin
       begin
         uDM.PedDetpagValor.AsCurrency := uDM.PedidosVlrCCred.AsCurrency;
         uDM.PedDetpagtPag.AsString := '03';
+        uDM.PedDetpagtpIntegra.AsInteger := uDM.SisPessoaTefPos.ASInteger;
       end;
       if uDM.PedidosVlrCDeb.AsCurrency > 0 then
       begin
         uDM.PedDetpagValor.AsCurrency := uDM.PedidosVlrCDeb.AsCurrency;
         uDM.PedDetpagtPag.AsString := '04';
+        uDM.PedDetpagtpIntegra.AsInteger := uDM.SisPessoaTefPos.ASInteger;
       end;
       if uDM.PedidosVlrPIX.AsCurrency > 0 then
       begin
@@ -652,7 +662,7 @@ begin
                     mtConfirmation,[mbYes,mbNo],0,mbNo,['Sim','Não']) = mrYes
         then xImpressao := 'S';
     if xImpressao = 'S' then
-       EmiteNFCe(uDM.PedidosNumero.AsInteger);
+       EmiteNFCe(uDM.PedidosNumero.AsInteger, cbImprimeNFCe.Checked);
 
   end;
   //
@@ -1005,7 +1015,7 @@ begin
      FuFinPedido.Width := Screen.Width;
   SBoxPedido.Width := Trunc(FuFinPedido.Width * 0.45);
 
-  btGravar.Top := 6;
+  btGravar.Top := 38;
   btGravar.Left := 5;
   btGravar.Height := Trunc(PanCtle.Height * 0.50);
   btGravar.Width := PanCtle.Width - 10;
