@@ -5,7 +5,8 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Data.DB, Vcl.DBCtrls, Vcl.Grids,
-  Vcl.DBGrids, Vcl.ExtCtrls, Vcl.StdCtrls, Vcl.Buttons;
+  Vcl.DBGrids, Vcl.ExtCtrls, Vcl.StdCtrls, Vcl.Buttons,
+  IniFiles, ShellAPI;
   Procedure ConsultarPedidos;
 
 type
@@ -14,16 +15,17 @@ type
     PanCtle: TPanel;
     GridPed: TDBGrid;
     NavPed: TDBNavigator;
-    btImprimir: TBitBtn;
+    btImprimirPedido: TBitBtn;
     btEmitirNFCe: TBitBtn;
     btSair: TBitBtn;
-    btEtiquetas: TBitBtn;
+    btImprimirEtiquetas: TBitBtn;
     procedure FormShow(Sender: TObject);
-    procedure btImprimirClick(Sender: TObject);
+    procedure btImprimirPedidoClick(Sender: TObject);
     procedure FormResize(Sender: TObject);
     procedure btSairClick(Sender: TObject);
     procedure btEmitirNFCeClick(Sender: TObject);
-    procedure btEtiquetasClick(Sender: TObject);
+    procedure btImprimirEtiquetasClick(Sender: TObject);
+    procedure FormClose(Sender: TObject; var Action: TCloseAction);
   private
     { Private declarations }
   public
@@ -32,6 +34,7 @@ type
 
 var
   FuConsPedidos: TFuConsPedidos;
+  wArqXML,wArqSai: String;
 
 implementation
 
@@ -64,7 +67,7 @@ begin
 
 end;
 
-procedure TFuConsPedidos.btEtiquetasClick(Sender: TObject);
+procedure TFuConsPedidos.btImprimirEtiquetasClick(Sender: TObject);
 begin
   if MessageDlg('Emissão de etiquetas' + #13 +
                 'Pedido: ' + uDM.PedidosNumero.AsString + #13 +
@@ -76,23 +79,62 @@ end;
 
 
 procedure TFuConsPedidos.btEmitirNFCeClick(Sender: TObject);
-var xImpressao: String;
+var wExec,wParam: String;
+    wIniName,wAbrir,wImprimir,wPDF,wTrans: String;
+    wIniFile: TIniFile;
 begin
   if uDM.Pedidos.RecordCount = 0 then Exit;
-  xImpressao := 'N';
-  if uDM.PedidosNrNFCe.AsInteger > 0 then xImpressao := 'S'
-  else if MessageDlg('Geração / Emissão de NFCe' + #13 +
-                     'Pedido: ' + uDM.PedidosNumero.AsString + #13 +
-                     'Valor: ' + FloatToStrF(uDM.PedidosValor.AsCurrency,ffNumber,15,2) + #13 +
-                     'Meio pagamento: ' + uDM.PedidosZC_MPExtenso.AsString,
-                     mtConfirmation,[mbYes,mbNo],0,mbNo,['Sim','Não']) = mrYes
-       then xImpressao := 'S';
-  if xImpressao = 'S' then
-     EmiteNFCe(uDM.PedidosNumero.AsInteger, True);
+  if uDM.PedidosNrNFCe.AsInteger > 0
+  then begin
+  //  ShowMessage('Re-impressão da NFCe' + #13 + 'XML=' + uDM.PedidosArqXML.AsString);
+    wArqXML := ExtractFilePath(Application.ExeName) + 'wNFe.XML';
+    wArqSai := ExtractFilePath(Application.ExeName) + 'wNFe.Txt';
+    DeleteFile(wArqXML);
+    DeleteFile(wArqSai);
+    uDM.PedidosArqXML.SaveToFile(wArqXML);
+    wExec := ObtemParametro('ACNFE_EXE');
+    if not FileExists(wExec)
+    then begin
+      wExec := ExtractFilePath(Application.ExeName) + wExec;
+      if not FileExists(wExec) then
+      begin
+        wExec := ObtemParametro('ACNFE_EXE');
+        MessageDlg(wExec + ' não encontrado, processo abortado',mtInformation,[mbOk],0);
+        Exit;
+      end;
+    end;
+    wIniName := ChangeFileExt(wExec,'.Ini');
+    wIniFile := TIniFile.Create(wIniName);
+    wAbrir := wIniFile.ReadString('NFC','AbrirDANFE','');
+    wImprimir := wIniFile.ReadString('NFC','ImprimirAuto','');
+    wPDF := wIniFile.ReadString('NFC','PathSalvarPDF','');
+    wTrans := wIniFile.ReadString('NFC','PathSalvar','');
+    //
+    wIniFile.WriteString('NFC','AbrirDANFE','S');
+    wIniFile.WriteString('NFC','ImprimirAuto','S');
+    wIniFile.WriteString('NFC','PathSalvarPDF',wTrans);
+    //
+    wParam := '/GERARDANFE ' + wArqXML + ' -as ' + wArqSai;   // + ' -nroimp 1';
+    ShellExecute(0,'open',pChar(wExec),pChar(wParam),'',1);
+    sleep(2500);
+    //
+    wIniFile.WriteString('NFC','AbrirDANFE',wAbrir);
+    wIniFile.WriteString('NFC','ImprimirAuto',wImprimir);
+    wIniFile.WriteString('NFC','PathSalvarPDF',wPDF);
+    wIniFile.WriteString('NFC','PathSalvar',wTrans);
+    wIniFile.Free;
+    Exit;
+  end;
+  if MessageDlg('Geração / Emissão de NFCe' + #13 +
+                'Pedido: ' + uDM.PedidosNumero.AsString + #13 +
+                'Valor: ' + FloatToStrF(uDM.PedidosValor.AsCurrency,ffNumber,15,2) + #13 +
+                'Meio pagamento: ' + uDM.PedidosZC_MPExtenso.AsString,
+                mtConfirmation,[mbYes,mbNo],0,mbNo,['Sim','Não']) = mrYes
+  then EmiteNFCe(uDM.PedidosNumero.AsInteger, True);
 
 end;
 
-procedure TFuConsPedidos.btImprimirClick(Sender: TObject);
+procedure TFuConsPedidos.btImprimirPedidoClick(Sender: TObject);
 begin
   if uDM.Pedidos.RecordCount = 0 then Exit;
   ImprimePedido(uDM.PedidosNumero.AsInteger);  //, False);
@@ -102,6 +144,12 @@ end;
 procedure TFuConsPedidos.btSairClick(Sender: TObject);
 begin
   FuConsPedidos.Close;
+
+end;
+
+procedure TFuConsPedidos.FormClose(Sender: TObject; var Action: TCloseAction);
+begin
+  DeleteFile(wArqXML);
 
 end;
 

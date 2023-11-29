@@ -451,31 +451,12 @@ object FuPrincipalEtq: TFuPrincipalEtq
         VisibleButtons = [nbFirst, nbPrior, nbNext, nbLast]
         TabOrder = 0
       end
-      object dbNroPedido: TDBEdit
-        Left = 158
-        Top = 42
-        Width = 74
-        Height = 24
-        Anchors = [akLeft, akBottom]
-        DataField = 'Numero'
-        DataSource = uDM.DSPedidos
-        Font.Charset = DEFAULT_CHARSET
-        Font.Color = clWindowText
-        Font.Height = -13
-        Font.Name = 'Tahoma'
-        Font.Style = []
-        ParentFont = False
-        ReadOnly = True
-        TabOrder = 1
-        Visible = False
-        OnChange = dbNroPedidoChange
-      end
       object cbSelPedidos: TComboBox
         Left = 4
         Top = 66
         Width = 140
         Height = 27
-        TabOrder = 2
+        TabOrder = 1
         Text = 'cbSelPedidos'
         OnClick = cbSelPedidosClick
         Items.Strings = (
@@ -484,9 +465,9 @@ object FuPrincipalEtq: TFuPrincipalEtq
           'Todos')
       end
       object btReload: TBitBtn
-        Left = 92
+        Left = 4
         Top = 99
-        Width = 140
+        Width = 233
         Height = 34
         Caption = '&Atualizar'
         Glyph.Data = {
@@ -508,8 +489,27 @@ object FuPrincipalEtq: TFuPrincipalEtq
           3333333333300333333333333333333773333333333333333333333333333333
           33333333333333333333}
         NumGlyphs = 2
-        TabOrder = 3
+        TabOrder = 2
         OnClick = btReloadClick
+      end
+      object dbNroPedido: TDBEdit
+        Left = 163
+        Top = 42
+        Width = 74
+        Height = 24
+        Anchors = [akLeft, akBottom]
+        DataField = 'Numero'
+        DataSource = uDM.DSPedidos
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -13
+        Font.Name = 'Tahoma'
+        Font.Style = []
+        ParentFont = False
+        ReadOnly = True
+        TabOrder = 3
+        Visible = False
+        OnChange = dbNroPedidoChange
       end
     end
   end
@@ -520,7 +520,6 @@ object FuPrincipalEtq: TFuPrincipalEtq
     Height = 456
     Align = alClient
     TabOrder = 2
-    ExplicitLeft = 300
     object PanRodapeItens: TPanel
       Left = 1
       Top = 312
@@ -954,9 +953,9 @@ object FuPrincipalEtq: TFuPrincipalEtq
     end
     object GridItens: TDBGrid
       Left = 1
-      Top = 34
+      Top = 42
       Width = 607
-      Height = 245
+      Height = 237
       Align = alClient
       DataSource = uDM.DSPedItens
       DrawingStyle = gdsClassic
@@ -1070,12 +1069,44 @@ object FuPrincipalEtq: TFuPrincipalEtq
       Left = 1
       Top = 1
       Width = 607
-      Height = 33
+      Height = 41
       Align = alTop
       BevelKind = bkFlat
       BevelOuter = bvNone
-      Caption = 'Lanches && Bebidas'
+      Color = clGradientActiveCaption
+      ParentBackground = False
       TabOrder = 3
+      DesignSize = (
+        603
+        37)
+      object Label4: TLabel
+        Left = 4
+        Top = 3
+        Width = 221
+        Height = 33
+        Caption = 'Lanches && Bebidas'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -27
+        Font.Name = 'Tahoma'
+        Font.Style = []
+        ParentFont = False
+      end
+      object LabNrPedido: TLabel
+        Left = 444
+        Top = 3
+        Width = 150
+        Height = 33
+        Alignment = taRightJustify
+        Anchors = [akTop, akRight]
+        Caption = 'LabNrPedido'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -27
+        Font.Name = 'Tahoma'
+        Font.Style = []
+        ParentFont = False
+      end
     end
   end
   object PanReload: TPanel

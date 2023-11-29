@@ -194,7 +194,6 @@ object uDM: TuDM
     Top = 176
   end
   object SisPessoa: TFDTable
-    Active = True
     IndexFieldNames = 'id'
     Connection = FDC
     TableName = 'speedfood.sis_pessoa'
@@ -606,6 +605,11 @@ object uDM: TuDM
       FieldName = 'TpIntegra'
       Origin = 'TpIntegra'
     end
+    object PedidosSitPagto: TIntegerField
+      AutoGenerateValue = arDefault
+      FieldName = 'SitPagto'
+      Origin = 'SitPagto'
+    end
     object PedidosZC_Impresso: TStringField
       FieldKind = fkCalculated
       FieldName = 'ZC_Impresso'
@@ -640,6 +644,12 @@ object uDM: TuDM
       FieldKind = fkCalculated
       FieldName = 'ZC_NroLst'
       Size = 3
+      Calculated = True
+    end
+    object PedidosZC_SitPagto: TStringField
+      FieldKind = fkCalculated
+      FieldName = 'ZC_SitPagto'
+      Size = 1
       Calculated = True
     end
   end

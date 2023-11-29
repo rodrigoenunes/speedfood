@@ -156,10 +156,28 @@ begin
                FSFEuPrintFortes.RLEtiqLanche.Preview
             else
                FSFEuPrintFortes.RLEtiqLanche.Print;
-          3:if lPreview then
-               FSFEuPrintFortes.RLEtiqBebida.Preview
-            else
-               FSFEuPrintFortes.RLEtiqBebida.Print;
+          3:begin
+              filAnt := uDM.PedItens.Filtered;
+              filTxtAnt := uDM.PedItens.Filter;
+              uDM.PedItens.Filtered := True;
+              uDM.PedItens.Filter := 'TpProd=3';
+              uDM.PedItens.Refresh;
+              if lPreview then
+                 FSFEuPrintFortes.RLEtiqBebida.Preview
+              else
+                 FSFEuPrintFortes.RLEtiqBebida.Print;
+              uDM.PedItens.First;
+              while not uDM.PedItens.Eof do
+              begin
+                uDM.PedItens.Edit;
+                uDM.PedItensEtqImpressa.AsInteger := 1;
+                uDM.PedItens.Post;
+                uDM.PedItens.Next;
+              end;
+              uDM.PedItens.Filtered := filAnt;
+              uDM.PedItens.Filter := filTxtAnt;
+              uDM.PedItens.Refresh;
+          end;
       end;
     end
     else MessageDlg('Item não encontrado' + #13 +

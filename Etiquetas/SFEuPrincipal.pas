@@ -26,7 +26,6 @@ type
     LabNrEtqs: TLabel;
     NavItens: TDBNavigator;
     GridItens: TDBGrid;
-    dbNroPedido: TDBEdit;
     btNoEtiq: TBitBtn;
     btPreview: TBitBtn;
     btPrint: TBitBtn;
@@ -44,6 +43,9 @@ type
     btReload: TBitBtn;
     PanReload: TPanel;
     LabTmp: TLabel;
+    Label4: TLabel;
+    dbNroPedido: TDBEdit;
+    LabNrPedido: TLabel;
     procedure FormCreate(Sender: TObject);
     procedure FormActivate(Sender: TObject);
     procedure btCarregaClick(Sender: TObject);
@@ -217,6 +219,7 @@ end;
 
 procedure TFuPrincipalEtq.btPrintClick(Sender: TObject);
 var nKey1,nKey2: Integer;
+    nImpressas: Integer;
 begin
   if uDM.PedItens.RecordCount = 0 then Exit;
   Timer1.Enabled := False;
@@ -230,6 +233,23 @@ begin
     uDM.PedItensEtqImpressa.AsInteger := 1;
     uDM.PedItens.Post;
   end;
+  nImpressas := 0;
+  uDM.PedItens.First;
+  while not uDM.PedItens.Eof do
+  begin
+    if uDM.PedItensEtqImpressa.AsInteger = 1 then
+       nImpressas := nImpressas + 1;
+    uDM.PedItens.Next;
+  end;
+  if nImpressas = uDM.PedItens.RecordCount then
+  begin
+    uDM.Pedidos.Edit;
+    uDM.PedidosEtqImpressas.AsInteger := 1;
+    uDM.Pedidos.Post;
+  end;
+  uDM.PedItens.FindKey([nKey1,nKey2]);
+  uDM.PedItens.Refresh;
+  ReloadPedidos;
   Timer1.Enabled := True;
 
 end;
@@ -326,7 +346,12 @@ end;
 
 procedure TFuPrincipalEtq.dbNroPedidoChange(Sender: TObject);
 begin
+  LabNrPedido.Visible := False;
+  Application.ProcessMessages;
   if not uDM.PedItens.Active then Exit;
+  LabNrPedido.Caption := 'Pedido: ' + uDM.PedidosNumero.AsString;
+  LabNrPedido.Visible := True;
+  Application.ProcessMessages;
   DefineSelecao;
 
 end;
@@ -344,6 +369,7 @@ begin
     uDM.Pedidos.Active    := True;
     uDM.PedItens.Active   := True;
     uDM.Parametros.Active := True;
+    uDM.sitPagto          := 1;     // Somente pedidos 'pagos'
     nTempo := StrToIntDef(ObtemParametro('EtiquetaTimer'),10);
     if nTempo = 0 then nTempo := 11;
     LabTmp.Caption := IntToStr(nTempo);

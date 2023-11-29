@@ -920,7 +920,7 @@ Begin
       uDM.Pedidos['SrNFCe']:= Retorno.NroSerie;
       uDM.Pedidos['NrNFCe']:= Retorno.NroNF;
 
-      uDM.Pedidos['ArqXML']:= Retorno.ArqXML;
+      uDM.Pedidos['ArqXML']:= Retorno.ConteudoXML;    // Retorno.ArqXML;
 
       uDM.Pedidos.Post;
 

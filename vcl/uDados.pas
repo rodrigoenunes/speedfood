@@ -263,6 +263,8 @@ type
     DetpagWrktPag: TStringField;
     PedidosTpIntegra: TIntegerField;
     SisPessoaTefPos: TIntegerField;
+    PedidosZC_SitPagto: TStringField;
+    PedidosSitPagto: TIntegerField;
     procedure ItensCalcFields(DataSet: TDataSet);
     procedure LctCaixaCalcFields(DataSet: TDataSet);
     procedure PedWrkCalcFields(DataSet: TDataSet);
@@ -294,6 +296,7 @@ type
     nomeClie,CPFCNPJ: String;
     turnoIni,turnoFin,etqImpress: Integer;
     turnoCorrente: Integer;
+    sitPagto: Integer;
 
   end;
 
@@ -494,6 +497,7 @@ begin
   End;
   //
   sServer := vIniFile.ReadString('DB', 'Host', '').Trim;
+  //ShowMessage('Server=' + sServer);
   if Not sServer.IsEmpty then
     FDC.Params[ FDC.Params.IndexOfName('server') ]:= 'Server=' + sServer;
   vIniFile.Free;
@@ -599,6 +603,11 @@ begin
     PedidosZC_Senha.AsString := nrAux;   // PedidosNumero.AsString;
   PedidosZC_NroLst.AsString := nrAux;
 
+  if PedidosSitPagto.AsInteger <> 0 then
+    PedidosZC_SitPagto.AsString := 'P'                // Fontname no grid=Wingdings 2
+  else
+    PedidosZC_SitPagto.AsString := '';
+
   PedidosZC_Impresso.AsString := '';
   if PedidosEtqImpressas.AsInteger > 0 then
     PedidosZC_Impresso.AsString := 'Impresso';
@@ -624,6 +633,18 @@ begin
   // uDM.etqImpress 0-Não impressa  1-Impressa  2-Todas (sem selecão)
   if uDM.etqImpress <> 2 then
      if uDM.PedidosEtqImpressas.AsInteger <> uDM.etqImpress then Exit;
+  // Filtro para a situação de pagamento (sitPago = 0-Pendentes de pagamento  1-Pagos  2-Todos)
+  // Filtro utilizado SOMENTE para impressão de etiquetas
+  if uDM.sitPagto <> 2 then      // Seleção por situação de pagamento
+  begin
+    if (uDM.sitPagto = 1)                      // Somente pedidos 'pagos'
+       and (PedidosSitPagto.AsInteger = 0)     // e pedido NÃO pago
+       then Exit;
+    if (uDM.sitPagto = 0)                      // Somente pedidos NÃO pagos
+       and (PedidosSitPagto.AsInteger = 1)     // e pedido pago
+       then Exit;
+  end;
+
   Accept := True;
 
 end;
@@ -662,7 +683,7 @@ begin
   PedItensZC_CodDescr.AsString := '[ ' + PedItensCodProd.AsString + ' ] ' + PedItensZC_Descricao.AsString;
 
   if PedItensEtqImpressa.AsInteger <> 0 then
-    PedItensZC_Impresso.ASString := 'P'
+    PedItensZC_Impresso.ASString := 'P'                          // Fontname no grid=Wingdings 2
   else
     PedItensZC_Impresso.AsString := '';
 

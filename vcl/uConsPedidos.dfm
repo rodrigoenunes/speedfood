@@ -11,6 +11,7 @@ object FuConsPedidos: TFuConsPedidos
   Font.Name = 'Tahoma'
   Font.Style = []
   OldCreateOrder = False
+  OnClose = FormClose
   OnResize = FormResize
   OnShow = FormShow
   PixelsPerInch = 96
@@ -19,14 +20,14 @@ object FuConsPedidos: TFuConsPedidos
     Left = 0
     Top = 0
     Width = 671
-    Height = 406
+    Height = 394
     Align = alClient
     TabOrder = 0
     object GridPed: TDBGrid
       Left = 1
       Top = 1
       Width = 669
-      Height = 404
+      Height = 392
       Align = alClient
       DataSource = uDM.DSPedidos
       DrawingStyle = gdsClassic
@@ -74,7 +75,7 @@ object FuConsPedidos: TFuConsPedidos
           Expanded = False
           FieldName = 'NomeCliente'
           Title.Caption = 'Cliente'
-          Width = 180
+          Width = 188
           Visible = True
         end
         item
@@ -115,9 +116,9 @@ object FuConsPedidos: TFuConsPedidos
   end
   object PanCtle: TPanel
     Left = 0
-    Top = 406
+    Top = 394
     Width = 671
-    Height = 81
+    Height = 93
     Align = alBottom
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
@@ -128,24 +129,29 @@ object FuConsPedidos: TFuConsPedidos
     TabOrder = 1
     DesignSize = (
       671
-      81)
+      93)
     object NavPed: TDBNavigator
       Left = 8
       Top = 6
       Width = 140
-      Height = 33
+      Height = 41
       DataSource = uDM.DSPedidos
       VisibleButtons = [nbFirst, nbPrior, nbNext, nbLast]
       TabOrder = 0
     end
-    object btImprimir: TBitBtn
-      Left = 283
+    object btImprimirPedido: TBitBtn
+      Left = 211
       Top = 5
-      Width = 123
-      Height = 35
+      Width = 131
+      Height = 41
       Hint = 'Imprimir pedido'
       Anchors = [akTop, akRight]
       Caption = 'Imprimir'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -16
+      Font.Name = 'Tahoma'
+      Font.Style = []
       Glyph.Data = {
         66070000424D660700000000000036000000280000001A000000170000000100
         18000000000030070000C30E0000C30E00000000000000000000BEBEBEBEBEBE
@@ -207,19 +213,25 @@ object FuConsPedidos: TFuConsPedidos
         BEBEBEBEBEBEBEBEBEBEBEBEBEBEBEBEBEBEBEBEBEBEBEBEBEBEBEBEBEBEBEBE
         BEBEBEBEB9B9B99D9D9D949494929292B2B2B2B8B8B8BEBEBEBEBEBEBEBEBEBE
         BEBEBEBEBEBEBEBE0000}
+      ParentFont = False
       ParentShowHint = False
       ShowHint = True
       TabOrder = 1
-      OnClick = btImprimirClick
+      OnClick = btImprimirPedidoClick
     end
     object btEmitirNFCe: TBitBtn
-      Left = 412
+      Left = 348
       Top = 5
-      Width = 123
-      Height = 35
+      Width = 131
+      Height = 41
       Hint = 'Emitr Nota Fiscal Consumidor'
       Anchors = [akTop, akRight]
       Caption = 'NFCe'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -16
+      Font.Name = 'Tahoma'
+      Font.Style = []
       Glyph.Data = {
         F6060000424DF606000000000000360000002800000018000000180000000100
         180000000000C0060000120B0000120B00000000000000000000FF00FFFF00FF
@@ -277,16 +289,17 @@ object FuConsPedidos: TFuConsPedidos
         00030C000000000208021D850338FEFF00FFFF00FFFF00FFFF00FFFF00FFFF00
         FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF
         00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF0231E60336FF}
+      ParentFont = False
       ParentShowHint = False
       ShowHint = True
       TabOrder = 2
       OnClick = btEmitirNFCeClick
     end
     object btSair: TBitBtn
-      Left = 384
-      Top = 41
+      Left = 476
+      Top = 48
       Width = 185
-      Height = 35
+      Height = 41
       Hint = 'Fechar janela atual'
       Anchors = [akTop, akRight]
       Caption = 'Sair'
@@ -309,14 +322,19 @@ object FuConsPedidos: TFuConsPedidos
       TabOrder = 4
       OnClick = btSairClick
     end
-    object btEtiquetas: TBitBtn
-      Left = 541
-      Top = 6
-      Width = 123
-      Height = 35
+    object btImprimirEtiquetas: TBitBtn
+      Left = 211
+      Top = 48
+      Width = 131
+      Height = 41
       Hint = 'Imprimir etiquetas do pedido'
       Anchors = [akTop, akRight]
       Caption = 'Etiquetas'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -16
+      Font.Name = 'Tahoma'
+      Font.Style = []
       Glyph.Data = {
         76020000424D7602000000000000760000002800000020000000200000000100
         0400000000000002000000000000000000001000000000000000000000000000
@@ -338,10 +356,11 @@ object FuConsPedidos: TFuConsPedidos
         FFFFFFFFFFFFFFFFF0666660FFFFFFFFFFFFFFFFFFFFFFFF0666666600000000
         0000000000000000666666666666666666666666666666666666666666666666
         6666666666666666666666666666666666666666666666666666}
+      ParentFont = False
       ParentShowHint = False
       ShowHint = True
       TabOrder = 3
-      OnClick = btEtiquetasClick
+      OnClick = btImprimirEtiquetasClick
     end
   end
 end

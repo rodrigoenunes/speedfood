@@ -22,7 +22,6 @@ begin
   Application.CreateForm(TFEnviaEMail, FEnviaEMail);
   Application.CreateForm(TFuSysPrinters, FuSysPrinters);
   Application.CreateForm(TFuHelpSpeedFood, FuHelpSpeedFood);
-  //Application.CreateForm(TFuHelpSpeedFood, FuHelpSpeedFood);
   //Application.CreateForm(TFSFEuPrintFortes, FSFEuPrintFortes);
   Application.Run;
 end.
