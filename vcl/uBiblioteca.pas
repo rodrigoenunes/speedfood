@@ -7,6 +7,8 @@ Type
     Resultado: Boolean;
     Mensagem: String;
     ArqXML: String;
+    IdArqXML: String;
+    Chave: String;
     NroSerie: Integer;
     NroNF: Integer;
     ConteudoXML: String;
@@ -858,7 +860,7 @@ Var
 Begin
   Result.Resultado:= False;
 
-  sArqSaida:= IncludeTrailingPathDelimiter(GetEnvironmentVariable('TEMP'));
+  sArqSaida:= IncludeTrailingPathDelimiter(vACNFE_TMP); // IncludeTrailingPathDelimiter(GetEnvironmentVariable('TEMP'));
   if Not DirectoryExists(sArqSaida) then
     ForceDirectories(sArqSaida);
 
@@ -903,6 +905,21 @@ Begin
   // ShowMessage(ExecComando);
   Result.Mensagem:= sl.Text;
   Result.Resultado:= Copy(Result.Mensagem, 84, 3) = '100';
+
+  if Not Result.Resultado then
+    Exit;
+
+  Result.Chave:= Copy(Result.Mensagem, 39, 44);
+  Result.IdArqXML:=
+    IncludeTrailingPathDelimiter(vACNFE_XML) +
+    Result.Chave +
+    '-nfe.xml';
+  if FileExists(Result.IdArqXML) then
+  Begin
+    sl.LoadFromFile(Result.IdArqXML);
+    Result.ArqXML:= sl.Text;
+  End;
+
 
 End;
 
@@ -952,6 +969,49 @@ Begin
 
 End;
 
+Function AtualizarRetornoNFC(pCom_Pedido_Numero: Integer; Retorno: TRetorno): TRetorno;
+Var
+  vAtualizou: Boolean;
+  sSQL: String;
+Begin
+  Result:= Retorno;
+  vAtualizou:= False;
+
+  if uDM.Pedidos.Active then
+  Begin
+    if uDM.Pedidos.Locate('Numero', pCom_Pedido_Numero, []) then
+    Begin
+      uDM.Pedidos.Edit;
+      uDM.Pedidos['ArqXML']  := Retorno.ArqXML;
+      uDM.Pedidos['IdArqXML']:= Retorno.IdArqXML;
+      uDM.Pedidos['ChaveNFe']:= Retorno.Chave;
+      uDM.Pedidos.Post;
+
+      vAtualizou:= True;
+    End;
+  End;
+
+  if Not vAtualizou then
+  Begin
+    sSQL:=
+      'update com_pedido ' +
+      'set ArqXML   = '':ArqXML'', ' +
+      '    IdArqXML = '':IdArqXML'', ' +
+      '    ChaveNFe = '':ChaveNFe'' ' +
+      'where numero = :numero ';
+
+    sSQL:= sSQL.Replace(':ArqXML', Retorno.ArqXML );
+    sSQL:= sSQL.Replace(':IdArqXML', Retorno.IdArqXML);
+    sSQL:= sSQL.Replace(':ChaveNFe', Retorno.Chave  );
+    sSQL:= sSQL.Replace(':numero', pCom_Pedido_Numero.ToString );
+
+    uDM.FDC.ExecSQL(sSQL);
+
+
+  End;
+
+End;
+
 Function EmitirNFCeDePV(pCom_Pedido_Numero: Integer; pCom_Imprimir: Boolean): TRetorno;
 Var
   vNroSerie, vNroNF: Integer;
@@ -978,6 +1038,7 @@ Begin
   Result.NroNF      := vNroNF;
   Result.ConteudoXML:= vDataXML;
 
+  AtualizarRetornoNFC(pCom_Pedido_Numero, Result);
 
 End;
 
