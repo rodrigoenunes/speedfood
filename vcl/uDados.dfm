@@ -610,6 +610,18 @@ object uDM: TuDM
       FieldName = 'SitPagto'
       Origin = 'SitPagto'
     end
+    object PedidosIdArqXML: TStringField
+      AutoGenerateValue = arDefault
+      FieldName = 'IdArqXML'
+      Origin = 'IdArqXML'
+      Size = 255
+    end
+    object PedidosChaveNFe: TStringField
+      AutoGenerateValue = arDefault
+      FieldName = 'ChaveNFe'
+      Origin = 'ChaveNFe'
+      Size = 44
+    end
     object PedidosZC_Impresso: TStringField
       FieldKind = fkCalculated
       FieldName = 'ZC_Impresso'
@@ -650,6 +662,12 @@ object uDM: TuDM
       FieldKind = fkCalculated
       FieldName = 'ZC_SitPagto'
       Size = 1
+      Calculated = True
+    end
+    object PedidosZC_SitTxt: TStringField
+      FieldKind = fkCalculated
+      FieldName = 'ZC_SitTxt'
+      Size = 10
       Calculated = True
     end
   end
@@ -1382,8 +1400,11 @@ object uDM: TuDM
     end
   end
   object PedDetpag: TFDTable
+    OnCalcFields = PedDetpagCalcFields
+    OnFilterRecord = PedDetpagFilterRecord
     IndexFieldNames = 'Numero;Seq'
     MasterSource = DSPedidos
+    MasterFields = 'Numero'
     Connection = FDC
     TableName = 'speedfood.com_pedidodetpag'
     Left = 216
@@ -1464,6 +1485,28 @@ object uDM: TuDM
       Origin = 'vTroco'
       Precision = 15
       Size = 2
+    end
+    object PedDetpagnrDocto: TStringField
+      AutoGenerateValue = arDefault
+      FieldName = 'nrDocto'
+      Origin = 'nrDocto'
+      Size = 45
+    end
+    object PedDetpagcodVenda: TStringField
+      AutoGenerateValue = arDefault
+      FieldName = 'codVenda'
+      Origin = 'codVenda'
+      Size = 45
+    end
+    object PedDetpagSit: TIntegerField
+      AutoGenerateValue = arDefault
+      FieldName = 'Sit'
+      Origin = 'Sit'
+    end
+    object PedDetpagZC_nrCartao: TStringField
+      FieldKind = fkCalculated
+      FieldName = 'ZC_nrCartao'
+      Calculated = True
     end
   end
   object DSPedDetpag: TDataSource

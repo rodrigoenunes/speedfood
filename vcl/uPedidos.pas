@@ -617,7 +617,9 @@ begin
   pgControle.ActivePageIndex := 0;
   if CriaAbrePedidoWrk(0) <> 0 then Exit;
   itensPedido := 0;
+  edItens.Text := IntToStr(itensPedido);
   totalPedido := 0;
+  edTotal.Text := FloatToStrF(totalpedido,ffCurrency,15,2);
   PanWork.Visible := True;
   FuPedidos.FormResize(nil);
   btDummy.SetFocus;

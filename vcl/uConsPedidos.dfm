@@ -3,7 +3,7 @@ object FuConsPedidos: TFuConsPedidos
   Top = 0
   Caption = 'Consultar pedidos'
   ClientHeight = 487
-  ClientWidth = 671
+  ClientWidth = 725
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -19,14 +19,14 @@ object FuConsPedidos: TFuConsPedidos
   object Panel1: TPanel
     Left = 0
     Top = 0
-    Width = 671
+    Width = 725
     Height = 394
     Align = alClient
     TabOrder = 0
     object GridPed: TDBGrid
       Left = 1
       Top = 1
-      Width = 669
+      Width = 723
       Height = 392
       Align = alClient
       DataSource = uDM.DSPedidos
@@ -111,13 +111,21 @@ object FuConsPedidos: TFuConsPedidos
           Title.Caption = 'Ser'
           Width = 28
           Visible = True
+        end
+        item
+          Alignment = taCenter
+          Expanded = False
+          FieldName = 'ZC_SitTxt'
+          Title.Alignment = taCenter
+          Title.Caption = 'Situa'#231#227'o'
+          Visible = True
         end>
     end
   end
   object PanCtle: TPanel
     Left = 0
     Top = 394
-    Width = 671
+    Width = 725
     Height = 93
     Align = alBottom
     Font.Charset = DEFAULT_CHARSET
@@ -128,7 +136,7 @@ object FuConsPedidos: TFuConsPedidos
     ParentFont = False
     TabOrder = 1
     DesignSize = (
-      671
+      725
       93)
     object NavPed: TDBNavigator
       Left = 8
@@ -140,13 +148,13 @@ object FuConsPedidos: TFuConsPedidos
       TabOrder = 0
     end
     object btImprimirPedido: TBitBtn
-      Left = 211
+      Left = 240
       Top = 5
-      Width = 131
+      Width = 155
       Height = 41
       Hint = 'Imprimir pedido'
       Anchors = [akTop, akRight]
-      Caption = 'Imprimir'
+      Caption = 'Pedido'
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -16
@@ -220,11 +228,11 @@ object FuConsPedidos: TFuConsPedidos
       OnClick = btImprimirPedidoClick
     end
     object btEmitirNFCe: TBitBtn
-      Left = 348
+      Left = 401
       Top = 5
-      Width = 131
+      Width = 155
       Height = 41
-      Hint = 'Emitr Nota Fiscal Consumidor'
+      Hint = 'Emitir Nota Fiscal Consumidor'
       Anchors = [akTop, akRight]
       Caption = 'NFCe'
       Font.Charset = DEFAULT_CHARSET
@@ -292,13 +300,13 @@ object FuConsPedidos: TFuConsPedidos
       ParentFont = False
       ParentShowHint = False
       ShowHint = True
-      TabOrder = 2
+      TabOrder = 3
       OnClick = btEmitirNFCeClick
     end
     object btSair: TBitBtn
-      Left = 476
-      Top = 48
-      Width = 185
+      Left = 562
+      Top = 28
+      Width = 155
       Height = 41
       Hint = 'Fechar janela atual'
       Anchors = [akTop, akRight]
@@ -319,13 +327,13 @@ object FuConsPedidos: TFuConsPedidos
       NumGlyphs = 2
       ParentShowHint = False
       ShowHint = True
-      TabOrder = 4
+      TabOrder = 5
       OnClick = btSairClick
     end
     object btImprimirEtiquetas: TBitBtn
-      Left = 211
+      Left = 240
       Top = 48
-      Width = 131
+      Width = 155
       Height = 41
       Hint = 'Imprimir etiquetas do pedido'
       Anchors = [akTop, akRight]
@@ -359,8 +367,31 @@ object FuConsPedidos: TFuConsPedidos
       ParentFont = False
       ParentShowHint = False
       ShowHint = True
-      TabOrder = 3
+      TabOrder = 2
       OnClick = btImprimirEtiquetasClick
+    end
+    object btCancelar: TBitBtn
+      Left = 401
+      Top = 48
+      Width = 155
+      Height = 41
+      Hint = 'Cancelar pedido, NFCe e transa'#231#227'o de cart'#227'o'
+      Anchors = [akTop, akRight]
+      Caption = 'Cancelar'
+      Glyph.Data = {
+        42010000424D4201000000000000760000002800000011000000110000000100
+        040000000000CC000000CE0E0000C40E00001000000000000000000000000000
+        80000080000000808000800000008000800080800000C0C0C000808080000000
+        FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFFFF00777777777777
+        77777000000077788777777777777000000077D55877777D87777000000077D5
+        558777D558777000000077D555587D55558770000000777D5555855555877000
+        00007777D555555558777000000077777D555555877770000000777777555558
+        777770000000777777D5555877777000000077777D5555587777700000007777
+        D5558555877770000000777D55587D55587770000000777D558777D555877000
+        00007777D577777D555770000000777777777777D5D770000000777777777777
+        777770000000}
+      TabOrder = 4
+      OnClick = btCancelarClick
     end
   end
 end

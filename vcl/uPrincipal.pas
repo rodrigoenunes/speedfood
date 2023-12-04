@@ -155,7 +155,8 @@ begin
     uDM.Pedidos.Active   := True;
     uDM.PedItens.Active  := True;
     uDM.PedDetPag.Active := True;
-    uDM.etqImpress := 2;        // Compatibilização com "Etiquetas"
+    uDM.etqImpress := 2;        // Compatibilização com "Etiquetas" (Todas)
+    uDM.sitPagto := 3;          // Todas as situações
     //
     FFRCtle.RLPreviewSetup1.ZoomFactor := StrToIntDef(ObtemParametro('FortesZoomFactor'),100);
     FGen.lSalvaForm := True;

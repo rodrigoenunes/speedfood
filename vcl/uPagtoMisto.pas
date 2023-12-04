@@ -5,7 +5,7 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ExtCtrls, Vcl.StdCtrls, Vcl.Buttons,
-  Vcl.DBCtrls, Vcl.Mask, Data.DB, Vcl.Grids, Vcl.DBGrids;
+  Vcl.DBCtrls, Vcl.Mask, Data.DB, Vcl.Grids, Vcl.DBGrids, Vcl.Touch.Keyboard;
   Procedure PagamentoMisto(pmtTop,pmtLeft,pmtHeight,pmtWidth:Integer;
                            var pmtReais,pmtCCred,pmtCDeb,pmtPIX,pmtOutros: Currency);
 
@@ -34,12 +34,17 @@ type
     PanRight: TPanel;
     btConfValor: TBitBtn;
     DBText2: TDBText;
+    Teclado: TTouchKeyboard;
     procedure btFecharClick(Sender: TObject);
     procedure btMaisClick(Sender: TObject);
     procedure dbFormaPgtoClick(Sender: TObject);
     procedure btConfValorClick(Sender: TObject);
     procedure FormActivate(Sender: TObject);
     procedure btMenosClick(Sender: TObject);
+    procedure edValorEnter(Sender: TObject);
+    procedure edValorExit(Sender: TObject);
+    procedure edValorKeyDown(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
   private
     { Private declarations }
   public
@@ -83,6 +88,7 @@ begin
 
   FuPagtoMisto.Free;
 end;
+
 
 procedure TFuPagtoMisto.btConfValorClick(Sender: TObject);
 var wSeq: Integer;
@@ -183,6 +189,27 @@ end;
 procedure TFuPagtoMisto.dbFormaPgtoClick(Sender: TObject);
 begin
   SelectNext((Sender as TwinControl), True, True);
+
+end;
+
+procedure TFuPagtoMisto.edValorEnter(Sender: TObject);
+var tvLeft,tvTop: Integer;
+begin
+  tvLeft := edValor.Left + edValor.Width + 4;
+  tvTop := 8;
+  Teclado.Visible := uDM.SisPessoaTecladoVirtual.AsBoolean;
+
+end;
+
+procedure TFuPagtoMisto.edValorExit(Sender: TObject);
+begin
+  Teclado.Visible := False;
+
+end;
+
+procedure TFuPagtoMisto.edValorKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
+begin
+  if Key = vk_Return then SelectNext((Sender as TwinControl), True, True);
 
 end;
 

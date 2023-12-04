@@ -922,6 +922,7 @@ Begin
 
       uDM.Pedidos['ArqXML']:= Retorno.ConteudoXML;    // Retorno.ArqXML;
 
+      uDM.PedidosSitPagto.AsInteger := 1;
       uDM.Pedidos.Post;
 
       vAtualizou:= True;

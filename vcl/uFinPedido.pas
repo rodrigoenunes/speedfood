@@ -96,6 +96,7 @@ type
     procedure dbPlacaKeyDown(Sender: TObject; var Key: Word;
       Shift: TShiftState);
     procedure FormResize(Sender: TObject);
+    procedure FormClose(Sender: TObject; var Action: TCloseAction);
   private
     { Private declarations }
   public
@@ -187,6 +188,7 @@ begin
     uDM.PedidosMeioPagto.AsInteger := uDM.meioPgto;
     uDM.PedidosNomeCliente.AsString := uDM.nomeClie;
     uDM.PedidosCPF_CNPJ.AsString := uDM.CPFCNPJ;
+    uDM.PedidosSitPagto.AsInteger := 0;                  // NÃO PAGO
     //
     qtdLin := 0;
     uDM.PedWrk.First;
@@ -430,6 +432,7 @@ var somaVlr,wSaldo: Currency;
     newSeq,lanSeq,bebSeq: Integer;
     vlrEntradas,vlrSaidas: Currency;
     xImpressao: String;
+    wMsg: String;
 begin
   if ObtemParametro('PedidoPlaca') = 'S' then
      if StrToIntDef(uDM.PedidosPlaca.AsString,0) = 0 then
@@ -456,6 +459,10 @@ begin
     Exit;
   end;
   //
+  cbImprimeNFCe.Enabled := False;
+  btCancelar.Enabled := False;
+  btRetornar.Enabled := False;
+
   lanSeq := 0;     // Qtd de lanches no pedido
   bebSeq := 0;     // Qtd de bebidas e outros no pedido
   uDM.PedWrk.First;
@@ -526,7 +533,7 @@ begin
   end;
   // Pagtos
   if uDM.DetpagWrk.RecordCount > 0 then
-  begin         // Grava n registros Detpag partindo de detpagWRK
+  begin         // Grava 'n' registros Detpag partindo de detpagWRK
     uDM.DetpagWrk.First;
     newSeq := 0;
     while not uDM.DetpagWrk.eof do
@@ -534,13 +541,13 @@ begin
       newSeq := newSeq + 1;
       uDM.PedDetpag.Append;
       uDM.PedDetpagNumero.AsInteger := uDM.PedidosNumero.AsInteger;
-      uDM.PedDetpagSeq.AsInteger := newSeq;
+      uDM.PedDetpagSeq.AsInteger    := newSeq;
       uDM.PedDetpagindPag.AsInteger := 0;      // Sempre 0 (A vista) (1-Prazo)
-      uDM.PedDetpagtPag.AsString := uDM.DetpagWrktPag.AsString;
+      uDM.PedDetpagtPag.AsString    := uDM.DetpagWrktPag.AsString;
       uDM.PedDetpagValor.AsCurrency := uDM.DetpagWrkValor.AsCurrency;
       if (uDM.DetpagWrktPag.AsString = '03')         // Cartao crédito
          or (uDM.DetpagWrktPag.AsString = '04')      // Cartao debito
-         //or (uDM.DetpagWrktPag.ASString = '17')
+         //or (uDM.DetpagWrktPag.AsString = '17')
          then uDM.PedDetpagtpIntegra.AsInteger := uDM.SisPessoaTefPos.ASInteger
          else uDM.PedDetpagtpIntegra.AsInteger := 0;
       uDM.PedDetpag.Post;
@@ -550,10 +557,10 @@ begin
   end
   else begin    // Grava 1 registro detpag
     uDM.PedDetpag.Append;
-    uDM.PedDetpagNumero.AsInteger := uDM.PedidosNumero.AsInteger;
-    uDM.PedDetpagSeq.AsInteger := 1;
-    uDM.PedDetpagindPag.AsInteger := 0;      // Sempre 0 (A vista) (1-Prazo)
-    uDM.PedDetpagtpIntegra.AsInteger := 1;
+    uDM.PedDetpagNumero.AsInteger    := uDM.PedidosNumero.AsInteger;
+    uDM.PedDetpagSeq.AsInteger       := 1;
+    uDM.PedDetpagindPag.AsInteger    := 0;      // Sempre 0 (A vista) (1-Prazo)
+    uDM.PedDetpagtpIntegra.AsInteger := 0;
     if uDM.PedidosVlrReais.AsCurrency > 0 then
     begin
       uDM.PedDetpagtPag.AsString := '01';       // Reais
@@ -587,6 +594,58 @@ begin
     uDM.PedDetpag.Post;
   end;
 
+  nRetorno := 0;
+  // NFCe: (S)im  (N)ao
+  wMsg := '';
+  if ObtemParametro('NFCe_Imprimir') = 'S' then         // Emitir NFCe?
+  begin
+    case uDM.PedidosMeioPagto.AsInteger of
+      0:xImpressao := ObtemParametro('NFCe_Reais');        // Pagto em Reais (dinheiro)
+      1:xImpressao := ObtemParametro('NFCe_CDebito');      // Pagto Cartao de débito
+      2:xImpressao := ObtemParametro('NFCe_CCredito');     // Pagto Cartao de crédito
+      3:xImpressao := ObtemParametro('NFCe_PIX');          // Pagto PIX
+      4:xImpressao := ObtemParametro('NFCe_Outros');       // Pagto Outros
+      5:xImpressao := ObtemParametro('NFCe_Misto');        // Pagto Misto
+    end;
+    if Pos(xImpressao,'SNQ') = 0  then xImpressao := 'Q';
+    if xImpressao = 'Q' then
+      if MessageDlg('Geração / Emissão de NFCe' + #13 +
+                    'Pedido: ' + uDM.PedidosNumero.AsString + #13 +
+                    'Valor: ' + FloatToStrF(uDM.PedidosValor.AsCurrency,ffNumber,15,2) + #13 +
+                    'Meio pagamento: ' + uDM.PedidosZC_MPExtenso.AsString,
+                    mtConfirmation,[mbYes,mbNo],0,mbNo,['Sim','Não']) = mrYes
+        then xImpressao := 'S';
+    if xImpressao = 'S' then
+    begin
+       EmiteNFCe(uDM.PedidosNumero.AsInteger, cbImprimeNFCe.Checked);
+       wMsg := 'DFe';
+    end;
+  end;
+  //
+  if uDM.PedidosSitPagto.AsInteger = 0 then
+  begin
+    if wMsg = 'DFe' then
+      wMsg := 'Falha na emissão de documento fiscal'
+    else
+      wMsg := 'Meio de pagamento: ' + uDM.PedidosZC_MPExtenso.AsString;
+    if MessageDlg('Confirmação de pagamento' + #13#13 +
+                  wMsg + #13#13 +
+                  'Pagamento realizado ?',
+                  mtConfirmation,[mbYes,mbNo],0,mbNo,['Sim','Não']) = mrYes then
+    begin
+      uDM.Pedidos.Edit;
+      uDM.PedidosSitPagto.AsInteger := 1;
+      uDM.Pedidos.Post;
+    end;
+  end;
+  //
+  if (uDM.PedidosSitPagto.AsInteger = 0)
+     and (uDM.PedidosNrNFCe.AsInteger = 0) then
+  begin      // Pedido Não pago
+    FuFinPedido.Close;
+    Exit;
+  end;
+  //
   // Atualiza caixa
   uDM.LctCaixa.Last;
   wSaldo := uDM.LctCaixaSaldo.AsCurrency;
@@ -627,7 +686,6 @@ begin
                  uDM.RegCaixaE_CartaoCredito.AsCurrency + uDM.RegCaixaE_PIX.AsCurrency +
                  uDM.RegCaixaE_Outros.AsCurrency + uDM.RegCaixaE_Suprimento.AsCurrency;
   vlrSaidas   := uDM.RegCaixaS_Saidas.AsCurrency + uDM.RegCaixaS_Sangria.AsCurrency;
-
   uDM.RegCaixaSaldoFinal.AsCurrency := (uDM.RegCaixaSaldoInicial.AsCurrency + vlrEntradas) - vlrSaidas;
   uDM.RegCaixa.Post;
   //
@@ -641,31 +699,6 @@ begin
   if xImpressao = 'S' then
     ImprimePedido(uDM.PedidosNumero.AsInteger);
   //
-  nRetorno := 0;
-  // NFCe: (S)im  (N)ao
-  if ObtemParametro('NFCe_Imprimir') = 'S' then
-  begin
-    case uDM.PedidosMeioPagto.AsInteger of
-      0:xImpressao := ObtemParametro('NFCe_Reais');        // Pagto em Reais (dinheiro)
-      1:xImpressao := ObtemParametro('NFCe_CDebito');      // Pagto Cartao de débito
-      2:xImpressao := ObtemParametro('NFCe_CCredito');     // Pagto Cartao de crédito
-      3:xImpressao := ObtemParametro('NFCe_PIX');          // Pagto PIX
-      4:xImpressao := ObtemParametro('NFCe_Outros');       // Pagto Outros
-      5:xImpressao := ObtemParametro('NFCe_Misto');        // Pagto Misto
-    end;
-    if Pos(xImpressao,'SNQ') = 0  then xImpressao := 'Q';
-    if xImpressao = 'Q' then
-      if MessageDlg('Geração / Emissão de NFCe' + #13 +
-                    'Pedido: ' + uDM.PedidosNumero.AsString + #13 +
-                    'Valor: ' + FloatToStrF(uDM.PedidosValor.AsCurrency,ffNumber,15,2) + #13 +
-                    'Meio pagamento: ' + uDM.PedidosZC_MPExtenso.AsString,
-                    mtConfirmation,[mbYes,mbNo],0,mbNo,['Sim','Não']) = mrYes
-        then xImpressao := 'S';
-    if xImpressao = 'S' then
-       EmiteNFCe(uDM.PedidosNumero.AsInteger, cbImprimeNFCe.Checked);
-
-  end;
-  //
   xImpressao := ObtemParametro('EtiquetaFinalPedido');
   if xImpressao = 'Q' then
     if MessageDlg('Impressão etiquetas do pedido' + #13 +
@@ -673,9 +706,6 @@ begin
                   'Imprimir etiquetas ?',
                   mtConfirmation,[mbYes,mbNo],0,mbNo,['Sim','Não']) = mrYes
     then xImpressao := 'S';
-
-  // Impressão das etiquetas do pedido
-
   if xImpressao = 'S' then
   begin
     EmiteEtiquetas(uDM.PedidosNumero.AsInteger, 0);           // Todos os ítens do pedido
@@ -997,6 +1027,14 @@ procedure TFuFinPedido.MudaPontoVirgula(Sender: TObject; var Key: Char);
 begin
   if Key = '.' then
     Key := ',';
+end;
+
+procedure TFuFinPedido.FormClose(Sender: TObject; var Action: TCloseAction);
+begin
+  cbImprimeNFCe.Enabled := True;
+  btCancelar.Enabled := True;
+  btRetornar.Enabled := True;
+
 end;
 
 procedure TFuFinPedido.FormCreate(Sender: TObject);

@@ -19,6 +19,7 @@ type
     btEmitirNFCe: TBitBtn;
     btSair: TBitBtn;
     btImprimirEtiquetas: TBitBtn;
+    btCancelar: TBitBtn;
     procedure FormShow(Sender: TObject);
     procedure btImprimirPedidoClick(Sender: TObject);
     procedure FormResize(Sender: TObject);
@@ -26,6 +27,7 @@ type
     procedure btEmitirNFCeClick(Sender: TObject);
     procedure btImprimirEtiquetasClick(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
+    procedure btCancelarClick(Sender: TObject);
   private
     { Private declarations }
   public
@@ -35,6 +37,7 @@ type
 var
   FuConsPedidos: TFuConsPedidos;
   wArqXML,wArqSai: String;
+  wExec: String;
 
 implementation
 
@@ -55,7 +58,19 @@ begin
                ObtemParametro('NFCe_Misto');      // Pagto Misto
   if (Pos('S',xEmissoes) > 0) or (Pos('Q',xEmissoes) > 0) then
     lDisp := True;
-
+  //
+  wExec := ObtemParametro('ACNFE_EXE');
+  if not FileExists(wExec)
+  then begin
+    wExec := ExtractFilePath(Application.ExeName) + wExec;
+    if not FileExists(wExec) then
+    begin
+      wExec := ObtemParametro('ACNFE_EXE');
+      MessageDlg(wExec + ' não encontrado, processo abortado',mtInformation,[mbOk],0);
+      Exit;
+    end;
+  end;
+  //
   FuConsPedidos := TFuConsPedidos.Create(nil);
   FuConsPedidos.Height := Screen.Height - 60;
   FuConsPedidos.Top := 10;
@@ -64,6 +79,144 @@ begin
   FuConsPedidos.btEmitirNFCe.Enabled := lDisp;
   FuConsPedidos.ShowModal;
   FuConsPedidos.Free;
+
+end;
+
+Procedure RetornoACNFe(pArqSai:String; pTempo:Integer; var pRetorno:String);
+var wTempo,i: Integer;
+    wRetorno: TStringList;
+begin
+  pRetorno := '';
+  wTempo := 0;               // Tempo decorrido
+  pTempo := pTempo * 1000;   // Tempo a decorrer em milisegundos
+  while wTempo < pTempo do
+  begin
+    sleep(500);
+    if FileExists(pArqSai) then
+    begin
+      wRetorno := TStringList.Create;
+      wRetorno.LoadFromFile(pArqSai);
+      for i := 0 to wRetorno.Count-1 do
+        pRetorno := pRetorno + wRetorno[i];
+      wRetorno.Free;
+      wTempo := pTempo + 500;
+    end
+    else wTempo := wTempo + 500;
+  end;
+        
+end;
+
+
+Procedure CancelaCartao(pExec:String);
+var wVlrPago,wData,wTpCard: String;
+    wCmdo,wParm,wRetorno: String;
+    codRetorno: Integer;
+    arqXML,arqSai: String;
+    wVlr: Currency;
+begin
+{                                    cAut                    NrDoc
+  ACNFe6 /tef /cancelar CIELO 316,30 273337 13/10/23 CREDITO 23208 arq-nfe.xml -as C:\saida\padrao.txt
+        Valor com 2 decimais !!!!!!!    }
+  if uDM.PedDetpag.RecordCount = 0 then
+    Exit;
+  //
+  wArqXML := ExtractFilePath(Application.ExeName) + 'wTEF.XML';
+  wArqSai := ExtractFilePath(Application.ExeName) + 'wTEF.Txt';
+  DeleteFile(wArqXML);
+  uDM.PedidosArqXML.SaveToFile(wArqXML);
+  uDM.PedDetpag.First;
+  while not uDM.PedDetpag.Eof do
+  begin
+    if uDM.PedDetpagSit.AsInteger = 0 then
+    begin
+      wTpCard := '';
+      if uDM.PedDetpagtPag.AsString = '03' then
+        wTpCard := 'CREDITO'
+      else
+        wTpCard := 'DEBITO';
+      wData    := Copy(uDM.PedidosData.AsString,1,10);
+      wData    := Copy(wData,1,6) + Copy(wData,9,2);
+      wVlrPago := FloatToStrF(uDM.PedDetpagValor.AsCurrency,ffFixed,15,2);
+      wCmdo    := pExec;                                     // Executável
+      wParm    := '/tef /cancelar ' +                        // Parametros iniciais
+                  'PAGSEGURO ' +    //uDM.PedDetpagAfiliacao.AsString + ' ' +             // Afiliação
+                  wVlrPago + ' ' +                                    // Valor do cartão
+                  uDM.PedDetpagcAut.AsString + ' ' +                  // Autorização da operação
+                  wData + ' ' +                                       // Data do ocorrido   (dd/mm/aa)
+                  wTpCard + ' ' +                                     // CREDITO ou DEBITO
+                  uDM.PedDetpagnrDocto.AsString + ' ' +               // Nro do documento (da transação do cartão)
+                  wArqXML +                                           // Arquivo XML da NFCe
+                ' -as ' + arqSai;                                     // Arquivo saída específico de cancelamento de cartão
+      if MessageDlg('Cancelamento de transação com cartão de crédito/débito' + #13#13 +
+                    'Pedido: ' + uDM.PedidosNumero.AsString + '   Seq: ' + uDM.PedDetpagSeq.AsString + #13 +
+                    'Nr.docto: ' + uDM.PedDetpagnrDocto.AsString +
+                    '   Cód.venda: ' + uDM.PedDetpagcodVenda.AsString + #13 +
+                    'Cartão: ' + uDM.PedDetpagZC_nrCartao.AsString + #13 +
+                    'Valor: ' + FloatToStrF(uDM.PedDetpagValor.AsCurrency,ffNumber,15,2) + #13#13 + 'Confirme',
+                    mtConfirmation,[mbYes,mbNo],0,mbNo) = mrYes
+      then begin
+        DeleteFile(wArqSai);
+        ShellExecute(0,'open',pChar(wCmdo),pChar(wParm),'',1);
+        RetornoACNFe(wArqSai,30,wRetorno);
+        ShowMessage(wRetorno);
+        uDM.PedDetpag.Edit;
+        uDM.PedDetpagSit.AsInteger := 1;
+        uDM.peddetpag.Post;
+      end;
+    end;
+    uDM.PedDetpag.Next;
+  end;
+
+end;
+
+Procedure CancelaNFCe(pExec:String);
+var wChave,wJustif,wCmdo,wParm,wRetorno: String;
+begin
+{
+/CANCELARNF <chave_nfe> <just> [<-email email@xyz.com>] [<-as arq_saida>] [<-arqxml arq_xml>] [<-seq num_seq>] [<nroimp> N]
+<chave_nfe>            Chave de 44 dígitos do NFe
+<just>                 Justificativa do cancelamento do NFe
+<-email email@xyz.com> Parâmetro opcional.
+<-as arq_saida>        Arquivo de saída alternativo ao do ini
+<-arqxml arq_xml>      Arquivo de entrada XML para a geração do DANFe.
+<-seq num_seq>         Sequência do evento. Se não informado, será considerado 1\
+<-nroimp N>            Nro de vezes que o documento será enviado para impressora
+<-rav arqRAV>          Arquivo RAV do DANFe modelo para gerar o PDF
+}
+  wArqXML := uDM.PedidosIdArqXML.AsString;
+  if wArqXML = '' then
+  begin
+    wArqXML := ExtractFilePath(Application.ExeName) + 'wCanc.XML';
+    DeleteFile(wArqXML);
+    uDM.PedidosArqXML.SaveToFile(wArqXML);
+  end;
+  wArqSai := ExtractFilePath(Application.ExeName) + 'wCanc.Txt';
+  wChave  := uDM.PedidosChaveNFe.AsString;
+  wJustif := ObtemParametro('JustifCancelamento');
+  if wJustif = '' then
+    wJustif := 'Cliente cancelou a compra';
+  wCmdo    := pExec;                                     // Executável
+  wParm    := '/CANCELARNF "'+ wChave + '" ' + wJustif + ' -as ' + wArqSai + ' ' + wArqXML;
+  if MessageDlg('Cancelamento de NFCe' + #13#13 +
+                'Pedido: ' + uDM.PedidosNumero.AsString + #13 +
+                '  Valor: ' + FloatToStrF(uDM.PedidosValor.AsCurrency,ffNumber,15,2) + #13 +
+                '  NFCe: ' + uDM.PedidosNrNFCe.AsString,
+                 mtConfirmation,[mbYes,mbNo],0,mbNo) = mrYes
+  then begin
+    DeleteFile(wArqSai);
+    ShellExecute(0,'open',pChar(wCmdo),pChar(wParm),'',1);
+    RetornoACNFe(wArqSai,30,wRetorno);
+    ShowMessage(wRetorno);
+  end;
+
+end;
+
+Procedure CancelaPedido;
+begin
+  uDM.Pedidos.Edit;
+  uDM.PedidosSitPagto.AsInteger := 9;
+  uDM.Pedidos.Post;
+  SHowMessage('Efetuar cancelamento no caixa');
 
 end;
 
@@ -78,37 +231,86 @@ begin
 end;
 
 
+procedure TFuConsPedidos.btCancelarClick(Sender: TObject);
+var nPgts: Integer;
+    wMsg: String;
+begin
+  if uDM.Pedidos.RecordCount = 0 then Exit;
+  if uDM.PedidosSitPagto.AsInteger = 9 then
+  begin
+    MessageDlg('Pedido anteriormente cancelado',mtInformation,[mbOk],0);
+    Exit;
+  end;
+  if uDM.PedidosSitPagto.AsInteger = 0 then
+  begin
+    if MessageDlg('Pedido pendente' + #13#13 + 'Excluir o pedido ?',
+                  mtConfirmation,[mbYes,mbNo],0,mbNo,['Sim','Não']) = mrYes
+    then begin
+      uDM.Peddetpag.Refresh;
+      uDM.PedDetpag.First;
+      while uDM.PedDetpag.RecordCount > 0 do
+        uDM.Peddetpag.Delete;
+      uDM.PedItens.Refresh;
+      uDM.PedItens.First;
+      while uDM.PedItens.RecordCount > 0 do
+        uDM.PedItens.Delete;
+      uDM.Pedidos.Delete;
+    end;
+    Exit;
+  end;
+  //
+  uDM.PedDetpag.Filtered := True;       // Somente regs '03' e '04'  e  Sit = 0
+  uDM.PedDetpag.Refresh;
+  nPgts := uDM.PedDetpag.RecordCount;
+  wMsg  := '- Transação de cartão (';
+  if nPgts > 0 then
+    wMsg := wMsg + IntToStr(nPgts) + ' ocorrencias)' + #13
+  else
+    wMsg := wMsg + 'não houve transação com cartão)' + #13;
+  if uDM.PedidosNrNFCe.AsInteger > 0 then
+    wMsg := wMsg + '- Nota fiscal (NFCe)' + #13
+  else
+    wMsg := wMsg + #13;
+  wMsg := wMsg + '- Pedido';
+  if MessageDlg('Confirme o cancelamento do pedido' + #13 +
+                'Nro: ' + uDM.PedidosNumero.AsString +
+                '  Valor: ' + FloatToStrF(uDM.PedidosValor.AsCurrency,ffNUmber,15,2) + #13#13 +
+                wMsg,
+                mtConfirmation,[mbYes,mbNo],0,mbNo,['Sim','Não']) = mrYes then
+  begin
+    CancelaCartao(wExec);
+    CancelaNFCe(wExec);
+    CancelaPedido;
+  end;
+  uDM.PedDetpag.Filtered := False;
+
+end;
+
 procedure TFuConsPedidos.btEmitirNFCeClick(Sender: TObject);
 var wExec,wParam: String;
     wIniName,wAbrir,wImprimir,wPDF,wTrans: String;
     wIniFile: TIniFile;
 begin
   if uDM.Pedidos.RecordCount = 0 then Exit;
+  if wExec = '' then
+  begin
+    MessageDlg(wExec + ' não encontrado, processo abortado',mtInformation,[mbOk],0);
+    Exit;
+  end;
+  //
   if uDM.PedidosNrNFCe.AsInteger > 0
   then begin
-  //  ShowMessage('Re-impressão da NFCe' + #13 + 'XML=' + uDM.PedidosArqXML.AsString);
     wArqXML := ExtractFilePath(Application.ExeName) + 'wNFe.XML';
     wArqSai := ExtractFilePath(Application.ExeName) + 'wNFe.Txt';
     DeleteFile(wArqXML);
     DeleteFile(wArqSai);
     uDM.PedidosArqXML.SaveToFile(wArqXML);
-    wExec := ObtemParametro('ACNFE_EXE');
-    if not FileExists(wExec)
-    then begin
-      wExec := ExtractFilePath(Application.ExeName) + wExec;
-      if not FileExists(wExec) then
-      begin
-        wExec := ObtemParametro('ACNFE_EXE');
-        MessageDlg(wExec + ' não encontrado, processo abortado',mtInformation,[mbOk],0);
-        Exit;
-      end;
-    end;
-    wIniName := ChangeFileExt(wExec,'.Ini');
-    wIniFile := TIniFile.Create(wIniName);
-    wAbrir := wIniFile.ReadString('NFC','AbrirDANFE','');
+    wIniName  := ChangeFileExt(wExec,'.Ini');
+    wIniFile  := TIniFile.Create(wIniName);
+    wAbrir    := wIniFile.ReadString('NFC','AbrirDANFE','');
     wImprimir := wIniFile.ReadString('NFC','ImprimirAuto','');
-    wPDF := wIniFile.ReadString('NFC','PathSalvarPDF','');
-    wTrans := wIniFile.ReadString('NFC','PathSalvar','');
+    wPDF      := wIniFile.ReadString('NFC','PathSalvarPDF','');
+    wTrans    := wIniFile.ReadString('NFC','PathSalvar','');
     //
     wIniFile.WriteString('NFC','AbrirDANFE','S');
     wIniFile.WriteString('NFC','ImprimirAuto','S');
@@ -155,15 +357,19 @@ end;
 
 procedure TFuConsPedidos.FormResize(Sender: TObject);
 begin
-  if FuConsPedidos.Width < 670 then FuConsPedidos.Width := 670;
+  if FuConsPedidos.Width < 700 then FuConsPedidos.Width := 700;
   if FuConsPedidos.Height < 480 then FuConsPedidos.Height := 480;
-  GridPed := DefineGrid(GridPed,[0.08,0.15,0.06,0.10,0.33,0.05,0.06,0.08,0.04],4,0);
+  GridPed := DefineGrid(GridPed,[0.08,0.15,0.06,0.10,0.33,0.05,0.06,0.08,0.04,0.08],4,0);
 
 end;
 
 procedure TFuConsPedidos.FormShow(Sender: TObject);
 begin
   uDM.Pedidos.Last;
+  if ObtemParametro('CancelarPedidos') = 'S' then
+    btCancelar.Visible := True
+  else
+    btCancelar.Visible := False;
 
 end;
 

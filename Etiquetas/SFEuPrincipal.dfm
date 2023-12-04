@@ -592,6 +592,7 @@ object FuPrincipalEtq: TFuPrincipalEtq
           6666666666666666999666666666666666666666666666666666}
         ParentFont = False
         TabOrder = 1
+        Visible = False
         OnClick = btNoEtiqClick
       end
       object btPreview: TBitBtn

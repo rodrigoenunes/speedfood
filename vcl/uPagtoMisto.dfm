@@ -316,6 +316,9 @@ object FuPagtoMisto: TFuPagtoMisto
         DataField = 'Valor'
         DataSource = uDM.SDetpagWrk
         TabOrder = 0
+        OnEnter = edValorEnter
+        OnExit = edValorExit
+        OnKeyDown = edValorKeyDown
       end
       object dbFormaPgto: TDBRadioGroup
         Left = 197
@@ -364,6 +367,15 @@ object FuPagtoMisto: TFuPagtoMisto
         NumGlyphs = 2
         TabOrder = 2
         OnClick = btConfValorClick
+      end
+      object Teclado: TTouchKeyboard
+        Left = 191
+        Top = 6
+        Width = 180
+        Height = 180
+        GradientEnd = clSilver
+        GradientStart = clGray
+        Layout = 'NumPad'
       end
     end
     object DBGrid1: TDBGrid

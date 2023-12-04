@@ -265,6 +265,13 @@ type
     SisPessoaTefPos: TIntegerField;
     PedidosZC_SitPagto: TStringField;
     PedidosSitPagto: TIntegerField;
+    PedidosZC_SitTxt: TStringField;
+    PedDetpagnrDocto: TStringField;
+    PedDetpagZC_nrCartao: TStringField;
+    PedDetpagcodVenda: TStringField;
+    PedidosIdArqXML: TStringField;
+    PedidosChaveNFe: TStringField;
+    PedDetpagSit: TIntegerField;
     procedure ItensCalcFields(DataSet: TDataSet);
     procedure LctCaixaCalcFields(DataSet: TDataSet);
     procedure PedWrkCalcFields(DataSet: TDataSet);
@@ -276,6 +283,8 @@ type
     procedure PedidosFilterRecord(DataSet: TDataSet; var Accept: Boolean);
     procedure DataModuleCreate(Sender: TObject);
     procedure DetpagWrkCalcFields(DataSet: TDataSet);
+    procedure PedDetpagCalcFields(DataSet: TDataSet);
+    procedure PedDetpagFilterRecord(DataSet: TDataSet; var Accept: Boolean);
   private
     { Private declarations }
   public
@@ -478,7 +487,8 @@ begin
   Result := '';
   if not uDM.Parametros.Active then
     uDM.Parametros.Active := True;
-  if uDM.Parametros.FindKey([idParam]) then Result := AnsiUpperCase(uDM.ParametrosValor.AsString);
+  if uDM.Parametros.FindKey([idParam]) then
+    Result := AnsiUpperCase(uDM.ParametrosValor.AsString);
 
 end;
 
@@ -489,6 +499,7 @@ Var
   sIniFile, sServer: String;
 
 begin
+  FDC.Connected := False;
   sIniFile := ChangeFileExt(ParamStr(0), '.ini');
   vIniFile := TIniFile.Create(sIniFile);
   if not FileExists(sIniFile) then
@@ -593,6 +604,22 @@ begin
 
 end;
 
+procedure TuDM.PedDetpagCalcFields(DataSet: TDataSet);
+begin
+  PedDetpagZC_nrCartao.AsString := Copy(PedDetpagnrCartao.AsString,1,4) + '.' +
+                                   Copy(PedDetpagnrCartao.AsString,5,4) + '.' +
+                                   Copy(PedDetpagnrCartao.AsString,9,4) + '.' +
+                                   Copy(PedDetpagnrCartao.AsString,13,4);
+end;
+
+procedure TuDM.PedDetpagFilterRecord(DataSet: TDataSet; var Accept: Boolean);
+begin
+  Accept := False;
+  if (PedDetpagtPag.AsString = '03') or
+     (PeddetpagtPag.AsString = '04') then Accept := True;
+
+end;
+
 procedure TuDM.PedidosCalcFields(DataSet: TDataSet);
 var xData,nrAux: String;
 begin
@@ -603,10 +630,20 @@ begin
     PedidosZC_Senha.AsString := nrAux;   // PedidosNumero.AsString;
   PedidosZC_NroLst.AsString := nrAux;
 
-  if PedidosSitPagto.AsInteger <> 0 then
-    PedidosZC_SitPagto.AsString := 'P'                // Fontname no grid=Wingdings 2
-  else
-    PedidosZC_SitPagto.AsString := '';
+  if PedidosSitPagto.AsInteger = 1 then
+  begin
+    PedidosZC_SitPagto.AsString := 'P';                // Fontname no grid=Wingdings 2  (Pago) Tickado
+    PedidosZC_SitTxt.AsString := 'Pago';
+  end
+  else if PedidosSitPagto.AsInteger = 9
+       then begin
+         PedidosZC_SitPagto.AsString := 'O';                // Cancelado
+         PedidosZC_SItTxt.AsString := 'Cancelado';
+       end
+       else begin
+         PedidosZC_SitPagto.AsString := '';
+         PedidosZC_SitTxt.AsString := 'Pendente';
+       end;
 
   PedidosZC_Impresso.AsString := '';
   if PedidosEtqImpressas.AsInteger > 0 then
@@ -633,18 +670,20 @@ begin
   // uDM.etqImpress 0-Não impressa  1-Impressa  2-Todas (sem selecão)
   if uDM.etqImpress <> 2 then
      if uDM.PedidosEtqImpressas.AsInteger <> uDM.etqImpress then Exit;
-  // Filtro para a situação de pagamento (sitPago = 0-Pendentes de pagamento  1-Pagos  2-Todos)
-  // Filtro utilizado SOMENTE para impressão de etiquetas
-  if uDM.sitPagto <> 2 then      // Seleção por situação de pagamento
-  begin
-    if (uDM.sitPagto = 1)                      // Somente pedidos 'pagos'
-       and (PedidosSitPagto.AsInteger = 0)     // e pedido NÃO pago
-       then Exit;
-    if (uDM.sitPagto = 0)                      // Somente pedidos NÃO pagos
-       and (PedidosSitPagto.AsInteger = 1)     // e pedido pago
-       then Exit;
+  // Filtro para a situação de pagamento   uDM.sitPagto
+  //     0-Pagto pendente  1-Pago  2-Pendentes e Pagos  3-Cancelados  9-Todos (Pend,Pago,Cancelado)
+  case uDM.sitPagto of
+    0:if PedidosSitPagto.AsInteger <> 0 then              // Somente pendentes
+         Exit;
+    1:if PedidosSitPagto.AsInteger <> 1 then              // Somente pagos
+         Exit;
+    2:if (PedidosSitPagto.AsInteger <> 0) and             // Pendentes e Pagos
+         (PedidosSitPagto.AsInteger <> 1) then
+         Exit;
+    3:if PedidosSitPagto.AsInteger <> 9 then              // Somente cancelados
+         Exit;
   end;
-
+  //
   Accept := True;
 
 end;

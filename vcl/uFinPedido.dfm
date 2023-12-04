@@ -12,6 +12,7 @@ object FuFinPedido: TFuFinPedido
   Font.Style = []
   OldCreateOrder = False
   Position = poDesigned
+  OnClose = FormClose
   OnCreate = FormCreate
   OnResize = FormResize
   OnShow = FormShow
