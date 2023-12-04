@@ -55,6 +55,12 @@ type
     btNova: TBitBtn;
     btImprimir: TBitBtn;
     btSair2: TBitBtn;
+    edVlrNFCe: TEdit;
+    edQtdOutrosDoc: TEdit;
+    edQtdNFCe: TEdit;
+    edVlrOutrosDoc: TEdit;
+    Label12: TLabel;
+    Label13: TLabel;
     procedure btSairClick(Sender: TObject);
     procedure btProcessarClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -74,6 +80,8 @@ var
   qtdMeioPgto: array[0..6] of Integer;
   ttQtd: Integer;
   ttVlr: Currency;
+  ttQtdDoc: array[0..1] of Integer;     // NFCe/Outros
+  ttVlrDoc: array[0..1] of Currency;    // NFCe/Outros
 
 implementation
 
@@ -122,6 +130,7 @@ begin
 end;
 
 Procedure ProcessaPedido;
+var iDoc: integer;
 begin
   uDM.PedItens.First;
   while not uDM.PedItens.Eof do
@@ -160,6 +169,12 @@ begin
     // Totalização
     qtdMeioPgto[6] := qtdMeioPgto[6] + 1;    // Qtd total de pedidos
     vlrMeioPgto[6] := vlrMeioPgto[6] + uDM.PedidosValor.AsCurrency;  // Somatório dos pedidos
+    //
+    if uDM.PedidosNrNFCe.AsInteger > 0
+      then iDoc := 0    // NFCe
+      else iDoc := 1;   // Outros
+    ttQtdDoc[iDoc] := ttQtdDoc[iDoc] + 1;
+    ttVlrDoc[iDoc] := ttVlrDoc[iDoc] + uDM.PedidosValor.AsCurrency;
   end;
 
 end;
@@ -183,7 +198,7 @@ begin
 end;
 
 procedure TFuAdministrativo.btProcessarClick(Sender: TObject);
-var i: Integer;
+var i,tAux: Integer;
 begin
   i := Pos(' ',cbTurnoIni.Text);
   tIni := StrToIntDef(Copy(cbTurnoIni.Text,1,i-1),99999);
@@ -197,10 +212,18 @@ begin
   end;
   if tIni > tFim then
   begin
+    tAux := tIni;
+    tIni := tFim;
+    tFim := tAux;
+  end;
+  {
+  if tIni > tFim then
+  begin
     MessageDlg('Turno inicial não pode ser posterior ao turno final, reinforme',mtError,[mbOk],0);
     cbTurnoIni.SetFocus;
     Exit;
   end;
+  }
   //
   uDM.ResVendas.Active := True;
   uDM.ResVendas.EmptyDataSet;
@@ -211,6 +234,11 @@ begin
     end;
   ttQtd := 0;
   ttVlr := 0;
+  for i := 0 to 1 do
+  begin
+    ttQtdDoc[i] := 0;   // NFCe/Outros
+    ttVlrDoc[1] := 0;
+  end;
 
   gbTurnos.Height := 151;
   gbTurnos.Enabled := False;
@@ -266,6 +294,11 @@ begin
   edQtdMisto.Text := IntToStr(qtdMeioPgto[5]);
   edQtdTotal.Text := IntToStr(qtdMeioPgto[6]);
 
+  edVlrNFCe.Text := FloatToStrF(ttVlrDoc[0],ffNumber,15,2);
+  edVlrOutrosDoc.Text := FloatToStrF(ttVlrDoc[1],ffNumber,15,2);
+  edQtdNFCe.Text := IntToStr( ttQtdDoc[0]);
+  edQtdOutrosDoc.Text :=  IntToStr(ttQtdDoc[1]);
+
   PanResultado.Visible := True;
   FuAdministrativo.FormResize(nil);
 
@@ -279,7 +312,7 @@ end;
 
 procedure TFuAdministrativo.FormCreate(Sender: TObject);
 begin
-  LabObsMisto.Caption := '(*) Incluso nos meios' + #13 + 'de pagamento';
+  //LabObsMisto.Caption := '(*) Incluso nos meios' + #13 + 'de pagamento';
 
 end;
 

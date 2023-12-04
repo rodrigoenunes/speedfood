@@ -10,7 +10,6 @@ object uDM: TuDM
       'Password=speed@123'
       'Server=127.0.0.1'
       'DriverID=MySQL')
-    Connected = True
     LoginPrompt = False
     Left = 28
     Top = 8

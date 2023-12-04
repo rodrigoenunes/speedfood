@@ -3,7 +3,7 @@ object FuAdministrativo: TFuAdministrativo
   Top = 0
   Caption = 'Administrativo'
   ClientHeight = 553
-  ClientWidth = 718
+  ClientWidth = 751
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -18,7 +18,7 @@ object FuAdministrativo: TFuAdministrativo
   object gbTurnos: TGroupBox
     Left = 0
     Top = 0
-    Width = 718
+    Width = 751
     Height = 151
     Align = alTop
     Caption = 'Per'#237'odo (Turnos) '#224' considerar'
@@ -29,6 +29,9 @@ object FuAdministrativo: TFuAdministrativo
     Font.Style = []
     ParentFont = False
     TabOrder = 0
+    DesignSize = (
+      751
+      151)
     object Label1: TLabel
       Left = 8
       Top = 30
@@ -72,8 +75,9 @@ object FuAdministrativo: TFuAdministrativo
     object cbTurnoIni: TComboBox
       Left = 120
       Top = 27
-      Width = 460
+      Width = 496
       Height = 31
+      Anchors = [akLeft, akTop, akRight]
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -19
@@ -86,8 +90,9 @@ object FuAdministrativo: TFuAdministrativo
     object cbTurnoFin: TComboBox
       Left = 120
       Top = 67
-      Width = 460
+      Width = 496
       Height = 31
+      Anchors = [akLeft, akTop, akRight]
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -19
@@ -98,19 +103,21 @@ object FuAdministrativo: TFuAdministrativo
       Text = 'cbTurnoFin'
     end
     object btProcessar: TBitBtn
-      Left = 592
+      Left = 628
       Top = 27
       Width = 112
       Height = 31
+      Anchors = [akTop, akRight]
       Caption = 'Processar'
       TabOrder = 2
       OnClick = btProcessarClick
     end
     object btSair: TBitBtn
-      Left = 592
+      Left = 628
       Top = 67
       Width = 112
       Height = 31
+      Anchors = [akTop, akRight]
       Caption = 'Sair/Cancelar'
       TabOrder = 3
       OnClick = btSairClick
@@ -118,8 +125,9 @@ object FuAdministrativo: TFuAdministrativo
     object PBar1: TProgressBar
       Left = 18
       Top = 120
-      Width = 686
+      Width = 722
       Height = 25
+      Anchors = [akLeft, akTop, akRight]
       TabOrder = 4
       Visible = False
     end
@@ -127,25 +135,20 @@ object FuAdministrativo: TFuAdministrativo
   object PanResultado: TPanel
     Left = 0
     Top = 151
-    Width = 718
+    Width = 751
     Height = 402
     Align = alClient
     TabOrder = 1
     Visible = False
-    ExplicitTop = 145
-    ExplicitWidth = 677
-    ExplicitHeight = 390
     object Panel1: TPanel
       Left = 1
       Top = 360
-      Width = 716
+      Width = 749
       Height = 41
       Align = alBottom
       TabOrder = 0
-      ExplicitTop = 348
-      ExplicitWidth = 675
       DesignSize = (
-        716
+        749
         41)
       object btNova: TBitBtn
         Left = 6
@@ -166,7 +169,7 @@ object FuAdministrativo: TFuAdministrativo
         OnClick = btImprimirClick
       end
       object btSair2: TBitBtn
-        Left = 568
+        Left = 601
         Top = 6
         Width = 138
         Height = 25
@@ -174,23 +177,22 @@ object FuAdministrativo: TFuAdministrativo
         Caption = 'Sair/Cancelar'
         TabOrder = 2
         OnClick = btSairClick
-        ExplicitLeft = 527
       end
     end
     object PanValores: TPanel
       Left = 1
       Top = 1
-      Width = 176
+      Width = 236
       Height = 359
       Align = alLeft
       TabOrder = 1
-      ExplicitHeight = 347
       object Label3: TLabel
-        Left = 8
-        Top = 26
-        Width = 47
+        Left = 38
+        Top = 35
+        Width = 52
         Height = 16
-        Caption = 'Dinheiro'
+        Alignment = taRightJustify
+        Caption = 'Dinheiro:'
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clWindowText
         Font.Height = -13
@@ -200,10 +202,11 @@ object FuAdministrativo: TFuAdministrativo
       end
       object Label4: TLabel
         Left = 8
-        Top = 66
-        Width = 77
+        Top = 65
+        Width = 82
         Height = 16
-        Caption = 'Cart'#227'o d'#233'bito'
+        Alignment = taRightJustify
+        Caption = 'Cart'#227'o d'#233'bito:'
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clWindowText
         Font.Height = -13
@@ -212,11 +215,12 @@ object FuAdministrativo: TFuAdministrativo
         ParentFont = False
       end
       object Label5: TLabel
-        Left = 8
-        Top = 106
-        Width = 81
+        Left = 4
+        Top = 95
+        Width = 86
         Height = 16
-        Caption = 'Cart'#227'o cr'#233'dito'
+        Alignment = taRightJustify
+        Caption = 'Cart'#227'o cr'#233'dito:'
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clWindowText
         Font.Height = -13
@@ -225,11 +229,12 @@ object FuAdministrativo: TFuAdministrativo
         ParentFont = False
       end
       object Label6: TLabel
-        Left = 8
-        Top = 146
-        Width = 19
+        Left = 66
+        Top = 125
+        Width = 24
         Height = 16
-        Caption = 'PIX'
+        Alignment = taRightJustify
+        Caption = 'PIX:'
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clWindowText
         Font.Height = -13
@@ -238,11 +243,12 @@ object FuAdministrativo: TFuAdministrativo
         ParentFont = False
       end
       object Label7: TLabel
-        Left = 8
-        Top = 186
-        Width = 38
+        Left = 47
+        Top = 155
+        Width = 43
         Height = 16
-        Caption = 'Outros'
+        Alignment = taRightJustify
+        Caption = 'Outros:'
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clWindowText
         Font.Height = -13
@@ -251,11 +257,12 @@ object FuAdministrativo: TFuAdministrativo
         ParentFont = False
       end
       object Label9: TLabel
-        Left = 8
-        Top = 226
-        Width = 52
+        Left = 33
+        Top = 185
+        Width = 57
         Height = 16
-        Caption = 'Misto (*)'
+        Alignment = taRightJustify
+        Caption = 'Misto (*):'
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clWindowText
         Font.Height = -13
@@ -264,11 +271,12 @@ object FuAdministrativo: TFuAdministrativo
         ParentFont = False
       end
       object Label8: TLabel
-        Left = 8
-        Top = 270
-        Width = 32
+        Left = 53
+        Top = 215
+        Width = 37
         Height = 16
-        Caption = 'Total'
+        Alignment = taRightJustify
+        Caption = 'Total:'
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clWindowText
         Font.Height = -13
@@ -277,8 +285,8 @@ object FuAdministrativo: TFuAdministrativo
         ParentFont = False
       end
       object LabObsMisto: TLabel
-        Left = 8
-        Top = 314
+        Left = 6
+        Top = 241
         Width = 210
         Height = 16
         Caption = '(*) Incluso nos meios de pagamento'
@@ -289,10 +297,38 @@ object FuAdministrativo: TFuAdministrativo
         Font.Style = []
         ParentFont = False
       end
+      object Label12: TLabel
+        Left = 47
+        Top = 313
+        Width = 43
+        Height = 16
+        Alignment = taRightJustify
+        Caption = 'Outros:'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -13
+        Font.Name = 'Tahoma'
+        Font.Style = []
+        ParentFont = False
+      end
+      object Label13: TLabel
+        Left = 55
+        Top = 283
+        Width = 35
+        Height = 16
+        Alignment = taRightJustify
+        Caption = 'NFCe:'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -13
+        Font.Name = 'Tahoma'
+        Font.Style = []
+        ParentFont = False
+      end
       object edReais: TEdit
-        Left = 8
-        Top = 40
-        Width = 101
+        Left = 90
+        Top = 31
+        Width = 93
         Height = 24
         Alignment = taRightJustify
         Font.Charset = DEFAULT_CHARSET
@@ -306,8 +342,8 @@ object FuAdministrativo: TFuAdministrativo
         Text = 'edReais'
       end
       object edQtdReais: TEdit
-        Left = 113
-        Top = 40
+        Left = 187
+        Top = 31
         Width = 43
         Height = 24
         Font.Charset = DEFAULT_CHARSET
@@ -320,9 +356,9 @@ object FuAdministrativo: TFuAdministrativo
         Text = 'edQtdReais'
       end
       object edCDeb: TEdit
-        Left = 8
-        Top = 80
-        Width = 101
+        Left = 90
+        Top = 61
+        Width = 93
         Height = 24
         Alignment = taRightJustify
         Font.Charset = DEFAULT_CHARSET
@@ -336,8 +372,8 @@ object FuAdministrativo: TFuAdministrativo
         Text = 'edCDeb'
       end
       object edQtdCDeb: TEdit
-        Left = 113
-        Top = 80
+        Left = 187
+        Top = 61
         Width = 43
         Height = 24
         Font.Charset = DEFAULT_CHARSET
@@ -350,9 +386,9 @@ object FuAdministrativo: TFuAdministrativo
         Text = 'edQtdReais'
       end
       object edCCred: TEdit
-        Left = 8
-        Top = 120
-        Width = 101
+        Left = 90
+        Top = 91
+        Width = 93
         Height = 24
         Alignment = taRightJustify
         Font.Charset = DEFAULT_CHARSET
@@ -366,8 +402,8 @@ object FuAdministrativo: TFuAdministrativo
         Text = 'edCCred'
       end
       object edQtdCCred: TEdit
-        Left = 113
-        Top = 120
+        Left = 187
+        Top = 91
         Width = 43
         Height = 24
         Font.Charset = DEFAULT_CHARSET
@@ -380,9 +416,9 @@ object FuAdministrativo: TFuAdministrativo
         Text = 'edQtdReais'
       end
       object edPIX: TEdit
-        Left = 8
-        Top = 160
-        Width = 101
+        Left = 90
+        Top = 121
+        Width = 93
         Height = 24
         Alignment = taRightJustify
         Font.Charset = DEFAULT_CHARSET
@@ -396,8 +432,8 @@ object FuAdministrativo: TFuAdministrativo
         Text = 'edPIX'
       end
       object edQtdPIX: TEdit
-        Left = 113
-        Top = 160
+        Left = 187
+        Top = 121
         Width = 43
         Height = 24
         Font.Charset = DEFAULT_CHARSET
@@ -410,9 +446,9 @@ object FuAdministrativo: TFuAdministrativo
         Text = 'edQtdReais'
       end
       object edOutros: TEdit
-        Left = 8
-        Top = 200
-        Width = 101
+        Left = 90
+        Top = 151
+        Width = 93
         Height = 24
         Alignment = taRightJustify
         Font.Charset = DEFAULT_CHARSET
@@ -426,8 +462,8 @@ object FuAdministrativo: TFuAdministrativo
         Text = 'edOutros'
       end
       object edQtdOutros: TEdit
-        Left = 113
-        Top = 200
+        Left = 187
+        Top = 151
         Width = 43
         Height = 24
         Font.Charset = DEFAULT_CHARSET
@@ -440,9 +476,9 @@ object FuAdministrativo: TFuAdministrativo
         Text = 'edQtdReais'
       end
       object edMisto: TEdit
-        Left = 8
-        Top = 240
-        Width = 101
+        Left = 90
+        Top = 181
+        Width = 93
         Height = 24
         Alignment = taRightJustify
         Font.Charset = DEFAULT_CHARSET
@@ -456,8 +492,8 @@ object FuAdministrativo: TFuAdministrativo
         Text = 'edOutros'
       end
       object edQtdMisto: TEdit
-        Left = 113
-        Top = 240
+        Left = 187
+        Top = 181
         Width = 43
         Height = 24
         Font.Charset = DEFAULT_CHARSET
@@ -470,9 +506,9 @@ object FuAdministrativo: TFuAdministrativo
         Text = 'edQtdReais'
       end
       object edTotal: TEdit
-        Left = 8
-        Top = 284
-        Width = 101
+        Left = 90
+        Top = 211
+        Width = 93
         Height = 24
         Alignment = taRightJustify
         Font.Charset = DEFAULT_CHARSET
@@ -486,8 +522,8 @@ object FuAdministrativo: TFuAdministrativo
         Text = 'edTotal'
       end
       object edQtdTotal: TEdit
-        Left = 114
-        Top = 284
+        Left = 187
+        Top = 211
         Width = 43
         Height = 24
         Font.Charset = DEFAULT_CHARSET
@@ -502,7 +538,7 @@ object FuAdministrativo: TFuAdministrativo
       object Panel2: TPanel
         Left = 1
         Top = 1
-        Width = 174
+        Width = 234
         Height = 24
         Align = alTop
         Color = clTeal
@@ -528,20 +564,78 @@ object FuAdministrativo: TFuAdministrativo
           ParentFont = False
         end
       end
+      object edVlrNFCe: TEdit
+        Left = 90
+        Top = 279
+        Width = 93
+        Height = 24
+        Alignment = taRightJustify
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -13
+        Font.Name = 'Tahoma'
+        Font.Style = []
+        ParentFont = False
+        ReadOnly = True
+        TabOrder = 15
+        Text = 'edVlrNFCe'
+      end
+      object edQtdOutrosDoc: TEdit
+        Left = 187
+        Top = 309
+        Width = 43
+        Height = 24
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -13
+        Font.Name = 'Tahoma'
+        Font.Style = []
+        ParentFont = False
+        TabOrder = 16
+        Text = 'edQtdOutrosDoc'
+      end
+      object edQtdNFCe: TEdit
+        Left = 187
+        Top = 279
+        Width = 43
+        Height = 24
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -13
+        Font.Name = 'Tahoma'
+        Font.Style = []
+        ParentFont = False
+        TabOrder = 17
+        Text = 'edQtdNFCe'
+      end
+      object edVlrOutrosDoc: TEdit
+        Left = 90
+        Top = 309
+        Width = 93
+        Height = 24
+        Alignment = taRightJustify
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -13
+        Font.Name = 'Tahoma'
+        Font.Style = []
+        ParentFont = False
+        ReadOnly = True
+        TabOrder = 18
+        Text = 'edVlrOutrosDoc'
+      end
     end
     object Panel3: TPanel
-      Left = 177
+      Left = 237
       Top = 1
-      Width = 540
+      Width = 513
       Height = 359
       Align = alClient
       TabOrder = 2
-      ExplicitWidth = 499
-      ExplicitHeight = 347
       object Panel4: TPanel
         Left = 1
         Top = 1
-        Width = 538
+        Width = 511
         Height = 24
         Align = alTop
         Color = clTeal
@@ -553,7 +647,6 @@ object FuAdministrativo: TFuAdministrativo
         ParentBackground = False
         ParentFont = False
         TabOrder = 0
-        ExplicitWidth = 497
         object Label11: TLabel
           Left = 8
           Top = 4
@@ -571,12 +664,10 @@ object FuAdministrativo: TFuAdministrativo
       object Panel5: TPanel
         Left = 1
         Top = 317
-        Width = 538
+        Width = 511
         Height = 41
         Align = alBottom
         TabOrder = 1
-        ExplicitTop = 305
-        ExplicitWidth = 497
         object NavItens: TDBNavigator
           Left = 8
           Top = 6
@@ -590,7 +681,7 @@ object FuAdministrativo: TFuAdministrativo
       object GridItens: TDBGrid
         Left = 1
         Top = 25
-        Width = 538
+        Width = 511
         Height = 292
         Align = alClient
         DataSource = uDM.SResVendas

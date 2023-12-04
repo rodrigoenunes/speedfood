@@ -120,10 +120,13 @@ begin
   if uDM.PedDetpag.RecordCount = 0 then
     Exit;
   //
-  wArqXML := ExtractFilePath(Application.ExeName) + 'wTEF.XML';
   wArqSai := ExtractFilePath(Application.ExeName) + 'wTEF.Txt';
-  DeleteFile(wArqXML);
-  uDM.PedidosArqXML.SaveToFile(wArqXML);
+  wArqXML := uDM.PedidosIdArqXML.AsString;
+{
+  wArqXML := ExtractFilePath(Application.ExeName) + 'wTEF.XML';     // Trocar por pedidosidarqxml
+  DeleteFile(wArqXML);                                              // depois da troca nao deletar
+  uDM.PedidosArqXML.SaveToFile(wArqXML);                            // não salvar
+}
   uDM.PedDetpag.First;
   while not uDM.PedDetpag.Eof do
   begin
@@ -287,7 +290,7 @@ begin
 end;
 
 procedure TFuConsPedidos.btEmitirNFCeClick(Sender: TObject);
-var wExec,wParam: String;
+var wParam: String;
     wIniName,wAbrir,wImprimir,wPDF,wTrans: String;
     wIniFile: TIniFile;
 begin
