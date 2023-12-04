@@ -966,6 +966,8 @@ Begin
   vNroNF   := Result.NroNF;
   vDataXML := Result.ConteudoXML;
 
+  AtualizarSituacaoPV(pCom_Pedido_Numero, Result);
+
   Result:= EmitirNFCeDeArqXML(Result.ArqXML, pCom_Imprimir);
   if Not Result.Resultado then
     Exit;
@@ -974,7 +976,6 @@ Begin
   Result.NroNF      := vNroNF;
   Result.ConteudoXML:= vDataXML;
 
-  AtualizarSituacaoPV(pCom_Pedido_Numero, Result);
 
 End;
 

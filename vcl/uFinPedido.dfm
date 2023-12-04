@@ -10,13 +10,11 @@ object FuFinPedido: TFuFinPedido
   Font.Height = -16
   Font.Name = 'Tahoma'
   Font.Style = []
-  OldCreateOrder = False
   Position = poDesigned
   OnClose = FormClose
   OnCreate = FormCreate
   OnResize = FormResize
   OnShow = FormShow
-  PixelsPerInch = 96
   TextHeight = 19
   object PanRodape: TPanel
     Left = 0
@@ -31,6 +29,8 @@ object FuFinPedido: TFuFinPedido
     Font.Style = []
     ParentFont = False
     TabOrder = 2
+    ExplicitTop = 523
+    ExplicitWidth = 980
   end
   object PanInform: TPanel
     Left = 445
@@ -45,6 +45,8 @@ object FuFinPedido: TFuFinPedido
     Font.Style = []
     ParentFont = False
     TabOrder = 1
+    ExplicitWidth = 535
+    ExplicitHeight = 482
     object PanCliente: TPanel
       Left = 1
       Top = 283
@@ -52,6 +54,7 @@ object FuFinPedido: TFuFinPedido
       Height = 77
       Align = alTop
       TabOrder = 2
+      ExplicitWidth = 533
       object Label4: TLabel
         Left = 4
         Top = 47
@@ -103,6 +106,8 @@ object FuFinPedido: TFuFinPedido
       Height = 122
       Align = alClient
       TabOrder = 3
+      ExplicitWidth = 533
+      ExplicitHeight = 121
       DesignSize = (
         537
         122)
@@ -142,6 +147,7 @@ object FuFinPedido: TFuFinPedido
         ParentFont = False
         TabOrder = 2
         OnClick = btCancelarClick
+        ExplicitTop = 67
       end
       object btRetornar: TBitBtn
         Left = 173
@@ -261,6 +267,7 @@ object FuFinPedido: TFuFinPedido
       Height = 243
       Align = alTop
       TabOrder = 1
+      ExplicitWidth = 533
       object PanDetPgto: TPanel
         Left = 161
         Top = 1
@@ -269,6 +276,7 @@ object FuFinPedido: TFuFinPedido
         Align = alClient
         BevelOuter = bvNone
         TabOrder = 1
+        ExplicitWidth = 371
         object LabReais: TLabel
           Left = 74
           Top = 30
@@ -467,6 +475,7 @@ object FuFinPedido: TFuFinPedido
       Color = clTeal
       ParentBackground = False
       TabOrder = 0
+      ExplicitWidth = 533
       object Label5: TLabel
         Left = 97
         Top = 14
@@ -503,6 +512,7 @@ object FuFinPedido: TFuFinPedido
         Color = clYellow
         ParentBackground = False
         TabOrder = 1
+        ExplicitLeft = 394
         object Label6: TLabel
           Left = 0
           Top = 0
@@ -540,6 +550,7 @@ object FuFinPedido: TFuFinPedido
     Align = alTop
     Enabled = False
     TabOrder = 0
+    ExplicitWidth = 980
     object Label1: TLabel
       Left = 11
       Top = 11
@@ -604,6 +615,7 @@ object FuFinPedido: TFuFinPedido
     Height = 483
     Align = alLeft
     TabOrder = 7
+    ExplicitHeight = 482
     object imgPedido: TImage
       Left = 28
       Top = 14
