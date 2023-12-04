@@ -237,6 +237,7 @@ Begin
   //
   }
 
+  {
   sSQL:=
     'select 1 ' +
     'from com_pedido ' +
@@ -254,6 +255,7 @@ Begin
     vResultSet.Close;
     vResultSet.Free;
   End;
+  }
 
 End;
 

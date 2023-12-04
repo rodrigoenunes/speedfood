@@ -10,11 +10,9 @@ object FuConsPedidos: TFuConsPedidos
   Font.Height = -13
   Font.Name = 'Tahoma'
   Font.Style = []
-  OldCreateOrder = False
   OnClose = FormClose
   OnResize = FormResize
   OnShow = FormShow
-  PixelsPerInch = 96
   TextHeight = 16
   object Panel1: TPanel
     Left = 0
@@ -23,6 +21,8 @@ object FuConsPedidos: TFuConsPedidos
     Height = 394
     Align = alClient
     TabOrder = 0
+    ExplicitWidth = 721
+    ExplicitHeight = 393
     object GridPed: TDBGrid
       Left = 1
       Top = 1
@@ -135,6 +135,8 @@ object FuConsPedidos: TFuConsPedidos
     Font.Style = []
     ParentFont = False
     TabOrder = 1
+    ExplicitTop = 393
+    ExplicitWidth = 721
     DesignSize = (
       725
       93)
@@ -148,7 +150,7 @@ object FuConsPedidos: TFuConsPedidos
       TabOrder = 0
     end
     object btImprimirPedido: TBitBtn
-      Left = 240
+      Left = 236
       Top = 5
       Width = 155
       Height = 41
@@ -226,9 +228,10 @@ object FuConsPedidos: TFuConsPedidos
       ShowHint = True
       TabOrder = 1
       OnClick = btImprimirPedidoClick
+      ExplicitLeft = 232
     end
     object btEmitirNFCe: TBitBtn
-      Left = 401
+      Left = 397
       Top = 5
       Width = 155
       Height = 41
@@ -302,9 +305,10 @@ object FuConsPedidos: TFuConsPedidos
       ShowHint = True
       TabOrder = 3
       OnClick = btEmitirNFCeClick
+      ExplicitLeft = 393
     end
     object btSair: TBitBtn
-      Left = 562
+      Left = 558
       Top = 28
       Width = 155
       Height = 41
@@ -329,9 +333,10 @@ object FuConsPedidos: TFuConsPedidos
       ShowHint = True
       TabOrder = 5
       OnClick = btSairClick
+      ExplicitLeft = 554
     end
     object btImprimirEtiquetas: TBitBtn
-      Left = 240
+      Left = 236
       Top = 48
       Width = 155
       Height = 41
@@ -369,9 +374,10 @@ object FuConsPedidos: TFuConsPedidos
       ShowHint = True
       TabOrder = 2
       OnClick = btImprimirEtiquetasClick
+      ExplicitLeft = 232
     end
     object btCancelar: TBitBtn
-      Left = 401
+      Left = 397
       Top = 48
       Width = 155
       Height = 41
@@ -392,6 +398,7 @@ object FuConsPedidos: TFuConsPedidos
         777770000000}
       TabOrder = 4
       OnClick = btCancelarClick
+      ExplicitLeft = 393
     end
   end
 end

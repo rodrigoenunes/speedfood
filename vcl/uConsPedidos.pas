@@ -287,7 +287,7 @@ begin
 end;
 
 procedure TFuConsPedidos.btEmitirNFCeClick(Sender: TObject);
-var wExec,wParam: String;
+var wParam: String;
     wIniName,wAbrir,wImprimir,wPDF,wTrans: String;
     wIniFile: TIniFile;
 begin
@@ -298,6 +298,7 @@ begin
     Exit;
   end;
   //
+  {
   if uDM.PedidosNrNFCe.AsInteger > 0
   then begin
     wArqXML := ExtractFilePath(Application.ExeName) + 'wNFe.XML';
@@ -327,6 +328,7 @@ begin
     wIniFile.Free;
     Exit;
   end;
+  }
   if MessageDlg('Geração / Emissão de NFCe' + #13 +
                 'Pedido: ' + uDM.PedidosNumero.AsString + #13 +
                 'Valor: ' + FloatToStrF(uDM.PedidosValor.AsCurrency,ffNumber,15,2) + #13 +
