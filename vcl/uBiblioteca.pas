@@ -975,7 +975,7 @@ Begin
 End;
 
 
-Procedure BuscarDadosTEF(Result: TRetorno; pCom_Pedido_Numero: Integer);
+Procedure BuscarDadosTEF(Var Result: TRetorno; pCom_Pedido_Numero: Integer);
 Begin
   Result.DetPags:=
     uDM.FDC.ExecSQLScalar(
@@ -987,14 +987,14 @@ Begin
     );
 End;
 
-Procedure AtualizarDadosTEF(Retorno: TRetorno; pCom_Pedido_Numero: Integer);
+Procedure AtualizarDadosTEF(ArqXML: String; Retorno: TRetorno; pCom_Pedido_Numero: Integer);
 Var
   sArqSaida: String;
   slDetPags, slRetorno: TStringList;
   I: Integer;
 Begin
   sArqSaida:= IncludeTrailingPathDelimiter(vACNFE_TMP);
-  sArqSaida:= sArqSaida + ChangeFileExt( ExtractFileName(Retorno.ArqXML), '.tef');
+  sArqSaida:= sArqSaida + ChangeFileExt( ExtractFileName(ArqXML), '.tef');
 
   if Not FileExists(sArqSaida) then
     Exit;
@@ -1012,7 +1012,7 @@ Begin
 
     uDM.FDC.ExecSQL(
       'UPDATE com_pedidodetpag ' +
-      'set cAut      = ' + slRetorno[I].Substring(40, 20).Trim.QuotedString + ', ' +
+      'set cAut      = ' + slRetorno[I].Substring(20, 20).Trim.QuotedString + ', ' +
       '    nrCartao  = ' + slRetorno[I].Substring(60, 20).Trim.QuotedString + ', ' +
       '    nrDocto   = ' + slRetorno[I].Substring(00, 20).Trim.QuotedString + ', ' +
       '    codVenda  = ' + slRetorno[I].Substring(20, 20).Trim.QuotedString + ', ' +
@@ -1075,7 +1075,7 @@ End;
 Function EmitirNFCeDePV(pCom_Pedido_Numero: Integer; pCom_Imprimir: Boolean): TRetorno;
 Var
   vNroSerie, vNroNF: Integer;
-  vDataXML: String;
+  vDataXML, vArqXML, vDetPags: String;
 Begin
   Result:= ValidarParametrosNFCe(pCom_Pedido_Numero);
 
@@ -1095,9 +1095,12 @@ Begin
 
   BuscarDadosTEF(Result, pCom_Pedido_Numero);
 
+  vDetPags:= Result.DetPags;
+  vArqXML:= Result.ArqXML;
   EmitirNFCeDeArqXML(Result.ArqXML, pCom_Imprimir, Result);
 
-  AtualizarDadosTEF(Result, pCom_Pedido_Numero);
+  Result.DetPags:= vDetPags;
+  AtualizarDadosTEF(vArqXML, Result, pCom_Pedido_Numero);
 
   // Aq se deve puxar os dados do detpag
   // Caso tiver pgtos TEF ok, estes devem ser atualizados na tabela

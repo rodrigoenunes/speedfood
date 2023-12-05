@@ -82,28 +82,43 @@ begin
 
 end;
 
-Procedure RetornoACNFe(pArqSai:String; pTempo:Integer; var pRetorno:String);
+Procedure RetornoACNFe(pArqSai:String; pTempo:Integer; var pRetorno:String; pTmpExtra:Integer = 0);
 var wTempo,i: Integer;
     wRetorno: TStringList;
 begin
+  // Sleep(pTmpExtra * 1000);
   pRetorno := '';
   wTempo := 0;               // Tempo decorrido
   pTempo := pTempo * 1000;   // Tempo a decorrer em milisegundos
+  //FuConsPedidos.Memo1.Lines.Add('Antes While: ' + wTempo.ToString + '/' + pTempo.ToString);
   while wTempo < pTempo do
   begin
+    //FuConsPedidos.Memo1.Lines.Add('Dentro while: ' + wTempo.ToString + '/' + pTempo.ToString);
     sleep(500);
     if FileExists(pArqSai) then
     begin
+      //FuConsPedidos.Memo1.Lines.Add('Arquivo existe!');
       wRetorno := TStringList.Create;
       wRetorno.LoadFromFile(pArqSai);
+      //FuConsPedidos.Memo1.Lines.Add('Conteudo Arquivo:');
+      //FuConsPedidos.Memo1.Lines.Add(wRetorno.Text);
       for i := 0 to wRetorno.Count-1 do
         pRetorno := pRetorno + wRetorno[i];
       wRetorno.Free;
       wTempo := pTempo + 500;
     end
-    else wTempo := wTempo + 500;
+    else
+    Begin
+      wTempo := wTempo + 500;
+      //FuConsPedidos.Memo1.Lines.Add('Arquivo NAO existe!');
+    End;
   end;
-        
+  //FuConsPedidos.Memo1.Lines.Add('Fora While: ' + wTempo.ToString + '/' + pTempo.ToString);
+  //FuConsPedidos.Memo1.Lines.Add('pRetorno:');
+  //FuConsPedidos.Memo1.Lines.Add(pRetorno);
+
+
+
 end;
 
 
@@ -111,7 +126,6 @@ Function CancelaCartao(pExec:String): Boolean;
 var wVlrPago,wData,wTpCard: String;
     wCmdo,wParm,wRetorno: String;
     codRetorno: Integer;
-    arqXML,arqSai: String;
     wVlr: Currency;
 begin
 {                                    cAut                    NrDoc
@@ -152,7 +166,7 @@ begin
                   wTpCard + ' ' +                                     // CREDITO ou DEBITO
                   uDM.PedDetpagnrDocto.AsString + ' ' +               // Nro do documento (da transação do cartão)
                   wArqXML +                                           // Arquivo XML da NFCe
-                ' -as ' + arqSai;                                     // Arquivo saída específico de cancelamento de cartão
+                ' -as ' + wArqSai;                                     // Arquivo saída específico de cancelamento de cartão
       if MessageDlg('Cancelamento de transação com cartão de crédito/débito' + #13#13 +
                     'Pedido: ' + uDM.PedidosNumero.AsString + '   Seq: ' + uDM.PedDetpagSeq.AsString + #13 +
                     'Nr.docto: ' + uDM.PedDetpagnrDocto.AsString +
@@ -162,9 +176,14 @@ begin
                     mtConfirmation,[mbYes,mbNo],0,mbNo) = mrYes
       then begin
         DeleteFile(wArqSai);
+
+        // InputQuery('', 'wCmdo', wCmdo);
+        // InputQuery('', 'wParm', wParm);
+
         ShellExecute(0,'open',pChar(wCmdo),pChar(wParm),'',1);
-        RetornoACNFe(wArqSai,30,wRetorno);
-        ShowMessage(wRetorno);
+
+        RetornoACNFe(wArqSai,90,wRetorno,5);
+        ShowMessage('TEF ' + wRetorno);
         uDM.PedDetpag.Edit;
         uDM.PedDetpagSit.AsInteger := 1;
         uDM.peddetpag.Post;
@@ -205,7 +224,7 @@ begin
   if wJustif = '' then
     wJustif := 'Cliente cancelou a compra';
   wCmdo    := pExec;                                     // Executável
-  wParm    := '/CANCELARNF "'+ wChave + '" ' + wJustif + ' -as ' + wArqSai + ' ' + wArqXML;
+  wParm    := '/CANCELARNF '+ wChave + ' "' + wJustif + '" -as ' + wArqSai + ' ' + wArqXML;
   if MessageDlg('Cancelamento de NFCe' + #13#13 +
                 'Pedido: ' + uDM.PedidosNumero.AsString + #13 +
                 '  Valor: ' + FloatToStrF(uDM.PedidosValor.AsCurrency,ffNumber,15,2) + #13 +
@@ -215,7 +234,7 @@ begin
     DeleteFile(wArqSai);
     ShellExecute(0,'open',pChar(wCmdo),pChar(wParm),'',1);
     RetornoACNFe(wArqSai,30,wRetorno);
-    ShowMessage(wRetorno);
+    ShowMessage('NFCe '+ wRetorno);
   end;
   Result := True;
 
