@@ -2,6 +2,8 @@ unit uBiblioteca;
 
 interface
 
+// Uses System.Generics.Collections;
+
 Type
   TRetorno = Record
     Resultado: Boolean;
@@ -12,6 +14,7 @@ Type
     NroSerie: Integer;
     NroNF: Integer;
     ConteudoXML: String;
+    DetPags: String;
   End;
 
   TICMSTot = Record
@@ -227,10 +230,8 @@ Begin
   Result:= TestarSeValorParametroEstaVazio('emissor_sis_pessoa_id', vEMISSOR_SIS_PESSOA_ID);
   if Not Result.Resultado then
     Exit;
-  //
 
   // vSIS_PESSOA_ID   emissor_sis_pessoa_id
-
 
   {
   Result:= TSVPE_VazioOuDir('ACNFE_OUT', vACNFE_OUT);
@@ -670,9 +671,9 @@ Begin
         if vcard = Nil then
           vcard:= vdetPag.AddChild('card');
 
-        // if Not vds.Fields[I].AsString.IsEmpty then
-          vcard.AddChild( vds.Fields[I].FieldName.Replace('card.', '') ).NodeValue:=
-            vds.Fields[I].AsString;
+        vcard.AddChild( vds.Fields[I].FieldName.Replace('card.', '') ).NodeValue:=
+          vds.Fields[I].AsString;
+
       End
       Else
         vdetPag.AddChild(vds.Fields[I].FieldName).NodeValue:= vds.Fields[I].AsString;
@@ -850,7 +851,7 @@ begin
     // WaitForSingleObject(ProcInfo.hProcess, INFINITE); // 10000); //
 end;
 
-Function EmitirNFCeDeArqXML(ArqXML: String; pCom_Imprimir: Boolean): TRetorno;
+Procedure EmitirNFCeDeArqXML(ArqXML: String; pCom_Imprimir: Boolean; Var Result: TRetorno); // : TRetorno;
 Const
   T: Integer = 1200;
 Var
@@ -864,7 +865,11 @@ Begin
   if Not DirectoryExists(sArqSaida) then
     ForceDirectories(sArqSaida);
 
-  sArqSaida:= sArqSaida + ChangeFileExt( ExtractFileName(ArqXML), '.txt');
+  sArqSaida:= sArqSaida + ChangeFileExt( ExtractFileName(ArqXML), '.tef');
+  if System.SysUtils.FileExists(sArqSaida) then
+    System.SysUtils.DeleteFile(sArqSaida);
+
+  sArqSaida:= ChangeFileExt(sArqSaida, '.txt');
 
   ExecComando:=
     '"' + vACNFE_EXE + '"' +
@@ -880,7 +885,7 @@ Begin
 
   // InputQuery('', '',  ExecComando);
 
-  DeleteFile(sArqSaida);
+  System.SysUtils.DeleteFile(sArqSaida);
 
   ChamarExecutavel( ExecComando );
 
@@ -969,6 +974,61 @@ Begin
 
 End;
 
+
+Procedure BuscarDadosTEF(Result: TRetorno; pCom_Pedido_Numero: Integer);
+Begin
+  Result.DetPags:=
+    uDM.FDC.ExecSQLScalar(
+      'select replace(trim(GROUP_CONCAT(Seq)), '','', '';'') Seqs ' +
+      'from com_pedidodetpag ' +
+      'where tpintegra = 1 ' +
+      '  and numero = ' + pCom_Pedido_Numero.ToString +
+      '  order by Seq '
+    );
+End;
+
+Procedure AtualizarDadosTEF(Retorno: TRetorno; pCom_Pedido_Numero: Integer);
+Var
+  sArqSaida: String;
+  slDetPags, slRetorno: TStringList;
+  I: Integer;
+Begin
+  sArqSaida:= IncludeTrailingPathDelimiter(vACNFE_TMP);
+  sArqSaida:= sArqSaida + ChangeFileExt( ExtractFileName(Retorno.ArqXML), '.tef');
+
+  if Not FileExists(sArqSaida) then
+    Exit;
+
+  slDetPags:= TStringList.Create;
+  slDetPags.Text:= Retorno.DetPags.Replace(';', #13#10);
+
+  slRetorno:= TStringList.Create;
+  slRetorno.LoadFromFile(sArqSaida);
+
+  for I:= 0 to slRetorno.Count-1 do
+  Begin
+    if Trim(slRetorno[I]).IsEmpty then
+      Continue;
+
+    uDM.FDC.ExecSQL(
+      'UPDATE com_pedidodetpag ' +
+      'set cAut      = ' + slRetorno[I].Substring(40, 20).Trim.QuotedString + ', ' +
+      '    nrCartao  = ' + slRetorno[I].Substring(60, 20).Trim.QuotedString + ', ' +
+      '    nrDocto   = ' + slRetorno[I].Substring(00, 20).Trim.QuotedString + ', ' +
+      '    codVenda  = ' + slRetorno[I].Substring(20, 20).Trim.QuotedString + ', ' +
+      '    tpIntegra = 2 ' +
+      'where numero = ' + pCom_Pedido_Numero.ToString +
+      '  and seq    = ' + slDetPags[I]
+    );
+
+
+
+  End;
+
+
+
+End;
+
 Function AtualizarRetornoNFC(pCom_Pedido_Numero: Integer; Retorno: TRetorno): TRetorno;
 Var
   vAtualizou: Boolean;
@@ -1018,19 +1078,32 @@ Var
   vDataXML: String;
 Begin
   Result:= ValidarParametrosNFCe(pCom_Pedido_Numero);
+
   if Not Result.Resultado then
     Exit;
 
   Result:= getGerarArqXML(pCom_Pedido_Numero);
+
   if Not Result.Resultado then
     Exit;
+
   vNroSerie:= Result.NroSerie;
   vNroNF   := Result.NroNF;
   vDataXML := Result.ConteudoXML;
 
   AtualizarSituacaoPV(pCom_Pedido_Numero, Result);
 
-  Result:= EmitirNFCeDeArqXML(Result.ArqXML, pCom_Imprimir);
+  BuscarDadosTEF(Result, pCom_Pedido_Numero);
+
+  EmitirNFCeDeArqXML(Result.ArqXML, pCom_Imprimir, Result);
+
+  AtualizarDadosTEF(Result, pCom_Pedido_Numero);
+
+  // Aq se deve puxar os dados do detpag
+  // Caso tiver pgtos TEF ok, estes devem ser atualizados na tabela
+  // Mudar o select de detpags para q, caso o mesmo esteja como pago,
+  //       o tpIntegra deverá ser igual a 2 para nao mais ser cobrado
+
   if Not Result.Resultado then
     Exit;
 
