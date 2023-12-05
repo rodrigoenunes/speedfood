@@ -107,7 +107,7 @@ begin
 end;
 
 
-Procedure CancelaCartao(pExec:String);
+Function CancelaCartao(pExec:String): Boolean;
 var wVlrPago,wData,wTpCard: String;
     wCmdo,wParm,wRetorno: String;
     codRetorno: Integer;
@@ -117,16 +117,19 @@ begin
 {                                    cAut                    NrDoc
   ACNFe6 /tef /cancelar CIELO 316,30 273337 13/10/23 CREDITO 23208 arq-nfe.xml -as C:\saida\padrao.txt
         Valor com 2 decimais !!!!!!!    }
+  Result := False;
   if uDM.PedDetpag.RecordCount = 0 then
     Exit;
   //
   wArqSai := ExtractFilePath(Application.ExeName) + 'wTEF.Txt';
   wArqXML := uDM.PedidosIdArqXML.AsString;
-{
-  wArqXML := ExtractFilePath(Application.ExeName) + 'wTEF.XML';     // Trocar por pedidosidarqxml
-  DeleteFile(wArqXML);                                              // depois da troca nao deletar
-  uDM.PedidosArqXML.SaveToFile(wArqXML);                            // não salvar
-}
+  if not FileExists(wArqXML) then
+  begin
+    MessageDlg('Arquivo XML não encontrado' + #13 + wArqXML + #13 +
+               'Processo interrompido',mtError,[mbOk],0);
+    Exit;
+  end;
+
   uDM.PedDetpag.First;
   while not uDM.PedDetpag.Eof do
   begin
@@ -169,10 +172,11 @@ begin
     end;
     uDM.PedDetpag.Next;
   end;
+  Result := True;
 
 end;
 
-Procedure CancelaNFCe(pExec:String);
+Function CancelaNFCe(pExec:String): Boolean;
 var wChave,wJustif,wCmdo,wParm,wRetorno: String;
 begin
 {
@@ -186,13 +190,15 @@ begin
 <-nroimp N>            Nro de vezes que o documento será enviado para impressora
 <-rav arqRAV>          Arquivo RAV do DANFe modelo para gerar o PDF
 }
+  Result := False;
   wArqXML := uDM.PedidosIdArqXML.AsString;
-  if wArqXML = '' then
+  if not FileExists(wArqXML) then
   begin
-    wArqXML := ExtractFilePath(Application.ExeName) + 'wCanc.XML';
-    DeleteFile(wArqXML);
-    uDM.PedidosArqXML.SaveToFile(wArqXML);
+    MessageDlg('Arquivo XML não encontrado' + #13 + wArqXML + #13 +
+               'Processo interrompido',mtError,[mbOk],0);
+    Exit;
   end;
+
   wArqSai := ExtractFilePath(Application.ExeName) + 'wCanc.Txt';
   wChave  := uDM.PedidosChaveNFe.AsString;
   wJustif := ObtemParametro('JustifCancelamento');
@@ -211,6 +217,7 @@ begin
     RetornoACNFe(wArqSai,30,wRetorno);
     ShowMessage(wRetorno);
   end;
+  Result := True;
 
 end;
 
@@ -281,9 +288,9 @@ begin
                 wMsg,
                 mtConfirmation,[mbYes,mbNo],0,mbNo,['Sim','Não']) = mrYes then
   begin
-    CancelaCartao(wExec);
-    CancelaNFCe(wExec);
-    CancelaPedido;
+    if CancelaCartao(wExec)
+      then if CancelaNFCe(wExec)
+           then CancelaPedido;
   end;
   uDM.PedDetpag.Filtered := False;
 
@@ -301,14 +308,12 @@ begin
     Exit;
   end;
   //
-  {
+
   if uDM.PedidosNrNFCe.AsInteger > 0
   then begin
-    wArqXML := ExtractFilePath(Application.ExeName) + 'wNFe.XML';
+    wArqXML := uDM.PedidosIdArqXML.AsString;
     wArqSai := ExtractFilePath(Application.ExeName) + 'wNFe.Txt';
-    DeleteFile(wArqXML);
     DeleteFile(wArqSai);
-    uDM.PedidosArqXML.SaveToFile(wArqXML);
     wIniName  := ChangeFileExt(wExec,'.Ini');
     wIniFile  := TIniFile.Create(wIniName);
     wAbrir    := wIniFile.ReadString('NFC','AbrirDANFE','');
@@ -331,7 +336,7 @@ begin
     wIniFile.Free;
     Exit;
   end;
-  }
+
   if MessageDlg('Geração / Emissão de NFCe' + #13 +
                 'Pedido: ' + uDM.PedidosNumero.AsString + #13 +
                 'Valor: ' + FloatToStrF(uDM.PedidosValor.AsCurrency,ffNumber,15,2) + #13 +

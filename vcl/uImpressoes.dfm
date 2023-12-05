@@ -1350,219 +1350,331 @@ object FuImpressoes: TFuImpressoes
       Left = 19
       Top = 95
       Width = 264
-      Height = 130
+      Height = 186
       BandType = btSummary
       Borders.Sides = sdCustom
       Borders.DrawLeft = False
       Borders.DrawTop = True
       Borders.DrawRight = False
       Borders.DrawBottom = True
-      object RLLabel39: TRLLabel
-        Left = 53
-        Top = 4
-        Width = 45
-        Height = 14
-        Alignment = taRightJustify
-        Caption = 'Dinheiro:'
+      object RLPanel8: TRLPanel
+        Left = 0
+        Top = 1
+        Width = 264
+        Height = 128
+        Align = faTop
+        Borders.Sides = sdCustom
+        Borders.DrawLeft = False
+        Borders.DrawTop = False
+        Borders.DrawRight = False
+        Borders.DrawBottom = True
+        object RLLabel39: TRLLabel
+          Left = 53
+          Top = 4
+          Width = 45
+          Height = 14
+          Alignment = taRightJustify
+          Caption = 'Dinheiro:'
+        end
+        object RLLabReais: TRLLabel
+          Left = 100
+          Top = 4
+          Width = 64
+          Height = 14
+          Alignment = taRightJustify
+          AutoSize = False
+        end
+        object RLLabQtdReais: TRLLabel
+          Left = 168
+          Top = 4
+          Width = 32
+          Height = 14
+          Alignment = taRightJustify
+          AutoSize = False
+        end
+        object RLLabel40: TRLLabel
+          Left = 28
+          Top = 19
+          Width = 70
+          Height = 14
+          Alignment = taRightJustify
+          Caption = 'Cart'#227'o d'#233'bito:'
+        end
+        object RLLabCDeb: TRLLabel
+          Left = 100
+          Top = 19
+          Width = 64
+          Height = 14
+          Alignment = taRightJustify
+          AutoSize = False
+        end
+        object RLLabQtdCDeb: TRLLabel
+          Left = 168
+          Top = 19
+          Width = 32
+          Height = 14
+          Alignment = taRightJustify
+          AutoSize = False
+        end
+        object RLLabel41: TRLLabel
+          Left = 24
+          Top = 34
+          Width = 74
+          Height = 14
+          Alignment = taRightJustify
+          Caption = 'Cart'#227'o cr'#233'dito:'
+        end
+        object RLLabCCred: TRLLabel
+          Left = 100
+          Top = 34
+          Width = 64
+          Height = 14
+          Alignment = taRightJustify
+          AutoSize = False
+        end
+        object RLLabQtdCCred: TRLLabel
+          Left = 168
+          Top = 34
+          Width = 32
+          Height = 14
+          Alignment = taRightJustify
+          AutoSize = False
+        end
+        object RLLabel42: TRLLabel
+          Left = 77
+          Top = 49
+          Width = 21
+          Height = 14
+          Alignment = taRightJustify
+          Caption = 'PIX:'
+        end
+        object RLLabPIX: TRLLabel
+          Left = 100
+          Top = 49
+          Width = 64
+          Height = 14
+          Alignment = taRightJustify
+          AutoSize = False
+        end
+        object RLLabQtdPIX: TRLLabel
+          Left = 168
+          Top = 49
+          Width = 32
+          Height = 14
+          Alignment = taRightJustify
+          AutoSize = False
+        end
+        object RLLabel43: TRLLabel
+          Left = 59
+          Top = 64
+          Width = 39
+          Height = 14
+          Alignment = taRightJustify
+          Caption = 'Outros:'
+        end
+        object RLLabOutros: TRLLabel
+          Left = 100
+          Top = 64
+          Width = 64
+          Height = 14
+          Alignment = taRightJustify
+          AutoSize = False
+        end
+        object RLLabQtdOutros: TRLLabel
+          Left = 168
+          Top = 64
+          Width = 32
+          Height = 14
+          Alignment = taRightJustify
+          AutoSize = False
+        end
+        object RLLabel44: TRLLabel
+          Left = 55
+          Top = 79
+          Width = 43
+          Height = 14
+          Alignment = taRightJustify
+          Caption = 'Misto(*):'
+        end
+        object RLLabMisto: TRLLabel
+          Left = 100
+          Top = 79
+          Width = 64
+          Height = 14
+          Alignment = taRightJustify
+          AutoSize = False
+        end
+        object RLLabel45: TRLLabel
+          Left = 65
+          Top = 98
+          Width = 33
+          Height = 14
+          Alignment = taRightJustify
+          Caption = 'Total:'
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clBlack
+          Font.Height = -11
+          Font.Name = 'Arial'
+          Font.Style = [fsBold]
+          ParentFont = False
+        end
+        object RLLabTotal: TRLLabel
+          Left = 100
+          Top = 98
+          Width = 64
+          Height = 14
+          Alignment = taRightJustify
+          AutoSize = False
+        end
+        object RLLabQtdMisto: TRLLabel
+          Left = 168
+          Top = 79
+          Width = 32
+          Height = 14
+          Alignment = taRightJustify
+          AutoSize = False
+        end
+        object RLLabQtdTotal: TRLLabel
+          Left = 168
+          Top = 98
+          Width = 32
+          Height = 14
+          Alignment = taRightJustify
+          AutoSize = False
+        end
+        object RLLabel38: TRLLabel
+          Left = 111
+          Top = 115
+          Width = 153
+          Height = 12
+          Align = faRightBottom
+          Alignment = taRightJustify
+          Caption = '(*) incluso nos meios de pagamento'
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clBlack
+          Font.Height = -9
+          Font.Name = 'Arial'
+          Font.Style = []
+          ParentFont = False
+        end
+        object RLAngleLabel1: TRLAngleLabel
+          Left = 4
+          Top = 2
+          Width = 14
+          Height = 119
+          Angle = 90.000000000000000000
+          Caption = 'Meios de pagamento'
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clBlack
+          Font.Height = -11
+          Font.Name = 'Arial'
+          Font.Style = [fsBold]
+          ParentFont = False
+        end
       end
-      object RLLabel40: TRLLabel
-        Left = 28
-        Top = 19
-        Width = 70
-        Height = 14
-        Alignment = taRightJustify
-        Caption = 'Cart'#227'o d'#233'bito:'
-      end
-      object RLLabel41: TRLLabel
-        Left = 24
-        Top = 34
-        Width = 74
-        Height = 14
-        Alignment = taRightJustify
-        Caption = 'Cart'#227'o cr'#233'dito:'
-      end
-      object RLLabel42: TRLLabel
-        Left = 77
-        Top = 49
-        Width = 21
-        Height = 14
-        Alignment = taRightJustify
-        Caption = 'PIX:'
-      end
-      object RLLabel43: TRLLabel
-        Left = 59
-        Top = 64
-        Width = 39
-        Height = 14
-        Alignment = taRightJustify
-        Caption = 'Outros:'
-      end
-      object RLLabel44: TRLLabel
-        Left = 55
-        Top = 79
-        Width = 43
-        Height = 14
-        Alignment = taRightJustify
-        Caption = 'Misto(*):'
-      end
-      object RLLabel45: TRLLabel
-        Left = 65
-        Top = 98
-        Width = 33
-        Height = 14
-        Alignment = taRightJustify
-        Caption = 'Total:'
-        Font.Charset = DEFAULT_CHARSET
-        Font.Color = clBlack
-        Font.Height = -11
-        Font.Name = 'Arial'
-        Font.Style = [fsBold]
-        ParentFont = False
-      end
-      object RLAngleLabel1: TRLAngleLabel
-        Left = 4
-        Top = 4
-        Width = 14
-        Height = 119
-        Angle = 90.000000000000000000
-        Caption = 'Meios de pagamento'
-        Font.Charset = DEFAULT_CHARSET
-        Font.Color = clBlack
-        Font.Height = -11
-        Font.Name = 'Arial'
-        Font.Style = [fsBold]
-        ParentFont = False
-      end
-      object RLLabReais: TRLLabel
-        Left = 100
-        Top = 4
-        Width = 64
-        Height = 14
-        Alignment = taRightJustify
-        AutoSize = False
-      end
-      object RLLabCDeb: TRLLabel
-        Left = 100
-        Top = 19
-        Width = 64
-        Height = 14
-        Alignment = taRightJustify
-        AutoSize = False
-      end
-      object RLLabCCred: TRLLabel
-        Left = 100
-        Top = 34
-        Width = 64
-        Height = 14
-        Alignment = taRightJustify
-        AutoSize = False
-      end
-      object RLLabPIX: TRLLabel
-        Left = 100
-        Top = 49
-        Width = 64
-        Height = 14
-        Alignment = taRightJustify
-        AutoSize = False
-      end
-      object RLLabOutros: TRLLabel
-        Left = 100
-        Top = 64
-        Width = 64
-        Height = 14
-        Alignment = taRightJustify
-        AutoSize = False
-      end
-      object RLLabMisto: TRLLabel
-        Left = 100
-        Top = 79
-        Width = 64
-        Height = 14
-        Alignment = taRightJustify
-        AutoSize = False
-      end
-      object RLLabTotal: TRLLabel
-        Left = 100
-        Top = 98
-        Width = 64
-        Height = 14
-        Alignment = taRightJustify
-        AutoSize = False
-      end
-      object RLLabQtdReais: TRLLabel
-        Left = 168
-        Top = 4
-        Width = 32
-        Height = 14
-        Alignment = taRightJustify
-        AutoSize = False
-      end
-      object RLLabQtdCDeb: TRLLabel
-        Left = 168
-        Top = 19
-        Width = 32
-        Height = 14
-        Alignment = taRightJustify
-        AutoSize = False
-      end
-      object RLLabQtdCCred: TRLLabel
-        Left = 168
-        Top = 34
-        Width = 32
-        Height = 14
-        Alignment = taRightJustify
-        AutoSize = False
-      end
-      object RLLabQtdPIX: TRLLabel
-        Left = 168
-        Top = 49
-        Width = 32
-        Height = 14
-        Alignment = taRightJustify
-        AutoSize = False
-      end
-      object RLLabQtdOutros: TRLLabel
-        Left = 168
-        Top = 64
-        Width = 32
-        Height = 14
-        Alignment = taRightJustify
-        AutoSize = False
-      end
-      object RLLabQtdMisto: TRLLabel
-        Left = 168
-        Top = 79
-        Width = 32
-        Height = 14
-        Alignment = taRightJustify
-        AutoSize = False
-      end
-      object RLLabQtdTotal: TRLLabel
-        Left = 168
-        Top = 98
-        Width = 32
-        Height = 14
-        Alignment = taRightJustify
-        AutoSize = False
-      end
-      object RLLabel38: TRLLabel
-        Left = 111
-        Top = 117
-        Width = 153
-        Height = 12
-        Align = faRightBottom
-        Caption = '(*) incluso nos meios de pagamento'
-        Font.Charset = DEFAULT_CHARSET
-        Font.Color = clBlack
-        Font.Height = -9
-        Font.Name = 'Arial'
-        Font.Style = []
-        ParentFont = False
+      object RLPanel9: TRLPanel
+        Left = 0
+        Top = 129
+        Width = 264
+        Height = 56
+        Align = faClient
+        object RLLabel4: TRLLabel
+          Left = 66
+          Top = 4
+          Width = 32
+          Height = 14
+          Alignment = taRightJustify
+          Caption = 'NFCe:'
+        end
+        object RLLabNFCe: TRLLabel
+          Left = 100
+          Top = 4
+          Width = 64
+          Height = 14
+          Alignment = taRightJustify
+          AutoSize = False
+        end
+        object RLLabQtdNFCe: TRLLabel
+          Left = 168
+          Top = 4
+          Width = 32
+          Height = 14
+          Alignment = taRightJustify
+          AutoSize = False
+        end
+        object RLLabQtdDocs: TRLLabel
+          Left = 168
+          Top = 19
+          Width = 32
+          Height = 14
+          Alignment = taRightJustify
+          AutoSize = False
+        end
+        object RLLabDocs: TRLLabel
+          Left = 100
+          Top = 19
+          Width = 64
+          Height = 14
+          Alignment = taRightJustify
+          AutoSize = False
+        end
+        object RLLabel18: TRLLabel
+          Left = 59
+          Top = 19
+          Width = 39
+          Height = 14
+          Alignment = taRightJustify
+          Caption = 'Outros:'
+        end
+        object RLAngleLabel2: TRLAngleLabel
+          Left = 4
+          Top = 2
+          Width = 14
+          Height = 41
+          Angle = 90.000000000000000000
+          Caption = 'Doctos'
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clBlack
+          Font.Height = -11
+          Font.Name = 'Arial'
+          Font.Style = [fsBold]
+          ParentFont = False
+        end
+        object RLLabel5: TRLLabel
+          Left = 65
+          Top = 36
+          Width = 33
+          Height = 14
+          Alignment = taRightJustify
+          Caption = 'Total:'
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clBlack
+          Font.Height = -11
+          Font.Name = 'Arial'
+          Font.Style = [fsBold]
+          ParentFont = False
+        end
+        object RLLabTotVlrDocs: TRLLabel
+          Left = 100
+          Top = 36
+          Width = 64
+          Height = 14
+          Alignment = taRightJustify
+          AutoSize = False
+        end
+        object RLLabTotQtdDocs: TRLLabel
+          Left = 168
+          Top = 36
+          Width = 32
+          Height = 14
+          Alignment = taRightJustify
+          AutoSize = False
+        end
       end
     end
-    object RLBand1: TRLBand
+    object Res_Footer: TRLBand
       Left = 19
-      Top = 225
+      Top = 281
       Width = 264
       Height = 17
       BandType = btFooter

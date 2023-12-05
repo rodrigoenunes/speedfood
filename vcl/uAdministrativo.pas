@@ -61,6 +61,9 @@ type
     edVlrOutrosDoc: TEdit;
     Label12: TLabel;
     Label13: TLabel;
+    Label14: TLabel;
+    edTotVlrDocs: TEdit;
+    edTotQtdDocs: TEdit;
     procedure btSairClick(Sender: TObject);
     procedure btProcessarClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -80,8 +83,8 @@ var
   qtdMeioPgto: array[0..6] of Integer;
   ttQtd: Integer;
   ttVlr: Currency;
-  ttQtdDoc: array[0..1] of Integer;     // NFCe/Outros
-  ttVlrDoc: array[0..1] of Currency;    // NFCe/Outros
+  ttQtdDoc: array[0..2] of Integer;     // NFCe/Outros
+  ttVlrDoc: array[0..2] of Currency;    // NFCe/Outros
 
 implementation
 
@@ -175,6 +178,8 @@ begin
       else iDoc := 1;   // Outros
     ttQtdDoc[iDoc] := ttQtdDoc[iDoc] + 1;
     ttVlrDoc[iDoc] := ttVlrDoc[iDoc] + uDM.PedidosValor.AsCurrency;
+    ttQtdDoc[2] := ttQtdDoc[2] + 1;
+    ttVlrDoc[2] := ttVlrDoc[2] + uDM.PedidosValor.AsCurrency;
   end;
 
 end;
@@ -182,7 +187,7 @@ end;
 
 procedure TFuAdministrativo.btImprimirClick(Sender: TObject);
 begin
-  ImprimeResumo(cbTurnoIni.Text,cbTurnoFin.Text,vlrMeioPgto,qtdMeioPgto);
+  ImprimeResumo(cbTurnoIni.Text,cbTurnoFin.Text,vlrMeioPgto,qtdMeioPgto,ttVlrDoc,ttQtdDoc);
 
 end;
 
@@ -199,6 +204,7 @@ end;
 
 procedure TFuAdministrativo.btProcessarClick(Sender: TObject);
 var i,tAux: Integer;
+    impAnt,pgtAnt: Integer;
 begin
   i := Pos(' ',cbTurnoIni.Text);
   tIni := StrToIntDef(Copy(cbTurnoIni.Text,1,i-1),99999);
@@ -234,10 +240,10 @@ begin
     end;
   ttQtd := 0;
   ttVlr := 0;
-  for i := 0 to 1 do
+  for i := 0 to 2 do
   begin
     ttQtdDoc[i] := 0;   // NFCe/Outros
-    ttVlrDoc[1] := 0;
+    ttVlrDoc[i] := 0;
   end;
 
   gbTurnos.Height := 151;
@@ -245,6 +251,10 @@ begin
 
   uDM.turnoIni := tIni;
   uDM.TurnoFin := tFim;
+  impAnt := uDM.etqImpress;
+  pgtAnt := uDM.sitPagto;
+  uDM.etqImpress := 2;             // Sem seleção de impressão de etiquetas
+  uDM.sitPagto := 1;               // Somente pagos
   uDM.Pedidos.Filtered := True;
   uDM.Pedidos.Refresh;
   uDM.Pedidos.First;
@@ -265,6 +275,10 @@ begin
     Application.ProcessMessages;
     uDM.Pedidos.Next;
   end;
+  //
+  uDM.etqImpress := impAnt;
+  uDM.meioPgto := pgtAnt;
+  uDM.Pedidos.Refresh;
   //
   uDM.ResVendas.Append;
   uDM.ResVendasTpProd.AsInteger := 9;
@@ -298,6 +312,8 @@ begin
   edVlrOutrosDoc.Text := FloatToStrF(ttVlrDoc[1],ffNumber,15,2);
   edQtdNFCe.Text := IntToStr( ttQtdDoc[0]);
   edQtdOutrosDoc.Text :=  IntToStr(ttQtdDoc[1]);
+  edTotVlrDocs.Text := FloatToStrF(ttVlrDoc[2],ffNumber,15,2);
+  edTotQtdDocs.Text := IntToStr(ttQtdDoc[2]);
 
   PanResultado.Visible := True;
   FuAdministrativo.FormResize(nil);

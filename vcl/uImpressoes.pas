@@ -8,8 +8,8 @@ uses
   Procedure ImprimePedido(pNroPedido:Integer; pSys:Boolean = True);
   Function EmiteNFCe(pNroPedido:Integer;pImprimir:Boolean): TRetorno;
   Procedure ImprimeCaixa(pSequencia: Integer);
-  Procedure ImprimeResumo(pIni,pFim:String;pVlr:array of Currency; pQtd:array of Integer);
-
+  Procedure ImprimeResumo(pIni,pFim:String;pVlr:array of Currency; pQtd:array of Integer;
+                                           pVlrDoc:array of Currency; pqtdDoc:array of Integer);
 
 type
   TFuImpressoes = class(TForm)
@@ -128,34 +128,46 @@ type
     RLDbResDescr: TRLDBText;
     RLDbResQtd: TRLDBText;
     RLDbResTotal: TRLDBText;
-    RLLabel39: TRLLabel;
-    RLLabel40: TRLLabel;
-    RLLabel41: TRLLabel;
-    RLLabel42: TRLLabel;
-    RLLabel43: TRLLabel;
-    RLLabel44: TRLLabel;
-    RLLabel45: TRLLabel;
-    RLAngleLabel1: TRLAngleLabel;
-    RLLabReais: TRLLabel;
-    RLLabCDeb: TRLLabel;
-    RLLabCCred: TRLLabel;
-    RLLabPIX: TRLLabel;
-    RLLabOutros: TRLLabel;
-    RLLabMisto: TRLLabel;
-    RLLabTotal: TRLLabel;
-    RLLabQtdReais: TRLLabel;
-    RLLabQtdCDeb: TRLLabel;
-    RLLabQtdCCred: TRLLabel;
-    RLLabQtdPIX: TRLLabel;
-    RLLabQtdOutros: TRLLabel;
-    RLLabQtdMisto: TRLLabel;
-    RLLabQtdTotal: TRLLabel;
-    RLLabel38: TRLLabel;
     RLDbSenha: TRLDBText;
-    RLBand1: TRLBand;
+    Res_Footer: TRLBand;
     RLLabel27: TRLLabel;
     RLBand2: TRLBand;
     RLLabel28: TRLLabel;
+    RLPanel8: TRLPanel;
+    RLLabel39: TRLLabel;
+    RLLabReais: TRLLabel;
+    RLLabQtdReais: TRLLabel;
+    RLLabel40: TRLLabel;
+    RLLabCDeb: TRLLabel;
+    RLLabQtdCDeb: TRLLabel;
+    RLLabel41: TRLLabel;
+    RLLabCCred: TRLLabel;
+    RLLabQtdCCred: TRLLabel;
+    RLLabel42: TRLLabel;
+    RLLabPIX: TRLLabel;
+    RLLabQtdPIX: TRLLabel;
+    RLLabel43: TRLLabel;
+    RLLabOutros: TRLLabel;
+    RLLabQtdOutros: TRLLabel;
+    RLLabel44: TRLLabel;
+    RLLabMisto: TRLLabel;
+    RLLabel45: TRLLabel;
+    RLLabTotal: TRLLabel;
+    RLLabQtdMisto: TRLLabel;
+    RLLabQtdTotal: TRLLabel;
+    RLLabel38: TRLLabel;
+    RLAngleLabel1: TRLAngleLabel;
+    RLPanel9: TRLPanel;
+    RLLabel4: TRLLabel;
+    RLLabNFCe: TRLLabel;
+    RLLabQtdNFCe: TRLLabel;
+    RLLabQtdDocs: TRLLabel;
+    RLLabDocs: TRLLabel;
+    RLLabel18: TRLLabel;
+    RLAngleLabel2: TRLAngleLabel;
+    RLLabel5: TRLLabel;
+    RLLabTotVlrDocs: TRLLabel;
+    RLLabTotQtdDocs: TRLLabel;
     procedure RLCaixaBeforePrint(Sender: TObject; var PrintIt: Boolean);
     procedure RLPedDetalBeforePrint(Sender: TObject; var PrintIt: Boolean);
   private
@@ -448,7 +460,8 @@ begin
 
 end;
 
-Procedure ImprimeResumo(pIni,pFim:String; pVlr:array of Currency; pQtd:array of Integer);
+Procedure ImprimeResumo(pIni,pFim:String;pVlr:array of Currency; pQtd:array of Integer;
+                                         pVlrDoc:array of Currency; pqtdDoc:array of Integer);
 var i: Integer;
 begin
   idPrinter := ObtemParametro('ResumoPrinter');
@@ -494,6 +507,13 @@ begin
     RLLabQtdOutros.Caption := IntToStr(pQtd[4]);
     RLLabQtdMisto.Caption := IntToStr(pQtd[5]);
     RLLabQtdTotal.Caption := IntToStr(pQtd[6]);
+
+    RLLabNFCe.Caption := FloatToStrf(pVlrDoc[0],ffNumber,15,2);
+    RLLabQtdNFCe.Caption := IntToSTr(pQtdDoc[0]);
+    RLLabDocs.Caption := FloatToStrF(pVlrDoc[1],ffNumber,15,2);
+    RLLabQtdDocs.Caption := IntToSTr(pQtdDoc[1]);
+    RLLabTotVlrDocs.Caption := FloatToStrF(pVlrDoc[2],ffNumber,15,2);
+    RLLabTotQtdDocs.Caption := IntToStr(pQtdDoc[2]);
 
     nAltura := RLRes_Cabec.Height + RLRes_Cols.Height +
                (uDM.ResVendas.RecordCount * RLRes_Detal.Height) +

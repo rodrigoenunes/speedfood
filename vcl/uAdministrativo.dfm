@@ -285,7 +285,7 @@ object FuAdministrativo: TFuAdministrativo
         ParentFont = False
       end
       object LabObsMisto: TLabel
-        Left = 6
+        Left = 20
         Top = 241
         Width = 210
         Height = 16
@@ -299,7 +299,7 @@ object FuAdministrativo: TFuAdministrativo
       end
       object Label12: TLabel
         Left = 47
-        Top = 313
+        Top = 301
         Width = 43
         Height = 16
         Alignment = taRightJustify
@@ -313,11 +313,25 @@ object FuAdministrativo: TFuAdministrativo
       end
       object Label13: TLabel
         Left = 55
-        Top = 283
+        Top = 271
         Width = 35
         Height = 16
         Alignment = taRightJustify
         Caption = 'NFCe:'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -13
+        Font.Name = 'Tahoma'
+        Font.Style = []
+        ParentFont = False
+      end
+      object Label14: TLabel
+        Left = 56
+        Top = 331
+        Width = 34
+        Height = 16
+        Alignment = taRightJustify
+        Caption = 'Total:'
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clWindowText
         Font.Height = -13
@@ -566,7 +580,7 @@ object FuAdministrativo: TFuAdministrativo
       end
       object edVlrNFCe: TEdit
         Left = 90
-        Top = 279
+        Top = 267
         Width = 93
         Height = 24
         Alignment = taRightJustify
@@ -582,7 +596,7 @@ object FuAdministrativo: TFuAdministrativo
       end
       object edQtdOutrosDoc: TEdit
         Left = 187
-        Top = 309
+        Top = 297
         Width = 43
         Height = 24
         Font.Charset = DEFAULT_CHARSET
@@ -596,7 +610,7 @@ object FuAdministrativo: TFuAdministrativo
       end
       object edQtdNFCe: TEdit
         Left = 187
-        Top = 279
+        Top = 267
         Width = 43
         Height = 24
         Font.Charset = DEFAULT_CHARSET
@@ -610,7 +624,7 @@ object FuAdministrativo: TFuAdministrativo
       end
       object edVlrOutrosDoc: TEdit
         Left = 90
-        Top = 309
+        Top = 297
         Width = 93
         Height = 24
         Alignment = taRightJustify
@@ -623,6 +637,36 @@ object FuAdministrativo: TFuAdministrativo
         ReadOnly = True
         TabOrder = 18
         Text = 'edVlrOutrosDoc'
+      end
+      object edTotVlrDocs: TEdit
+        Left = 90
+        Top = 327
+        Width = 93
+        Height = 24
+        Alignment = taRightJustify
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -13
+        Font.Name = 'Tahoma'
+        Font.Style = []
+        ParentFont = False
+        ReadOnly = True
+        TabOrder = 19
+        Text = 'edTotVlrDocs'
+      end
+      object edTotQtdDocs: TEdit
+        Left = 187
+        Top = 327
+        Width = 43
+        Height = 24
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -13
+        Font.Name = 'Tahoma'
+        Font.Style = []
+        ParentFont = False
+        TabOrder = 20
+        Text = 'edTotQtdDocs'
       end
     end
     object Panel3: TPanel
