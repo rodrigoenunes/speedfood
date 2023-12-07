@@ -977,14 +977,19 @@ End;
 
 Procedure BuscarDadosTEF(Var Result: TRetorno; pCom_Pedido_Numero: Integer);
 Begin
-  Result.DetPags:=
-    uDM.FDC.ExecSQLScalar(
-      'select replace(trim(GROUP_CONCAT(Seq)), '','', '';'') Seqs ' +
-      'from com_pedidodetpag ' +
-      'where tpintegra = 1 ' +
-      '  and numero = ' + pCom_Pedido_Numero.ToString +
-      '  order by Seq '
-    );
+  Try
+    Result.DetPags:=
+      uDM.FDC.ExecSQLScalar(
+        'select replace(trim(GROUP_CONCAT(Seq)), '','', '';'') Seqs ' +
+        'from com_pedidodetpag ' +
+        'where tpintegra = 1 ' +
+        '  and numero = ' + pCom_Pedido_Numero.ToString +
+        '  order by Seq '
+        );
+    Except
+      Exit;
+    End;
+
 End;
 
 Procedure AtualizarDadosTEF(ArqXML: String; Retorno: TRetorno; pCom_Pedido_Numero: Integer);

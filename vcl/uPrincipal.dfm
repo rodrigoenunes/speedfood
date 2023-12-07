@@ -509,7 +509,7 @@ object FuPrincipal: TFuPrincipal
   end
   object btHelpGeral: TBitBtn
     Left = 358
-    Top = 332
+    Top = 300
     Width = 131
     Height = 25
     Anchors = [akRight, akBottom]
@@ -533,7 +533,7 @@ object FuPrincipal: TFuPrincipal
   end
   object btHelpArgox: TBitBtn
     Left = 358
-    Top = 361
+    Top = 330
     Width = 131
     Height = 25
     Anchors = [akRight, akBottom]

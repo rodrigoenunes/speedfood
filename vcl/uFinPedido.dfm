@@ -10,11 +10,13 @@ object FuFinPedido: TFuFinPedido
   Font.Height = -16
   Font.Name = 'Tahoma'
   Font.Style = []
+  OldCreateOrder = True
   Position = poDesigned
   OnClose = FormClose
   OnCreate = FormCreate
   OnResize = FormResize
   OnShow = FormShow
+  PixelsPerInch = 96
   TextHeight = 19
   object PanRodape: TPanel
     Left = 0
@@ -29,8 +31,6 @@ object FuFinPedido: TFuFinPedido
     Font.Style = []
     ParentFont = False
     TabOrder = 2
-    ExplicitTop = 523
-    ExplicitWidth = 980
   end
   object PanInform: TPanel
     Left = 445
@@ -45,8 +45,6 @@ object FuFinPedido: TFuFinPedido
     Font.Style = []
     ParentFont = False
     TabOrder = 1
-    ExplicitWidth = 535
-    ExplicitHeight = 482
     object PanCliente: TPanel
       Left = 1
       Top = 283
@@ -54,7 +52,6 @@ object FuFinPedido: TFuFinPedido
       Height = 77
       Align = alTop
       TabOrder = 2
-      ExplicitWidth = 533
       object Label4: TLabel
         Left = 4
         Top = 47
@@ -106,8 +103,6 @@ object FuFinPedido: TFuFinPedido
       Height = 122
       Align = alClient
       TabOrder = 3
-      ExplicitWidth = 533
-      ExplicitHeight = 121
       DesignSize = (
         537
         122)
@@ -147,7 +142,6 @@ object FuFinPedido: TFuFinPedido
         ParentFont = False
         TabOrder = 2
         OnClick = btCancelarClick
-        ExplicitTop = 67
       end
       object btRetornar: TBitBtn
         Left = 173
@@ -267,7 +261,6 @@ object FuFinPedido: TFuFinPedido
       Height = 243
       Align = alTop
       TabOrder = 1
-      ExplicitWidth = 533
       object PanDetPgto: TPanel
         Left = 161
         Top = 1
@@ -276,7 +269,6 @@ object FuFinPedido: TFuFinPedido
         Align = alClient
         BevelOuter = bvNone
         TabOrder = 1
-        ExplicitWidth = 371
         object LabReais: TLabel
           Left = 74
           Top = 30
@@ -475,7 +467,6 @@ object FuFinPedido: TFuFinPedido
       Color = clTeal
       ParentBackground = False
       TabOrder = 0
-      ExplicitWidth = 533
       object Label5: TLabel
         Left = 97
         Top = 14
@@ -512,7 +503,6 @@ object FuFinPedido: TFuFinPedido
         Color = clYellow
         ParentBackground = False
         TabOrder = 1
-        ExplicitLeft = 394
         object Label6: TLabel
           Left = 0
           Top = 0
@@ -550,7 +540,6 @@ object FuFinPedido: TFuFinPedido
     Align = alTop
     Enabled = False
     TabOrder = 0
-    ExplicitWidth = 980
     object Label1: TLabel
       Left = 11
       Top = 11
@@ -615,7 +604,6 @@ object FuFinPedido: TFuFinPedido
     Height = 483
     Align = alLeft
     TabOrder = 7
-    ExplicitHeight = 482
     object imgPedido: TImage
       Left = 28
       Top = 14
@@ -635,6 +623,42 @@ object FuFinPedido: TFuFinPedido
       Font.Style = []
       ParentFont = False
       Visible = False
+    end
+    object PanAguarde: TPanel
+      Left = 28
+      Top = 352
+      Width = 397
+      Height = 117
+      Color = clHighlight
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -27
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      ParentBackground = False
+      ParentFont = False
+      TabOrder = 0
+      Visible = False
+      object Label7: TLabel
+        Left = 20
+        Top = 16
+        Width = 302
+        Height = 33
+        Caption = 'Processando, aguarde ....'
+      end
+      object LabInstrucao: TLabel
+        Left = 20
+        Top = 55
+        Width = 303
+        Height = 29
+        Caption = 'Siga as instru'#231#245'es do Pinpad'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clYellow
+        Font.Height = -24
+        Font.Name = 'Tahoma'
+        Font.Style = []
+        ParentFont = False
+      end
     end
   end
   object dbMenos: TDBMemo
@@ -686,8 +710,8 @@ object FuFinPedido: TFuFinPedido
     Visible = False
   end
   object Teclado: TTouchKeyboard
-    Left = 170
-    Top = 262
+    Left = 62
+    Top = 202
     Width = 180
     Height = 165
     DrawingStyle = dsGradient

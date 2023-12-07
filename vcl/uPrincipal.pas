@@ -37,6 +37,7 @@ type
       Shift: TShiftState; X, Y: Integer);
     procedure btHelpArgoxMouseDown(Sender: TObject; Button: TMouseButton;
       Shift: TShiftState; X, Y: Integer);
+    procedure btPinpadClick(Sender: TObject);
   private
     { Private declarations }
   public
@@ -101,6 +102,15 @@ begin
   if ObtemParametro('UsaCorItem') = 'S' then uDM.usaCorItem := True
      else uDM.usaCorItem := False;
   LancamentoPedidos;
+
+end;
+
+procedure TFuPrincipal.btPinpadClick(Sender: TObject);
+begin
+  if MessageDlg('Deseja configurar o pinpad?',mtConfirmation,[mbYes,mbNo],0,mbNo,['Sim','Não']) <> mrYes then
+    Exit;
+
+  ShowMessage('xxxx');
 
 end;
 

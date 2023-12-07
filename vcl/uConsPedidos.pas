@@ -5,8 +5,7 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Data.DB, Vcl.DBCtrls, Vcl.Grids,
-  Vcl.DBGrids, Vcl.ExtCtrls, Vcl.StdCtrls, Vcl.Buttons,
-  IniFiles, ShellAPI;
+  Vcl.DBGrids, Vcl.ExtCtrls, Vcl.StdCtrls, Vcl.Buttons, IniFiles, ShellAPI;
   Procedure ConsultarPedidos;
 
 type
@@ -263,6 +262,7 @@ end;
 procedure TFuConsPedidos.btCancelarClick(Sender: TObject);
 var nPgts: Integer;
     wMsg: String;
+    lCancCartao: Boolean;
 begin
   if uDM.Pedidos.RecordCount = 0 then Exit;
   if uDM.PedidosSitPagto.AsInteger = 9 then
@@ -307,9 +307,12 @@ begin
                 wMsg,
                 mtConfirmation,[mbYes,mbNo],0,mbNo,['Sim','Não']) = mrYes then
   begin
-    if CancelaCartao(wExec)
-      then if CancelaNFCe(wExec)
-           then CancelaPedido;
+    if (uDM.PedidosMeioPagto.AsInteger = 1) or (uDM.PedidosMeioPagto.AsInteger = 2)
+    then lCancCartao := CancelaCartao(wExec)
+    else lCancCartao := True;
+    if lCancCartao then
+       if CancelaNFCe(wExec) then
+          CancelaPedido;
   end;
   uDM.PedDetpag.Filtered := False;
 
@@ -328,7 +331,7 @@ begin
   end;
   //
 
-  if uDM.PedidosNrNFCe.AsInteger > 0
+  if (uDM.PedidosNrNFCe.AsInteger > 0) and (uDM.PedidosIdArqXML.AsString <> '')
   then begin
     wArqXML := uDM.PedidosIdArqXML.AsString;
     wArqSai := ExtractFilePath(Application.ExeName) + 'wNFe.Txt';

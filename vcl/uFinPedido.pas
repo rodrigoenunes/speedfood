@@ -60,6 +60,9 @@ type
     Label6: TLabel;
     LabFalta: TLabel;
     cbImprimeNFCe: TCheckBox;
+    PanAguarde: TPanel;
+    Label7: TLabel;
+    LabInstrucao: TLabel;
     procedure btGravarClick(Sender: TObject);
     procedure btRetornarClick(Sender: TObject);
     procedure btCancelarClick(Sender: TObject);
@@ -460,8 +463,16 @@ begin
   end;
   //
   cbImprimeNFCe.Enabled := False;
+  btGravar.Enabled := False;
   btCancelar.Enabled := False;
   btRetornar.Enabled := False;
+  if (uDM.PedidosMeioPagto.AsInteger = 1) or            // Débito
+     (uDM.PedidosMeioPagto.AsInteger = 2) or            // Credito
+     (uDM.PedidosMeioPagto.AsInteger = 5)               // Misto
+     then LabInstrucao.Caption := 'Siga as instruções do PINPAD'
+     else LabInstrucao.Caption := 'Aguarde o final do processo';
+  PanAGuarde.Visible := True;
+  Application.ProcessMessages;
 
   lanSeq := 0;     // Qtd de lanches no pedido
   bebSeq := 0;     // Qtd de bebidas e outros no pedido
@@ -1032,8 +1043,10 @@ end;
 procedure TFuFinPedido.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
   cbImprimeNFCe.Enabled := True;
+  btGravar.Enabled := True;
   btCancelar.Enabled := True;
   btRetornar.Enabled := True;
+  PanAguarde.Visible := False;
 
 end;
 
