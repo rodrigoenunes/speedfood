@@ -946,7 +946,7 @@ Begin
 
       uDM.Pedidos['ArqXML']:= Retorno.ConteudoXML;    // Retorno.ArqXML;
 
-      uDM.PedidosSitPagto.AsInteger := 1;
+      //uDM.PedidosSitPagto.AsInteger := 1;        // Atualizar somente na saida.....
       uDM.Pedidos.Post;
 
       vAtualizou:= True;
@@ -986,9 +986,9 @@ Begin
         '  and numero = ' + pCom_Pedido_Numero.ToString +
         '  order by Seq '
         );
-    Except
-      Exit;
-    End;
+  Except
+    Exit;
+  End;
 
 End;
 
@@ -1103,6 +1103,15 @@ Begin
   vDetPags:= Result.DetPags;
   vArqXML:= Result.ArqXML;
   EmitirNFCeDeArqXML(Result.ArqXML, pCom_Imprimir, Result);
+
+  if not Result.Resultado then
+  begin
+    MessageDlg('TEF'+ #13 +
+               'Falha na inicialização do Pinpad, ou' + #13 +
+               'Cancelamento no PINPAD, ou' + #13 +
+               'Erro na transação',mtError,[mbOk],0);
+    Exit;
+  end;
 
   Result.DetPags:= vDetPags;
   AtualizarDadosTEF(vArqXML, Result, pCom_Pedido_Numero);

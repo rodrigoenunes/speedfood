@@ -146,7 +146,8 @@ begin
   uDM.PedDetpag.First;
   while not uDM.PedDetpag.Eof do
   begin
-    if uDM.PedDetpagSit.AsInteger = 0 then
+    if (uDM.PedDetpagSit.AsInteger = 0) and              // Situação : Não cancelado
+       (uDM.PedDetpagtpIntegra.AsInteger <> 2) then      // Integrado : é Integrado
     begin
       wTpCard := '';
       if uDM.PedDetpagtPag.AsString = '03' then
@@ -244,7 +245,7 @@ begin
   uDM.Pedidos.Edit;
   uDM.PedidosSitPagto.AsInteger := 9;
   uDM.Pedidos.Post;
-  SHowMessage('Efetuar cancelamento no caixa');
+  //ShowMessage('Efetuar cancelamento no caixa');
 
 end;
 
@@ -262,7 +263,7 @@ end;
 procedure TFuConsPedidos.btCancelarClick(Sender: TObject);
 var nPgts: Integer;
     wMsg: String;
-    lCancCartao: Boolean;
+    lCancCartao,lCancNFCe: Boolean;
 begin
   if uDM.Pedidos.RecordCount = 0 then Exit;
   if uDM.PedidosSitPagto.AsInteger = 9 then
@@ -307,12 +308,18 @@ begin
                 wMsg,
                 mtConfirmation,[mbYes,mbNo],0,mbNo,['Sim','Não']) = mrYes then
   begin
-    if (uDM.PedidosMeioPagto.AsInteger = 1) or (uDM.PedidosMeioPagto.AsInteger = 2)
-    then lCancCartao := CancelaCartao(wExec)
-    else lCancCartao := True;
+    lCancCartao := True;
+    if (uDM.PedidosMeioPagto.AsInteger = 1) or
+       (uDM.PedidosMeioPagto.AsInteger = 2) then
+       lCancCartao := CancelaCartao(wExec);
     if lCancCartao then
-       if CancelaNFCe(wExec) then
-          CancelaPedido;
+    begin
+      lCancNFCe := True;
+      if uDM.PedidosNrNFCe.AsInteger > 0 then
+        lCancNFCe := CancelaNFCe(wExec);
+      if lCancNFCe then
+        CancelaPedido;
+    end;
   end;
   uDM.PedDetpag.Filtered := False;
 
@@ -322,6 +329,7 @@ procedure TFuConsPedidos.btEmitirNFCeClick(Sender: TObject);
 var wParam: String;
     wIniName,wAbrir,wImprimir,wPDF,wTrans: String;
     wIniFile: TIniFile;
+    wStatus: Boolean;
 begin
   if uDM.Pedidos.RecordCount = 0 then Exit;
   if wExec = '' then
@@ -364,7 +372,7 @@ begin
                 'Valor: ' + FloatToStrF(uDM.PedidosValor.AsCurrency,ffNumber,15,2) + #13 +
                 'Meio pagamento: ' + uDM.PedidosZC_MPExtenso.AsString,
                 mtConfirmation,[mbYes,mbNo],0,mbNo,['Sim','Não']) = mrYes
-  then EmiteNFCe(uDM.PedidosNumero.AsInteger, True);
+  then EmiteNFCe(uDM.PedidosNumero.AsInteger, True, wStatus);
 
 end;
 

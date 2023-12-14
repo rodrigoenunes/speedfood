@@ -118,7 +118,6 @@ object FuConsPedidos: TFuConsPedidos
           FieldName = 'ZC_SitTxt'
           Title.Alignment = taCenter
           Title.Caption = 'Situa'#231#227'o'
-          Width = 64
           Visible = True
         end>
     end

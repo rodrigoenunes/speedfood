@@ -5,7 +5,7 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Mask, Vcl.DBCtrls, Vcl.ExtCtrls,
-  Vcl.Buttons, System.UITypes, Vcl.Touch.Keyboard;
+  Vcl.Buttons, System.UITypes, Vcl.Touch.Keyboard, Data.DB;
   Function FinalizaPedido: Integer;
 
 type
@@ -63,6 +63,7 @@ type
     PanAguarde: TPanel;
     Label7: TLabel;
     LabInstrucao: TLabel;
+    TimerMsgPinpad: TTimer;
     procedure btGravarClick(Sender: TObject);
     procedure btRetornarClick(Sender: TObject);
     procedure btCancelarClick(Sender: TObject);
@@ -100,6 +101,8 @@ type
       Shift: TShiftState);
     procedure FormResize(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
+    procedure dbMeioPagtoExit(Sender: TObject);
+    procedure TimerMsgPinpadTimer(Sender: TObject);
   private
     { Private declarations }
   public
@@ -187,7 +190,7 @@ begin
     uDM.PedidosVlrTroco.AsCurrency := 0;
     uDM.PedidosCPF_CNPJ.EditMask := '';
     uDM.PedidosTurno.AsInteger := uDM.turnoCorrente;
-    uDM.PedidosPlaca.AsString := IntToStr(uDM.nroPlaca);
+    uDM.PedidosPlaca.AsString := uDM.nroPlaca;
     uDM.PedidosMeioPagto.AsInteger := uDM.meioPgto;
     uDM.PedidosNomeCliente.AsString := uDM.nomeClie;
     uDM.PedidosCPF_CNPJ.AsString := uDM.CPFCNPJ;
@@ -432,10 +435,12 @@ end;
 
 procedure TFuFinPedido.btGravarClick(Sender: TObject);
 var somaVlr,wSaldo: Currency;
-    newSeq,lanSeq,bebSeq: Integer;
+    newSeq,lanSeq,bebSeq,newSitPagto,i,wrkSeq: Integer;
     vlrEntradas,vlrSaidas: Currency;
-    xImpressao: String;
+    xEmitirNFCe,xImpressao: String;
     wMsg: String;
+    wStatus,wAtivarMsg: Boolean;
+
 begin
   if ObtemParametro('PedidoPlaca') = 'S' then
      if StrToIntDef(uDM.PedidosPlaca.AsString,0) = 0 then
@@ -444,7 +449,6 @@ begin
        dbPlaca.SetFocus;
        Exit;
      end;
-
   if uDM.PedidosMeioPagto.AsInteger = 0 then   // Dinheiro
     if uDM.PedidosVlrRecebido.AsCurrency < uDM.PedidosValor.AsCurrency then
     begin
@@ -466,14 +470,19 @@ begin
   btGravar.Enabled := False;
   btCancelar.Enabled := False;
   btRetornar.Enabled := False;
+  LabInstrucao.Caption := 'Aguarde o final do processo';
+  wAtivarMsg := False;
   if (uDM.PedidosMeioPagto.AsInteger = 1) or            // Débito
      (uDM.PedidosMeioPagto.AsInteger = 2) or            // Credito
      (uDM.PedidosMeioPagto.AsInteger = 5)               // Misto
-     then LabInstrucao.Caption := 'Siga as instruções do PINPAD'
-     else LabInstrucao.Caption := 'Aguarde o final do processo';
-  PanAGuarde.Visible := True;
+  then begin
+    LabInstrucao.Caption := 'Siga as instruções do PINPAD';
+    wAtivarMsg := True;
+  end;
+  PanAguarde.Color := clHighlight;
+  PanAguarde.Visible := True;
   Application.ProcessMessages;
-
+  //
   lanSeq := 0;     // Qtd de lanches no pedido
   bebSeq := 0;     // Qtd de bebidas e outros no pedido
   uDM.PedWrk.First;
@@ -495,22 +504,24 @@ begin
   newSeq := 200;
   while not uDM.PedWrk.Eof do
   begin
-    uDM.PedItens.Append;
-    uDM.PedItensNumero.AsInteger := nrPedido;
     case uDM.PedWrkTpProd.AsInteger of
       1,4:begin     // Lanches
             lanSeq := lanSeq + 1;
-            uDM.PedItensNrLcto.AsInteger := lanSeq;
+            wrkSeq := lanSeq;
           end;
         3:begin     // Bebidas e outros
             bebSeq := bebSeq + 1;
-            uDM.PedItensNrLcto.AsInteger := bebSeq;
+            wrkSeq := bebSeq;
         end;
         else begin
             newSeq := newSeq + 1;
-            uDM.PedItensNrLcto.AsInteger := newSeq;
+            wrkSeq := newSeq;
         end;
     end;
+    //
+    uDM.PedItens.Append;
+    uDM.PedItensNumero.AsInteger       := nrPedido;
+    uDM.PedItensNrLcto.AsInteger       := wrkSeq;
     uDM.PedItensTpProd.AsInteger       := uDM.PedWrkTpProd.AsInteger;
     uDM.PedItensCodProd.AsInteger      := uDM.PedWrkCodProd.AsInteger;
     uDM.PedItensQuant.AsInteger        := uDM.PedWrkQuant.AsInteger;
@@ -559,8 +570,8 @@ begin
       if (uDM.DetpagWrktPag.AsString = '03')         // Cartao crédito
          or (uDM.DetpagWrktPag.AsString = '04')      // Cartao debito
          //or (uDM.DetpagWrktPag.AsString = '17')
-         then uDM.PedDetpagtpIntegra.AsInteger := uDM.SisPessoaTefPos.ASInteger
-         else uDM.PedDetpagtpIntegra.AsInteger := 0;
+         then uDM.PedDetpagtpIntegra.AsInteger := uDM.SisPessoaTefPos.AsInteger
+         else uDM.PedDetpagtpIntegra.AsInteger := 2;
       uDM.PedDetpag.Post;
       uDM.DetpagWrk.Next;
     end;
@@ -571,7 +582,7 @@ begin
     uDM.PedDetpagNumero.AsInteger    := uDM.PedidosNumero.AsInteger;
     uDM.PedDetpagSeq.AsInteger       := 1;
     uDM.PedDetpagindPag.AsInteger    := 0;      // Sempre 0 (A vista) (1-Prazo)
-    uDM.PedDetpagtpIntegra.AsInteger := 0;
+    uDM.PedDetpagtpIntegra.AsInteger := 2;
     if uDM.PedidosVlrReais.AsCurrency > 0 then
     begin
       uDM.PedDetpagtPag.AsString := '01';       // Reais
@@ -605,56 +616,81 @@ begin
     uDM.PedDetpag.Post;
   end;
 
+  Try
+    uDM.Pedidos.Edit;
+  Except
+  End;
   nRetorno := 0;
-  // NFCe: (S)im  (N)ao
   wMsg := '';
-  if ObtemParametro('NFCe_Imprimir') = 'S' then         // Emitir NFCe?
+  wStatus := True;
+  if ObtemParametro('NFCe_Emitir') = 'S' then         // Emitir NFCe?
   begin
+    xEmitirNFCe := 'Q';
     case uDM.PedidosMeioPagto.AsInteger of
-      0:xImpressao := ObtemParametro('NFCe_Reais');        // Pagto em Reais (dinheiro)
-      1:xImpressao := ObtemParametro('NFCe_CDebito');      // Pagto Cartao de débito
-      2:xImpressao := ObtemParametro('NFCe_CCredito');     // Pagto Cartao de crédito
-      3:xImpressao := ObtemParametro('NFCe_PIX');          // Pagto PIX
-      4:xImpressao := ObtemParametro('NFCe_Outros');       // Pagto Outros
-      5:xImpressao := ObtemParametro('NFCe_Misto');        // Pagto Misto
+      0:xEmitirNFCe := ObtemParametro('NFCe_Reais');        // Pagto em Reais (dinheiro)
+      1:xEmitirNFCe := ObtemParametro('NFCe_CDebito');      // Pagto Cartao de débito
+      2:xEmitirNFCe := ObtemParametro('NFCe_CCredito');     // Pagto Cartao de crédito
+      3:xEmitirNFCe := ObtemParametro('NFCe_PIX');          // Pagto PIX
+      4:xEmitirNFCe := ObtemParametro('NFCe_Outros');       // Pagto Outros
+      5:xEmitirNFCe := ObtemParametro('NFCe_Misto');        // Pagto Misto
     end;
-    if Pos(xImpressao,'SNQ') = 0  then xImpressao := 'Q';
-    if xImpressao = 'Q' then
+    if (xEmitirNFCe = 'Q') or (xEmitirNFCe = '') then
       if MessageDlg('Geração / Emissão de NFCe' + #13 +
                     'Pedido: ' + uDM.PedidosNumero.AsString + #13 +
                     'Valor: ' + FloatToStrF(uDM.PedidosValor.AsCurrency,ffNumber,15,2) + #13 +
                     'Meio pagamento: ' + uDM.PedidosZC_MPExtenso.AsString,
                     mtConfirmation,[mbYes,mbNo],0,mbNo,['Sim','Não']) = mrYes
-        then xImpressao := 'S';
-    if xImpressao = 'S' then
+        then xEmitirNFCe := 'S';
+    if xEmitirNFCe = 'S' then
     begin
-       EmiteNFCe(uDM.PedidosNumero.AsInteger, cbImprimeNFCe.Checked);
-       wMsg := 'DFe';
+      TimerMsgPinpad.Enabled := wAtivarMsg;
+      EmiteNFCe(uDM.PedidosNumero.AsInteger, cbImprimeNFCe.Checked, wStatus);
+      TimerMsgPinPad.Enabled := False;
+      PanAguarde.Color := clHighLight;
+      wMsg := 'DFe';
     end;
   end;
-  //
-  if uDM.PedidosSitPagto.AsInteger = 0 then
+
+  if wStatus then
   begin
-    if wMsg = 'DFe' then
-      wMsg := 'Falha na emissão de documento fiscal'
-    else
-      wMsg := 'Meio de pagamento: ' + uDM.PedidosZC_MPExtenso.AsString;
-    if MessageDlg('Confirmação de pagamento' + #13#13 +
-                  wMsg + #13#13 +
-                  'Pagamento realizado ?',
-                  mtConfirmation,[mbYes,mbNo],0,mbNo,['Sim','Não']) = mrYes then
-    begin
-      uDM.Pedidos.Edit;
-      uDM.PedidosSitPagto.AsInteger := 1;
-      uDM.Pedidos.Post;
-    end;
+    newSitPagto := 1;
+    if uDM.PedidosMeioPagto.AsInteger = 0 then
+      if MessageDlg('Pagamento em REAIS' + #13 + 'Confirme o pagamento',
+                    mtConfirmation,[mbYes,mbNo],0,mbNo,['Sim','Não']) = mrNo then
+                    newSitPagto := 0;                   // Não pago
+    uDM.Pedidos.Edit;
+    uDM.PedidosSitPagto.AsInteger := newSitPagto;
+    uDM.Pedidos.Post;
   end;
-  //
-  if (uDM.PedidosSitPagto.AsInteger = 0)
-     and (uDM.PedidosNrNFCe.AsInteger = 0) then
-  begin      // Pedido Não pago
-    FuFinPedido.Close;
-    Exit;
+  if (not wStatus) or
+     (uDM.PedidosSitPagto.AsInteger = 0) then
+  begin
+    if MessageDlg('Falha na emissão do documento fiscal ou na efetivação do pagamento' + #13#13 +
+                  'Informe:' + #13 +
+                  '<Repetir> pagamento  ou  <Excluir> pedido',
+                  mtConfirmation,[mbYes,mbNo],0,mbYes,['Repetir pagamento','Excluir pedido']) = mrYes
+    then begin
+      uDM.PedDetpag.First;
+      while uDM.PedDetpag.RecordCount > 0 do
+        uDM.PedDetpag.Delete;
+      uDM.PedItens.First;
+      while uDM.PedItens.RecordCount > 0 do
+        uDM.PedItens.Delete;
+      if uDM.Pedidos.State <> dsEdit then
+         uDM.Pedidos.Edit;
+      cbImprimeNFCe.Enabled := True;
+      btGravar.Enabled := True;
+      btCancelar.Enabled := True;
+      PanAguarde.Visible := False;
+      //btRetornar.Enabled := False;
+      dbMeioPagto.SetFocus;
+      Exit;
+    end
+    else begin
+      ExcluePedido(uDM.PedidosNumero.AsInteger);
+      FuFinPedido.Close;
+      Exit;
+    end;
   end;
   //
   // Atualiza caixa
@@ -741,7 +777,7 @@ end;
 
 procedure TFuFinPedido.btRetornarClick(Sender: TObject);
 begin
-  uDM.nroPlaca := StrToIntDef(uDM.PedidosPlaca.AsString,0);
+  uDM.nroPlaca := uDM.PedidosPlaca.AsString;
   uDM.meioPgto := uDM.PedidosMeioPagto.AsInteger;
   uDM.nomeClie := uDM.PedidosNomeCliente.AsString;
   uDM.CPFCNPJ := uDM.PedidosCPF_CNPJ.AsString;
@@ -804,11 +840,11 @@ begin
   edPIX.Enabled    := False;
   edOutros.Enabled := False;
 
-  uDM.PedidosVlrReais.Clear;
-  uDM.PedidosVlrCDeb.Clear;
-  uDM.PedidosVlrCCred.Clear;
-  uDM.PedidosVlrPIX.Clear;
-  uDM.PedidosVlrOutros.Clear;
+  uDM.PedidosVlrReais.AsCurrency := 0;
+  uDM.PedidosVlrCDeb.AsCurrency := 0;
+  uDM.PedidosVlrCCred.AsCurrency := 0;
+  uDM.PedidosVlrPIX.AsCurrency := 0;
+  uDM.PedidosVlrOutros.AsCurrency := 0;
   uDM.PedidosMeioPagto.AsInteger := dbMeioPagto.ItemIndex;
   case dbMeioPagto.ItemIndex of
     0:begin
@@ -821,6 +857,7 @@ begin
         edTroco.Visible  := True;
         LabTroco.Visible := True;
         edReceb.SetFocus;
+        Exit;
     end;
     1:uDM.PedidosVlrCDeb.AsCurrency   := FuPedidos.totalPedido;
     2:uDM.PedidosVlrCCred.AsCurrency  := FuPedidos.totalPedido;
@@ -842,6 +879,16 @@ begin
   end;
   ExibeValorFaltante;
 
+end;
+
+procedure TFuFinPedido.dbMeioPagtoExit(Sender: TObject);
+begin
+{
+  if dbMeioPagto.ItemIndex = 0 then
+    edReceb.SetFocus
+  else
+    btGravar.SetFocus;
+}
 end;
 
 procedure TFuFinPedido.dbNomeEnter(Sender: TObject);
@@ -867,6 +914,8 @@ end;
 
 procedure TFuFinPedido.dbPlacaEnter(Sender: TObject);
 begin
+//  dbPlaca.Text := '';
+//  uDM.PedidosPlaca.Clear;
   tvLeft := PanInform.Left + dbPlaca.Left - 8;
   if (tvLeft + 300) >= FuFinPedido.Width
      then tvLeft := FuFinPedido.Width - 328;
@@ -1004,6 +1053,7 @@ end;
 
 procedure TFuFinPedido.edRecebEnter(Sender: TObject);
 begin
+  edReceb.Text := '';
   tvLeft := PanInform.Left + PanDetPgto.Left + 20;
   if (tvLeft + 300) >= FuFinPedido.Width
      then tvLeft := FuFinPedido.Width - 328;
@@ -1015,13 +1065,19 @@ end;
 procedure TFuFinPedido.edRecebExit(Sender: TObject);
 begin
   Teclado.Visible := False;
+  if edReceb.Text = '' then
+  begin
+    uDM.PedidosVlrRecebido.AsCurrency := uDM.PedidosValor.AsCurrency;
+    uDM.PedidosVlrTroco.AsCurrency := 0;
+    Exit;
+  end;
   if uDM.PedidosVlrRecebido.AsCurrency > 0 then
   begin
      if uDM.PedidosVlrRecebido.AsCurrency < uDM.PedidosValor.AsCurrency then
      begin
        MessageDlg('Valor recebido insuficiente, reinforme',mtError,[mbOk],0);
-      edReceb.SetFocus;
-      Exit;
+       edReceb.SetFocus;
+       Exit;
     end;
     uDM.PedidosVlrTroco.AsCurrency := uDM.PedidosVlrRecebido.AsCurrency - uDM.PedidosValor.AsCurrency;
   end;
@@ -1038,6 +1094,16 @@ procedure TFuFinPedido.MudaPontoVirgula(Sender: TObject; var Key: Char);
 begin
   if Key = '.' then
     Key := ',';
+end;
+
+procedure TFuFinPedido.TimerMsgPinpadTimer(Sender: TObject);
+begin
+  if PanAguarde.Color = clHighlight then
+    PanAguarde.Color := clRed
+  else
+    PanAguarde.Color := clHighlight;
+  Application.ProcessMessages;
+
 end;
 
 procedure TFuFinPedido.FormClose(Sender: TObject; var Action: TCloseAction);
@@ -1066,15 +1132,18 @@ begin
      FuFinPedido.Width := Screen.Width;
   SBoxPedido.Width := Trunc(FuFinPedido.Width * 0.45);
 
-  btGravar.Top := 38;
-  btGravar.Left := 5;
-  btGravar.Height := Trunc(PanCtle.Height * 0.50);
-  btGravar.Width := PanCtle.Width - 10;
+  btGravar.Top := 40;
+  btGravar.Left := 8;
+  btGravar.Height := Trunc(PanCtle.Height * 0.45);
+  btGravar.Width := PanCtle.Width - 16;
 
   btRetornar.Left := PanCtle.Width div 2;
   btRetornar.Top := btGravar.Top + btGravar.Height + 12;
-  btRetornar.Height := Trunc(PanCtle.Height * 0.40);
+  btRetornar.Height := Trunc(PanCtle.Height * 0.30);
   btRetornar.Width := Trunc(PanCtle.Width * 0.45);
+
+  btCancelar.Left := btGravar.Left;
+  btCancelar.Top := (btRetornar.Top + btRetornar.Height) - btCancelar.Height;
 
 end;
 

@@ -2,7 +2,7 @@ object FuFinPedido: TFuFinPedido
   Left = 0
   Top = 0
   Caption = 'Finaliza'#231#227'o do pedido'
-  ClientHeight = 547
+  ClientHeight = 567
   ClientWidth = 984
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -20,7 +20,7 @@ object FuFinPedido: TFuFinPedido
   TextHeight = 19
   object PanRodape: TPanel
     Left = 0
-    Top = 524
+    Top = 544
     Width = 984
     Height = 23
     Align = alBottom
@@ -36,7 +36,7 @@ object FuFinPedido: TFuFinPedido
     Left = 445
     Top = 41
     Width = 539
-    Height = 483
+    Height = 503
     Align = alClient
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
@@ -100,18 +100,14 @@ object FuFinPedido: TFuFinPedido
       Left = 1
       Top = 360
       Width = 537
-      Height = 122
+      Height = 142
       Align = alClient
       TabOrder = 3
-      DesignSize = (
-        537
-        122)
       object btCancelar: TBitBtn
         Left = 5
-        Top = 68
+        Top = 87
         Width = 162
         Height = 49
-        Anchors = [akLeft, akBottom]
         Caption = '&Cancelar pedido'
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clWindowText
@@ -145,7 +141,7 @@ object FuFinPedido: TFuFinPedido
       end
       object btRetornar: TBitBtn
         Left = 173
-        Top = 61
+        Top = 80
         Width = 208
         Height = 56
         Caption = '&Tela anterior'
@@ -262,79 +258,79 @@ object FuFinPedido: TFuFinPedido
       Align = alTop
       TabOrder = 1
       object PanDetPgto: TPanel
-        Left = 161
+        Left = 200
         Top = 1
-        Width = 375
+        Width = 336
         Height = 241
         Align = alClient
         BevelOuter = bvNone
         TabOrder = 1
         object LabReais: TLabel
-          Left = 74
-          Top = 30
+          Left = 94
+          Top = 34
           Width = 25
           Height = 19
           Alignment = taRightJustify
           Caption = 'R$:'
         end
         object LabCDeb: TLabel
-          Left = 32
-          Top = 120
+          Left = 52
+          Top = 124
           Width = 67
           Height = 19
           Alignment = taRightJustify
           Caption = 'C.D'#233'bito:'
         end
         object LabCCred: TLabel
-          Left = 27
-          Top = 150
+          Left = 47
+          Top = 154
           Width = 72
           Height = 19
           Alignment = taRightJustify
           Caption = 'C.Cr'#233'dito:'
         end
         object LabPix: TLabel
-          Left = 69
-          Top = 180
+          Left = 89
+          Top = 184
           Width = 30
           Height = 19
           Alignment = taRightJustify
           Caption = 'PIX:'
         end
         object LabOutros: TLabel
-          Left = 45
-          Top = 210
+          Left = 65
+          Top = 214
           Width = 54
           Height = 19
           Alignment = taRightJustify
           Caption = 'Outros:'
         end
         object Label10: TLabel
-          Left = 8
-          Top = 2
+          Left = 16
+          Top = 5
           Width = 91
           Height = 19
           Caption = 'Recebimento'
         end
         object LabReceb: TLabel
-          Left = 8
-          Top = 60
+          Left = 28
+          Top = 64
           Width = 91
           Height = 19
           Alignment = taRightJustify
           Caption = 'Vlr recebido:'
         end
         object LabTroco: TLabel
-          Left = 52
-          Top = 90
+          Left = 72
+          Top = 94
           Width = 47
           Height = 19
           Alignment = taRightJustify
           Caption = 'Troco:'
         end
         object edReais: TDBEdit
-          Left = 100
-          Top = 26
+          Left = 120
+          Top = 30
           Width = 121
           Height = 27
           DataField = 'VlrReais'
@@ -347,8 +343,8 @@ object FuFinPedido: TFuFinPedido
           OnKeyPress = MudaPontoVirgula
         end
         object edCDeb: TDBEdit
-          Left = 100
-          Top = 116
+          Left = 120
+          Top = 120
           Width = 121
           Height = 27
           DataField = 'VlrCDeb'
@@ -361,8 +357,8 @@ object FuFinPedido: TFuFinPedido
           OnKeyPress = MudaPontoVirgula
         end
         object edCCred: TDBEdit
-          Left = 100
-          Top = 146
+          Left = 120
+          Top = 150
           Width = 121
           Height = 27
           DataField = 'VlrCCred'
@@ -375,8 +371,8 @@ object FuFinPedido: TFuFinPedido
           OnKeyPress = MudaPontoVirgula
         end
         object edPIX: TDBEdit
-          Left = 100
-          Top = 176
+          Left = 120
+          Top = 180
           Width = 121
           Height = 27
           DataField = 'VlrPIX'
@@ -389,8 +385,8 @@ object FuFinPedido: TFuFinPedido
           OnKeyPress = MudaPontoVirgula
         end
         object edOutros: TDBEdit
-          Left = 100
-          Top = 206
+          Left = 120
+          Top = 210
           Width = 121
           Height = 27
           DataField = 'VlrOutros'
@@ -403,8 +399,8 @@ object FuFinPedido: TFuFinPedido
           OnKeyPress = MudaPontoVirgula
         end
         object edReceb: TDBEdit
-          Left = 100
-          Top = 56
+          Left = 120
+          Top = 60
           Width = 121
           Height = 27
           DataField = 'VlrRecebido'
@@ -416,8 +412,8 @@ object FuFinPedido: TFuFinPedido
           OnKeyPress = MudaPontoVirgula
         end
         object edTroco: TDBEdit
-          Left = 100
-          Top = 86
+          Left = 120
+          Top = 90
           Width = 121
           Height = 27
           DataField = 'VlrTroco'
@@ -431,7 +427,7 @@ object FuFinPedido: TFuFinPedido
       object dbMeioPagto: TDBRadioGroup
         Left = 1
         Top = 1
-        Width = 160
+        Width = 199
         Height = 241
         Align = alLeft
         BiDiMode = bdLeftToRight
@@ -456,6 +452,7 @@ object FuFinPedido: TFuFinPedido
           '4'
           '5')
         OnClick = dbMeioPagtoClick
+        OnExit = dbMeioPagtoExit
       end
     end
     object PanPlaca: TPanel
@@ -601,7 +598,7 @@ object FuFinPedido: TFuFinPedido
     Left = 0
     Top = 41
     Width = 445
-    Height = 483
+    Height = 503
     Align = alLeft
     TabOrder = 7
     object imgPedido: TImage
@@ -718,5 +715,12 @@ object FuFinPedido: TFuFinPedido
     GradientEnd = clAqua
     GradientStart = clTeal
     Layout = 'NumPad'
+  end
+  object TimerMsgPinpad: TTimer
+    Enabled = False
+    Interval = 500
+    OnTimer = TimerMsgPinpadTimer
+    Left = 324
+    Top = 297
   end
 end

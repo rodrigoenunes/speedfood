@@ -6,7 +6,7 @@ uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, RLReport, System.UITypes, RLPrinters, uBiblioteca;
   Procedure ImprimePedido(pNroPedido:Integer; pSys:Boolean = True);
-  Function EmiteNFCe(pNroPedido:Integer;pImprimir:Boolean): TRetorno;
+  Function EmiteNFCe(pNroPedido:Integer;pImprimir:Boolean;var pStatus:Boolean): TRetorno;
   Procedure ImprimeCaixa(pSequencia: Integer);
   Procedure ImprimeResumo(pIni,pFim:String;pVlr:array of Currency; pQtd:array of Integer;
                                            pVlrDoc:array of Currency; pqtdDoc:array of Integer);
@@ -376,12 +376,10 @@ begin
 
 end;
 
-Function EmiteNFCe(pNroPedido:Integer;pImprimir:Boolean): TRetorno;
+Function EmiteNFCe(pNroPedido:Integer;pImprimir:Boolean;var pStatus:Boolean): TRetorno;
 begin
-//  Application.MessageBox('Emissão NFCe desativada','Info',64);
-//  Exit;
-
   Result := EmitirNFCeDePV(pNroPedido,pImprimir);
+  pStatus := Result.Resultado;
   if Not Result.Resultado then
     Application.MessageBox(
      PChar(Result.Mensagem),

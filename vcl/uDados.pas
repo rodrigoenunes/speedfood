@@ -15,6 +15,7 @@ uses
   Function CriaAbrePedidoWrk(pNro:Integer): Integer;
   Function CriaResumoVendas: Boolean;
   Function ObtemParametro(idParam:String): String;
+  Procedure ExcluePedido(pNumero:Integer);
 
 type
   TuDM = class(TDataModule)
@@ -301,8 +302,8 @@ type
     usaCorItem: Boolean;
     sysUser: String;
     filGrupoItens: Integer;
-    nroPlaca,meioPgto: Integer;
-    nomeClie,CPFCNPJ: String;
+    meioPgto: Integer;
+    nomeClie,CPFCNPJ,nroPlaca: String;
     turnoIni,turnoFin,etqImpress: Integer;
     turnoCorrente: Integer;
     sitPagto: Integer;
@@ -313,7 +314,7 @@ var
   uDM: TuDM;
 
 const
-  xGrupos: array[1..6] of String = ('Lanches','Extras Lanche','Bedidas','Basicos','Extras Basico','Diversos');
+  xGrupos: array[1..6] of String = ('Lanches','Extras Lanche','Bebidas','Basicos','Extras Basico','Diversos');
   xOperacao: array[0..4] of String = ('Saldo','Receb','Suprim','Pagto','Sangria');
   xOperAbrv: array[0..4] of String = ('Sdo',  'Rec',  'Sup',   'Pgt',  'San');
   xMeioPgto: array[0..5] of String = ('R$', 'CDeb','CCred','PIX','Outros','Misto');
@@ -443,7 +444,7 @@ begin
     PedWrk.Active := True;
     DetpagWrk.Active := True;
     wNroPedido := pNro;
-    nroPlaca := 0;
+    nroPlaca := '';
     meioPgto := 0;
     nomeClie := '';
     CPFCNPJ := '';
@@ -489,6 +490,21 @@ begin
     uDM.Parametros.Active := True;
   if uDM.Parametros.FindKey([idParam]) then
     Result := AnsiUpperCase(uDM.ParametrosValor.AsString);
+
+end;
+
+
+Procedure ExcluePedido(pNumero:Integer);
+begin
+  if not uDM.Pedidos.FindKey([pNumero]) then
+     Exit;
+  uDM.PedDetpag.First;
+  while uDM.PedDetpag.RecordCount > 0 do
+    uDM.PedDetpag.Delete;
+  uDM.PedItens.First;
+  while uDM.PedItens.RecordCount > 0 do
+    uDM.PedItens.Delete;
+  uDM.Pedidos.Delete;
 
 end;
 
