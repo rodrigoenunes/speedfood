@@ -37,6 +37,7 @@ var
   FuConsPedidos: TFuConsPedidos;
   wArqXML,wArqSai: String;
   wExec: String;
+  lDebug: Boolean;
 
 implementation
 
@@ -46,7 +47,7 @@ uses uDados, uImpressoes, uGenericas, SFEuPrintFortes;
 
 Procedure ConsultarPedidos;
 var xEmissoes: String;
-    lDisp: Boolean;
+    lDisp,filAnt: Boolean;
 begin
   lDisp := False;
   xEmissoes := ObtemParametro('NFCe_Reais') +     // Pagto em Reais (dinheiro)
@@ -70,6 +71,18 @@ begin
     end;
   end;
   //
+  if ObtemParametro('_DEBUGCONSPEDIDOS') = 'S' then
+    lDebug := True
+  else
+    lDebug := False;
+  //
+  if lDebug then ShowMessage('Selecionando dados');
+  filAnt := uDM.Pedidos.Filtered;
+  uDM.Pedidos.Filtered := False;
+  uDM.Pedidos.Refresh;
+  uDM.Pedidos.Last;
+  if lDebug then ShowMessage('Selecionou dados - Todos');
+  //
   FuConsPedidos := TFuConsPedidos.Create(nil);
   FuConsPedidos.Height := Screen.Height - 60;
   FuConsPedidos.Top := 10;
@@ -78,6 +91,13 @@ begin
   FuConsPedidos.btEmitirNFCe.Enabled := lDisp;
   FuConsPedidos.ShowModal;
   FuConsPedidos.Free;
+  //
+  if lDebug then ShowMessage('Restaurando seleção');
+  uDM.Pedidos.Filtered := filAnt;
+  uDM.Pedidos.Refresh;
+  uDM.Pedidos.Last;
+  if lDebug then ShowMessage('Restauração finalizada');
+
 
 end;
 
@@ -405,7 +425,8 @@ end;
 
 procedure TFuConsPedidos.FormShow(Sender: TObject);
 begin
-  uDM.Pedidos.Last;
+  //uDM.Pedidos.Last;
+  if lDebug then ShowMessage('FormShow');
   if ObtemParametro('CancelarPedidos') = 'S' then
     btCancelar.Visible := True
   else
