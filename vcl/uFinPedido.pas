@@ -476,7 +476,7 @@ begin
      (uDM.PedidosMeioPagto.AsInteger = 2) or            // Credito
      (uDM.PedidosMeioPagto.AsInteger = 5)               // Misto
   then begin
-    LabInstrucao.Caption := 'Siga as instruções do PINPAD';
+    LabInstrucao.Caption := 'Siga as instruções do PINPAD !!!';
     wAtivarMsg := True;
   end;
   PanAguarde.Color := clHighlight;
@@ -582,35 +582,38 @@ begin
     uDM.PedDetpagNumero.AsInteger    := uDM.PedidosNumero.AsInteger;
     uDM.PedDetpagSeq.AsInteger       := 1;
     uDM.PedDetpagindPag.AsInteger    := 0;      // Sempre 0 (A vista) (1-Prazo)
-    uDM.PedDetpagtpIntegra.AsInteger := 2;
+    uDM.PedDetpagtpIntegra.AsInteger := uDM.SisPessoaTefPos.ASInteger;
     if uDM.PedidosVlrReais.AsCurrency > 0 then
     begin
       uDM.PedDetpagtPag.AsString := '01';       // Reais
       uDM.PedDetpagValor.AsCurrency := uDM.PedidosVlrReais.AsCurrency;
       uDM.PedDetpagvTroco.AsCurrency := uDM.PedidosVlrTroco.AsCurrency;
+      uDM.PedDetpagtpIntegra.AsInteger := 2;    // Não integrado
     end
     else begin
       if uDM.PedidosVlrCCred.AsCurrency > 0 then
       begin
         uDM.PedDetpagValor.AsCurrency := uDM.PedidosVlrCCred.AsCurrency;
         uDM.PedDetpagtPag.AsString := '03';
-        uDM.PedDetpagtpIntegra.AsInteger := uDM.SisPessoaTefPos.ASInteger;
+        //uDM.PedDetpagtpIntegra.AsInteger := uDM.SisPessoaTefPos.ASInteger;
       end;
       if uDM.PedidosVlrCDeb.AsCurrency > 0 then
       begin
         uDM.PedDetpagValor.AsCurrency := uDM.PedidosVlrCDeb.AsCurrency;
         uDM.PedDetpagtPag.AsString := '04';
-        uDM.PedDetpagtpIntegra.AsInteger := uDM.SisPessoaTefPos.ASInteger;
+        //uDM.PedDetpagtpIntegra.AsInteger := uDM.SisPessoaTefPos.ASInteger;
       end;
       if uDM.PedidosVlrPIX.AsCurrency > 0 then
       begin
         uDM.PedDetpagValor.AsCurrency := uDM.PedidosVlrPIX.AsCurrency;
         uDM.PedDetpagtPag.AsString := '17';
+        uDM.PedDetpagtpIntegra.AsInteger := 2;
       end;
       if uDM.PedidosVlrOutros.AsCurrency > 0 then
       begin
         uDM.PedDetpagValor.AsCurrency := uDM.PedidosVlrOutros.AsCurrency;
         uDM.PedDetpagtPag.AsString := '99';
+        uDM.PedDetpagtpIntegra.AsInteger := 2;
       end;
     end;
     uDM.PedDetpag.Post;

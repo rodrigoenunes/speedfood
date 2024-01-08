@@ -307,6 +307,7 @@ type
     turnoIni,turnoFin,etqImpress: Integer;
     turnoCorrente: Integer;
     sitPagto: Integer;
+    lDebug: Boolean;
 
   end;
 

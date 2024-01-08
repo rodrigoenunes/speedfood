@@ -96,6 +96,8 @@ Procedure Administrativo;
 var xTurno: String;
     lFilter: Boolean;
 begin
+  uDM.lDebug := False;
+  if ObtemParametro('_DEBUG') = 'S' then uDM.lDebug := True;
   if not CriaResumoVendas then
   begin
     MessageDlg('Não foi possível criar "ResumoVendas"',mtError,[mbOk],0);
@@ -222,14 +224,8 @@ begin
     tIni := tFim;
     tFim := tAux;
   end;
-  {
-  if tIni > tFim then
-  begin
-    MessageDlg('Turno inicial não pode ser posterior ao turno final, reinforme',mtError,[mbOk],0);
-    cbTurnoIni.SetFocus;
-    Exit;
-  end;
-  }
+  if uDM.lDebug then
+    MessageDlg('tIni=' + IntToStr(tIni) + '  tFim=' + IntToStr(tFim), mtInformation,[mbOk],0);
   //
   uDM.ResVendas.Active := True;
   uDM.ResVendas.EmptyDataSet;
@@ -265,16 +261,23 @@ begin
   LabProcess.Caption := 'Processando ' + IntToStr(PBar1.Position) + ' de ' + IntToStr(pBar1.Max);
   LabProcess.Visible := True;
   PanResultado.Visible := False;
+  if uDM.lDebug then MessageDlg('Antes da leitura dos pedidos' + #13 +
+                                'tIni=' + IntToStr(uDM.turnoIni) + ' tFim=' + IntToStr(uDM.turnoFin) + #13 +
+                                'sitPagto=' + IntToStr(uDM.sitPagto) + ' etiqs=' + IntToStr(uDM.etqImpress) + #13 +
+                                'Pedidos=' + IntToStr(uDM.Pedidos.RecordCount),mtInformation,[mbOk],0);
+
   Application.ProcessMessages;
   while not uDM.Pedidos.Eof do
   begin
-    if (uDM.PedidosTurno.AsInteger >= tIni) and (uDM.PedidosTurno.AsInteger <= tFim)
-      then ProcessaPedido;
+    //if (uDM.PedidosTurno.AsInteger >= tIni) and (uDM.PedidosTurno.AsInteger <= tFim)
+    //  then ProcessaPedido;
+    ProcessaPedido;
     PBar1.Position := pBar1.Position + 1;
     LabProcess.Caption := 'Processando ' + IntToStr(PBar1.Position) + ' de ' + IntToStr(pBar1.Max);
     Application.ProcessMessages;
     uDM.Pedidos.Next;
   end;
+  if uDM.lDebug then MessageDlg('Depois da leitura dos pedidos',mtInformation,[mbOk],0);
   //
   uDM.etqImpress := impAnt;
   uDM.meioPgto := pgtAnt;

@@ -37,7 +37,6 @@ var
   FuConsPedidos: TFuConsPedidos;
   wArqXML,wArqSai: String;
   wExec: String;
-  lDebug: Boolean;
 
 implementation
 
@@ -49,6 +48,10 @@ Procedure ConsultarPedidos;
 var xEmissoes: String;
     lDisp,filAnt: Boolean;
 begin
+  uDM.lDebug := False;
+  if ObtemParametro('_DEBUG') = 'S' then
+    uDM.lDebug := True;
+  //
   lDisp := False;
   xEmissoes := ObtemParametro('NFCe_Reais') +     // Pagto em Reais (dinheiro)
                ObtemParametro('NFCe_CDebito') +   // Pagto Cartao de débito
@@ -71,17 +74,12 @@ begin
     end;
   end;
   //
-  if ObtemParametro('_DEBUGCONSPEDIDOS') = 'S' then
-    lDebug := True
-  else
-    lDebug := False;
-  //
-  if lDebug then ShowMessage('Selecionando dados');
+  if uDM.lDebug then ShowMessage('Selecionando dados');
   filAnt := uDM.Pedidos.Filtered;
   uDM.Pedidos.Filtered := False;
   uDM.Pedidos.Refresh;
   uDM.Pedidos.Last;
-  if lDebug then ShowMessage('Selecionou dados - Todos');
+  if uDM.lDebug then ShowMessage('Selecionou dados - Todos');
   //
   FuConsPedidos := TFuConsPedidos.Create(nil);
   FuConsPedidos.Height := Screen.Height - 60;
@@ -92,11 +90,11 @@ begin
   FuConsPedidos.ShowModal;
   FuConsPedidos.Free;
   //
-  if lDebug then ShowMessage('Restaurando seleção');
+  if uDM.lDebug then ShowMessage('Restaurando seleção');
   uDM.Pedidos.Filtered := filAnt;
   uDM.Pedidos.Refresh;
   uDM.Pedidos.Last;
-  if lDebug then ShowMessage('Restauração finalizada');
+  if uDM.lDebug then ShowMessage('Restauração finalizada');
 
 
 end;
@@ -426,7 +424,7 @@ end;
 procedure TFuConsPedidos.FormShow(Sender: TObject);
 begin
   //uDM.Pedidos.Last;
-  if lDebug then ShowMessage('FormShow');
+  if uDM.lDebug then ShowMessage('FormShow');
   if ObtemParametro('CancelarPedidos') = 'S' then
     btCancelar.Visible := True
   else

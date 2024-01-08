@@ -5,7 +5,7 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Buttons, Vcl.ExtCtrls, Midaslib, DateUtils,
-  System.UITypes;
+  System.UITypes, ShellAPI;
 
 type
   TFuPrincipal = class(TForm)
@@ -115,12 +115,21 @@ begin
 end;
 
 procedure TFuPrincipal.btSairClick(Sender: TObject);
+var wExec,wParm: String;
+
 begin
 {
   CalculaSaldoCaixa(uDM.RegCaixaTurno.AsInteger);
   if MessageDlg('Imprimir fechamento de caixa ?',mtConfirmation,[mbYes,mbNo],0,mbNo,['Sim','Não']) = mrYes
      then ImprimeCaixa(uDM.RegCaixaTurno.AsInteger);
 }
+  if MessageDlg('Executar operação adicional (cartões) ?',
+                 mtConfirmation,[mbYes,mbNo],0,mbNo,['Sim','Não']) = mrYes
+  then begin
+    wExec := ObtemParametro('ACNFE_EXE');
+    wParm := '/TEF /CANCELAR X';
+    ShellExecute(0,'open',pChar(wExec),pChar(wParm),'',1);
+  end;
   FuPrincipal.Close;
 
 end;
