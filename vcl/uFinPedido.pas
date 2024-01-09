@@ -569,7 +569,7 @@ begin
       uDM.PedDetpagValor.AsCurrency := uDM.DetpagWrkValor.AsCurrency;
       if (uDM.DetpagWrktPag.AsString = '03')         // Cartao crédito
          or (uDM.DetpagWrktPag.AsString = '04')      // Cartao debito
-         //or (uDM.DetpagWrktPag.AsString = '17')
+         or (uDM.DetpagWrktPag.AsString = '17')      // PIX
          then uDM.PedDetpagtpIntegra.AsInteger := uDM.SisPessoaTefPos.AsInteger
          else uDM.PedDetpagtpIntegra.AsInteger := 2;
       uDM.PedDetpag.Post;
@@ -595,19 +595,19 @@ begin
       begin
         uDM.PedDetpagValor.AsCurrency := uDM.PedidosVlrCCred.AsCurrency;
         uDM.PedDetpagtPag.AsString := '03';
-        //uDM.PedDetpagtpIntegra.AsInteger := uDM.SisPessoaTefPos.ASInteger;
+        uDM.PedDetpagtpIntegra.AsInteger := uDM.SisPessoaTefPos.ASInteger;
       end;
       if uDM.PedidosVlrCDeb.AsCurrency > 0 then
       begin
         uDM.PedDetpagValor.AsCurrency := uDM.PedidosVlrCDeb.AsCurrency;
         uDM.PedDetpagtPag.AsString := '04';
-        //uDM.PedDetpagtpIntegra.AsInteger := uDM.SisPessoaTefPos.ASInteger;
+        uDM.PedDetpagtpIntegra.AsInteger := uDM.SisPessoaTefPos.ASInteger;
       end;
       if uDM.PedidosVlrPIX.AsCurrency > 0 then
       begin
         uDM.PedDetpagValor.AsCurrency := uDM.PedidosVlrPIX.AsCurrency;
         uDM.PedDetpagtPag.AsString := '17';
-        //uDM.PedDetpagtpIntegra.AsInteger := 2;
+        uDM.PedDetpagtpIntegra.AsInteger := uDM.SisPessoaTefPos.ASInteger;
       end;
       if uDM.PedidosVlrOutros.AsCurrency > 0 then
       begin

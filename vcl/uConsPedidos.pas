@@ -165,7 +165,7 @@ begin
   while not uDM.PedDetpag.Eof do
   begin
     if (uDM.PedDetpagSit.AsInteger = 0) and              // Situação : Não cancelado
-       (uDM.PedDetpagtpIntegra.AsInteger <> 2) then      // Integrado : é Integrado
+       (uDM.PedDetpagtpIntegra.AsInteger = 1) then       // Integrado : SIM
     begin
       wTpCard := '';
       if uDM.PedDetpagtPag.AsString = '03' then
