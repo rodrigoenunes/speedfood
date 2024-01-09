@@ -470,10 +470,11 @@ begin
   btGravar.Enabled := False;
   btCancelar.Enabled := False;
   btRetornar.Enabled := False;
-  LabInstrucao.Caption := 'Aguarde o final do processo';
+  LabInstrucao.Caption := 'Aguarde o final do processo';   // R$(*0) ou Outros(4)
   wAtivarMsg := False;
   if (uDM.PedidosMeioPagto.AsInteger = 1) or            // Débito
      (uDM.PedidosMeioPagto.AsInteger = 2) or            // Credito
+     (uDM.PedidosMeioPagto.AsInteger = 3) or            // PIX        (09/01/24)
      (uDM.PedidosMeioPagto.AsInteger = 5)               // Misto
   then begin
     LabInstrucao.Caption := 'Siga as instruções do PINPAD !!!';
@@ -513,12 +514,11 @@ begin
             bebSeq := bebSeq + 1;
             wrkSeq := bebSeq;
         end;
-        else begin
+        else begin  // Extras
             newSeq := newSeq + 1;
             wrkSeq := newSeq;
         end;
     end;
-    //
     uDM.PedItens.Append;
     uDM.PedItensNumero.AsInteger       := nrPedido;
     uDM.PedItensNrLcto.AsInteger       := wrkSeq;
@@ -553,9 +553,9 @@ begin
     uDM.PedItens.Post;
     uDM.PedWrk.Next;
   end;
-  // Pagtos
+  // Pagtos  (detpagWRK)
   if uDM.DetpagWrk.RecordCount > 0 then
-  begin         // Grava 'n' registros Detpag partindo de detpagWRK
+  begin         // Grava 'n' registros Detpag partindo de detpagWRK (Somente se for pagto MISTO)
     uDM.DetpagWrk.First;
     newSeq := 0;
     while not uDM.DetpagWrk.eof do
@@ -577,12 +577,12 @@ begin
     end;
     uDM.DetpagWrk.EmptyDataSet;
   end
-  else begin    // Grava 1 registro detpag
+  else begin    // Grava 1 registro detpag   (não há registros em detpagWRK)
     uDM.PedDetpag.Append;
     uDM.PedDetpagNumero.AsInteger    := uDM.PedidosNumero.AsInteger;
     uDM.PedDetpagSeq.AsInteger       := 1;
     uDM.PedDetpagindPag.AsInteger    := 0;      // Sempre 0 (A vista) (1-Prazo)
-    uDM.PedDetpagtpIntegra.AsInteger := uDM.SisPessoaTefPos.ASInteger;
+    uDM.PedDetpagtpIntegra.AsInteger := uDM.SisPessoaTefPos.AsInteger;     // 09/01/24
     if uDM.PedidosVlrReais.AsCurrency > 0 then
     begin
       uDM.PedDetpagtPag.AsString := '01';       // Reais
@@ -607,7 +607,7 @@ begin
       begin
         uDM.PedDetpagValor.AsCurrency := uDM.PedidosVlrPIX.AsCurrency;
         uDM.PedDetpagtPag.AsString := '17';
-        uDM.PedDetpagtpIntegra.AsInteger := 2;
+        //uDM.PedDetpagtpIntegra.AsInteger := 2;
       end;
       if uDM.PedidosVlrOutros.AsCurrency > 0 then
       begin
