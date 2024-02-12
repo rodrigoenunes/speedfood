@@ -775,7 +775,7 @@ object FuCaixaMovto: TFuCaixaMovto
         TabOrder = 6
         OnClick = btExcluirClick
       end
-      object BitBtn7: TBitBtn
+      object btSair2: TBitBtn
         Left = 700
         Top = 48
         Width = 135
@@ -894,7 +894,7 @@ object FuCaixaMovto: TFuCaixaMovto
           00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF}
         NumGlyphs = 2
         TabOrder = 7
-        OnClick = btSairClick
+        OnClick = btSair2Click
       end
     end
     object GridLctos: TDBGrid

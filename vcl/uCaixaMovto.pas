@@ -67,7 +67,7 @@ type
     btAlterar: TBitBtn;
     btRecalcular: TBitBtn;
     btExcluir: TBitBtn;
-    BitBtn7: TBitBtn;
+    btSair2: TBitBtn;
     PanManutLcto: TPanel;
     LabOperacao: TLabel;
     btManutOk: TBitBtn;
@@ -118,6 +118,7 @@ type
     procedure cbTurnosChange(Sender: TObject);
     procedure cbTurnosEnter(Sender: TObject);
     procedure btImprimirClick(Sender: TObject);
+    procedure btSair2Click(Sender: TObject);
   private
     { Private declarations }
   public
@@ -127,6 +128,7 @@ type
 var
   FuCaixaMovto: TFuCaixaMovto;
   xTurno: String;
+  lProsseguiu: Boolean;
 
 implementation
 
@@ -137,6 +139,7 @@ uses uDados, uGenericas, uCaixa, uImpressoes;
 Procedure CaixaMovimentacao;    //(pAtual:Boolean=True);
 begin
   FuCaixaMovto := TFuCaixaMovto.Create(nil);
+  lProsseguiu := False;
   with FuCaixaMovto
   do begin
     cbTurnos.Clear;
@@ -328,6 +331,13 @@ begin
   LabNRegs.Caption := IntToStr(uDM.LctCaixa.RecordCount) + ' lanctos';
   PanLanctos.Visible := True;
   FormResize(nil);
+  lProsseguiu := True;
+
+end;
+
+procedure TFuCaixaMovto.btSair2Click(Sender: TObject);
+begin
+  FuCaixaMovto.Close;
 
 end;
 
@@ -408,9 +418,12 @@ end;
 
 procedure TFuCaixaMovto.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
-  GridLctos.Visible := False;
-  CalculaSaldoCaixa(uDM.RegCaixaTurno.AsInteger);
-  GridLctos.Visible := True;
+  if lProsseguiu then
+  begin
+    GridLctos.Visible := False;
+    CalculaSaldoCaixa(uDM.RegCaixaTurno.AsInteger);
+    GridLctos.Visible := True;
+  end;
 
 end;
 
