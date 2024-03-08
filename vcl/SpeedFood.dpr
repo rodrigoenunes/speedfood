@@ -16,14 +16,14 @@ uses
   uConsPedidos in 'uConsPedidos.pas' {FuConsPedidos},
   uSysPrinters in '..\..\UsoGeral\uSysPrinters.pas' {FuSysPrinters},
   FortesReportCtle in '..\..\uFortesReport\FortesReportCtle.pas' {FFRCtle},
-  EnviaEMail in '..\..\uFortesReport\EnviaEMail.pas' {FEnviaEMail},
   uAdministrativo in 'uAdministrativo.pas' {FuAdministrativo},
   uUserPwd in 'uUserPwd.pas' {FuUserPwd},
   uHelpSpeedFood in 'uHelpSpeedFood.pas' {FuHelpSpeedFood},
   SFEuPrintFortes in '..\Etiquetas\SFEuPrintFortes.pas' {FSFEuPrintFortes},
   uMontarLanche in 'uMontarLanche.pas' {FuMontarLanche},
   uBiblioteca in 'uBiblioteca.pas',
-  uPagtoMisto in 'uPagtoMisto.pas' {FuPagtoMisto};
+  uPagtoMisto in 'uPagtoMisto.pas' {FuPagtoMisto},
+  uEmail in '..\..\UsoGeral\uEmail.pas';
 
 {$R *.res}
 
@@ -33,7 +33,6 @@ begin
   Application.CreateForm(TFuPrincipal, FuPrincipal);
   Application.CreateForm(TFGen, FGen);
   Application.CreateForm(TFFRCtle, FFRCtle);
-  Application.CreateForm(TFEnviaEMail, FEnviaEMail);
   Application.CreateForm(TFuUserPwd, FuUserPwd);
   Application.CreateForm(TFuPagtoMisto, FuPagtoMisto);
   //Application.CreateForm(TFuUserPwd, FuUserPwd);
