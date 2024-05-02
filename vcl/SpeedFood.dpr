@@ -15,7 +15,6 @@ uses
   uCaixaMovto in 'uCaixaMovto.pas' {FuCaixaMovto},
   uSysPrinters in '..\..\UsoGeral\uSysPrinters.pas' {FuSysPrinters},
   FortesReportCtle in '..\..\uFortesReport\FortesReportCtle.pas' {FFRCtle},
-  uAdministrativo in 'uAdministrativo.pas' {FuAdministrativo},
   uUserPwd in 'uUserPwd.pas' {FuUserPwd},
   uHelpSpeedFood in 'uHelpSpeedFood.pas' {FuHelpSpeedFood},
   SFEuPrintFortes in '..\Etiquetas\SFEuPrintFortes.pas' {FSFEuPrintFortes},
@@ -25,7 +24,7 @@ uses
   uEmail in '..\..\UsoGeral\uEmail.pas',
   uConfirmacao in '..\UsoGeral\uConfirmacao.pas' {FuConfirmacao},
   uQueryPedidos in 'uQueryPedidos.pas' {FuQueryPedidos},
-  uQueryAdministrativo in 'uQueryAdministrativo.pas' {FuQueryAdministrativo};
+  uAdministrativo in 'uAdministrativo.pas' {FuAdministrativo};
 
 {$R *.res}
 
@@ -42,13 +41,12 @@ begin
   Application.CreateForm(TFuCaixaMovto, FuCaixaMovto);
   Application.CreateForm(TFuTrataLanche, FuTrataLanche);
   Application.CreateForm(TFuPedidos, FuPedidos);
-  Application.CreateForm(TFuAdministrativo, FuAdministrativo);
   Application.CreateForm(TFuFinPedido, FuFinPedido);
   Application.CreateForm(TFuItens, FuItens);
   Application.CreateForm(TFuCaixa, FuCaixa);
   Application.CreateForm(TFuImpressoes, FuImpressoes);
-  Application.CreateForm(TFuQueryAdministrativo, FuQueryAdministrativo);
   Application.CreateForm(TFuQueryPedidos, FuQueryPedidos);
+  Application.CreateForm(TFuAdministrativo, FuAdministrativo);
   Application.Run;
 
 end.

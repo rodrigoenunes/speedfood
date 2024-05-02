@@ -52,8 +52,8 @@ implementation
 {$R *.dfm}
 
 uses uItens, uDados, uGenericas, uCaixa, uPedidos, uImpressoes, uUsuario,
-  FortesReportCtle, uAdministrativo, uUserPwd, uHelpSpeedFood,
-  uCaixaMovto, uQueryPedidos,uQueryAdministrativo;
+  FortesReportCtle, uUserPwd, uHelpSpeedFood,
+  uCaixaMovto, uQueryPedidos, uAdministrativo;
 
 procedure TFuPrincipal.btAbrirCaixaClick(Sender: TObject);
 begin
@@ -66,8 +66,7 @@ begin
   if ObtemParametro('SistemaUserPwd') = 'S'
   then if not ObtemUsuario(uDM.sysUser)
             then btSairClick(nil);
-  QueryAdministrativo;
-  //Administrativo;
+  Administrativo;
 
 end;
 

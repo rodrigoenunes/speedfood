@@ -161,9 +161,6 @@
             <Form>FFRCtle</Form>
             <FormType>dfm</FormType>
         </DCCReference>
-        <DCCReference Include="uAdministrativo.pas">
-            <Form>FuAdministrativo</Form>
-        </DCCReference>
         <DCCReference Include="uUserPwd.pas">
             <Form>FuUserPwd</Form>
             <FormType>dfm</FormType>
@@ -194,8 +191,8 @@
             <Form>FuQueryPedidos</Form>
             <FormType>dfm</FormType>
         </DCCReference>
-        <DCCReference Include="uQueryAdministrativo.pas">
-            <Form>FuQueryAdministrativo</Form>
+        <DCCReference Include="uAdministrativo.pas">
+            <Form>FuAdministrativo</Form>
             <FormType>dfm</FormType>
         </DCCReference>
         <BuildConfiguration Include="Base">

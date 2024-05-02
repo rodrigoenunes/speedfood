@@ -10,7 +10,7 @@ object FuAdministrativo: TFuAdministrativo
   Font.Height = -13
   Font.Name = 'Tahoma'
   Font.Style = []
-  OnCreate = FormCreate
+  OnClose = FormClose
   OnResize = FormResize
   TextHeight = 16
   object gbTurnos: TGroupBox
@@ -168,7 +168,7 @@ object FuAdministrativo: TFuAdministrativo
       end
       object btSair2: TBitBtn
         Left = 601
-        Top = 6
+        Top = 5
         Width = 138
         Height = 25
         Anchors = [akTop, akRight]

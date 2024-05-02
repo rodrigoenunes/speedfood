@@ -66,10 +66,10 @@ type
     edTotQtdDocs: TEdit;
     procedure btSairClick(Sender: TObject);
     procedure btProcessarClick(Sender: TObject);
-    procedure FormCreate(Sender: TObject);
     procedure btNovaClick(Sender: TObject);
     procedure FormResize(Sender: TObject);
     procedure btImprimirClick(Sender: TObject);
+    procedure FormClose(Sender: TObject; var Action: TCloseAction);
   private
     { Private declarations }
   public
@@ -103,7 +103,7 @@ begin
     MessageDlg('Não foi possível criar "ResumoVendas"',mtError,[mbOk],0);
     Exit;
   end;
-  //FuAdministrativo := TFuAdministrativo.Create(nil);
+  //
   FuAdministrativo.Top := 12;
   FuAdministrativo.Height := Screen.Height - 80;
   FuAdministrativo.Left := 80;
@@ -122,12 +122,13 @@ begin
     end;
     cbTurnoIni.ItemIndex := 0;
     cbTurnoFin.ItemIndex := 0;
-    lFilter := uDM.Pedidos.Filtered;
+    //
+    // lFilter := uDM.Pedidos.Filtered;
 
     FuAdministrativo.ShowModal;
 
-    uDM.Pedidos.Filtered := lFilter;
-    uDM.Pedidos.Refresh;
+    // uDM.Pedidos.Filtered := lFilter;
+    // uDM.Pedidos.Refresh;
 
   end;
   //FuAdministrativo.Free;
@@ -251,9 +252,11 @@ begin
   pgtAnt := uDM.sitPagto;
   uDM.etqImpress := 2;             // Sem seleção de impressão de etiquetas
   uDM.sitPagto := 1;               // Somente pagos
+  //
   uDM.Pedidos.Filtered := True;
   uDM.Pedidos.Refresh;
   uDM.Pedidos.First;
+  //
   PBar1.Min := 0;
   PBar1.Max := uDM.Pedidos.RecordCount;
   PBar1.Position := 0;
@@ -329,9 +332,14 @@ begin
 
 end;
 
-procedure TFuAdministrativo.FormCreate(Sender: TObject);
+procedure TFuAdministrativo.FormClose(Sender: TObject;
+  var Action: TCloseAction);
 begin
-  //LabObsMisto.Caption := '(*) Incluso nos meios' + #13 + 'de pagamento';
+  gbTurnos.Height := 101;
+  gbTurnos.Enabled := True;
+  LabProcess.Visible := False;
+  PBar1.Visible := False;
+  PanResultado.Visible := False;
 
 end;
 
