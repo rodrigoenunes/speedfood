@@ -10,13 +10,11 @@ object FuFinPedido: TFuFinPedido
   Font.Height = -16
   Font.Name = 'Tahoma'
   Font.Style = []
-  OldCreateOrder = True
   Position = poDesigned
   OnClose = FormClose
   OnCreate = FormCreate
   OnResize = FormResize
   OnShow = FormShow
-  PixelsPerInch = 96
   TextHeight = 19
   object PanRodape: TPanel
     Left = 0

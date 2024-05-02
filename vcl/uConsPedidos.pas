@@ -49,8 +49,9 @@ var xEmissoes: String;
     lDisp,filAnt: Boolean;
 begin
   uDM.lDebug := False;
-  if ObtemParametro('_DEBUG') = 'S' then
+  if ObtemParametro('DEBUG') = 'S' then
     uDM.lDebug := True;
+
   //
   lDisp := False;
   xEmissoes := ObtemParametro('NFCe_Reais') +     // Pagto em Reais (dinheiro)
@@ -81,14 +82,14 @@ begin
   uDM.Pedidos.Last;
   if uDM.lDebug then ShowMessage('Selecionou dados - Todos');
   //
-  FuConsPedidos := TFuConsPedidos.Create(nil);
+  //FuConsPedidos := TFuConsPedidos.Create(nil);
   FuConsPedidos.Height := Screen.Height - 60;
   FuConsPedidos.Top := 10;
   FuConsPedidos.Width := Trunc(Screen.Width * 0.60);
   FuConsPedidos.Left := 40;
   FuConsPedidos.btEmitirNFCe.Enabled := lDisp;
   FuConsPedidos.ShowModal;
-  FuConsPedidos.Free;
+  //FuConsPedidos.Free;
   //
   if uDM.lDebug then ShowMessage('Restaurando seleção');
   uDM.Pedidos.Filtered := filAnt;

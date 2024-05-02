@@ -10,9 +10,7 @@ object FuPagtoMisto: TFuPagtoMisto
   Font.Height = -21
   Font.Name = 'Tahoma'
   Font.Style = []
-  OldCreateOrder = False
   OnActivate = FormActivate
-  PixelsPerInch = 96
   TextHeight = 25
   object PanTopo: TPanel
     Left = 0
@@ -35,17 +33,16 @@ object FuPagtoMisto: TFuPagtoMisto
       object Label1: TLabel
         Left = 2
         Top = 2
-        Width = 221
+        Width = 148
         Height = 25
         Align = alTop
         Alignment = taCenter
         Caption = 'Valor do pedido'
-        ExplicitWidth = 148
       end
       object DBText1: TDBText
         Left = 2
         Top = 34
-        Width = 221
+        Width = 78
         Height = 25
         Align = alBottom
         Alignment = taCenter
@@ -58,7 +55,6 @@ object FuPagtoMisto: TFuPagtoMisto
         Font.Name = 'Tahoma'
         Font.Style = []
         ParentFont = False
-        ExplicitWidth = 78
       end
     end
     object PanVlrRestante: TPanel
@@ -74,17 +70,16 @@ object FuPagtoMisto: TFuPagtoMisto
       object Label2: TLabel
         Left = 2
         Top = 2
-        Width = 312
+        Width = 131
         Height = 25
         Align = alTop
         Alignment = taCenter
         Caption = 'Valor restante'
-        ExplicitWidth = 131
       end
       object LabRestante: TLabel
         Left = 2
         Top = 34
-        Width = 312
+        Width = 114
         Height = 25
         Align = alBottom
         Alignment = taCenter
@@ -95,7 +90,6 @@ object FuPagtoMisto: TFuPagtoMisto
         Font.Name = 'Tahoma'
         Font.Style = []
         ParentFont = False
-        ExplicitWidth = 114
       end
     end
   end

@@ -10,14 +10,12 @@ object FuPrincipal: TFuPrincipal
   Font.Height = -16
   Font.Name = 'Tahoma'
   Font.Style = []
-  OldCreateOrder = False
   OnActivate = FormActivate
   OnClose = FormClose
   OnCreate = FormCreate
   DesignSize = (
     504
     394)
-  PixelsPerInch = 96
   TextHeight = 19
   object Image1: TImage
     Left = 291

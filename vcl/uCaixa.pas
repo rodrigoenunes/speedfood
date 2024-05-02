@@ -5,7 +5,7 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, DateUtils, Vcl.DBCtrls, Vcl.StdCtrls,
-  Vcl.Mask, Vcl.Buttons;
+  Vcl.Mask, Vcl.Buttons, Vcl.ExtCtrls;
   Function VerificaStatusCaixa: Integer;
   Function AberturaDeCaixa: Integer;
   Function FechamentoDeCaixa: Integer;
@@ -212,7 +212,7 @@ begin
     Result := 0;       // Abrir novo caixa/turno
     Exit;
   end;
-  FuCaixa := TFuCaixa.Create(nil);
+  //FuCaixa := TFuCaixa.Create(nil);
   with FuCaixa
   do begin
     LabRotina.Caption := 'Turno aberto';
@@ -226,7 +226,7 @@ begin
     ShowModal;
     Result := wStatusCaixa;     // 0-Abrir novo; 1-Prosseguir
   end;
-  FuCaixa.Free;
+  //FuCaixa.Free;
 
 end;
 
@@ -235,7 +235,7 @@ Function AberturaDeCaixa: Integer;
 var wTurno: Integer;
 begin
   Result  := 0;
-  FuCaixa := TFuCaixa.Create(nil);
+  //FuCaixa := TFuCaixa.Create(nil);
   with FuCaixa
   do begin
     LabRotina.Caption := 'Abertura de turno';
@@ -262,13 +262,13 @@ begin
     else
       Result := -1;
   end;
-  FuCaixa.Free;
+  //FuCaixa.Free;
 
 end;
 
 Function FechamentoDeCaixa: Integer;
 begin
-  FuCaixa := TFuCaixa.Create(nil);
+  //FuCaixa := TFuCaixa.Create(nil);
   with FuCaixa do
   begin
     uDM.RegCaixa.Edit;
@@ -289,7 +289,7 @@ begin
     ShowModal;
     Result := wStatusCaixa;
   end;
-  FuCaixa.Free;
+  //FuCaixa.Free;
 
 end;
 

@@ -138,7 +138,7 @@ uses uDados, uGenericas, uCaixa, uImpressoes;
 
 Procedure CaixaMovimentacao;    //(pAtual:Boolean=True);
 begin
-  FuCaixaMovto := TFuCaixaMovto.Create(nil);
+  //FuCaixaMovto := TFuCaixaMovto.Create(nil);
   lProsseguiu := False;
   with FuCaixaMovto
   do begin
@@ -163,7 +163,7 @@ begin
   }
     ShowModal;
   end;
-  FuCaixaMovto.Free;
+  //FuCaixaMovto.Free;
 
 end;
 

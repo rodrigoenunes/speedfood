@@ -10,11 +10,9 @@ object FuConsPedidos: TFuConsPedidos
   Font.Height = -13
   Font.Name = 'Tahoma'
   Font.Style = []
-  OldCreateOrder = True
   OnClose = FormClose
   OnResize = FormResize
   OnShow = FormShow
-  PixelsPerInch = 96
   TextHeight = 16
   object Panel1: TPanel
     Left = 0

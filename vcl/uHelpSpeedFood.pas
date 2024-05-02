@@ -32,7 +32,7 @@ implementation
 
 Procedure AjudaSpeedFood(pTpAjuda:Integer; pModo:Boolean = False);
 begin
-  FuHelpSpeedFood := TFuHelpSpeedFood.Create(nil);
+  //FuHelpSpeedFood := TFuHelpSpeedFood.Create(nil);
   with FuHelpSpeedFood
   do begin
     Top := 20;
@@ -63,7 +63,7 @@ begin
       btSalvar.Visible := True;
     end;
     ShowModal;
-    Free;
+    //Free;
   end;
 
 end;

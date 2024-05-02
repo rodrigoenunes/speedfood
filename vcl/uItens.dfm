@@ -10,13 +10,11 @@ object FuItens: TFuItens
   Font.Height = -13
   Font.Name = 'Tahoma'
   Font.Style = []
-  OldCreateOrder = False
   Position = poDesigned
   ShowHint = True
   OnActivate = FormActivate
   OnClose = FormClose
   OnResize = FormResize
-  PixelsPerInch = 96
   TextHeight = 16
   object PanDados: TPanel
     Left = 0

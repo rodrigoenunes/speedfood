@@ -92,17 +92,19 @@ uses uDados, uGenericas, uFinPedido, uTrataLanche, uBiblioteca, uMontarLanche;
 
 Procedure LancamentoPedidos;
 begin
-  FuPedidos := TFuPedidos.Create(nil);
-  FuTrataLanche := TFuTrataLanche.Create(nil);
-  FuMontarLanche := TFuMontarLanche.Create(nil);
-  FuFinPedido := TFuFinPedido.Create(nil);
+  //FuPedidos := TFuPedidos.Create(nil);
+  //FuTrataLanche := TFuTrataLanche.Create(nil);
+  //FuMontarLanche := TFuMontarLanche.Create(nil);
+  //FuFinPedido := TFuFinPedido.Create(nil);
+
   nExec := 0;
   nMaxExtras := StrToIntDef(ObtemParametro('PedidoMaxExtras'),7);
   FuPedidos.ShowModal;
-  FuFinPedido.Free;
-  FuMontarLanche.Free;
-  FuTrataLanche.Free;
-  FuPedidos.Free;
+
+  //FuFinPedido.Free;
+  //FuMontarLanche.Free;
+  //FuTrataLanche.Free;
+  //FuPedidos.Free;
 
 end;
 

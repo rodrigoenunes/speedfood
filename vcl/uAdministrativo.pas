@@ -97,13 +97,13 @@ var xTurno: String;
     lFilter: Boolean;
 begin
   uDM.lDebug := False;
-  if ObtemParametro('_DEBUG') = 'S' then uDM.lDebug := True;
+  if ObtemParametro('DEBUG') = 'S' then uDM.lDebug := True;
   if not CriaResumoVendas then
   begin
     MessageDlg('Não foi possível criar "ResumoVendas"',mtError,[mbOk],0);
     Exit;
   end;
-  FuAdministrativo := TFuAdministrativo.Create(nil);
+  //FuAdministrativo := TFuAdministrativo.Create(nil);
   FuAdministrativo.Top := 12;
   FuAdministrativo.Height := Screen.Height - 80;
   FuAdministrativo.Left := 80;
@@ -130,7 +130,7 @@ begin
     uDM.Pedidos.Refresh;
 
   end;
-  FuAdministrativo.Free;
+  //FuAdministrativo.Free;
 
 end;
 

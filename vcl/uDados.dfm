@@ -1,5 +1,4 @@
 object uDM: TuDM
-  OldCreateOrder = False
   OnCreate = DataModuleCreate
   Height = 419
   Width = 648
@@ -444,6 +443,7 @@ object uDM: TuDM
     OnFilterRecord = PedidosFilterRecord
     IndexFieldNames = 'Numero'
     Connection = FDC
+    ResourceOptions.AssignedValues = [rvEscapeExpand]
     TableName = 'speedfood.com_pedido'
     Left = 212
     Top = 144
@@ -621,6 +621,11 @@ object uDM: TuDM
       Origin = 'ChaveNFe'
       Size = 44
     end
+    object PedidosOrigem: TShortintField
+      AutoGenerateValue = arDefault
+      FieldName = 'Origem'
+      Origin = 'Origem'
+    end
     object PedidosZC_Impresso: TStringField
       FieldKind = fkCalculated
       FieldName = 'ZC_Impresso'
@@ -667,6 +672,11 @@ object uDM: TuDM
       FieldKind = fkCalculated
       FieldName = 'ZC_SitTxt'
       Size = 10
+      Calculated = True
+    end
+    object PedidosZC_Origem: TStringField
+      FieldKind = fkCalculated
+      FieldName = 'ZC_Origem'
       Calculated = True
     end
   end

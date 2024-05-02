@@ -11,11 +11,9 @@ object FuCaixa: TFuCaixa
   Font.Height = -13
   Font.Name = 'Tahoma'
   Font.Style = []
-  OldCreateOrder = False
   Position = poDesigned
   OnActivate = FormActivate
   OnCreate = FormCreate
-  PixelsPerInch = 96
   TextHeight = 16
   object Label1: TLabel
     Left = 64

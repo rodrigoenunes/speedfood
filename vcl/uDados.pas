@@ -273,6 +273,8 @@ type
     PedidosIdArqXML: TStringField;
     PedidosChaveNFe: TStringField;
     PedDetpagSit: TIntegerField;
+    PedidosOrigem: TShortintField;
+    PedidosZC_Origem: TStringField;
     procedure ItensCalcFields(DataSet: TDataSet);
     procedure LctCaixaCalcFields(DataSet: TDataSet);
     procedure PedWrkCalcFields(DataSet: TDataSet);
@@ -308,6 +310,7 @@ type
     turnoCorrente: Integer;
     sitPagto: Integer;
     lDebug: Boolean;
+    wOperCartoes: Integer;
 
   end;
 
@@ -490,7 +493,7 @@ begin
   if not uDM.Parametros.Active then
     uDM.Parametros.Active := True;
   if uDM.Parametros.FindKey([idParam]) then
-    Result := AnsiUpperCase(uDM.ParametrosValor.AsString);
+    Result := uDM.ParametrosValor.AsString;
 
 end;
 
@@ -531,6 +534,8 @@ begin
   vIniFile.Free;
   //
   FDC.Connected := True;
+  //
+  wOperCartoes := 0;
 
 end;
 
@@ -647,20 +652,20 @@ begin
     PedidosZC_Senha.AsString := nrAux;   // PedidosNumero.AsString;
   PedidosZC_NroLst.AsString := nrAux;
 
-  if PedidosSitPagto.AsInteger = 1 then
-  begin
-    PedidosZC_SitPagto.AsString := 'P';                // Fontname no grid=Wingdings 2  (Pago) Tickado
-    PedidosZC_SitTxt.AsString := 'Pago';
-  end
-  else if PedidosSitPagto.AsInteger = 9
-       then begin
-         PedidosZC_SitPagto.AsString := 'O';                // Cancelado
-         PedidosZC_SItTxt.AsString := 'Cancelado';
-       end
-       else begin
-         PedidosZC_SitPagto.AsString := '';
-         PedidosZC_SitTxt.AsString := 'Pendente';
-       end;
+  case PedidosSitPagto.AsInteger of
+    1:begin
+        PedidosZC_SitPagto.AsString := 'P';                // Fontname no grid=Wingdings 2  (Pago) Tickado
+        PedidosZC_SitTxt.AsString := 'Pago';
+    end;
+    9:begin
+        PedidosZC_SitPagto.AsString := 'O';                // Cancelado
+        PedidosZC_SItTxt.AsString := 'Cancelado';
+    end
+    else begin   // 0,2,3,4,5,6,7,8
+       PedidosZC_SitPagto.AsString := '';
+       PedidosZC_SitTxt.AsString := 'Pendente';
+    end;
+  end;
 
   PedidosZC_Impresso.AsString := '';
   if PedidosEtqImpressas.AsInteger > 0 then
@@ -675,6 +680,12 @@ begin
   else begin
     PedidosZC_MeioPagto.AsString := '(' + PedidosMeioPagto.AsString + ')';
     PedidosZC_MPExtenso.AsString := '[  ' + PedidosMeioPagto.AsString + '  ]';
+  end;
+
+  case PedidosOrigem.AsInteger of
+    0:PedidosZC_Origem.AsString := 'Onibus';
+    1:PedidosZC_Origem.AsString := 'Onibus-WhatsApp';
+    else PedidosZC_Origem.AsString := '';
   end;
 
 end;
@@ -774,9 +785,9 @@ end;
 
 procedure TuDM.RegCaixaCalcFields(DataSet: TDataSet);
 begin
-  if RegCaixaSituacao.AsString = 'E' then
+  if RegCaixaSituacao.AsString = 'F' then
   begin
-    RegCaixaZC_Situacao.AsString := 'Encerrado';
+    RegCaixaZC_Situacao.AsString := 'Finalizado';
     RegCaixaZC_IniFim.AsString := Copy(RegCaixaDtHrInicio.AsString,1,6) +
                                   Copy(RegCaixaDtHrInicio.AsString,9,8) + ' - ' +
                                   Copy(RegCaixaDtHrFim.AsString,1,6) +

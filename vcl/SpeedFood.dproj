@@ -4,7 +4,7 @@
         <ProjectVersion>19.5</ProjectVersion>
         <FrameworkType>VCL</FrameworkType>
         <Base>True</Base>
-        <Config Condition="'$(Config)'==''">Release</Config>
+        <Config Condition="'$(Config)'==''">Debug</Config>
         <Platform Condition="'$(Platform)'==''">Win32</Platform>
         <TargetedPlatforms>1</TargetedPlatforms>
         <AppType>Application</AppType>
@@ -87,6 +87,7 @@
         <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
         <VerInfo_Locale>1033</VerInfo_Locale>
         <DCC_UnitSearchPath>C:\Clientes\uli\speedfood\UsoGeral\;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
+        <DCC_ExeOutput>C:\Projetos\speedfood\vcl\Win32\Debug\</DCC_ExeOutput>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_2)'!=''">
         <DCC_LocalDebugSymbols>false</DCC_LocalDebugSymbols>
@@ -152,10 +153,6 @@
             <Form>FuCaixaMovto</Form>
             <FormType>dfm</FormType>
         </DCCReference>
-        <DCCReference Include="uConsPedidos.pas">
-            <Form>FuConsPedidos</Form>
-            <FormType>dfm</FormType>
-        </DCCReference>
         <DCCReference Include="..\..\UsoGeral\uSysPrinters.pas">
             <Form>FuSysPrinters</Form>
             <FormType>dfm</FormType>
@@ -166,7 +163,6 @@
         </DCCReference>
         <DCCReference Include="uAdministrativo.pas">
             <Form>FuAdministrativo</Form>
-            <FormType>dfm</FormType>
         </DCCReference>
         <DCCReference Include="uUserPwd.pas">
             <Form>FuUserPwd</Form>
@@ -190,6 +186,18 @@
             <FormType>dfm</FormType>
         </DCCReference>
         <DCCReference Include="..\..\UsoGeral\uEmail.pas"/>
+        <DCCReference Include="..\UsoGeral\uConfirmacao.pas">
+            <Form>FuConfirmacao</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="uQueryPedidos.pas">
+            <Form>FuQueryPedidos</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="uQueryAdministrativo.pas">
+            <Form>FuQueryAdministrativo</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>
@@ -224,6 +232,12 @@
                     </Platform>
                 </DeployFile>
                 <DeployFile LocalName="Win32\Debug\SpeedFood.exe" Configuration="Debug" Class="ProjectOutput"/>
+                <DeployFile LocalName="Win32\Debug\SpeedFood.exe" Configuration="Debug" Class="ProjectOutput">
+                    <Platform Name="Win32">
+                        <RemoteName>SpeedFood.exe</RemoteName>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
                 <DeployClass Name="AdditionalDebugSymbols">
                     <Platform Name="iOSSimulator">
                         <Operation>1</Operation>

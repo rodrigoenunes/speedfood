@@ -10,10 +10,8 @@ object FuAdministrativo: TFuAdministrativo
   Font.Height = -13
   Font.Name = 'Tahoma'
   Font.Style = []
-  OldCreateOrder = False
   OnCreate = FormCreate
   OnResize = FormResize
-  PixelsPerInch = 96
   TextHeight = 16
   object gbTurnos: TGroupBox
     Left = 0

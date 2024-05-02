@@ -10,8 +10,6 @@ object FuHelpSpeedFood: TFuHelpSpeedFood
   Font.Height = -13
   Font.Name = 'Tahoma'
   Font.Style = []
-  OldCreateOrder = False
-  PixelsPerInch = 96
   TextHeight = 16
   object PanCtle: TPanel
     Left = 0

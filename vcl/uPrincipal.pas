@@ -52,8 +52,8 @@ implementation
 {$R *.dfm}
 
 uses uItens, uDados, uGenericas, uCaixa, uPedidos, uImpressoes, uUsuario,
-  uConsPedidos, FortesReportCtle, uAdministrativo, uUserPwd, uHelpSpeedFood,
-  uCaixaMovto;
+  FortesReportCtle, uAdministrativo, uUserPwd, uHelpSpeedFood,
+  uCaixaMovto, uQueryPedidos,uQueryAdministrativo;
 
 procedure TFuPrincipal.btAbrirCaixaClick(Sender: TObject);
 begin
@@ -66,13 +66,15 @@ begin
   if ObtemParametro('SistemaUserPwd') = 'S'
   then if not ObtemUsuario(uDM.sysUser)
             then btSairClick(nil);
-  Administrativo;
+  QueryAdministrativo;
+  //Administrativo;
 
 end;
 
 procedure TFuPrincipal.btConsPedidosClick(Sender: TObject);
 begin
-  ConsultarPedidos;
+  QueryPedidos(uDM.turnoCorrente);
+  //ConsultarPedidos;
 
 end;
 
@@ -123,13 +125,14 @@ begin
   if MessageDlg('Imprimir fechamento de caixa ?',mtConfirmation,[mbYes,mbNo],0,mbNo,['Sim','Não']) = mrYes
      then ImprimeCaixa(uDM.RegCaixaTurno.AsInteger);
 }
-  if MessageDlg('Executar operação adicional (cartões) ?',
-                 mtConfirmation,[mbYes,mbNo],0,mbNo,['Sim','Não']) = mrYes
-  then begin
-    wExec := ObtemParametro('ACNFE_EXE');
-    wParm := '/TEF /CANCELAR X';
-    ShellExecute(0,'open',pChar(wExec),pChar(wParm),'',1);
-  end;
+  if uDM.wOperCartoes > 0 then
+     if MessageDlg('Executar operação adicional (cartões) ?',
+                    mtConfirmation,[mbYes,mbNo],0,mbNo,['Sim','Não']) = mrYes
+     then begin
+       wExec := ObtemParametro('ACNFE_EXE');
+       wParm := '/TEF /CANCELAR X';
+       ShellExecute(0,'open',pChar(wExec),pChar(wParm),'',1);
+     end;
   FuPrincipal.Close;
 
 end;

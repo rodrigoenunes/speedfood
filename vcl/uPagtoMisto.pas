@@ -65,7 +65,7 @@ uses uDados;
 Procedure PagamentoMisto(pmtTop,pmtLeft,pmtHeight,pmtWidth:Integer;
                             var pmtReais,pmtCCred,pmtCDeb,pmtPIX,pmtOutros: Currency);
 begin
-  FuPagtoMisto := TFuPagtoMisto.Create(nil);
+  //FuPagtoMisto := TFuPagtoMisto.Create(nil);
   with FuPagtoMisto
   do begin
     Top := pmtTop;
@@ -86,7 +86,7 @@ begin
     pmtOutros := vlOutros;
   end;
 
-  FuPagtoMisto.Free;
+  //FuPagtoMisto.Free;
 end;
 
 

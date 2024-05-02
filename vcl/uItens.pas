@@ -111,7 +111,7 @@ var i: Integer;
 begin
   uDM.filGrupoItens := 0;
   uDM.Itens.Filtered := True;
-  FuItens := TFuItens.Create(nil);
+  //FuItens := TFuItens.Create(nil);
   with FuItens
   do begin
     dbTipo.Items.Clear;
@@ -146,7 +146,7 @@ begin
     uDM.Itens.First;
     ShowModal;
     uDM.Itens.Filtered := False;
-    Free;
+//    Free;
   end;
 
 end;

@@ -299,7 +299,7 @@ begin
 
   uDM.PedItens.Filtered := False;
   uDM.PedItens.Refresh;
-  FuImpressoes := TFuImpressoes.Create(nil);
+  //FuImpressoes := TFuImpressoes.Create(nil);
   //if FuImpressoes = Nil then
   //  Application.CreateForm(TFuImpressoes, FuImpressoes);
   with FuImpressoes
@@ -369,7 +369,7 @@ begin
       else for i := 1 to copias
            do RLPedido.Print;
   end;
-  FuImpressoes.Free;
+  //FuImpressoes.Free;
 
   uDM.PedItens.Filter := filTxtAnt;
   uDM.PedItens.Filtered := filAnt;
@@ -419,7 +419,7 @@ begin
     lPreview := True;
   //
   uDM.LctCaixa.Refresh;
-  FuImpressoes := TFuImpressoes.Create(nil);
+  //FuImpressoes := TFuImpressoes.Create(nil);
   with FuImpressoes
   do begin
     nAltura := RLCx_Cabec.Height + RLCx_Cols.Height +
@@ -454,7 +454,7 @@ begin
            do RLCaixa.Print;
 
   end;
-  FuImpressoes.Free;
+  //FuImpressoes.Free;
 
 end;
 
@@ -478,7 +478,7 @@ begin
     lPreview := True;
   //
   uDM.Resvendas.First;
-  FuImpressoes := TFuImpressoes.Create(nil);
+ // FuImpressoes := TFuImpressoes.Create(nil);
   with FuImpressoes
   do begin
     if pIni = pFim then
@@ -546,7 +546,7 @@ begin
            do RLResumo.Print;
 
   end;
-  FuImpressoes.Free;
+  //FuImpressoes.Free;
 
 end;
 

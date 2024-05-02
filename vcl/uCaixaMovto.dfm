@@ -10,12 +10,10 @@ object FuCaixaMovto: TFuCaixaMovto
   Font.Height = -13
   Font.Name = 'Tahoma'
   Font.Style = []
-  OldCreateOrder = False
   Position = poDesigned
   OnClose = FormClose
   OnResize = FormResize
   OnShow = FormShow
-  PixelsPerInch = 96
   TextHeight = 16
   object PanTurnos: TPanel
     Left = 0

@@ -121,7 +121,7 @@ implementation
 
 {$R *.dfm}
 
-uses uDados, uGenericas, uPedidos, uImpressoes, SFEuPrintFortes, uPagtoMisto;
+uses uDados, uGenericas, uPedidos, uImpressoes, SFEuPrintFortes, uPagtoMisto, uConfirmacao;
 
 Procedure AjustaFonteImagem;
 begin
@@ -435,12 +435,11 @@ end;
 
 procedure TFuFinPedido.btGravarClick(Sender: TObject);
 var somaVlr,wSaldo: Currency;
-    newSeq,lanSeq,bebSeq,newSitPagto,i,wrkSeq: Integer;
+    newSeq,lanSeq,bebSeq,newSitPagto,wrkSeq,nConf: Integer;
     vlrEntradas,vlrSaidas: Currency;
-    xEmitirNFCe,xImpressao: String;
-    wMsg: String;
+    xEmitirNFCe,xImpressao,wMsg: String;
     wStatus,wAtivarMsg: Boolean;
-
+    wAnswer: Integer;
 begin
   if ObtemParametro('PedidoPlaca') = 'S' then
      if StrToIntDef(uDM.PedidosPlaca.AsString,0) = 0 then
@@ -465,8 +464,24 @@ begin
     dbMeioPagto.SetFocus;
     Exit;
   end;
-  //  Mensagem / Aviso DESTACADO do meio de pagamento !!!!!!!
-
+  //
+  //  Mensagem / Aviso DESTACADO do meio de pagamento, exceto DINHEIRO
+  if (uDM.PedidosMeioPagto.AsInteger = 1) or     // Cartão débito
+     (uDM.PedidosMeioPagto.AsInteger = 2) or     // Cartão crédito
+     (uDM.PedidosMeioPagto.AsInteger = 5)
+  then if MessageDlg('Confirme' + #13 +
+                     'Pedido: ' + uDM.PedidosNumero.AsString +
+                     '  R$: ' + FloatToStrF(uDM.PedidosValor.AsCurrency,ffNumber,15,2) + #13 +
+                     'Meio de pagamento: ' + dbMeioPagto.Items[dbMeioPagto.ItemIndex] + #13 +
+                     'Confirme o pedido e meio de pagamento',
+                     mtConfirmation,
+                     [mbYes,mbNo],
+                     0,mbNo,['Confirmar','Não confirmar']) <> mrYes
+       then begin
+         dbMeioPagto.SetFocus;
+         Exit;
+       end;
+  //
   cbImprimeNFCe.Enabled := False;
   btGravar.Enabled := False;
   btCancelar.Enabled := False;
@@ -647,6 +662,7 @@ begin
         then xEmitirNFCe := 'S';
     if xEmitirNFCe = 'S' then
     begin
+      wStatus := False;
       TimerMsgPinpad.Enabled := wAtivarMsg;
       EmiteNFCe(uDM.PedidosNumero.AsInteger, cbImprimeNFCe.Checked, wStatus);
       TimerMsgPinPad.Enabled := False;
@@ -654,9 +670,12 @@ begin
       wMsg := 'DFe';
     end;
   end;
-
+  //
   if wStatus then
   begin
+     if (uDM.PedidosMeioPagto.AsInteger = 1) or        // Cartão dédito
+        (uDM.PedidosMeioPagto.AsInteger = 2)           // Cartão crédito
+        then uDM.wOperCartoes := uDM.wOperCartoes + 1;
     newSitPagto := 1;
     if uDM.PedidosMeioPagto.AsInteger = 0 then
       if MessageDlg('Pagamento em REAIS' + #13 + 'Confirme o pagamento',
@@ -669,10 +688,13 @@ begin
   if (not wStatus) or
      (uDM.PedidosSitPagto.AsInteger = 0) then
   begin
-    if MessageDlg('Falha na emissão do documento fiscal ou na efetivação do pagamento' + #13#13 +
-                  'Informe:' + #13 +
-                  '<Repetir> pagamento  ou  <Excluir> pedido',
-                  mtConfirmation,[mbYes,mbNo],0,mbYes,['Repetir pagamento','Excluir pedido']) = mrYes
+    wAnswer := MessageDlg('Falha na emissão do documento fiscal ou na efetivação do pagamento' + #13#13 +
+                          'Informe:' + #13 +
+                          '<Repetir> pagamento, <Excluir> pedido ou <Salvar> pedido',
+                          mtConfirmation,[mbYes,mbNo,mbRetry],0,mbYes,
+                          ['Repetir pagamento','Excluir pedido','Salvar pedido']);
+    // Repetir pagamento
+    if wAnswer = mrYes
     then begin
       uDM.PedDetpag.First;
       while uDM.PedDetpag.RecordCount > 0 do
@@ -689,12 +711,13 @@ begin
       //btRetornar.Enabled := False;
       dbMeioPagto.SetFocus;
       Exit;
-    end
-    else begin
-      ExcluePedido(uDM.PedidosNumero.AsInteger);
-      FuFinPedido.Close;
-      Exit;
     end;
+    // Excluir pedido
+    if wAnswer = mrNo
+       then ExcluePedido(uDM.PedidosNumero.AsInteger);
+    // wAnswer = mrRetry   (Deixa o pedido salvo)
+    FuFinPedido.Close;
+    Exit;
   end;
   //
   // Atualiza caixa

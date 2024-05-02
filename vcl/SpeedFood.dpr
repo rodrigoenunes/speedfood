@@ -13,7 +13,6 @@ uses
   uImpressoes in 'uImpressoes.pas' {FuImpressoes},
   uUsuario in 'uUsuario.pas' {FuUsuario},
   uCaixaMovto in 'uCaixaMovto.pas' {FuCaixaMovto},
-  uConsPedidos in 'uConsPedidos.pas' {FuConsPedidos},
   uSysPrinters in '..\..\UsoGeral\uSysPrinters.pas' {FuSysPrinters},
   FortesReportCtle in '..\..\uFortesReport\FortesReportCtle.pas' {FFRCtle},
   uAdministrativo in 'uAdministrativo.pas' {FuAdministrativo},
@@ -23,7 +22,10 @@ uses
   uMontarLanche in 'uMontarLanche.pas' {FuMontarLanche},
   uBiblioteca in 'uBiblioteca.pas',
   uPagtoMisto in 'uPagtoMisto.pas' {FuPagtoMisto},
-  uEmail in '..\..\UsoGeral\uEmail.pas';
+  uEmail in '..\..\UsoGeral\uEmail.pas',
+  uConfirmacao in '..\UsoGeral\uConfirmacao.pas' {FuConfirmacao},
+  uQueryPedidos in 'uQueryPedidos.pas' {FuQueryPedidos},
+  uQueryAdministrativo in 'uQueryAdministrativo.pas' {FuQueryAdministrativo};
 
 {$R *.res}
 
@@ -33,12 +35,20 @@ begin
   Application.CreateForm(TFuPrincipal, FuPrincipal);
   Application.CreateForm(TFGen, FGen);
   Application.CreateForm(TFFRCtle, FFRCtle);
-  Application.CreateForm(TFuUserPwd, FuUserPwd);
-  Application.CreateForm(TFuPagtoMisto, FuPagtoMisto);
-  //Application.CreateForm(TFuUserPwd, FuUserPwd);
-  Application.CreateForm(TFuHelpSpeedFood, FuHelpSpeedFood);
   Application.CreateForm(TFSFEuPrintFortes, FSFEuPrintFortes);
+  Application.CreateForm(TFuPagtoMisto, FuPagtoMisto);
+  Application.CreateForm(TFuHelpSpeedFood, FuHelpSpeedFood);
   Application.CreateForm(TFuMontarLanche, FuMontarLanche);
+  Application.CreateForm(TFuCaixaMovto, FuCaixaMovto);
+  Application.CreateForm(TFuTrataLanche, FuTrataLanche);
+  Application.CreateForm(TFuPedidos, FuPedidos);
+  Application.CreateForm(TFuAdministrativo, FuAdministrativo);
+  Application.CreateForm(TFuFinPedido, FuFinPedido);
+  Application.CreateForm(TFuItens, FuItens);
+  Application.CreateForm(TFuCaixa, FuCaixa);
+  Application.CreateForm(TFuImpressoes, FuImpressoes);
+  Application.CreateForm(TFuQueryAdministrativo, FuQueryAdministrativo);
+  Application.CreateForm(TFuQueryPedidos, FuQueryPedidos);
   Application.Run;
 
 end.

@@ -11,7 +11,6 @@ object FuPedidos: TFuPedidos
   Font.Height = -16
   Font.Name = 'Tahoma'
   Font.Style = []
-  OldCreateOrder = False
   Position = poDesigned
   OnCreate = FormCreate
   OnResize = FormResize
@@ -19,7 +18,6 @@ object FuPedidos: TFuPedidos
   DesignSize = (
     1000
     604)
-  PixelsPerInch = 96
   TextHeight = 19
   object imgFundo: TImage
     Left = 341
