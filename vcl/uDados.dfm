@@ -9,6 +9,7 @@ object uDM: TuDM
       'Password=speed@123'
       'Server=127.0.0.1'
       'DriverID=MySQL')
+    Connected = True
     LoginPrompt = False
     Left = 28
     Top = 8
@@ -25,9 +26,9 @@ object uDM: TuDM
   object Itens: TFDTable
     OnCalcFields = ItensCalcFields
     OnFilterRecord = ItensFilterRecord
-    IndexFieldNames = 'Grupo;Codigo'
     Connection = FDC
-    TableName = 'com_itens'
+    ResourceOptions.AssignedValues = [rvEscapeExpand]
+    TableName = 'speedfood.com_itens'
     Left = 32
     Top = 160
     object ItensGrupo: TIntegerField

@@ -4,7 +4,7 @@
         <ProjectVersion>19.5</ProjectVersion>
         <FrameworkType>VCL</FrameworkType>
         <Base>True</Base>
-        <Config Condition="'$(Config)'==''">Debug</Config>
+        <Config Condition="'$(Config)'==''">Release</Config>
         <Platform Condition="'$(Platform)'==''">Win32</Platform>
         <TargetedPlatforms>1</TargetedPlatforms>
         <AppType>Application</AppType>
@@ -191,8 +191,8 @@
             <Form>FuQueryPedidos</Form>
             <FormType>dfm</FormType>
         </DCCReference>
-        <DCCReference Include="uAdministrativo.pas">
-            <Form>FuAdministrativo</Form>
+        <DCCReference Include="uQueryAdministrativo.pas">
+            <Form>FuQueryAdministrativo</Form>
             <FormType>dfm</FormType>
         </DCCReference>
         <BuildConfiguration Include="Base">

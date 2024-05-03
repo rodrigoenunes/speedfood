@@ -53,7 +53,7 @@ implementation
 
 uses uItens, uDados, uGenericas, uCaixa, uPedidos, uImpressoes, uUsuario,
   FortesReportCtle, uUserPwd, uHelpSpeedFood,
-  uCaixaMovto, uQueryPedidos, uAdministrativo;
+  uCaixaMovto, uQueryPedidos, uQueryAdministrativo;
 
 procedure TFuPrincipal.btAbrirCaixaClick(Sender: TObject);
 begin

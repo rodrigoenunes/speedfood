@@ -24,7 +24,7 @@ uses
   uEmail in '..\..\UsoGeral\uEmail.pas',
   uConfirmacao in '..\UsoGeral\uConfirmacao.pas' {FuConfirmacao},
   uQueryPedidos in 'uQueryPedidos.pas' {FuQueryPedidos},
-  uAdministrativo in 'uAdministrativo.pas' {FuAdministrativo};
+  uQueryAdministrativo in 'uQueryAdministrativo.pas' {FuQueryAdministrativo};
 
 {$R *.res}
 
@@ -46,7 +46,7 @@ begin
   Application.CreateForm(TFuCaixa, FuCaixa);
   Application.CreateForm(TFuImpressoes, FuImpressoes);
   Application.CreateForm(TFuQueryPedidos, FuQueryPedidos);
-  Application.CreateForm(TFuAdministrativo, FuAdministrativo);
+  Application.CreateForm(TFuQueryAdministrativo, FuQueryAdministrativo);
   Application.Run;
 
 end.

@@ -139,10 +139,10 @@ var filAnt: Boolean;
 begin
   FSFEuPrintFortes := TFSFEuPrintFortes.Create(nil);
   DefinePrinterEtiqueta;
-  if AnsiUpperCase(ObtemParametro('EtiquetaPreview')) = 'S' then
-    lPreview := True
-  else
-    lPreview := False;
+//  if AnsiUpperCase(ObtemParametro('EtiquetaPreview')) = 'S' then
+//    lPreview := True
+//  else
+//    lPreview := False;
   //
   if pmtPreview then lPreview := True;
   //
