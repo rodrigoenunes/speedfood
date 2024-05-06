@@ -6,7 +6,7 @@ uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Mask, Vcl.DBCtrls, Vcl.ExtCtrls,
   Vcl.Buttons, System.UITypes, Vcl.Touch.Keyboard, Data.DB;
-  Function FinalizaPedido: Integer;
+  Function FinalizaPedido(var pNroPedido:Integer): Integer;
 
 type
   TFuFinPedido = class(TForm)
@@ -132,7 +132,7 @@ begin
 end;
 
 
-Function FinalizaPedido: Integer;
+Function FinalizaPedido(var pNroPedido:Integer): Integer;
 var
   qtdLin,linAux,linMax,i,tMax: Integer;
   posX,posY,posDescr,posSem,posMais,posMenos: Integer;
@@ -195,6 +195,8 @@ begin
     uDM.PedidosNomeCliente.AsString := uDM.nomeClie;
     uDM.PedidosCPF_CNPJ.AsString := uDM.CPFCNPJ;
     uDM.PedidosSitPagto.AsInteger := 0;                  // NÃO PAGO
+    //
+    pNroPedido := nrPedido;                  // <---- Variavel de retorno, nro do pedido
     //
     qtdLin := 0;
     uDM.PedWrk.First;
@@ -578,7 +580,7 @@ begin
     begin
       newSeq := newSeq + 1;
       uDM.PedDetpag.Append;
-      uDM.PedDetpagNumero.AsInteger := uDM.PedidosNumero.AsInteger;
+      uDM.PedDetpagNumero.AsInteger := nrPedido;           // uDM.PedidosNumero.AsInteger;
       uDM.PedDetpagSeq.AsInteger    := newSeq;
       uDM.PedDetpagindPag.AsInteger := 0;      // Sempre 0 (A vista) (1-Prazo)
       uDM.PedDetpagtPag.AsString    := uDM.DetpagWrktPag.AsString;
@@ -595,7 +597,7 @@ begin
   end
   else begin    // Grava 1 registro detpag   (não há registros em detpagWRK)
     uDM.PedDetpag.Append;
-    uDM.PedDetpagNumero.AsInteger    := uDM.PedidosNumero.AsInteger;
+    uDM.PedDetpagNumero.AsInteger    := nrPedido;          // uDM.PedidosNumero.AsInteger;
     uDM.PedDetpagSeq.AsInteger       := 1;
     uDM.PedDetpagindPag.AsInteger    := 0;      // Sempre 0 (A vista) (1-Prazo)
     uDM.PedDetpagtpIntegra.AsInteger := uDM.SisPessoaTefPos.AsInteger;     // 09/01/24
@@ -639,6 +641,7 @@ begin
     uDM.Pedidos.Edit;
   Except
   End;
+  //
   nRetorno := 0;
   wMsg := '';
   wStatus := True;
@@ -664,7 +667,7 @@ begin
     begin
       wStatus := False;
       TimerMsgPinpad.Enabled := wAtivarMsg;
-      EmiteNFCe(uDM.PedidosNumero.AsInteger, cbImprimeNFCe.Checked, wStatus);
+       EmiteNFCe(nrPedido, cbImprimeNFCe.Checked, wStatus);        //EmiteNFCe(uDM.PedidosNumero.AsInteger, cbImprimeNFCe.Checked, wStatus);
       TimerMsgPinPad.Enabled := False;
       PanAguarde.Color := clHighLight;
       wMsg := 'DFe';
@@ -763,6 +766,7 @@ begin
   uDM.RegCaixaSaldoFinal.AsCurrency := (uDM.RegCaixaSaldoInicial.AsCurrency + vlrEntradas) - vlrSaidas;
   uDM.RegCaixa.Post;
   //
+{
   xImpressao := ObtemParametro('PedidoImprimir');
   if Pos(xImpressao,'SNQ') = 0 then xImpressao := 'Q';       // Sim  Não  Questiona
   if xImpressao = 'Q' then
@@ -770,19 +774,21 @@ begin
       xImpressao := 'S'
     else
       xImpressao := 'N';
+  DebugMensagem(uDM.lDebug,'NroPedido:'+ IntToSTr(SalvaNroPedido));
   if xImpressao = 'S' then
-    ImprimePedido(uDM.PedidosNumero.AsInteger);
+    ImprimePedido(SalvaNroPedido);       //uDM.PedidosNumero.AsInteger);
   //
+}
   xImpressao := ObtemParametro('EtiquetaFinalPedido');
   if xImpressao = 'Q' then
     if MessageDlg('Impressão etiquetas do pedido' + #13 +
-                  'Pedido: ' + uDM.PedidosNumero.AsString + #13 +
+                  'Pedido: ' + IntToStr(nrPedido) + '[ ' + uDM.PedidosNumero.AsString + ' ]' + #13 +
                   'Imprimir etiquetas ?',
                   mtConfirmation,[mbYes,mbNo],0,mbNo,['Sim','Não']) = mrYes
     then xImpressao := 'S';
   if xImpressao = 'S' then
   begin
-    EmiteEtiquetas(uDM.PedidosNumero.AsInteger, 0);           // Todos os ítens do pedido
+    EmiteEtiquetas(nrPedido, 0);           //uDM.PedidosNumero.AsInteger, 0);           // Todos os ítens do pedido
     uDM.PedItens.Filtered := False;
     uDM.PedItens.Refresh;
     uDM.PedItens.First;

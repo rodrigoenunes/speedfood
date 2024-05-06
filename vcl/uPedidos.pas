@@ -88,7 +88,7 @@ implementation
 
 {$R *.dfm}
 
-uses uDados, uGenericas, uFinPedido, uTrataLanche, uBiblioteca, uMontarLanche;
+uses uDados, uGenericas, uFinPedido, uTrataLanche, uBiblioteca, uMontarLanche, uImpressoes;
 
 Procedure LancamentoPedidos;
 begin
@@ -564,15 +564,30 @@ begin
 end;
 
 procedure TFuPedidos.btFinalizarClick(Sender: TObject);
-var nRet: Integer;
+var nRet,nroPedido: Integer;
+    xImprimePedido: String;
 begin
   PanAlteraBebida.Visible := False;
   if FuPedidos.totalPedido = 0
-    then nRet := 2                   // Pedido sem valor, cancela o pedido
-    else nRet := FinalizaPedido;     // Finalização do pedido
+    then nRet := 2                              // Pedido sem valor, cancela o pedido
+    else nRet := FinalizaPedido(nroPedido);     // Finalização do pedido
   if nRet = 0
     then begin
-      //ShowMessage('Gravou pedido, atualizou caixa, emitiu pedido e emitiu NFCe(se for o caso)');
+      // Obs.1
+      DebugMensagem(uDM.lDebug,'Gravou pedido, atualizou caixa e emitiu NFCe(se for o caso)' + #13 +
+                               'Vai imprimir pedido nr: ' + IntToStr(nroPedido));
+      if nroPedido > 0 then
+      begin
+        xImprimePedido := ObtemParametro('PedidoImprimir');
+        if Pos(xImprimePedido,'SNQ') = 0 then xImprimePedido := 'Q';       // Sim  Não  Questiona
+        if xImprimePedido = 'Q' then
+           if MessageDlg('Imprimir pedido ?',mtConfirmation,[mbYes,mbNo],0,mbNo) = mrYes then
+              xImprimePedido := 'S'
+           else
+              xImprimePedido := 'N';
+        if xImprimePedido = 'S' then
+           ImprimePedido(nroPedido);
+      end;
       nRet := 2;
     end;
   if nRet = 2 then       // Novo pedido ou pedido cancelado

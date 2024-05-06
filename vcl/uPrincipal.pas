@@ -37,7 +37,6 @@ type
       Shift: TShiftState; X, Y: Integer);
     procedure btHelpArgoxMouseDown(Sender: TObject; Button: TMouseButton;
       Shift: TShiftState; X, Y: Integer);
-    procedure btPinpadClick(Sender: TObject);
   private
     { Private declarations }
   public
@@ -106,15 +105,6 @@ begin
 
 end;
 
-procedure TFuPrincipal.btPinpadClick(Sender: TObject);
-begin
-  if MessageDlg('Deseja configurar o pinpad?',mtConfirmation,[mbYes,mbNo],0,mbNo,['Sim','Não']) <> mrYes then
-    Exit;
-
-  ShowMessage('xxxx');
-
-end;
-
 procedure TFuPrincipal.btSairClick(Sender: TObject);
 var wExec,wParm: String;
 
@@ -178,6 +168,8 @@ begin
     uDM.PedDetPag.Active := True;
     uDM.etqImpress := 2;        // Compatibilização com "Etiquetas" (Todas)
     uDM.sitPagto := 3;          // Todas as situações
+    uDM.lDebug := False;
+    if ObtemParametro('DEBUG') = 'S' then uDM.lDebug := True;
     //
     FFRCtle.RLPreviewSetup1.ZoomFactor := StrToIntDef(ObtemParametro('FortesZoomFactor'),100);
     FGen.lSalvaForm := True;

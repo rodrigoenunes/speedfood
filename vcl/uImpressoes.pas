@@ -170,6 +170,7 @@ type
     RLLabTotQtdDocs: TRLLabel;
     procedure RLCaixaBeforePrint(Sender: TObject; var PrintIt: Boolean);
     procedure RLPedDetalBeforePrint(Sender: TObject; var PrintIt: Boolean);
+    procedure RLPedidoBeforePrint(Sender: TObject; var PrintIt: Boolean);
   private
     { Private declarations }
   public
@@ -296,6 +297,21 @@ begin
     nDesloc := ((margEsq+margDir)-10) * nPontos;
   //
   if not pSys then lPreview := True;
+  //
+  DebugMensagem(uDM.lDebug,'ImprimePedido nro: ' + uDM.PedidosNumero.AsString +
+                           '  Senha:' + uDM.PedidosPlaca.AsString);
+  if uDM.PedidosNumero.AsInteger <> pNroPedido then
+  begin
+    DebugMensagem(uDM.lDebug,'Nro errado');
+    if not uDM.Pedidos.FindKey([pNroPedido]) then
+    begin
+      DebugMensagem(uDM.lDebug,'Nro errado de novo......');
+      Exit;
+    end;
+
+  end;
+
+
 
   uDM.PedItens.Filtered := False;
   uDM.PedItens.Refresh;
@@ -560,6 +576,13 @@ end;
 procedure TFuImpressoes.RLPedDetalBeforePrint(Sender: TObject; var PrintIt: Boolean);
 begin
   RLPedDetal.Height := 15 + MontaTextoImpressao;
+
+end;
+
+procedure TFuImpressoes.RLPedidoBeforePrint(Sender: TObject;
+  var PrintIt: Boolean);
+begin
+  DebugMensagem(uDM.lDebug,'RLPedidoBeforePrint: ' + uDM.PedidosNumero.AsString);
 
 end;
 

@@ -517,7 +517,6 @@ procedure TuDM.DataModuleCreate(Sender: TObject);
 Var
   vIniFile: TIniFile;
   sIniFile, sServer: String;
-
 begin
   FDC.Connected := False;
   sIniFile := ChangeFileExt(ParamStr(0), '.ini');
@@ -528,7 +527,6 @@ begin
   End;
   //
   sServer := vIniFile.ReadString('DB', 'Host', '').Trim;
-  //ShowMessage('Server=' + sServer);
   if Not sServer.IsEmpty then
     FDC.Params[ FDC.Params.IndexOfName('server') ]:= 'Server=' + sServer;
   vIniFile.Free;

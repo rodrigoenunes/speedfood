@@ -826,6 +826,7 @@ object FuImpressoes: TFuImpressoes
     PageSetup.PaperSize = fpCustom
     PageSetup.PaperWidth = 80.000000000000000000
     PageSetup.PaperHeight = 120.000000000000000000
+    BeforePrint = RLPedidoBeforePrint
     object RLPedCab: TRLBand
       Left = 19
       Top = 19

@@ -242,7 +242,7 @@ PanCorMouseDown.....
   if Button = mbRight
   then begin
     uDM.ItensCorItem.AsString := ColorToString(PanCor.Color);
-    ShowMessage('Cor adotada');
+    DebugMensagem(uDM.lDebug,'Cor adotada');
     Exit;
   end;
 }
