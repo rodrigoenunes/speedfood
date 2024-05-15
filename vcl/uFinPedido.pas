@@ -467,10 +467,7 @@ begin
     Exit;
   end;
   //
-  //  Mensagem / Aviso DESTACADO do meio de pagamento, exceto DINHEIRO
-  if (uDM.PedidosMeioPagto.AsInteger = 1) or     // Cartão débito
-     (uDM.PedidosMeioPagto.AsInteger = 2) or     // Cartão crédito
-     (uDM.PedidosMeioPagto.AsInteger = 5)
+  if ObtemParametro('ConfirmaPagto') = 'S'
   then if MessageDlg('Confirme' + #13 +
                      'Pedido: ' + uDM.PedidosNumero.AsString +
                      '  R$: ' + FloatToStrF(uDM.PedidosValor.AsCurrency,ffNumber,15,2) + #13 +
@@ -490,10 +487,7 @@ begin
   btRetornar.Enabled := False;
   LabInstrucao.Caption := 'Aguarde o final do processo';   // R$(*0) ou Outros(4)
   wAtivarMsg := False;
-  if (uDM.PedidosMeioPagto.AsInteger = 1) or            // Débito
-     (uDM.PedidosMeioPagto.AsInteger = 2) or            // Credito
-     (uDM.PedidosMeioPagto.AsInteger = 3) or            // PIX        (09/01/24)
-     (uDM.PedidosMeioPagto.AsInteger = 5)               // Misto
+  if uDM.PedidosMeioPagto.AsInteger <> 0            // Não é dinheiro 1-CDeb 2-CCred 3-PIX 4-Outro 5-Misto
   then begin
     LabInstrucao.Caption := 'Siga as instruções do PINPAD !!!';
     wAtivarMsg := True;
@@ -667,7 +661,7 @@ begin
     begin
       wStatus := False;
       TimerMsgPinpad.Enabled := wAtivarMsg;
-       EmiteNFCe(nrPedido, cbImprimeNFCe.Checked, wStatus);        //EmiteNFCe(uDM.PedidosNumero.AsInteger, cbImprimeNFCe.Checked, wStatus);
+      EmiteNFCe(nrPedido, cbImprimeNFCe.Checked, wStatus);        //EmiteNFCe(uDM.PedidosNumero.AsInteger, cbImprimeNFCe.Checked, wStatus);
       TimerMsgPinPad.Enabled := False;
       PanAguarde.Color := clHighLight;
       wMsg := 'DFe';
@@ -782,7 +776,7 @@ begin
   xImpressao := ObtemParametro('EtiquetaFinalPedido');
   if xImpressao = 'Q' then
     if MessageDlg('Impressão etiquetas do pedido' + #13 +
-                  'Pedido: ' + IntToStr(nrPedido) + '[ ' + uDM.PedidosNumero.AsString + ' ]' + #13 +
+                  'Pedido: ' + IntToStr(nrPedido) + '  [ ' + uDM.PedidosNumero.AsString + ' ]' + #13 +
                   'Imprimir etiquetas ?',
                   mtConfirmation,[mbYes,mbNo],0,mbNo,['Sim','Não']) = mrYes
     then xImpressao := 'S';

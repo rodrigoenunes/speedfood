@@ -23,6 +23,7 @@ type
     btConsPedidos: TBitBtn;
     btHelpGeral: TBitBtn;
     btHelpArgox: TBitBtn;
+    btVerifSefaz: TBitBtn;
     procedure btSairClick(Sender: TObject);
     procedure btSuporteClick(Sender: TObject);
     procedure FormActivate(Sender: TObject);

@@ -2,7 +2,7 @@ object FuPrincipal: TFuPrincipal
   Left = 0
   Top = 0
   Caption = 'SpeddFood'
-  ClientHeight = 394
+  ClientHeight = 452
   ClientWidth = 504
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -15,7 +15,7 @@ object FuPrincipal: TFuPrincipal
   OnCreate = FormCreate
   DesignSize = (
     504
-    394)
+    452)
   TextHeight = 19
   object Image1: TImage
     Left = 291
@@ -101,7 +101,7 @@ object FuPrincipal: TFuPrincipal
   end
   object btSair: TBitBtn
     Left = 8
-    Top = 332
+    Top = 386
     Width = 257
     Height = 52
     Caption = 'Finalizar/Sair'
@@ -126,7 +126,7 @@ object FuPrincipal: TFuPrincipal
       11110BBBBBBBBBB0FFFFFFF011EEEEEEE1110BBBBBBBBBB0FFFFFFF011EEEEEE
       EE110BBBBBBBBBB0FFFFFFF011111EEEEE110BBBBBBBBBB0FFFFFFF0111111EE
       EE110BBBBBBBBBB0FFFFFFF0000000000000000000000000FFFF}
-    TabOrder = 6
+    TabOrder = 7
     OnClick = btSairClick
   end
   object btAbrirCaixa: TBitBtn
@@ -365,13 +365,13 @@ object FuPrincipal: TFuPrincipal
   end
   object PanTurno: TPanel
     Left = 275
-    Top = 22
+    Top = 8
     Width = 221
     Height = 79
     BevelInner = bvLowered
     Color = clGradientInactiveCaption
     ParentBackground = False
-    TabOrder = 7
+    TabOrder = 8
     Visible = False
     object LabInicio: TLabel
       Left = 12
@@ -507,7 +507,7 @@ object FuPrincipal: TFuPrincipal
   end
   object btHelpGeral: TBitBtn
     Left = 358
-    Top = 300
+    Top = 358
     Width = 131
     Height = 25
     Anchors = [akRight, akBottom]
@@ -526,12 +526,13 @@ object FuPrincipal: TFuPrincipal
       B333333377F377F3333333FB99FB99FB3333333377FF77333333333FB9999FB3
       333333333777733333333333FBFBFB3333333333333333333333}
     NumGlyphs = 2
-    TabOrder = 8
+    TabOrder = 9
     OnMouseDown = btHelpGeralMouseDown
+    ExplicitTop = 300
   end
   object btHelpArgox: TBitBtn
     Left = 358
-    Top = 330
+    Top = 388
     Width = 131
     Height = 25
     Anchors = [akRight, akBottom]
@@ -550,7 +551,16 @@ object FuPrincipal: TFuPrincipal
       B333333377F377F3333333FB99FB99FB3333333377FF77333333333FB9999FB3
       333333333777733333333333FBFBFB3333333333333333333333}
     NumGlyphs = 2
-    TabOrder = 9
+    TabOrder = 10
     OnMouseDown = btHelpArgoxMouseDown
+    ExplicitTop = 330
+  end
+  object btVerifSefaz: TBitBtn
+    Left = 8
+    Top = 332
+    Width = 257
+    Height = 52
+    Caption = 'Verifica disponibilidade SeFaz'
+    TabOrder = 6
   end
 end

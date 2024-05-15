@@ -299,7 +299,8 @@ begin
   if not pSys then lPreview := True;
   //
   DebugMensagem(uDM.lDebug,'ImprimePedido nro: ' + uDM.PedidosNumero.AsString +
-                           '  Senha:' + uDM.PedidosPlaca.AsString);
+                           '  Senha:' + uDM.PedidosPlaca.AsString +
+                           '  Turno:' + uDM.PedidosTurno.AsString);
   if uDM.PedidosNumero.AsInteger <> pNroPedido then
   begin
     DebugMensagem(uDM.lDebug,'Nro errado');
