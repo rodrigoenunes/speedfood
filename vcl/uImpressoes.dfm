@@ -3,13 +3,14 @@ object FuImpressoes: TFuImpressoes
   Top = 0
   Caption = 'FuImpressoes'
   ClientHeight = 681
-  ClientWidth = 649
+  ClientWidth = 700
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
   Font.Height = -11
   Font.Name = 'Tahoma'
   Font.Style = []
+  OnCreate = FormCreate
   TextHeight = 13
   object RLCaixa: TRLReport
     Left = 8
@@ -817,7 +818,7 @@ object FuImpressoes: TFuImpressoes
     Margins.TopMargin = 5.000000000000000000
     Margins.RightMargin = 5.000000000000000000
     Margins.BottomMargin = 5.000000000000000000
-    DataSource = uDM.DSPedItens
+    DataSource = SCDDet
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clBlack
     Font.Height = -11
@@ -826,6 +827,7 @@ object FuImpressoes: TFuImpressoes
     PageSetup.PaperSize = fpCustom
     PageSetup.PaperWidth = 80.000000000000000000
     PageSetup.PaperHeight = 120.000000000000000000
+    AfterPrint = RLPedidoAfterPrint
     BeforePrint = RLPedidoBeforePrint
     object RLPedCab: TRLBand
       Left = 19
@@ -869,14 +871,14 @@ object FuImpressoes: TFuImpressoes
         end
       end
       object RLDbPedido: TRLDBText
-        Left = 170
+        Left = 185
         Top = 23
-        Width = 93
+        Width = 78
         Height = 14
         Alignment = taRightJustify
         Anchors = [fkRight]
-        DataField = 'ZC_NroLst'
-        DataSource = uDM.DSPedidos
+        DataField = 'Numero'
+        DataSource = SCDPed
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clBlack
         Font.Height = -11
@@ -886,23 +888,23 @@ object FuImpressoes: TFuImpressoes
         Text = 'Pedido: '
       end
       object RLDbDataPedido: TRLDBText
-        Left = 178
+        Left = 198
         Top = 37
-        Width = 85
+        Width = 65
         Height = 14
         Alignment = taRightJustify
         Anchors = [fkRight]
-        DataField = 'ZC_DataHora'
-        DataSource = uDM.DSPedidos
+        DataField = 'DataHora'
+        DataSource = SCDPed
         Text = 'DH:'
       end
       object RLDBText41: TRLDBText
         Left = 39
         Top = 37
-        Width = 74
+        Width = 42
         Height = 14
-        DataField = 'NomeCliente'
-        DataSource = uDM.DSPedidos
+        DataField = 'Cliente'
+        DataSource = SCDPed
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clBlack
         Font.Height = -11
@@ -921,11 +923,11 @@ object FuImpressoes: TFuImpressoes
       object RLDbSenha: TRLDBText
         Left = 1
         Top = 17
-        Width = 138
+        Width = 108
         Height = 19
         Align = faLeftTop
-        DataField = 'ZC_Senha'
-        DataSource = uDM.DSPedidos
+        DataField = 'Senha'
+        DataSource = SCDPed
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clBlack
         Font.Height = -16
@@ -1019,7 +1021,7 @@ object FuImpressoes: TFuImpressoes
         Alignment = taCenter
         AutoSize = False
         DataField = 'NrLcto'
-        DataSource = uDM.DSPedItens
+        DataSource = SCDDet
         Text = ''
       end
       object RLDBText36: TRLDBText
@@ -1029,8 +1031,8 @@ object FuImpressoes: TFuImpressoes
         Height = 14
         Alignment = taCenter
         AutoSize = False
-        DataField = 'ZC_Tp'
-        DataSource = uDM.DSPedItens
+        DataField = 'Tipo'
+        DataSource = SCDDet
         Text = ''
       end
       object RLDBText37: TRLDBText
@@ -1041,7 +1043,7 @@ object FuImpressoes: TFuImpressoes
         Alignment = taCenter
         AutoSize = False
         DataField = 'Quant'
-        DataSource = uDM.DSPedItens
+        DataSource = SCDDet
         Text = ''
       end
       object RLDbDescrItem: TRLDBText
@@ -1050,8 +1052,8 @@ object FuImpressoes: TFuImpressoes
         Width = 132
         Height = 14
         AutoSize = False
-        DataField = 'ZC_Descricao'
-        DataSource = uDM.DSPedItens
+        DataField = 'Descricao'
+        DataSource = SCDDet
         Text = ''
       end
       object RLDbUnitItem: TRLDBText
@@ -1061,8 +1063,8 @@ object FuImpressoes: TFuImpressoes
         Height = 14
         Alignment = taRightJustify
         AutoSize = False
-        DataField = 'VlrUnFiscal'
-        DataSource = uDM.DSPedItens
+        DataField = 'Unitar'
+        DataSource = SCDDet
         Text = ''
       end
       object RLDbTotalItem: TRLDBText
@@ -1072,8 +1074,8 @@ object FuImpressoes: TFuImpressoes
         Height = 14
         Alignment = taRightJustify
         AutoSize = False
-        DataField = 'VlrTotal'
-        DataSource = uDM.DSPedItens
+        DataField = 'Total'
+        DataSource = SCDDet
         Text = ''
       end
       object RLMemoItem: TRLMemo
@@ -1096,13 +1098,13 @@ object FuImpressoes: TFuImpressoes
       Borders.DrawRight = False
       Borders.DrawBottom = True
       object RLDbTotalPed: TRLDBText
-        Left = 186
+        Left = 188
         Top = 3
-        Width = 78
+        Width = 76
         Height = 16
         Alignment = taRightJustify
-        DataField = 'Valor'
-        DataSource = uDM.DSPedidos
+        DataField = 'Total'
+        DataSource = SCDPed
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clBlack
         Font.Height = -13
@@ -1114,10 +1116,10 @@ object FuImpressoes: TFuImpressoes
       object RLDBText43: TRLDBText
         Left = 3
         Top = 20
-        Width = 175
+        Width = 151
         Height = 14
-        DataField = 'ZC_MPExtenso'
-        DataSource = uDM.DSPedidos
+        DataField = 'MeioPagto'
+        DataSource = SCDPed
         Text = 'Meio de pagamento: '
       end
     end
@@ -1155,8 +1157,8 @@ object FuImpressoes: TFuImpressoes
     end
   end
   object RLResumo: TRLReport
-    Left = 297
-    Top = 268
+    Left = 335
+    Top = 276
     Width = 302
     Height = 454
     Margins.LeftMargin = 5.000000000000000000
@@ -1702,6 +1704,139 @@ object FuImpressoes: TFuImpressoes
         Font.Style = []
         ParentFont = False
       end
+    end
+  end
+  object RLPedTexto: TRLReport
+    Left = 27
+    Top = 406
+    Width = 302
+    Height = 454
+    Margins.LeftMargin = 5.000000000000000000
+    Margins.TopMargin = 5.000000000000000000
+    Margins.RightMargin = 5.000000000000000000
+    Margins.BottomMargin = 5.000000000000000000
+    DataSource = SCDTexto
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clBlack
+    Font.Height = -11
+    Font.Name = 'Courier New'
+    Font.Style = []
+    PageSetup.PaperSize = fpCustom
+    PageSetup.PaperWidth = 80.000000000000000000
+    PageSetup.PaperHeight = 120.000000000000000000
+    object RLBand1: TRLBand
+      Left = 19
+      Top = 19
+      Width = 264
+      Height = 16
+      AutoSize = True
+      object RLDBText6: TRLDBText
+        Left = 0
+        Top = 0
+        Width = 42
+        Height = 16
+        Align = faLeft
+        DataField = 'Linha'
+        DataSource = SCDTexto
+        Text = ''
+      end
+    end
+  end
+  object CDPed: TClientDataSet
+    Aggregates = <>
+    Params = <>
+    Left = 648
+    Top = 104
+    object CDPedNumero: TStringField
+      FieldName = 'Numero'
+      Size = 10
+    end
+    object CDPedSenha: TStringField
+      FieldName = 'Senha'
+      Size = 15
+    end
+    object CDPedCliente: TStringField
+      FieldName = 'Cliente'
+      Size = 50
+    end
+    object CDPedDataHora: TStringField
+      FieldName = 'DataHora'
+      Size = 14
+    end
+    object CDPedMeioPagto: TStringField
+      FieldName = 'MeioPagto'
+    end
+    object CDPedTotal: TStringField
+      FieldName = 'Total'
+    end
+  end
+  object CDDet: TClientDataSet
+    Aggregates = <>
+    Params = <>
+    Left = 640
+    Top = 248
+    object CDDetNrLcto: TStringField
+      FieldName = 'NrLcto'
+      Size = 2
+    end
+    object CDDetTipo: TStringField
+      FieldName = 'Tipo'
+      Size = 1
+    end
+    object CDDetQuant: TStringField
+      FieldName = 'Quant'
+      Size = 3
+    end
+    object CDDetDescricao: TStringField
+      FieldName = 'Descricao'
+      Size = 40
+    end
+    object CDDetUnitar: TStringField
+      FieldName = 'Unitar'
+      Size = 12
+    end
+    object CDDetTotal: TStringField
+      FieldName = 'Total'
+      Size = 12
+    end
+    object CDDetExtras: TStringField
+      FieldName = 'Extras'
+      Size = 24
+    end
+    object CDDetObserv: TStringField
+      FieldName = 'Observ'
+      Size = 120
+    end
+    object CDDetPrensado: TSmallintField
+      FieldName = 'Prensado'
+    end
+    object CDDetCortado: TSmallintField
+      FieldName = 'Cortado'
+    end
+  end
+  object SCDDet: TDataSource
+    DataSet = CDDet
+    Left = 648
+    Top = 304
+  end
+  object SCDPed: TDataSource
+    DataSet = CDPed
+    Left = 648
+    Top = 160
+  end
+  object SCDTexto: TDataSource
+    DataSet = CDTexto
+    Left = 160
+    Top = 489
+  end
+  object CDTexto: TClientDataSet
+    Aggregates = <>
+    Params = <>
+    Left = 72
+    Top = 489
+    object CDTextoLinha: TStringField
+      FieldName = 'Linha'
+      Size = 120
     end
   end
 end

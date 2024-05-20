@@ -565,7 +565,7 @@ end;
 
 procedure TFuPedidos.btFinalizarClick(Sender: TObject);
 var nRet,nroPedido: Integer;
-    xImprimePedido: String;
+    lstPedido: String;
 begin
   PanAlteraBebida.Visible := False;
   if FuPedidos.totalPedido = 0
@@ -578,15 +578,18 @@ begin
                                'Vai imprimir pedido nr: ' + IntToStr(nroPedido));
       if nroPedido > 0 then
       begin
-        xImprimePedido := ObtemParametro('PedidoImprimir');
-        if Pos(xImprimePedido,'SNQ') = 0 then xImprimePedido := 'Q';       // Sim  Não  Questiona
-        if xImprimePedido = 'Q' then
+        lstPedido := ObtemParametro('PedidoImprimir');
+        if Pos(lstPedido,'SNQ') = 0 then lstPedido := 'Q';       // Sim  Não  Questiona
+        if lstPedido = 'Q' then
            if MessageDlg('Imprimir pedido ?',mtConfirmation,[mbYes,mbNo],0,mbNo) = mrYes then
-              xImprimePedido := 'S'
+              lstPedido := 'S'
            else
-              xImprimePedido := 'N';
-        if xImprimePedido = 'S' then
-           ImprimePedido(nroPedido);
+              lstPedido := 'N';
+        if lstPedido = 'S' then
+        begin
+           DebugMensagem(uDM.lDebug,'Vai imprimir pedido nro ' + IntToStr(nroPedido));
+           ImprimePedidoLst(nroPedido);
+        end;
       end;
       nRet := 2;
     end;

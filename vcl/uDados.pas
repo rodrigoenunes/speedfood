@@ -733,6 +733,7 @@ begin
   end;
   PedItensZC_PrensCort.AsString := '';
   if PedItensPrensado.AsInteger <> 0
+
      then PedItensZC_PrensCort.AsString := '< PRENSADO >     ';
   if PedItensCortado.AsInteger <> 0
      then PedItensZC_PrensCort.AsString := PedItensZC_PrensCort.AsString + '< CORTADO >';

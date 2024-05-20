@@ -770,7 +770,7 @@ begin
       xImpressao := 'N';
   DebugMensagem(uDM.lDebug,'NroPedido:'+ IntToSTr(SalvaNroPedido));
   if xImpressao = 'S' then
-    ImprimePedido(SalvaNroPedido);       //uDM.PedidosNumero.AsInteger);
+    ImprimeXXXPedido(SalvaNroPedido);       //uDM.PedidosNumero.AsInteger);
   //
 }
   xImpressao := ObtemParametro('EtiquetaFinalPedido');

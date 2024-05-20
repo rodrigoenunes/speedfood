@@ -4,8 +4,10 @@ interface
 
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, RLReport, System.UITypes, RLPrinters, uBiblioteca;
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, RLReport, System.UITypes, RLPrinters, uBiblioteca,
+  Data.DB, Datasnap.DBClient;
   Procedure ImprimePedido(pNroPedido:Integer; pSys:Boolean = True);
+  Procedure ImprimePedidoLst(pNroPedido:Integer);
   Function EmiteNFCe(pNroPedido:Integer;pImprimir:Boolean;var pStatus:Boolean): TRetorno;
   Procedure ImprimeCaixa(pSequencia: Integer);
   Procedure ImprimeResumo(pIni,pFim:String;pVlr:array of Currency; pQtd:array of Integer;
@@ -168,13 +170,43 @@ type
     RLLabel5: TRLLabel;
     RLLabTotVlrDocs: TRLLabel;
     RLLabTotQtdDocs: TRLLabel;
+    CDPed: TClientDataSet;
+    CDPedNumero: TStringField;
+    CDPedSenha: TStringField;
+    CDPedCliente: TStringField;
+    CDPedDataHora: TStringField;
+    CDPedMeioPagto: TStringField;
+    CDDet: TClientDataSet;
+    CDDetDescricao: TStringField;
+    SCDDet: TDataSource;
+    SCDPed: TDataSource;
+    CDPedTotal: TStringField;
+    CDDetNrLcto: TStringField;
+    CDDetTipo: TStringField;
+    CDDetQuant: TStringField;
+    CDDetUnitar: TStringField;
+    CDDetTotal: TStringField;
+    CDDetExtras: TStringField;
+    CDDetObserv: TStringField;
+    CDDetPrensado: TSmallintField;
+    CDDetCortado: TSmallintField;
+    RLPedTexto: TRLReport;
+    SCDTexto: TDataSource;
+    CDTexto: TClientDataSet;
+    CDTextoLinha: TStringField;
+    RLBand1: TRLBand;
+    RLDBText6: TRLDBText;
     procedure RLCaixaBeforePrint(Sender: TObject; var PrintIt: Boolean);
     procedure RLPedDetalBeforePrint(Sender: TObject; var PrintIt: Boolean);
     procedure RLPedidoBeforePrint(Sender: TObject; var PrintIt: Boolean);
+    procedure RLPedidoAfterPrint(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
   private
     { Private declarations }
   public
     { Public declarations }
+    lDSImpressao: Boolean;
+
   end;
 
 
@@ -195,7 +227,8 @@ implementation
 
 uses uDados, uGenericas, uSysPrinters, FortesReportCtle;
 
-Function MontaTextoImpressao: Integer;
+{
+Function MontaTextoImpressao_Orig: Integer;
 var xExtra,txtAux: String;
     i:Integer;
 begin
@@ -266,17 +299,329 @@ begin
   end;
 
 end;
+}
 
+Function MontaTextoImpressao
+: Integer;
+var xExtra,txtAux: String;
+    i:Integer;
+begin
+  Result := 0;
+  FuImpressoes.RLMemoItem.Lines.Clear;
+  FuImpressoes.RLMemoItem.Visible := False;
+  if (FuImpressoes.CDDetTipo.AsString <> 'L')                  // Lanche
+     and (FuImpressoes.CDDetTipo.AsString <> 'M')              // Lanche montado
+  then Exit;
+  //
+  if FuImpressoes.CDDetExtras.AsString = stringFiller('.',24) then Exit;
+  xExtra := FuImpressoes.CDDetExtras.AsString;
+  if FuImpressoes.CDDetTipo.AsString = 'L' then
+  begin
+    if Pos('0',xExtra) > 0 then
+    begin       // Há indicação SEM
+      txtAux := 'SEM ';
+      for i := 1 to 24 do
+      if xExtra[i] = '0' then
+        if uDM.Itens.FindKey([2,i]) then
+          txtAux := txtAux + uDM.ItensDescricao.AsString + '; ';
+      FuImpressoes.RLMemoItem.Lines.Add(txtAux);
+    end;
+    if (Pos('+',xExtra) > 0) or (Pos('1',xExtra) > 0) or (Pos('2',xExtra) > 0)
+    then begin       // Há indicação MAIS
+      txtAux := 'MAIS ';
+      for i := 1 to 24 do
+      if (xExtra[i] = '+') or (xExtra[i] = '1') or (xExtra[i] = '2') then
+        if uDM.Itens.FindKey([2,i]) then
+          txtAux := txtAux + uDM.ItensDescricao.AsString + '; ';
+      FuImpressoes.RLMemoItem.Lines.Add(txtAux);
+    end;
+    if Pos('-',xExtra) > 0 then
+    begin       // Há indicação MENOS
+      txtAux := 'MENOS ';
+      for i := 1 to 24 do
+      if xExtra[i] = '-' then
+        if uDM.Itens.FindKey([2,i]) then
+          txtAux := txtAux + uDM.ItensDescricao.AsString + '; ';
+        FuImpressoes.RLMemoItem.Lines.Add(txtAux);
+    end;
+  end
+  else begin         // Lanche montado
+    if Pos('+',xExtra) > 0
+    then begin       // Há indicação MAIS
+      txtAux := 'COM ';
+      for i := 1 to 24 do
+      if xExtra[i] = '+' then
+        if uDM.Itens.FindKey([5,i]) then
+          txtAux := txtAux + uDM.ItensDescricao.AsString + '; ';
+      FuImpressoes.RLMemoItem.Lines.Add(txtAux);
+    end;
+  end;
+  //
+  if uDM.PedItensObservacao.AsString <> '' then
+    FuImpressoes.RLMemoItem.Lines.Add(uDM.PedItensObservacao.AsString);
+  txtAux := '';
+  if uDM.PedItensPrensado.AsInteger > 0 then
+    txtAux := '     PRENSADO';
+  if uDM.PedItensCortado.AsInteger > 0 then
+    txtAux := txtAux + '     CORTADO';
+  if txtAux <> '' then
+    FuImpressoes.RLMemoItem.Lines.Add(txtAux);
+  //
+  if FuImpressoes.RLMemoItem.Lines.Count > 0
+  then begin
+    FuImpressoes.RLMemoItem.Visible := True;
+    Result := FuImpressoes.RLMemoItem.Lines.Count * 15;
+  end;
+
+end;
+
+
+Function MontaTextoLst: String;
+var xExtra,txtSem,txtMais,txtMenos,txtObs: String;
+    i:Integer;
+begin
+  Result := '';
+  if (uDM.PedItensTpProd.AsString <> '1')                  // Lanche
+     and (uDM.PedItensTpProd.AsString <> '4')              // Lanche montado
+  then Exit;
+{PedItensTpProd.AsInteger
+    1:PedItensZC_Tp.AsString := 'L';
+    3:PedItensZC_Tp.AsString := 'B';
+    4:PedItensZC_Tp.AsString := 'M';
+    6:PedItensZC_Tp.AsString := 'D';
+    else PedItensZC_Tp.AsString := '';}
+  if uDM.PedItensExtras.AsString = stringFiller('.',24) then Exit;
+  //
+  xExtra := uDM.PedItensExtras.AsString;
+  txtSem := '';
+  txtMais := '';
+  txtMenos := '';
+  txtObs := '';
+  if uDM.PedItensTpProd.AsString = 'L' then
+  begin
+    if Pos('0',xExtra) > 0 then
+    begin       // Há indicação SEM
+      txtSem := 'SEM ';
+      for i := 1 to 24 do
+      if xExtra[i] = '0' then
+        if uDM.Itens.FindKey([2,i]) then
+          txtSem := txtSem + uDM.ItensDescricao.AsString + '; ';
+    end;
+    if (Pos('+',xExtra) > 0) or (Pos('1',xExtra) > 0) or (Pos('2',xExtra) > 0)
+    then begin       // Há indicação MAIS
+      txtMais := 'MAIS ';
+      for i := 1 to 24 do
+      if (xExtra[i] = '+') or (xExtra[i] = '1') or (xExtra[i] = '2') then
+        if uDM.Itens.FindKey([2,i]) then
+          txtMais := txtMais + uDM.ItensDescricao.AsString + '; ';
+    end;
+    if Pos('-',xExtra) > 0 then
+    begin       // Há indicação MENOS
+      txtMenos := 'MENOS ';
+      for i := 1 to 24 do
+      if xExtra[i] = '-' then
+        if uDM.Itens.FindKey([2,i]) then
+          txtMenos := txtMenos + uDM.ItensDescricao.AsString + '; ';
+    end;
+  end
+  else begin         // Lanche montado
+    if Pos('+',xExtra) > 0
+    then begin       // Há indicação MAIS
+      txtMais := 'COM ';
+      for i := 1 to 24 do
+      if xExtra[i] = '+' then
+        if uDM.Itens.FindKey([5,i]) then
+          txtMais := txtMais + uDM.ItensDescricao.AsString + '; ';
+    end;
+  end;
+  //
+  if uDM.PedItensObservacao.AsString <> '' then
+    txtObs := uDM.PedItensObservacao.AsString + ';';
+  if uDM.PedItensPrensado.AsInteger > 0 then
+    txtObs := txtObs + ' <PRENSADO>';
+  if uDM.PedItensCortado.AsInteger > 0 then
+    txtObs := txtObs + ' <CORTADO>';
+  //
+  Result := txtSem + ' ' + txtMais + ' ' + txtMenos + ' ' + txtObs;
+
+end;
+
+
+Function CriaArqTmp: Boolean;
+begin
+  Result := False;
+  with FuImpressoes
+  do begin
+    if lDSImpressao then
+    begin
+      Result := True;
+      Exit;
+    end;
+    CDPed.Active := False;
+    CDPed.FieldDefs.Add('Numero', ftString, 10);
+    CDPed.FieldDefs.Add('Senha', ftString, 10);
+    CDPed.FieldDefs.Add('Cliente', ftString, 50);
+    CDPed.FieldDefs.Add('DataHora', ftString, 30);
+    CDPed.FieldDefs.Add('Total', ftString, 15);
+    CDPed.FieldDefs.Add('MeioPagto', ftString, 20);
+    CDPed.IndexDefs.Clear;
+    CDPed.CreateDataSet;
+    Try
+      CDPed.Active := True;
+      CDPed.Active := False;
+    Except
+      Exit;
+    End;
+    //
+    CDDet.Active := False;
+    CDDet.FieldDefs.Add('NrLcto', ftString, 2);
+    CDDet.FieldDefs.Add('Tipo', ftString, 1);
+    CDDet.FieldDefs.Add('Quant', ftString, 3);
+    CDDet.FieldDefs.Add('Descricao', ftString, 40);
+    CDDet.FieldDefs.Add('Unitar', ftString, 12);
+    CDDet.FieldDefs.Add('Total', ftString, 12);
+    CDDet.FieldDefs.Add('Extras', ftString, 24);
+    CDDet.FieldDefs.Add('Observ', ftString, 120);
+    CDDet.FieldDefs.Add('Prensado', ftSmallint);
+    CDDet.FieldDefs.Add('Cortado', ftSmallint);
+    CDDet.IndexDefs.Clear;
+    CDDet.CreateDataSet;
+    Try
+      CDDet.Active := True;
+      CDDet.Active := False;
+    Except
+      Exit;
+    End;
+    //
+    CDTexto.Active := False;
+    CDTexto.FieldDefs.Add('Linha', ftString, 120);
+    CDTexto.CreateDataSet;
+    Try
+      CDTexto.Active := True;
+      CDTexto.Active := False;
+    Except
+      Exit;
+    End;
+
+    lDSImpressao := True;
+    Result := True;
+  end;
+
+end;
+
+Procedure ImprimePedidoLst(pNroPedido:Integer);
+var lstPedido: TStringList;
+    xQuant,xDescr,xUnit,xTotal: String;
+    tamLinha,tamFonte,meiaLinha,tamDescr,nTam,i: Integer;
+begin
+  if not CriaArqTmp
+  then begin
+    MessageDlg('Erro criação ArqTmp',mtError,[mbOk],0);
+    Exit;
+  end;
+  if not uDM.Pedidos.FindKey([pNroPedido]) then Exit;
+  tamLinha := StrToIntDef(ObtemParametro('PedidoLstLinha'),60);
+  tamFonte := StrToIntDef(ObtemParametro('PedidoLstFonte'),8);
+  meiaLinha := tamLinha div 2;
+  tamDescr := tamLinha - 20;    // Quant(3) + Unit(8) + Total(8) + espaco(1)
+  //
+  lstPedido := TStringList.Create;
+  lstPedido.Add(stringCompleta('Cachorro Quente do Carlão','C',' ',tamLinha));
+  lstPedido.Add('');
+  lstPedido.Add(stringCompleta('Senha: '+ uDM.PedidosPlaca.AsString,'D',' ',meiaLinha) +
+                stringCompleta('Pedido: '+ uDM.PedidosZC_NroLst.AsString,'E',' ',meiaLinha));
+  lstPedido.Add('Cliente: ' + uDM.PedidosNomeCliente.AsString);
+  lstPedido.Add('DH: ' + uDM.PedidosZC_DataHora.AsString);
+  lstPedido.Add(stringCompleta('Detalhes','C','-',tamLinha));
+  uDM.PedItens.First;
+  while not uDM.PedItens.Eof
+  do begin
+    xQuant := stringCompleta(uDM.PedItensQuant.AsString,'E',' ',2);
+    xUnit := FloatToStrF(uDM.PedItensVlrUnitario.ASCurrency,ffNumber,7,2);
+    xUnit := stringCompleta(xUnit,'E',' ',8);
+    xTotal := FloatToStrF(uDM.PedItensVlrTotal.ASCurrency,ffNumber,7,2);
+    xTotal := stringCompleta(xTotal,'E',' ',8);
+    xDescr := stringCompleta(uDM.PedItensZC_Descricao.AsString,'D',' ',tamDescr);
+    lstPedido.Add(xQuant + ' ' + xDescr + xUnit + xTotal);
+    xDescr := MontaTextoLst;
+    while xDescr <> ''
+    do begin
+      nTam := Length(xDescr);
+      if nTam > tamDescr then
+        nTam := tamDescr;
+      lstPedido.Add(Copy(xDescr,1,nTam));
+      xDescr := Copy(xDescr,nTam+1,Length(xDescr)-nTam);
+    end;
+    uDM.PedItens.Next;
+  end;
+  lstPedido.Add(stringCompleta('Forma de pagamento: ' + uDM.PedidosZC_MPExtenso.AsString,'E',' ',tamLinha));
+  lstPedido.Add('');
+  lstPedido.Add(stringFiller('-',tamLinha));
+  //
+  with FuImpressoes
+  do begin
+    CDTexto.Active := True;
+    CDTexto.EmptyDataSet;
+    for i := 0 to lstPedido.Count-1
+    do begin
+      CDTexto.Append;
+      CDTextoLinha.AsString := lstPedido[i];
+      CDTexto.Post;
+    end;
+    RLPedTexto.Font.Size := tamFonte;
+    RLPedTexto.Preview;
+  end;
+
+end;
 
 Procedure ImprimePedido(pNroPedido:Integer; pSys:Boolean = True);
-var filTxtAnt: String;
-    filAnt: Boolean;
-    i: Integer;
+var i: Integer;
     lSeparador: Boolean;
 begin
-  if not uDM.Pedidos.FindKey([pNroPedido]) then Exit;
   if ObtemParametro('PedidoLinhaSep') = 'S' then lSeparador := True
     else lSeparador := False;
+  if not uDM.Pedidos.FindKey([pNroPedido]) then Exit;
+  //
+  if not CriaArqTmp
+  then begin
+    MessageDlg('Erro criação ArqTmp',mtError,[mbOk],0);
+    Exit;
+  end;
+  with FuImpressoes
+  do begin
+    CDPed.Active := True;
+    CDPed.EmptyDataSet;
+    CDDet.Active := True;
+    CDDet.EmptyDataSet;
+    CDPed.Append;
+    CDPedNumero.AsString := uDM.PedidosZC_NroLst.AsString;
+    CDPedSenha.AsString := uDM.PedidosZC_Senha.AsString;
+    CDPedCliente.AsString := uDM.PedidosNomeCliente.AsString;
+    CDPedDataHora.AsString := uDM.PedidosZC_DataHora.AsString;
+    CDPedTotal.AsString := FloatToStrF(uDM.PedidosValor.AsCurrency,ffNumber,15,2);
+    CDPedMeioPagto.AsString := uDM.PedidosZC_MPExtenso.AsString;
+    CDPed.Post;
+    //
+    uDM.PedItens.First;
+    while not uDM.PedItens.Eof
+    do begin
+      CDDet.Append;
+      CDDetNrLcto.AsString := uDM.PedItensZC_PedLcto.AsString;
+      CDDetTipo.AsString := uDM.PedItensZC_Tipo.AsString;             // L B M D
+      CDDetQuant.AsString := uDM.PedItensQuant.AsString;
+      CDDetDescricao.AsString := uDM.PedItensZC_Descricao.AsString;
+      CDDetUnitar.AsString := FloatToStrF(uDM.PedItensVlrUnitario.AsCurrency,ffNumber,12,2);
+      CDDetTotal.AsString := FloatToStrF(uDM.PedItensVlrTotal.AsCurrency,ffNumber,12,2);
+      CDDetExtras.AsString := uDM.PedItensExtras.AsString;
+      CDDetObserv.AsString := uDM.PedItensObservacao.AsString;
+      CDDetPrensado.AsInteger := uDM.PedItensPrensado.AsInteger;
+      CDDetCortado.AsInteger := uDM.PedItensCortado.AsInteger;
+      CDDet.Post;
+      uDM.PedItens.Next;
+    end;
+
+  end;
+  //
   idPrinter := ObtemParametro('PedidoPrinter');
   tmMax := StrToIntDef(ObtemParametro('PedidoTamMax'),300);
   margEsq := StrToIntDef(ObtemParametro('PedidoMargEsquerda'),5);
@@ -298,56 +643,25 @@ begin
   //
   if not pSys then lPreview := True;
   //
-  DebugMensagem(uDM.lDebug,'ImprimePedido nro: ' + uDM.PedidosNumero.AsString +
-                           '  Senha:' + uDM.PedidosPlaca.AsString +
-                           '  Turno:' + uDM.PedidosTurno.AsString);
-  if uDM.PedidosNumero.AsInteger <> pNroPedido then
-  begin
-    DebugMensagem(uDM.lDebug,'Nro errado');
-    if not uDM.Pedidos.FindKey([pNroPedido]) then
-    begin
-      DebugMensagem(uDM.lDebug,'Nro errado de novo......');
-      Exit;
-    end;
-
-  end;
-
-
-
-  uDM.PedItens.Filtered := False;
-  uDM.PedItens.Refresh;
-  //FuImpressoes := TFuImpressoes.Create(nil);
-  //if FuImpressoes = Nil then
-  //  Application.CreateForm(TFuImpressoes, FuImpressoes);
   with FuImpressoes
   do begin
-    //RLDbPedido.Left := 185 - nDesloc;
-    //RLDbDataPedido.Left := 168 - nDesloc;
     RLLabUnitItem.Left := 180 - nDesloc;
     RLLabTotalItem.Left := 220 - nDesloc;
-    RLDbDescrItem.Width := 132 - nDesloc;     // WIDTH está correto !!!!!
+    RLDbDescrItem.Width := 132 - nDesloc;
     RLDbUnitItem.Left := 180 - nDesloc;
     RLDbTotalItem.Left := 220 - nDesloc;
-    RLMemoItem.Width := 261 - nDesloc;        // WIDTH está correto !!!!!
+    RLMemoItem.Width := 261 - nDesloc;
     RLDbTotalPed.Left := 186 - nDesloc;
     nAltura := RLPedCab.Height + RLPedColCab.Height + RLPedSum.Height + RLPedFoot.Height +
                (uDM.PedItens.RecordCount * 16);
-    //filTxtAnt := uDM.PedItens.Filter;
-    //filAnt := uDM.PedItens.Filtered;
-    //uDM.PedItens.Filter := 'TpProd=1';
-    //uDM.PedItens.Filtered := True;
-
-    uDM.PedItens.First;
-    while not uDM.PedItens.Eof do
+    CDDet.First;
+    while not CDDet.Eof do
     begin
       nAltura := nAltura + MontaTextoImpressao;
-      if uDM.PedItensTpProd.AsInteger = 2
+      if CDDetTipo.AsString = 'M'
          then nAltura := nAltura + 15;
-      uDM.PedItens.Next;
+      CDDet.Next;
     end;
-    //uDM.PedItens.Filter :='';
-    //uDM.PedItens.Filtered := False;
-    //uDM.PedItens.First;
     //
     nAltura := nAltura + 60;
     tmPagina := Trunc(nAltura / 3.7795) + 1;
@@ -361,23 +675,6 @@ begin
     RLPedDetal.Borders.DrawBottom := lSeparador;
     FFRCtle.RLPreviewSetup1.CustomActionText := lstAction;
 
-
-   // RLPedSum.Borders.DrawTop := False;
-   // if not lSeparador then RLPedSum.Borders.DrawTop := True;
-
-{
-    if uDM.PedidosPlaca.AsString <> '' then
-    begin
-      RLDbPlaca.Visible := True;
-      RLDbNrPedido.Font.Size := 10;
-      RLDbNrPedido.Font.Style := [];
-    end
-    else begin
-      RLDbPlaca.Visible := False;
-      RLDbNrPedido.Font.Size := 12;
-      RLDbNrPedido.Font.Style := [fsBold];
-    end;
-}
     RLPedido.PrintDialog := lDialog;
     RLPrinters.RLPrinter.PrinterName := idPrinter;
     RLPrinters.RLPrinter.Copies := 1;
@@ -386,10 +683,12 @@ begin
       else for i := 1 to copias
            do RLPedido.Print;
   end;
-  //FuImpressoes.Free;
 
-  uDM.PedItens.Filter := filTxtAnt;
-  uDM.PedItens.Filtered := filAnt;
+  with FuImpressoes
+  do begin
+    CDPed.Active := False;
+    CDDet.Active := False;
+  end;
 
 end;
 
@@ -436,7 +735,6 @@ begin
     lPreview := True;
   //
   uDM.LctCaixa.Refresh;
-  //FuImpressoes := TFuImpressoes.Create(nil);
   with FuImpressoes
   do begin
     nAltura := RLCx_Cabec.Height + RLCx_Cols.Height +
@@ -471,7 +769,6 @@ begin
            do RLCaixa.Print;
 
   end;
-  //FuImpressoes.Free;
 
 end;
 
@@ -495,7 +792,6 @@ begin
     lPreview := True;
   //
   uDM.Resvendas.First;
- // FuImpressoes := TFuImpressoes.Create(nil);
   with FuImpressoes
   do begin
     if pIni = pFim then
@@ -563,10 +859,15 @@ begin
            do RLResumo.Print;
 
   end;
-  //FuImpressoes.Free;
 
 end;
 
+
+procedure TFuImpressoes.FormCreate(Sender: TObject);
+begin
+  lDSImpressao := False;
+
+end;
 
 procedure TFuImpressoes.RLCaixaBeforePrint(Sender: TObject; var PrintIt: Boolean);
 begin
@@ -580,9 +881,28 @@ begin
 
 end;
 
+procedure TFuImpressoes.RLPedidoAfterPrint(Sender: TObject);
+var nrPedido: Integer;
+    xMsg: String;
+begin
+  nrPedido := uDM.PedidosNumero.AsInteger;
+  uDM.PedItens.Active := False;
+  uDM.Pedidos.Active := False;
+  //
+  uDM.Pedidos.Active := True;
+  uDM.PedItens.Active := True;
+  if uDM.Pedidos.FindKey([nrPedido])
+    then xMsg := 'Achou ' + IntToStr(nrPedido)
+    else xMsg := 'Não achou ' + IntToStr(nrPedido) + ' - ' + uDM.PedidosNumero.AsString;
+  DebugMensagem(uDM.lDebug,'Apos impressão ' + xMsg);
+
+end;
+
 procedure TFuImpressoes.RLPedidoBeforePrint(Sender: TObject;
   var PrintIt: Boolean);
 begin
+  uDM.Pedidos.Refresh;
+
   DebugMensagem(uDM.lDebug,'RLPedidoBeforePrint: ' + uDM.PedidosNumero.AsString);
 
 end;
