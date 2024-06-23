@@ -194,13 +194,14 @@ type
     SCDTexto: TDataSource;
     CDTexto: TClientDataSet;
     CDTextoLinha: TStringField;
-    RLBand1: TRLBand;
-    RLDBText6: TRLDBText;
+    RLBandLinha: TRLBand;
+    RLMemoTxt: TRLMemo;
     procedure RLCaixaBeforePrint(Sender: TObject; var PrintIt: Boolean);
     procedure RLPedDetalBeforePrint(Sender: TObject; var PrintIt: Boolean);
     procedure RLPedidoBeforePrint(Sender: TObject; var PrintIt: Boolean);
     procedure RLPedidoAfterPrint(Sender: TObject);
     procedure FormCreate(Sender: TObject);
+    procedure RLPedTextoBeforePrint(Sender: TObject; var PrintIt: Boolean);
   private
     { Private declarations }
   public
@@ -220,6 +221,10 @@ var
   lstAction: String;
   lPreview,lDialog: Boolean;
   nPontos,nDesloc: Integer;
+
+  tamLinha,tamFonte: Integer;
+  xNegrito: String;
+  negrito: Boolean;
 
 implementation
 
@@ -512,18 +517,42 @@ end;
 Procedure ImprimePedidoLst(pNroPedido:Integer);
 var lstPedido: TStringList;
     xQuant,xDescr,xUnit,xTotal: String;
-    tamLinha,tamFonte,meiaLinha,tamDescr,nTam,i: Integer;
+    meiaLinha,tamDescr,nTam,i: Integer;
+    pedidoTxt: String;
 begin
+  FuImpressoes := TFuImpressoes.Create(nil);
   if not CriaArqTmp
   then begin
     MessageDlg('Erro criação ArqTmp',mtError,[mbOk],0);
+    FuImpressoes.Free;
     Exit;
   end;
-  if not uDM.Pedidos.FindKey([pNroPedido]) then Exit;
-  tamLinha := StrToIntDef(ObtemParametro('PedidoLstLinha'),60);
-  tamFonte := StrToIntDef(ObtemParametro('PedidoLstFonte'),8);
+  DebugMensagem(uDM.lDebug,'Localizando pedido nr:' + IntToStr(pNroPedido));
+  if not uDM.Pedidos.FindKey([pNroPedido])
+  then begin
+    FuImpressoes.Free;
+    Exit;
+  end;
+  DebugMensagem(uDM.lDebug,'Achou o pedido nr:' + IntToStr(pNroPedido));
+  //
+  idPrinter := ObtemParametro('PedidoPrinter');
+  tmMax := StrToIntDef(ObtemParametro('PedidoTamMax'),300);
+  if ObtemParametro('PedidoPreview') = 'S' then lPreview := True
+    else lPreview := False;
+  if ObtemParametro('PedidoDialogo') = 'S' then lDialog := True
+    else lDialog := False;
+  if not DefineImpressora(True,idPrinter,portaPrt,driverPrt,indexPrt) then
+    lPreview := True;
+  tamLinha := StrToIntDef(ObtemParametro('PedidoLstLinha'),45);
+  tamFonte := StrToIntDef(ObtemParametro('PedidoLstFonte'),6);
+  xNegrito := ObtemParametro('PedidoLstNegrito');
+  if xNegrito = 'S' then negrito := True
+  else begin
+    xNegrito := 'N';
+    negrito := False;
+  end;
   meiaLinha := tamLinha div 2;
-  tamDescr := tamLinha - 20;    // Quant(3) + Unit(8) + Total(8) + espaco(1)
+  tamDescr := tamLinha - 19;    // Quant(3) + Unit(8) + Total(8) + espaco(1)
   //
   lstPedido := TStringList.Create;
   lstPedido.Add(stringCompleta('Cachorro Quente do Carlão','C',' ',tamLinha));
@@ -537,7 +566,7 @@ begin
   while not uDM.PedItens.Eof
   do begin
     xQuant := stringCompleta(uDM.PedItensQuant.AsString,'E',' ',2);
-    xUnit := FloatToStrF(uDM.PedItensVlrUnitario.ASCurrency,ffNumber,7,2);
+    xUnit := FloatToStrF(uDM.PedItensVlrUnitario.AsCurrency,ffNumber,7,2);
     xUnit := stringCompleta(xUnit,'E',' ',8);
     xTotal := FloatToStrF(uDM.PedItensVlrTotal.ASCurrency,ffNumber,7,2);
     xTotal := stringCompleta(xTotal,'E',' ',8);
@@ -554,12 +583,29 @@ begin
     end;
     uDM.PedItens.Next;
   end;
+  xTotal := 'Total: ' + FloatToStrF(uDM.PedidosValor.AsCurrency,ffNumber,7,2);
+  lstPedido.Add(stringCompleta(stringFiller('-',Length(xTotal)),'E',' ',tamLinha));
+  lstPedido.Add(stringCompleta(xTotal,'E',' ',tamLinha));
   lstPedido.Add(stringCompleta('Forma de pagamento: ' + uDM.PedidosZC_MPExtenso.AsString,'E',' ',tamLinha));
-  lstPedido.Add('');
   lstPedido.Add(stringFiller('-',tamLinha));
+  lstPedido.Add('...');
+  lstPedido.Add('..');
+  lstPedido.Add('.');
+  pedidoTxt := ObtemParametro('PedidoLstArqTxt') + '.Txt';
+  if pedidoTxt <> '' then
+    Try
+      lstPedido.SaveToFile(pedidoTxt);
+    Except
+    End;
   //
   with FuImpressoes
   do begin
+    CDTexto.Active := True;
+    CDTexto.EmptyDataSet;
+    CDTexto.Append;
+    CDTextoLinha.AsString := '';
+    CDTexto.Post;
+    {
     CDTexto.Active := True;
     CDTexto.EmptyDataSet;
     for i := 0 to lstPedido.Count-1
@@ -568,9 +614,43 @@ begin
       CDTextoLinha.AsString := lstPedido[i];
       CDTexto.Post;
     end;
+    pedidoTxt := ObtemParametro('PedidoLstArqTxt');
+    CDTexto.SaveToFile(pedidoTxt);
+    CDTexto.Active := False;
+    CDTexto.Active := True;
+    CDTexto.LoadFromFile(pedidoTxt);
+    }
+    {
     RLPedTexto.Font.Size := tamFonte;
-    RLPedTexto.Preview;
+    if negrito then RLPedTexto.Font.Style := [fsBold]
+      else  RLPedTexto.Font.Style := [];
+
+    RLBandLinha.Font.Size := tamFonte;
+    if negrito then RLBandLinha.Font.Style := [fsBold]
+      else  RLBandLinha.Font.Style := [];
+    }
+    RLMemoTxt.Lines.Clear;
+    RLMemoTxt.Lines.LoadFromFile(pedidoTxt);
+    RLBandLinha.Height := lstPedido.Count * 10;
+    tmPagina := RLMemoTxt.Height + 60;    // (CDTexto.RecordCount * RLBandLinha.Height) + 60;
+    tmPagina := Trunc(tmPagina / 3.7795) + 1;
+    if tmPagina < 50 then tmPagina := 50
+       else if tmPagina > tmMax then tmPagina := tmMax;
+    RLPedTexto.PageSetup.PaperHeight := tmPagina;
+    RLPedTexto.PrintDialog := lDialog;
+
+    FFRCtle.RLPreviewSetup1.CustomActionText := '';
+    RLPrinters.RLPrinter.PrinterName := idPrinter;
+    RLPrinters.RLPrinter.Copies := 1;
+
+   if lPreview then RLPedTexto.Preview
+      else RLPedTexto.Print;
+
+   //CDTexto.EmptyDataSet;
+   //CDTexto.Active := False;
+
   end;
+  FuImpressoes.Free;
 
 end;
 
@@ -578,13 +658,19 @@ Procedure ImprimePedido(pNroPedido:Integer; pSys:Boolean = True);
 var i: Integer;
     lSeparador: Boolean;
 begin
+  FuImpressoes := TFuImpressoes.Create(nil);
   if ObtemParametro('PedidoLinhaSep') = 'S' then lSeparador := True
     else lSeparador := False;
-  if not uDM.Pedidos.FindKey([pNroPedido]) then Exit;
+  if not uDM.Pedidos.FindKey([pNroPedido])
+  then begin
+    FuImpressoes.Free;
+    Exit;
+  end;
   //
   if not CriaArqTmp
   then begin
     MessageDlg('Erro criação ArqTmp',mtError,[mbOk],0);
+    FuImpressoes.Free;
     Exit;
   end;
   with FuImpressoes
@@ -682,13 +768,11 @@ begin
    if lPreview then RLPedido.Preview
       else for i := 1 to copias
            do RLPedido.Print;
-  end;
 
-  with FuImpressoes
-  do begin
     CDPed.Active := False;
     CDDet.Active := False;
   end;
+  FuImpressoes.Free
 
 end;
 
@@ -733,6 +817,7 @@ begin
     else lDialog := False;
   if not DefineImpressora(True,idPrinter,portaPrt,driverPrt,indexPrt) then
     lPreview := True;
+  FuImpressoes := TFuImpressoes.Create(nil);
   //
   uDM.LctCaixa.Refresh;
   with FuImpressoes
@@ -767,8 +852,8 @@ begin
     if lPreview then RLCaixa.Preview
       else for i := 1 to copias
            do RLCaixa.Print;
-
   end;
+  FuImpressoes.Free;
 
 end;
 
@@ -776,6 +861,7 @@ Procedure ImprimeResumo(pIni,pFim:String;pVlr:array of Currency; pQtd:array of I
                                          pVlrDoc:array of Currency; pqtdDoc:array of Integer);
 var i: Integer;
 begin
+  FuImpressoes := TFuImpressoes.Create(nil);
   idPrinter := ObtemParametro('ResumoPrinter');
   tmMax := StrToIntDef(ObtemParametro('ResumoTamMax'),300);
   margEsq := StrToIntDef(ObtemParametro('ResumoMargEsquerda'),5);
@@ -857,6 +943,7 @@ begin
     if lPreview then RLResumo.Preview
       else for i := 1 to copias
            do RLResumo.Print;
+    FuImpressoes.Free;
 
   end;
 
@@ -902,8 +989,25 @@ procedure TFuImpressoes.RLPedidoBeforePrint(Sender: TObject;
   var PrintIt: Boolean);
 begin
   uDM.Pedidos.Refresh;
-
   DebugMensagem(uDM.lDebug,'RLPedidoBeforePrint: ' + uDM.PedidosNumero.AsString);
+
+end;
+
+procedure TFuImpressoes.RLPedTextoBeforePrint(Sender: TObject;
+  var PrintIt: Boolean);
+begin
+{
+  DebugMensagem(uDM.lDebug,'Linha=' + IntToStr(tamLinha) + '  Fonte=' + IntToStr(tamFonte) +
+                            '   Negrito=' + xNegrito);
+  RLPedTexto.Font.Size := tamFonte;
+}
+  //if negrito then RLPedTexto.Font.Style := [fsBold]
+  //   else  RLPedTexto.Font.Style := [];
+  {
+  RLBandLinha.Font.Size := tamFonte;
+  if negrito then RLBandLinha.Font.Style := [fsBold]
+    else  RLBandLinha.Font.Style := [];
+  }
 
 end;
 

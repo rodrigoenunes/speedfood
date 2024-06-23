@@ -34,7 +34,6 @@ begin
   Application.CreateForm(TFuPrincipal, FuPrincipal);
   Application.CreateForm(TFGen, FGen);
   Application.CreateForm(TFFRCtle, FFRCtle);
-  Application.CreateForm(TFSFEuPrintFortes, FSFEuPrintFortes);
   Application.CreateForm(TFuPagtoMisto, FuPagtoMisto);
   Application.CreateForm(TFuHelpSpeedFood, FuHelpSpeedFood);
   Application.CreateForm(TFuMontarLanche, FuMontarLanche);
@@ -44,7 +43,6 @@ begin
   Application.CreateForm(TFuFinPedido, FuFinPedido);
   Application.CreateForm(TFuItens, FuItens);
   Application.CreateForm(TFuCaixa, FuCaixa);
-  Application.CreateForm(TFuImpressoes, FuImpressoes);
   Application.CreateForm(TFuQueryPedidos, FuQueryPedidos);
   Application.CreateForm(TFuQueryAdministrativo, FuQueryAdministrativo);
   Application.Run;

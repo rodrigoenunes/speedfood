@@ -73,7 +73,6 @@ end;
 procedure TFuPrincipal.btConsPedidosClick(Sender: TObject);
 begin
   QueryPedidos(uDM.turnoCorrente);
-  //ConsultarPedidos;
 
 end;
 

@@ -528,7 +528,6 @@ object FuPrincipal: TFuPrincipal
     NumGlyphs = 2
     TabOrder = 9
     OnMouseDown = btHelpGeralMouseDown
-    ExplicitTop = 300
   end
   object btHelpArgox: TBitBtn
     Left = 358
@@ -553,7 +552,6 @@ object FuPrincipal: TFuPrincipal
     NumGlyphs = 2
     TabOrder = 10
     OnMouseDown = btHelpArgoxMouseDown
-    ExplicitTop = 330
   end
   object btVerifSefaz: TBitBtn
     Left = 8

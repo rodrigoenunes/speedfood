@@ -1718,27 +1718,33 @@ object FuImpressoes: TFuImpressoes
     DataSource = SCDTexto
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clBlack
-    Font.Height = -11
+    Font.Height = -9
     Font.Name = 'Courier New'
     Font.Style = []
     PageSetup.PaperSize = fpCustom
     PageSetup.PaperWidth = 80.000000000000000000
     PageSetup.PaperHeight = 120.000000000000000000
-    object RLBand1: TRLBand
+    RecordRange = rrCurrentOnly
+    BeforePrint = RLPedTextoBeforePrint
+    object RLBandLinha: TRLBand
       Left = 19
       Top = 19
       Width = 264
-      Height = 16
+      Height = 20
       AutoSize = True
-      object RLDBText6: TRLDBText
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clBlack
+      Font.Height = -9
+      Font.Name = 'Courier New'
+      Font.Style = []
+      ParentFont = False
+      object RLMemoTxt: TRLMemo
         Left = 0
         Top = 0
-        Width = 42
-        Height = 16
-        Align = faLeft
-        DataField = 'Linha'
-        DataSource = SCDTexto
-        Text = ''
+        Width = 264
+        Height = 20
+        Align = faClient
+        Behavior = [beSiteExpander]
       end
     end
   end

@@ -7,7 +7,7 @@ uses
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, RLReport, RLPrinters, RLRichText;
   procedure SetRecordRangeLanche(pModo:Integer);
   procedure DefinePrinterEtiqueta;
-  procedure EmiteEtiquetas(pmtPedido:Integer; pmtItem:Integer; pmtPreview:Boolean=False);
+  procedure EmiteEtiquetas(pmtPedido:Integer; pmtItem:Integer);
 
 type
   TFSFEuPrintFortes = class(TForm)
@@ -133,18 +133,17 @@ begin
 end;
 
 
-Procedure EmiteEtiquetas(pmtPedido:Integer; pmtItem:Integer; pmtPreview:Boolean=False);
+Procedure EmiteEtiquetas(pmtPedido:Integer; pmtItem:Integer);
 var filAnt: Boolean;
     filTxtAnt: String;
 begin
+  if not uDM.Pedidos.FindKey([pmtPedido]) then
+  begin
+    MessageDlg('Pedido nr ' + IntToStr(pmtPedido) + ' não encontrado', mtError,[mbOk], 0);
+    Exit;
+  end;
   FSFEuPrintFortes := TFSFEuPrintFortes.Create(nil);
-  DefinePrinterEtiqueta;
-//  if AnsiUpperCase(ObtemParametro('EtiquetaPreview')) = 'S' then
-//    lPreview := True
-//  else
-//    lPreview := False;
-  //
-  if pmtPreview then lPreview := True;
+  DefinePrinterEtiqueta;       // Define... define idPrinter, lPreview e lDialog das etiquetas
   //
   if pmtItem <> 0
   then begin

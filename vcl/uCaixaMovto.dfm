@@ -29,6 +29,8 @@ object FuCaixaMovto: TFuCaixaMovto
     ParentFont = False
     TabOrder = 0
     OnEnter = PanTurnosEnter
+    ExplicitLeft = -1
+    ExplicitTop = -5
     DesignSize = (
       979
       57)
@@ -40,10 +42,10 @@ object FuCaixaMovto: TFuCaixaMovto
       Caption = 'Turno / Data'
     end
     object sbAnterior: TSpeedButton
-      Left = 576
-      Top = 21
-      Width = 29
-      Height = 28
+      Left = 547
+      Top = 9
+      Width = 45
+      Height = 41
       Glyph.Data = {
         36030000424D3603000000000000360000002800000010000000100000000100
         18000000000000030000120B0000120B00000000000000000000FF00FFFF00FF
@@ -74,10 +76,10 @@ object FuCaixaMovto: TFuCaixaMovto
       OnClick = sbAnteriorClick
     end
     object sbAtual: TSpeedButton
-      Left = 608
-      Top = 21
-      Width = 29
-      Height = 28
+      Left = 597
+      Top = 9
+      Width = 41
+      Height = 41
       Glyph.Data = {
         36030000424D3603000000000000360000002800000010000000100000000100
         18000000000000030000120B0000120B00000000000000000000FF00FFFF00FF
@@ -108,10 +110,10 @@ object FuCaixaMovto: TFuCaixaMovto
       OnClick = sbAtualClick
     end
     object sbProximo: TSpeedButton
-      Left = 640
-      Top = 21
-      Width = 29
-      Height = 28
+      Left = 647
+      Top = 9
+      Width = 41
+      Height = 41
       Glyph.Data = {
         36030000424D3603000000000000360000002800000010000000100000000100
         18000000000000030000120B0000120B00000000000000000000FF00FFFF00FF
@@ -144,7 +146,7 @@ object FuCaixaMovto: TFuCaixaMovto
     object cbTurnos: TComboBox
       Left = 8
       Top = 22
-      Width = 562
+      Width = 533
       Height = 27
       TabOrder = 0
       Text = 'cbTurnos'
@@ -153,7 +155,7 @@ object FuCaixaMovto: TFuCaixaMovto
     end
     object btProsseguir: TBitBtn
       Left = 694
-      Top = 9
+      Top = 10
       Width = 135
       Height = 41
       Anchors = [akTop, akRight]
@@ -220,7 +222,7 @@ object FuCaixaMovto: TFuCaixaMovto
     end
     object btSair: TBitBtn
       Left = 835
-      Top = 9
+      Top = 10
       Width = 135
       Height = 41
       Anchors = [akTop, akRight]
