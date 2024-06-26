@@ -1127,7 +1127,7 @@ object FuImpressoes: TFuImpressoes
       Left = 19
       Top = 158
       Width = 264
-      Height = 17
+      Height = 24
       BandType = btFooter
       Borders.Sides = sdCustom
       Borders.DrawLeft = False
@@ -1154,11 +1154,19 @@ object FuImpressoes: TFuImpressoes
         Font.Style = []
         ParentFont = False
       end
+      object RLLabel11: TRLLabel
+        Left = 0
+        Top = 10
+        Width = 11
+        Height = 14
+        Align = faLeftBottom
+        Caption = '--'
+      end
     end
   end
   object RLResumo: TRLReport
-    Left = 335
-    Top = 276
+    Left = 334
+    Top = 219
     Width = 302
     Height = 454
     Margins.LeftMargin = 5.000000000000000000
@@ -1707,8 +1715,8 @@ object FuImpressoes: TFuImpressoes
     end
   end
   object RLPedTexto: TRLReport
-    Left = 27
-    Top = 406
+    Left = 26
+    Top = 394
     Width = 302
     Height = 454
     Margins.LeftMargin = 5.000000000000000000

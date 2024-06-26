@@ -196,6 +196,7 @@ type
     CDTextoLinha: TStringField;
     RLBandLinha: TRLBand;
     RLMemoTxt: TRLMemo;
+    RLLabel11: TRLLabel;
     procedure RLCaixaBeforePrint(Sender: TObject; var PrintIt: Boolean);
     procedure RLPedDetalBeforePrint(Sender: TObject; var PrintIt: Boolean);
     procedure RLPedidoBeforePrint(Sender: TObject; var PrintIt: Boolean);
@@ -518,7 +519,7 @@ Procedure ImprimePedidoLst(pNroPedido:Integer);
 var lstPedido: TStringList;
     xQuant,xDescr,xUnit,xTotal: String;
     meiaLinha,tamDescr,nTam,i: Integer;
-    pedidoTxt: String;
+    arqPedidoTxt: String;
 begin
   FuImpressoes := TFuImpressoes.Create(nil);
   if not CriaArqTmp
@@ -551,8 +552,8 @@ begin
     xNegrito := 'N';
     negrito := False;
   end;
-  meiaLinha := tamLinha div 2;
-  tamDescr := tamLinha - 19;    // Quant(3) + Unit(8) + Total(8) + espaco(1)
+  meiaLinha := (tamLinha div 2) - 1;
+  tamDescr := tamLinha - 21;    // Quant(3) + Unit(8) + Total(8) + espaco(1)
   //
   lstPedido := TStringList.Create;
   lstPedido.Add(stringCompleta('Cachorro Quente do Carlão','C',' ',tamLinha));
@@ -584,19 +585,19 @@ begin
     uDM.PedItens.Next;
   end;
   xTotal := 'Total: ' + FloatToStrF(uDM.PedidosValor.AsCurrency,ffNumber,7,2);
-  lstPedido.Add(stringCompleta(stringFiller('-',Length(xTotal)),'E',' ',tamLinha));
-  lstPedido.Add(stringCompleta(xTotal,'E',' ',tamLinha));
-  lstPedido.Add(stringCompleta('Forma de pagamento: ' + uDM.PedidosZC_MPExtenso.AsString,'E',' ',tamLinha));
+  lstPedido.Add(stringCompleta(stringFiller('-',Length(xTotal)),'E',' ',tamLinha-2));
+  lstPedido.Add(stringCompleta(xTotal,'E',' ',tamLinha-2));
+  lstPedido.Add(stringCompleta('Forma de pagamento: ' + uDM.PedidosZC_MPExtenso.AsString,'E',' ',tamLinha-2));
   lstPedido.Add(stringFiller('-',tamLinha));
   lstPedido.Add('...');
   lstPedido.Add('..');
   lstPedido.Add('.');
-  pedidoTxt := ObtemParametro('PedidoLstArqTxt') + '.Txt';
-  if pedidoTxt <> '' then
-    Try
-      lstPedido.SaveToFile(pedidoTxt);
-    Except
-    End;
+
+  arqPedidoTxt := ObtemParametro('PedidoTexto','Pedido.Txt');
+  Try
+    lstPedido.SaveToFile(arqPedidoTxt);     // Nome completo de pedido.txt .............
+  Except
+  End;
   //
   with FuImpressoes
   do begin
@@ -630,7 +631,7 @@ begin
       else  RLBandLinha.Font.Style := [];
     }
     RLMemoTxt.Lines.Clear;
-    RLMemoTxt.Lines.LoadFromFile(pedidoTxt);
+    RLMemoTxt.Lines.LoadFromFile(arqPedidoTxt);
     RLBandLinha.Height := lstPedido.Count * 10;
     tmPagina := RLMemoTxt.Height + 60;    // (CDTexto.RecordCount * RLBandLinha.Height) + 60;
     tmPagina := Trunc(tmPagina / 3.7795) + 1;

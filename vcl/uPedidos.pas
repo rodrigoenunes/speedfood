@@ -38,13 +38,18 @@ type
     edTotal: TEdit;
     Label2: TLabel;
     Label1: TLabel;
-    Label3: TLabel;
     btFinalizar: TBitBtn;
     btCancelar: TBitBtn;
     btDummy: TBitBtn;
     LabAux1: TLabel;
     LabAux2: TLabel;
     btMontarLanche: TBitBtn;
+    btBuscarPedido: TBitBtn;
+    PanBuscaPedido: TPanel;
+    Panel1: TPanel;
+    btNrOk: TBitBtn;
+    btNrCanc: TBitBtn;
+    cbPedidos: TComboBox;
     procedure btAbrirPedidoClick(Sender: TObject);
     procedure btFinalizarClick(Sender: TObject);
     procedure FormShow(Sender: TObject);
@@ -67,6 +72,10 @@ type
     procedure FormResize(Sender: TObject);
     procedure btCancelarClick(Sender: TObject);
     procedure btMontarLancheClick(Sender: TObject);
+    procedure btBuscarPedidoClick(Sender: TObject);
+    procedure btNrCancClick(Sender: TObject);
+    procedure btNrOkClick(Sender: TObject);
+    procedure cbPedidosExit(Sender: TObject);
   private
     { Private declarations }
   public
@@ -529,6 +538,31 @@ begin
 end;
 
 
+procedure TFuPedidos.btBuscarPedidoClick(Sender: TObject);
+begin
+  PanBuscaPedido.Left := btBuscarPedido.Left + btBuscarPedido.Width + 12;
+  PanBuscaPedido.Top := btBuscarPedido.Top - 6;
+  cbPedidos.Items.Clear;
+  uDM.Pedidos.FindNearest([uDM.nrInicialPedido]);
+  while not uDM.Pedidos.Eof do
+  begin
+    if (uDM.PedidosTurno.AsInteger = uDM.turnoCorrente) and
+       (uDM.PedidosSitPagto.AsInteger = 0)
+    then cbPedidos.Items.Add(uDM.PedidosNumero.AsString + '  ' + uDM.PedidosNomeCliente.AsString);
+    uDM.Pedidos.Next;
+  end;
+  if cbPedidos.Items.Count = 0 then
+  begin
+    MessageDlg('Não há pedidos pendentes',mtInformation,[mbOk],0);
+    Exit;
+  end;
+  cbPedidos.Text := '';
+  cbPedidos.ItemIndex := -1;
+  PanBuscaPedido.Visible := True;
+  cbPedidos.SetFocus;
+
+end;
+
 procedure TFuPedidos.btCancelarClick(Sender: TObject);
 begin
   PanAlteraBebida.Visible := False;
@@ -632,6 +666,92 @@ begin
 
 end;
 
+procedure TFuPedidos.btNrCancClick(Sender: TObject);
+begin
+  //edNrPedido.Text := '';
+  PanBuscaPedido.Visible := False;
+  btAbrirPedido.SetFocus;
+
+end;
+
+procedure TFuPedidos.btNrOkClick(Sender: TObject);
+var nPos,wNrPedido: Integer;
+    xPedido: String;
+begin
+  xPedido := cbPedidos.Text + ' x';
+  nPos := Pos(' ',xPedido);
+  wNrPedido := StrToIntDef(Copy(xPedido,1,nPos-1),0);
+  if not uDM.Pedidos.FindKey([wNrPedido]) then
+  begin
+    MessageDlg('Pedido ' + IntToStr(wNrPedido) + ' não encontrado, reinforme',mtError,[mbOk],0);
+    cbPedidos.SetFocus;
+    Exit;
+  end;
+  if uDM.PedidosTurno.AsInteger <> uDM.turnoCorrente then
+    if MessageDlg('Pedido: ' + IntToStr(wNrPedido) + '   Turno: ' + uDM.PedidosTurno.AsString +
+                  '   Turno atual: ' + IntToStr(uDM.turnoCorrente) + #13 +
+                  'utilizar ?',mtConfirmation,[mbYes,mbNo],0,mbNo,['Sim','Não']) <> mrYes
+    then begin
+      cbPedidos.SetFocus;
+      Exit;
+    end;
+  PanBuscaPedido.Visible := False;
+  //
+  // ShowMessage('Usar pedido nr: ' + intToStr(wNrPedido));
+  //
+  pgControle.ActivePageIndex := 0;
+  if CriaAbrePedidoWrk(wNrPedido) <> 0 then Exit;
+
+  uDM.wNroPedido := wNrPedido;
+  uDM.nroPlaca := uDM.PedidosPlaca.AsString;
+  uDM.meioPgto := uDM.PedidosMeioPagto.AsInteger;
+  uDM.nomeClie := uDM.PedidosNomeCliente.AsString;
+  uDM.CPFCNPJ := uDM.PedidosCPF_CNPJ.AsString;
+
+  uDM.PedItens.First;
+  while not uDM.PedItens.Eof do
+  begin
+    uDM.PedWrk.Append;
+    uDM.PedWrkNrLcto.AsInteger    := uDM.PedItensNrLcto.AsInteger;
+    uDM.PedWrkTpProd.AsInteger    := uDM.PedItensTpProd.AsInteger;
+    uDM.PedWrkCodProd.AsInteger   := uDM.PedItensCodProd.AsInteger;
+    uDM.PedWrkDescricao.AsString  := uDM.PedItensZC_Descricao.AsString;
+    uDM.PedWrkQuant.AsInteger     := uDM.PedItensQuant.AsInteger;
+    uDM.PedWrkVlrUnit.AsCurrency  := uDM.PedItensVlrUnitario.AsCurrency;
+    uDM.PedWrkCod01.AsInteger     := uDM.PedItensCod01.AsInteger;
+    uDM.PedWrkVlr01.AsCurrency    := uDM.PedItensVlr01.AsCurrency;
+    uDM.PedWrkCod02.AsInteger     := uDM.PedItensCod02.AsInteger;
+    uDM.PedWrkVlr02.AsCurrency    := uDM.PedItensVlr02.AsCurrency;
+    uDM.PedWrkCod03.AsInteger     := uDM.PedItensCod03.AsInteger;
+    uDM.PedWrkVlr03.AsCurrency    := uDM.PedItensVlr03.AsCurrency;
+    uDM.PedWrkVlrTotal.AsCurrency := uDM.PedItensVlrTotal.AsCurrency ;
+    uDM.PedWrkExtras.AsString     := uDM.PedItensExtras.AsString;
+    uDM.PedWrkTxtSem.AsString     := uDM.PedItensTxtSem.AsString;
+    uDM.PedWrkTxtMais.AsString    := uDM.PedItensTxtMais.AsString;
+    uDM.PedWrkTxtMenos.AsString   := uDM.PedItensTxtMenos.AsString;
+    uDM.PedWrkObserv.AsString     := uDM.PedItensObservacao.AsString;
+    if uDM.PedItensAlteraPreco.AsInteger = 1
+       then uDM.PedWrkAltPreco.AsBoolean := True
+       else uDM.PedWrkAltPreco.AsBoolean := False;
+    if uDM.PedItensCortado.AsInteger = 1
+       then uDM.PedWrkCortado.AsBoolean := True
+       else uDM.PedWrkCortado.AsBoolean := False;
+    if uDM.PedItensPrensado.AsInteger = 1
+       then uDM.PedWrkPrensado.AsBoolean := True
+       else uDM.PedWrkPrensado.AsBoolean := False;
+    uDM.PedWrk.Post;
+    uDM.PedItens.Next;
+  end;
+  itensPedido := uDM.PedWrk.RecordCount;
+  edItens.Text := IntToStr(itensPedido);
+  totalPedido := uDM.PedidosValor.AsCurrency;
+  edTotal.Text := FloatToStrF(totalpedido,ffCurrency,15,2);
+  PanWork.Visible := True;
+  FuPedidos.FormResize(nil);
+  btDummy.SetFocus;
+
+end;
+
 procedure TFuPedidos.btAbrirPedidoClick(Sender: TObject);
 begin
   pgControle.ActivePageIndex := 0;
@@ -652,17 +772,29 @@ begin
 
 end;
 
+procedure TFuPedidos.cbPedidosExit(Sender: TObject);
+begin
+  if cbPedidos.Text <> '' then
+    btNrOk.SetFocus
+  else btNrCanc.SetFocus;
+
+end;
+
 procedure TFuPedidos.FormCreate(Sender: TObject);
 begin
-  PanWork.Align   := alClient;
-  btAbrirPedido.Left   := 20;
-  btAbrirPedido.Top    := 60;
-  btAbrirPedido.Width  := 180;
-  btAbrirPedido.Height := 80;
-  btSair.Left     := btAbrirPedido.Left;
-  btSair.Top      := btAbrirPedido.Top + btAbrirPedido.Height + 20;
-  btSair.Width    := btAbrirPedido.Width;
-  btSair.Height   := btAbrirPedido.Height;
+  PanWork.Align         := alClient;
+  btAbrirPedido.Left    := 20;
+  btAbrirPedido.Top     := 60;
+  btAbrirPedido.Width   := 180;
+  btAbrirPedido.Height  := 80;
+  btBuscarPedido.Left   := btAbrirPedido.Left;
+  btBuscarPedido.Top    := btAbrirPedido.Top + btAbrirPedido.Height + 20;
+  btBuscarPedido.Width  := btAbrirPedido.Width;
+  btBuscarPedido.Height := btAbrirPedido.Height;
+  btSair.Left           := btAbrirPedido.Left;
+  btSair.Top            := btBuscarPedido.Top + btBuscarPedido.Height + 20;
+  btSair.Width          := btAbrirPedido.Width;
+  btSair.Height         := btAbrirPedido.Height;
 
 end;
 

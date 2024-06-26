@@ -24,6 +24,7 @@ type
     btHelpGeral: TBitBtn;
     btHelpArgox: TBitBtn;
     btVerifSefaz: TBitBtn;
+    LabPedidoInicial: TLabel;
     procedure btSairClick(Sender: TObject);
     procedure btSuporteClick(Sender: TObject);
     procedure FormActivate(Sender: TObject);
@@ -63,7 +64,7 @@ end;
 
 procedure TFuPrincipal.btAdminClick(Sender: TObject);
 begin
-  if ObtemParametro('SistemaUserPwd') = 'S'
+  if ObtemParametro('SistemaUserPwd','N') = 'S'
   then if not ObtemUsuario(uDM.sysUser)
             then btSairClick(nil);
   Administrativo;
@@ -99,7 +100,7 @@ end;
 
 procedure TFuPrincipal.btPedidosClick(Sender: TObject);
 begin
-  if ObtemParametro('UsaCorItem') = 'S' then uDM.usaCorItem := True
+  if ObtemParametro('UsaCorItem','N') = 'S' then uDM.usaCorItem := True
      else uDM.usaCorItem := False;
   LancamentoPedidos;
 
@@ -128,10 +129,10 @@ end;
 
 procedure TFuPrincipal.btSuporteClick(Sender: TObject);
 begin
-  if ObtemParametro('SistemaUserPwd') = 'S'
+  if ObtemParametro('SistemaUserPwd','N') = 'S'
   then if not ObtemUsuario(uDM.sysUser)
             then btSairClick(nil);
-  if ObtemParametro('UsaCorItem') = 'S' then uDM.usaCorItem := True
+  if ObtemParametro('UsaCorItem','N') = 'S' then uDM.usaCorItem := True
      else uDM.usaCorItem := False;
   ManutencaoProdutos;
   ContaExtras;
@@ -140,7 +141,7 @@ end;
 
 procedure TFuPrincipal.btUsuarioClick(Sender: TObject);
 begin
-  if ObtemParametro('SistemaUserPwd') = 'S'
+  if ObtemParametro('SistemaUserPwd','N') = 'S'
   then if not ObtemUsuario(uDM.sysUser)
             then btSairClick(nil);
   ManutencaoUsuario;
@@ -236,6 +237,14 @@ begin
     LabTurno.Caption  := '  Turno: ' + IntToStr(uDM.turnoCorrente);
     LabInicio.Caption := 'Início:' + uDM.RegCaixaDtHrInicio.AsString;
     LabFinal.Caption  := 'Final:' + uDM.RegCaixaDtHrFim.AsString;
+    uDM.Pedidos.Last;
+    uDM.nrInicialPedido := uDM.PedidosNumero.AsInteger;
+    while (uDM.PedidosTurno.AsInteger = uDM.turnoCorrente) and (not uDM.Pedidos.Bof) do
+    begin
+      uDM.nrInicialPedido := uDM.PedidosNumero.AsInteger;
+      uDM.Pedidos.Prior;
+    end;
+    LabPedidoInicial.Caption := IntToStr(uDM.nrInicialPedido);
     PanTurno.Visible  := True;
     //
     FuPrincipal.Visible := True;

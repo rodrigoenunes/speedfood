@@ -367,7 +367,7 @@ object FuPrincipal: TFuPrincipal
     Left = 275
     Top = 8
     Width = 221
-    Height = 79
+    Height = 81
     BevelInner = bvLowered
     Color = clGradientInactiveCaption
     ParentBackground = False
@@ -414,6 +414,20 @@ object FuPrincipal: TFuPrincipal
       Font.Style = [fsBold]
       ParentFont = False
       ExplicitWidth = 133
+    end
+    object LabPedidoInicial: TLabel
+      Left = 136
+      Top = 64
+      Width = 76
+      Height = 13
+      Alignment = taRightJustify
+      Caption = 'LabPedidoInicial'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -11
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      ParentFont = False
     end
   end
   object btConsPedidos: TBitBtn

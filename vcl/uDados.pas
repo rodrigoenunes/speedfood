@@ -14,7 +14,7 @@ uses
   Procedure CarregaExtras(pCols,pLins: Integer);
   Function CriaAbrePedidoWrk(pNro:Integer): Integer;
   Function CriaResumoVendas: Boolean;
-  Function ObtemParametro(idParam:String): String;
+  Function ObtemParametro(idParam:String; retDefault:String = ''): String;
   Procedure ExcluePedido(pNumero:Integer);
 
 type
@@ -308,6 +308,7 @@ type
     nomeClie,CPFCNPJ,nroPlaca: String;
     turnoIni,turnoFin,etqImpress: Integer;
     turnoCorrente: Integer;
+    nrInicialPedido: Integer;
     sitPagto: Integer;
     lDebug: Boolean;
     wOperCartoes: Integer;
@@ -447,11 +448,11 @@ begin
     //
     PedWrk.Active := True;
     DetpagWrk.Active := True;
-    wNroPedido := pNro;
-    nroPlaca := '';
-    meioPgto := 0;
-    nomeClie := '';
-    CPFCNPJ := '';
+    uDM.wNroPedido := pNro;
+    uDM.nroPlaca := '';
+    uDM.meioPgto := 0;
+    uDM.nomeClie := '';
+    uDM.CPFCNPJ := '';
 
   end;
 
@@ -487,13 +488,15 @@ begin
 end;
 
 
-Function ObtemParametro(idParam:String): String;
+Function ObtemParametro(idParam:String; retDefault:String = ''): String;
 begin
-  Result := '';
+  Result := retDefault;
   if not uDM.Parametros.Active then
     uDM.Parametros.Active := True;
   if uDM.Parametros.FindKey([idParam]) then
-    Result := uDM.ParametrosValor.AsString;
+    Result := uDM.ParametrosValor.AsString
+  else MessageDlg('Parametro [' + idParam + '] não informado' + #13 +
+                  'Default [' + retDefault + ']',mtWarning,[mbOk],0);
 
 end;
 

@@ -64,6 +64,7 @@ type
     Label7: TLabel;
     LabInstrucao: TLabel;
     TimerMsgPinpad: TTimer;
+    btRemoto: TBitBtn;
     procedure btGravarClick(Sender: TObject);
     procedure btRetornarClick(Sender: TObject);
     procedure btCancelarClick(Sender: TObject);
@@ -103,6 +104,7 @@ type
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure dbMeioPagtoExit(Sender: TObject);
     procedure TimerMsgPinpadTimer(Sender: TObject);
+    procedure btRemotoClick(Sender: TObject);
   private
     { Private declarations }
   public
@@ -148,11 +150,13 @@ begin
       btGravar.Caption   := 'Gravar && imprimir';
       btCancelar.Caption := 'Cancelar pedido';
       btRetornar.Caption := 'Tela anterior';
+      btRemoto.Caption   := 'WhatsApp';
     end
     else begin
       btGravar.Caption   := '&Gravar && imprimir';
       btCancelar.Caption := '&Cancelar pedido';
       btRetornar.Caption := '&Tela anterior';
+      btRemoto.Caption   := '&WhatsApp';
     end;
     posBarra := ObtemConfiguracaoTela(altBarra,lrgBarra,altMaxima,lrgMaxima);
     Width    := 920;
@@ -167,15 +171,27 @@ begin
     SBoxPedido.VertScrollBar.Visible := True;
     imgPedido.Align := alClient;
     //
-    uDM.Pedidos.Last;
-    nrPedido := uDM.PedidosNumero.AsInteger + 1;
-    uDM.Pedidos.Append;
-    uDM.PedidosNumero.AsInteger := nrPedido;
-    uDM.PedidosData.AsDateTime := Now;
-    uDM.PedidosCPF_CNPJ.Clear;
+    if uDM.wNroPedido > 0 then
+    begin
+      if not uDM.Pedidos.FindKey([uDM.wNroPedido]) then
+      begin
+        MessageDlg('Falha na atualização do pedido ' + IntToStr(uDM.wNroPedido),
+                   mtError,[mbOk],0);
+        pNroPedido := 0;
+        Exit;
+      end;
+      uDM.Pedidos.Edit;
+      nrPedido := uDM.wNroPedido;
+    end
+    else begin    // Pedido NOVO
+      uDM.Pedidos.Last;
+      nrPedido := uDM.PedidosNumero.AsInteger + 1;
+      uDM.Pedidos.Append;
+      uDM.PedidosNumero.AsInteger := nrPedido;
+      uDM.PedidosData.AsDateTime := Now;
+    end;
     uDM.PedidosLanctos.AsInteger := FuPedidos.itensPedido;
     uDM.PedidosValor.AsCurrency := FuPedidos.totalPedido;
-    uDM.PedidosMeioPagto.AsInteger := 0;      // Reais
     uDM.PedidosVlrReais.AsCurrency := FuPedidos.totalPedido;
     uDM.PedidosVlrCDeb.Clear;
     uDM.PedidosVlrCCred.Clear;
@@ -185,11 +201,11 @@ begin
     uDM.PedidosSrNFCe.Clear;
     uDM.PedidosArqXML.Clear;
     uDM.PedidosEtqImpressas.AsInteger := 0;
-    uDM.PedidosNomeCliente.Clear;
     uDM.PedidosVlrRecebido.AsCurrency := FuPedidos.totalPedido;
     uDM.PedidosVlrTroco.AsCurrency := 0;
     uDM.PedidosCPF_CNPJ.EditMask := '';
     uDM.PedidosTurno.AsInteger := uDM.turnoCorrente;
+
     uDM.PedidosPlaca.AsString := uDM.nroPlaca;
     uDM.PedidosMeioPagto.AsInteger := uDM.meioPgto;
     uDM.PedidosNomeCliente.AsString := uDM.nomeClie;
@@ -485,6 +501,7 @@ begin
   btGravar.Enabled := False;
   btCancelar.Enabled := False;
   btRetornar.Enabled := False;
+  btRemoto.Enabled := False;
   LabInstrucao.Caption := 'Aguarde o final do processo';   // R$(*0) ou Outros(4)
   wAtivarMsg := False;
   if uDM.PedidosMeioPagto.AsInteger <> 0            // Não é dinheiro 1-CDeb 2-CCred 3-PIX 4-Outro 5-Misto
@@ -503,13 +520,21 @@ begin
   begin
     case uDM.PedWrkTpProd.AsInteger of
       1,4:lanSeq := lanSeq + 1;
-        2:bebSeq := bebSeq + 1;
+        3:bebSeq := bebSeq + 1;
     end;
     uDM.PedWrk.Next;
   end;
+  uDM.PedidosOrigem.AsInteger := 0;
   uDM.PedidosLctLanches.AsInteger := lanSeq;     // Qtd de lanches no pedido
   uDM.PedidosLctBebidas.AsInteger := bebSeq;     // Qtd de bebidas no pedido
   uDM.Pedidos.Post;
+  //
+  if uDM.wNroPedido > 0 then
+  begin
+    uDM.PedItens.First;
+    while not uDM.PedItens.Eof do
+      uDM.PedItens.Delete
+  end;
   //
   uDM.PedWrk.First;
   lanSeq := 0;
@@ -704,6 +729,7 @@ begin
       cbImprimeNFCe.Enabled := True;
       btGravar.Enabled := True;
       btCancelar.Enabled := True;
+      btRemoto.Enabled := True;
       PanAguarde.Visible := False;
       //btRetornar.Enabled := False;
       dbMeioPagto.SetFocus;
@@ -798,6 +824,122 @@ begin
     uDM.Pedidos.Post;
   end;
   //
+  FuFinPedido.Close;
+
+end;
+
+procedure TFuFinPedido.btRemotoClick(Sender: TObject);
+var lanSeq,bebSeq,newSeq,wrkSeq: Integer;
+    xTipoImpressao: String;
+begin
+  ShowMessage('Grava pedido, imprime pedido, imprime etiquetas, não encerra o pedido nem emite NFCe');
+  if ObtemParametro('PedidoPlaca') = 'S' then
+     if StrToIntDef(uDM.PedidosPlaca.AsString,0) = 0 then
+     begin
+       MessageDlg('Nro de placa não informado, dado obrigatorio',mtError,[mbOk],0);
+       dbPlaca.SetFocus;
+       Exit;
+     end;
+  lanSeq := 0;     // Qtd de lanches no pedido
+  bebSeq := 0;     // Qtd de bebidas e outros no pedido
+  uDM.PedWrk.First;
+  while not uDM.PedWrk.Eof do
+  begin
+    case uDM.PedWrkTpProd.AsInteger of
+      1,4:lanSeq := lanSeq + 1;
+        2:bebSeq := bebSeq + 1;
+    end;
+    uDM.PedWrk.Next;
+  end;
+  uDM.PedidosOrigem.AsInteger := 1;              // Pedido remoto/whatsapp....
+  uDM.PedidosLctLanches.AsInteger := lanSeq;     // Qtd de lanches no pedido
+  uDM.PedidosLctBebidas.AsInteger := bebSeq;     // Qtd de bebidas no pedido
+  uDM.Pedidos.Post;
+  //
+  uDM.PedWrk.First;
+  lanSeq := 0;
+  bebSeq := 100;
+  newSeq := 200;
+  while not uDM.PedWrk.Eof do
+  begin
+    case uDM.PedWrkTpProd.AsInteger of
+      1,4:begin     // Lanches
+            lanSeq := lanSeq + 1;
+            wrkSeq := lanSeq;
+          end;
+        3:begin     // Bebidas e outros
+            bebSeq := bebSeq + 1;
+            wrkSeq := bebSeq;
+        end;
+        else begin  // Extras
+            newSeq := newSeq + 1;
+            wrkSeq := newSeq;
+        end;
+    end;
+    uDM.PedItens.Append;
+    uDM.PedItensNumero.AsInteger       := nrPedido;
+    uDM.PedItensNrLcto.AsInteger       := wrkSeq;
+    uDM.PedItensTpProd.AsInteger       := uDM.PedWrkTpProd.AsInteger;
+    uDM.PedItensCodProd.AsInteger      := uDM.PedWrkCodProd.AsInteger;
+    uDM.PedItensQuant.AsInteger        := uDM.PedWrkQuant.AsInteger;
+    uDM.PedItensVlrUnitario.AsCurrency := uDM.PedWrkVlrUnit.AsCurrency;
+    uDM.PedItensCod01.AsInteger        := uDM.PedWrkCod01.AsInteger;
+    uDM.PedItensVlr01.AsCurrency       := uDM.PedWrkVlr01.AsCurrency;
+    uDM.PedItensCod02.AsInteger        := uDM.PedWrkCod02.AsInteger;
+    uDM.PedItensVlr02.AsCurrency       := uDM.PedWrkVlr02.AsCurrency;
+    uDM.PedItensCod03.AsInteger        := uDM.PedWrkCod03.AsInteger;
+    uDM.PedItensVlr03.AsCurrency       := uDM.PedWrkVlr03.AsCurrency;
+    uDM.PedItensVlrTotal.AsCurrency    := uDM.PedWrkVlrTotal.AsCurrency;
+    uDM.PedItensExtras.AsString        := uDM.PedWrkExtras.AsString;
+    uDM.PedItensTxtSem.AsString        := uDM.PedWrkTxtSem.AsString;
+    uDM.PedItensTxtMais.AsString       := uDM.PedWrkTxtMais.AsString;
+    uDM.PedItensTxtMenos.AsString      := uDM.PedWrkTxtMenos.AsString;
+    uDM.PedItensObservacao.AsString    := uDM.PedWrkObserv.AsString;
+    uDM.PedItensEtqImpressa.AsInteger  := 0;
+    uDM.PedItensVlrUnFiscal.AsCurrency := uDM.PedWrkVlrTotal.AsCurrency / uDM.PedWrkQuant.AsInteger;
+    uDM.PedItensTurno.AsInteger        := uDM.RegCaixaTurno.AsInteger;
+    if uDM.PedWrkAltPreco.AsBoolean
+       then uDM.PedItensAlteraPreco.AsInteger := 1
+       else uDM.PedItensAlteraPreco.AsInteger := 0;
+    if uDM.PedWrkCortado.AsBoolean
+       then uDM.PedItensCortado.AsInteger := 1
+       else uDM.PedItensCortado.AsInteger := 0;
+    if uDM.PedWrkPrensado.AsBoolean
+       then uDM.PedItensPrensado.AsInteger := 1
+       else uDM.PedItensPrensado.AsInteger := 0;
+    uDM.PedItens.Post;
+    uDM.PedWrk.Next;
+  end;
+  Try
+    uDM.Pedidos.Edit;
+  Except
+  End;
+  //
+  xTipoImpressao := ObtemParametro('PedidoRemotoTpImpressao','Txt');
+  if xTipoImpressao = 'Txt' then
+     ImprimePedidoLst(uDM.PedidosNumero.AsInteger)
+  else if xTipoImpressao = 'Normal' then
+          ImprimePedido(uDM.PedidosNumero.AsInteger);    // Impressao normal
+  //
+  if ObtemParametro('PedidoRemotoEtiquetas','S') = 'S'
+  then begin
+    EmiteEtiquetas(nrPedido, 0);        // Todos os ítens do pedido
+    uDM.PedItens.Filtered := False;
+    uDM.PedItens.Refresh;
+    uDM.PedItens.First;
+    while not uDM.PedItens.Eof do
+    begin
+      uDM.PedItens.Edit;
+      uDM.PedItensEtqImpressa.AsInteger := 1;
+      uDM.PedItens.Post;
+      uDM.PedItens.Next;
+    end;
+    uDM.Pedidos.Edit;
+    uDM.PedidosEtqImpressas.AsInteger := 1;
+    uDM.Pedidos.Post;
+  end;
+  //
+  nRetorno := 0;
   FuFinPedido.Close;
 
 end;
@@ -1139,6 +1281,7 @@ begin
   btGravar.Enabled := True;
   btCancelar.Enabled := True;
   btRetornar.Enabled := True;
+  btRemoto.Enabled := True;
   PanAguarde.Visible := False;
 
 end;
@@ -1152,6 +1295,8 @@ begin
 end;
 
 procedure TFuFinPedido.FormResize(Sender: TObject);
+var lRemoto: Boolean;
+    nPos: Integer;
 begin
   if FuFinPedido.Width < 1000 then
      FuFinPedido.Width := 1000;
@@ -1159,10 +1304,27 @@ begin
      FuFinPedido.Width := Screen.Width;
   SBoxPedido.Width := Trunc(FuFinPedido.Width * 0.45);
 
+  if ObtemParametro('PedidoRemoto','S') = 'S' then
+    lRemoto := True
+  else lRemoto := False;
+
   btGravar.Top := 40;
   btGravar.Left := 8;
   btGravar.Height := Trunc(PanCtle.Height * 0.45);
-  btGravar.Width := PanCtle.Width - 16;
+  if lRemoto then
+  begin
+    btGravar.Width := ((PanCtle.Width - 24) div 3) * 2;
+    btRemoto.Top := btGravar.Top;
+    btRemoto.Left := btGravar.Left + btGravar.Width + 6;
+    btRemoto.Height := btGravar.Height;
+    btRemoto.Width := btGravar.Width div 2;
+    btRemoto.Caption := ObtemParametro('PedidoRemotoTexto','Remoto');
+    nPos := Pos('+',btRemoto.Caption);
+    if nPos > 0
+      then btRemoto.Caption := Copy(btRemoto.Caption,1,nPos-1) + #13 + Copy(btRemoto.Caption,nPos+1,Length(btRemoto.Caption)-nPos);
+  end
+  else btGravar.Width := PanCtle.Width - 24;
+  btRemoto.Visible := lRemoto;
 
   btRetornar.Left := PanCtle.Width div 2;
   btRetornar.Top := btGravar.Top + btGravar.Height + 12;
