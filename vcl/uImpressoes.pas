@@ -195,14 +195,17 @@ type
     CDTexto: TClientDataSet;
     CDTextoLinha: TStringField;
     RLBandLinha: TRLBand;
-    RLMemoTxt: TRLMemo;
     RLLabel11: TRLLabel;
+    RLLabCaixa: TRLLabel;
+    RLLabPedido: TRLLabel;
+    RLLabResumo: TRLLabel;
+    RLDbLinha: TRLDBText;
     procedure RLCaixaBeforePrint(Sender: TObject; var PrintIt: Boolean);
     procedure RLPedDetalBeforePrint(Sender: TObject; var PrintIt: Boolean);
     procedure RLPedidoBeforePrint(Sender: TObject; var PrintIt: Boolean);
     procedure RLPedidoAfterPrint(Sender: TObject);
     procedure FormCreate(Sender: TObject);
-    procedure RLPedTextoBeforePrint(Sender: TObject; var PrintIt: Boolean);
+    procedure RLResumoBeforePrint(Sender: TObject; var PrintIt: Boolean);
   private
     { Private declarations }
   public
@@ -536,7 +539,9 @@ begin
   end;
   DebugMensagem(uDM.lDebug,'Achou o pedido nr:' + IntToStr(pNroPedido));
   //
-  idPrinter := ObtemParametro('PedidoPrinter');
+  idPrinter := uDM.sysPedidosPrt;
+  if idPrinter = '' then
+     idPrinter := ObtemParametro('PedidoPrinter');
   tmMax := StrToIntDef(ObtemParametro('PedidoTamMax'),300);
   if ObtemParametro('PedidoPreview') = 'S' then lPreview := True
     else lPreview := False;
@@ -589,8 +594,12 @@ begin
   lstPedido.Add(stringCompleta(xTotal,'E',' ',tamLinha-2));
   lstPedido.Add(stringCompleta('Forma de pagamento: ' + uDM.PedidosZC_MPExtenso.AsString,'E',' ',tamLinha-2));
   lstPedido.Add(stringFiller('-',tamLinha));
+  lstPedido.Add('Est: ' + uDM.sysCPUId);
   lstPedido.Add('...');
   lstPedido.Add('..');
+  lstPedido.Add('.');
+  lstPedido.Add('.');
+  lstPedido.Add('.');
   lstPedido.Add('.');
 
   arqPedidoTxt := ObtemParametro('PedidoTexto','Pedido.Txt');
@@ -603,39 +612,30 @@ begin
   do begin
     CDTexto.Active := True;
     CDTexto.EmptyDataSet;
-    CDTexto.Append;
-    CDTextoLinha.AsString := '';
-    CDTexto.Post;
-    {
-    CDTexto.Active := True;
-    CDTexto.EmptyDataSet;
     for i := 0 to lstPedido.Count-1
     do begin
       CDTexto.Append;
       CDTextoLinha.AsString := lstPedido[i];
       CDTexto.Post;
     end;
-    pedidoTxt := ObtemParametro('PedidoLstArqTxt');
-    CDTexto.SaveToFile(pedidoTxt);
-    CDTexto.Active := False;
-    CDTexto.Active := True;
-    CDTexto.LoadFromFile(pedidoTxt);
-    }
-    {
     RLPedTexto.Font.Size := tamFonte;
     if negrito then RLPedTexto.Font.Style := [fsBold]
       else  RLPedTexto.Font.Style := [];
-
     RLBandLinha.Font.Size := tamFonte;
     if negrito then RLBandLinha.Font.Style := [fsBold]
       else  RLBandLinha.Font.Style := [];
-    }
+    RLDbLinha.ParentFont := True;
+    if tamFonte <= 6 then RLDbLinha.Height := 12
+                     else RLDbLinha.Height := 14;
+    tmPagina := (CDTexto.RecordCount * RLDbLinha.Height) + 60;
+    {
     RLMemoTxt.Lines.Clear;
     RLMemoTxt.Lines.LoadFromFile(arqPedidoTxt);
     RLBandLinha.Height := lstPedido.Count * 10;
-    tmPagina := RLMemoTxt.Height + 60;    // (CDTexto.RecordCount * RLBandLinha.Height) + 60;
+    tmPagina := RLMemoTxt.Height + 120;    // (CDTexto.RecordCount * RLBandLinha.Height) + 60;
+    }
     tmPagina := Trunc(tmPagina / 3.7795) + 1;
-    if tmPagina < 50 then tmPagina := 50
+    if tmPagina < 60 then tmPagina := 60
        else if tmPagina > tmMax then tmPagina := tmMax;
     RLPedTexto.PageSetup.PaperHeight := tmPagina;
     RLPedTexto.PrintDialog := lDialog;
@@ -648,7 +648,7 @@ begin
       else RLPedTexto.Print;
 
    //CDTexto.EmptyDataSet;
-   //CDTexto.Active := False;
+   CDTexto.Active := False;
 
   end;
   FuImpressoes.Free;
@@ -709,7 +709,9 @@ begin
 
   end;
   //
-  idPrinter := ObtemParametro('PedidoPrinter');
+  idPrinter := uDM.sysPedidosPrt;
+  if idPrinter = '' then
+     idPrinter := ObtemParametro('PedidoPrinter');
   tmMax := StrToIntDef(ObtemParametro('PedidoTamMax'),300);
   margEsq := StrToIntDef(ObtemParametro('PedidoMargEsquerda'),5);
   margDir := StrToIntDef(ObtemParametro('PedidoMargDireita'),5);
@@ -804,7 +806,10 @@ begin
     MessageDlg('Registro de caixa Turno ' + IntToStr(pSequencia) + ' não encontrado',mtError,[mbOk],0);
     Exit;
   end;
-  idPrinter := ObtemParametro('CaixaPrinter');
+
+  idPrinter := uDM.sysCaixaPrt;
+  if idPrinter = '' then
+     idPrinter := ObtemParametro('CaixaPrinter');
   tmMax := StrToIntDef(ObtemParametro('CaixaTamMax'),300);
   margEsq := StrToIntDef(ObtemParametro('CaixaMargEsquerda'),5);
   margDir := StrToIntDef(ObtemParametro('CaixaMargDireita'),5);
@@ -863,7 +868,11 @@ Procedure ImprimeResumo(pIni,pFim:String;pVlr:array of Currency; pQtd:array of I
 var i: Integer;
 begin
   FuImpressoes := TFuImpressoes.Create(nil);
-  idPrinter := ObtemParametro('ResumoPrinter');
+
+  idPrinter := uDM.sysResumoPrt;
+  if idPrinter = '' then
+     idPrinter := ObtemParametro('ResumoPrinter');
+
   tmMax := StrToIntDef(ObtemParametro('ResumoTamMax'),300);
   margEsq := StrToIntDef(ObtemParametro('ResumoMargEsquerda'),5);
   margDir := StrToIntDef(ObtemParametro('ResumoMargDireita'),5);
@@ -960,6 +969,7 @@ end;
 procedure TFuImpressoes.RLCaixaBeforePrint(Sender: TObject; var PrintIt: Boolean);
 begin
   RLLabEmis.Caption := 'Emissão: ' + DateTimeToStr(Now);
+  RLLabCaixa.Caption := 'Est: ' + uDM.sysCPUId;
 
 end;
 
@@ -991,24 +1001,13 @@ procedure TFuImpressoes.RLPedidoBeforePrint(Sender: TObject;
 begin
   uDM.Pedidos.Refresh;
   DebugMensagem(uDM.lDebug,'RLPedidoBeforePrint: ' + uDM.PedidosNumero.AsString);
+  RLLabPedido.Caption := 'Est: ' + uDM.sysCPUId;
 
 end;
 
-procedure TFuImpressoes.RLPedTextoBeforePrint(Sender: TObject;
-  var PrintIt: Boolean);
+procedure TFuImpressoes.RLResumoBeforePrint(Sender: TObject; var PrintIt: Boolean);
 begin
-{
-  DebugMensagem(uDM.lDebug,'Linha=' + IntToStr(tamLinha) + '  Fonte=' + IntToStr(tamFonte) +
-                            '   Negrito=' + xNegrito);
-  RLPedTexto.Font.Size := tamFonte;
-}
-  //if negrito then RLPedTexto.Font.Style := [fsBold]
-  //   else  RLPedTexto.Font.Style := [];
-  {
-  RLBandLinha.Font.Size := tamFonte;
-  if negrito then RLBandLinha.Font.Style := [fsBold]
-    else  RLBandLinha.Font.Style := [];
-  }
+  RLLabResumo.Caption := 'Est: ' + uDM.sysCPUId;
 
 end;
 

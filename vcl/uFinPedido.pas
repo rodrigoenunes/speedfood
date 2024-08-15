@@ -205,6 +205,7 @@ begin
     uDM.PedidosVlrTroco.AsCurrency := 0;
     uDM.PedidosCPF_CNPJ.EditMask := '';
     uDM.PedidosTurno.AsInteger := uDM.turnoCorrente;
+    uDM.PedidosOrigem.AsInteger := uDM.sysNumId;
 
     uDM.PedidosPlaca.AsString := uDM.nroPlaca;
     uDM.PedidosMeioPagto.AsInteger := uDM.meioPgto;
@@ -587,6 +588,7 @@ begin
     if uDM.PedWrkPrensado.AsBoolean
        then uDM.PedItensPrensado.AsInteger := 1
        else uDM.PedItensPrensado.AsInteger := 0;
+    uDM.PedItensEtqImpressa.AsInteger := uDM.PedWrkEtqImpressa.AsInteger;
     uDM.PedItens.Post;
     uDM.PedWrk.Next;
   end;
@@ -808,7 +810,7 @@ begin
     then xImpressao := 'S';
   if xImpressao = 'S' then
   begin
-    EmiteEtiquetas(nrPedido, 0);           //uDM.PedidosNumero.AsInteger, 0);           // Todos os ítens do pedido
+    EmiteEtiquetas(nrPedido, 0, True);           //uDM.PedidosNumero.AsInteger, 0, True); // Todos os ítens do pedido ainda nao impressos
     uDM.PedItens.Filtered := False;
     uDM.PedItens.Refresh;
     uDM.PedItens.First;
@@ -832,7 +834,7 @@ procedure TFuFinPedido.btRemotoClick(Sender: TObject);
 var lanSeq,bebSeq,newSeq,wrkSeq: Integer;
     xTipoImpressao: String;
 begin
-  ShowMessage('Grava pedido, imprime pedido, imprime etiquetas, não encerra o pedido nem emite NFCe');
+  //ShowMessage('Grava pedido, imprime pedido, imprime etiquetas, não encerra o pedido nem emite NFCe');
   if ObtemParametro('PedidoPlaca') = 'S' then
      if StrToIntDef(uDM.PedidosPlaca.AsString,0) = 0 then
      begin
@@ -923,7 +925,7 @@ begin
   //
   if ObtemParametro('PedidoRemotoEtiquetas','S') = 'S'
   then begin
-    EmiteEtiquetas(nrPedido, 0);        // Todos os ítens do pedido
+    EmiteEtiquetas(nrPedido, 0, True);        // Todos os ítens do pedido ainda nao impressos
     uDM.PedItens.Filtered := False;
     uDM.PedItens.Refresh;
     uDM.PedItens.First;
@@ -939,7 +941,7 @@ begin
     uDM.Pedidos.Post;
   end;
   //
-  nRetorno := 0;
+  nRetorno := 3;
   FuFinPedido.Close;
 
 end;

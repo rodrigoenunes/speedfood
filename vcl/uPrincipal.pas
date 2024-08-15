@@ -159,6 +159,17 @@ begin
   if uDM = Nil then
   begin
     uDM := TuDM.Create(nil);
+    //
+    if uDM.sysNumId = 0 then
+    begin
+      MessageDlg('Erro de inicialização, verifique arquivo INI' + #13 +
+                 'Estacao / Numero: Não pode ser ZERO' + #13 +
+                 'Estacao / Nome: Identificacao da estacao de trabalho' + #13 +
+                 'Aplicação não pode ser iniciada',
+                 mtError,[mbOk],0);
+      Halt(0);
+    end;
+    //
     uDM.FDC.Connected:= True;
     uDM.SisPessoa.Active := True;
     uDM.Itens.Active     := True;
@@ -171,6 +182,8 @@ begin
     uDM.sitPagto := 3;          // Todas as situações
     uDM.lDebug := False;
     if ObtemParametro('DEBUG') = 'S' then uDM.lDebug := True;
+    if ObtemParametro('VerifSeFaz','N') = 'S' then btVerifSefaz.Visible := True
+                                              else btVerifSefaz.Visible := False;
     //
     FFRCtle.RLPreviewSetup1.ZoomFactor := StrToIntDef(ObtemParametro('FortesZoomFactor'),100);
     FGen.lSalvaForm := True;
@@ -275,7 +288,6 @@ end;
 
 procedure TFuPrincipal.FormCreate(Sender: TObject);
 begin
-
   FuPrincipal.Width  := (Screen.Width div 5) * 2;
   FuPrincipal.Height := FuPrincipal.Width;
   FuPrincipal.Top    := 20;

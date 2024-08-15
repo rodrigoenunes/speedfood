@@ -11,11 +11,9 @@ object FuTrataLanche: TFuTrataLanche
   Font.Height = -11
   Font.Name = 'Tahoma'
   Font.Style = []
-  OldCreateOrder = False
   Position = poDesigned
   OnResize = FormResize
   OnShow = FormShow
-  PixelsPerInch = 96
   TextHeight = 13
   object PanInfoLanche: TPanel
     Left = 0
@@ -604,7 +602,7 @@ object FuTrataLanche: TFuTrataLanche
         object Label4: TLabel
           Left = 0
           Top = 0
-          Width = 110
+          Width = 40
           Height = 25
           Align = alTop
           Alignment = taCenter
@@ -615,7 +613,6 @@ object FuTrataLanche: TFuTrataLanche
           Font.Name = 'Tahoma'
           Font.Style = [fsBold, fsUnderline]
           ParentFont = False
-          ExplicitWidth = 40
         end
         object dbCortado: TDBCheckBox
           Left = 6

@@ -422,6 +422,9 @@ object uDM: TuDM
     object PedWrkPrensado: TBooleanField
       FieldName = 'Prensado'
     end
+    object PedWrkEtqImpressa: TSmallintField
+      FieldName = 'EtqImpressa'
+    end
     object PedWrkZC_Aviso: TStringField
       FieldKind = fkCalculated
       FieldName = 'ZC_Aviso'
@@ -626,6 +629,17 @@ object uDM: TuDM
       AutoGenerateValue = arDefault
       FieldName = 'Origem'
       Origin = 'Origem'
+    end
+    object PedidosIdEstacao: TStringField
+      AutoGenerateValue = arDefault
+      FieldName = 'IdEstacao'
+      Origin = 'IdEstacao'
+      Size = 45
+    end
+    object PedidosNrEstacao: TShortintField
+      AutoGenerateValue = arDefault
+      FieldName = 'NrEstacao'
+      Origin = 'NrEstacao'
     end
     object PedidosZC_Impresso: TStringField
       FieldKind = fkCalculated

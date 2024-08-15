@@ -7,7 +7,7 @@ uses
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, RLReport, RLPrinters, RLRichText;
   procedure SetRecordRangeLanche(pModo:Integer);
   procedure DefinePrinterEtiqueta;
-  procedure EmiteEtiquetas(pmtPedido:Integer; pmtItem:Integer);
+  procedure EmiteEtiquetas(pmtPedido:Integer; pmtItem:Integer; pmtNaoImpressa:Boolean);
 
 type
   TFSFEuPrintFortes = class(TForm)
@@ -133,7 +133,7 @@ begin
 end;
 
 
-Procedure EmiteEtiquetas(pmtPedido:Integer; pmtItem:Integer);
+Procedure EmiteEtiquetas(pmtPedido:Integer; pmtItem:Integer; pmtNaoImpressa:Boolean);
 var filAnt: Boolean;
     filTxtAnt: String;
 begin
@@ -188,6 +188,8 @@ begin
     filTxtAnt := uDM.PedItens.Filter;
     uDM.PedItens.Filtered := True;
     uDM.PedItens.Filter := 'TpProd=1 or TpProd=4';
+    if pmtNaoImpressa then
+       uDM.PedItens.Filter := '(TpProd=1 or TpProd=4) and EtqImpressa=0';
     uDM.PedItens.Refresh;
     if uDM.PedItens.RecordCount > 0 then
     begin
@@ -200,6 +202,8 @@ begin
     end;
     SetRecordRangeLanche(0);      // rrCurrentOnly;
     uDM.PedItens.Filter := 'TpProd=3';
+    if pmtNaoImpressa then
+       uDM.PedItens.Filter := uDM.PedItens.Filter + ' and EtqImpressa=0';
     uDM.PedItens.Refresh;
     if uDM.PedItens.RecordCount > 0 then
     begin      // Imprime TODAS as bebidas em uma etiqueta

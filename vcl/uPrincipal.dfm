@@ -3,7 +3,7 @@ object FuPrincipal: TFuPrincipal
   Top = 0
   Caption = 'SpeddFood'
   ClientHeight = 452
-  ClientWidth = 504
+  ClientWidth = 508
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -14,7 +14,7 @@ object FuPrincipal: TFuPrincipal
   OnClose = FormClose
   OnCreate = FormCreate
   DesignSize = (
-    504
+    508
     452)
   TextHeight = 19
   object Image1: TImage
@@ -101,7 +101,7 @@ object FuPrincipal: TFuPrincipal
   end
   object btSair: TBitBtn
     Left = 8
-    Top = 386
+    Top = 332
     Width = 257
     Height = 52
     Caption = 'Finalizar/Sair'
@@ -126,7 +126,7 @@ object FuPrincipal: TFuPrincipal
       11110BBBBBBBBBB0FFFFFFF011EEEEEEE1110BBBBBBBBBB0FFFFFFF011EEEEEE
       EE110BBBBBBBBBB0FFFFFFF011111EEEEE110BBBBBBBBBB0FFFFFFF0111111EE
       EE110BBBBBBBBBB0FFFFFFF0000000000000000000000000FFFF}
-    TabOrder = 7
+    TabOrder = 6
     OnClick = btSairClick
   end
   object btAbrirCaixa: TBitBtn
@@ -520,7 +520,7 @@ object FuPrincipal: TFuPrincipal
     OnClick = btConsPedidosClick
   end
   object btHelpGeral: TBitBtn
-    Left = 358
+    Left = 362
     Top = 358
     Width = 131
     Height = 25
@@ -542,9 +542,10 @@ object FuPrincipal: TFuPrincipal
     NumGlyphs = 2
     TabOrder = 9
     OnMouseDown = btHelpGeralMouseDown
+    ExplicitLeft = 358
   end
   object btHelpArgox: TBitBtn
-    Left = 358
+    Left = 362
     Top = 388
     Width = 131
     Height = 25
@@ -566,13 +567,15 @@ object FuPrincipal: TFuPrincipal
     NumGlyphs = 2
     TabOrder = 10
     OnMouseDown = btHelpArgoxMouseDown
+    ExplicitLeft = 358
   end
   object btVerifSefaz: TBitBtn
     Left = 8
-    Top = 332
+    Top = 392
     Width = 257
     Height = 52
     Caption = 'Verifica disponibilidade SeFaz'
-    TabOrder = 6
+    TabOrder = 7
+    Visible = False
   end
 end

@@ -275,6 +275,9 @@ type
     PedDetpagSit: TIntegerField;
     PedidosOrigem: TShortintField;
     PedidosZC_Origem: TStringField;
+    PedWrkEtqImpressa: TSmallintField;
+    PedidosIdEstacao: TStringField;
+    PedidosNrEstacao: TShortintField;
     procedure ItensCalcFields(DataSet: TDataSet);
     procedure LctCaixaCalcFields(DataSet: TDataSet);
     procedure PedWrkCalcFields(DataSet: TDataSet);
@@ -302,7 +305,9 @@ type
     wTxtExtraTab: array[1..24] of String;
     wVlrExtraTab: array[1..24] of Currency;
     usaCorItem: Boolean;
-    sysUser: String;
+    sysUser,sysCPUId: String;
+    sysNumId: Integer;
+    sysEtiquetasPrt,sysPedidosPrt,sysCaixaPrt,sysResumoPrt: String;
     filGrupoItens: Integer;
     meioPgto: Integer;
     nomeClie,CPFCNPJ,nroPlaca: String;
@@ -419,6 +424,7 @@ begin
     PedWrk.FieldDefs.Add('AltPreco',  ftBoolean);
     PedWrk.FieldDefs.Add('Cortado',   ftBoolean);
     PedWrk.FieldDefs.Add('Prensado',  ftBoolean);
+    PedWrk.FieldDefs.Add('EtqImpressa', ftSmallint);
     PedWrk.IndexDefs.Clear;
     PedWrk.IndexDefs.Add('','NrLcto',[ixPrimary,ixUnique]);
     PedWrk.CreateDataSet;
@@ -532,6 +538,15 @@ begin
   sServer := vIniFile.ReadString('DB', 'Host', '').Trim;
   if Not sServer.IsEmpty then
     FDC.Params[ FDC.Params.IndexOfName('server') ]:= 'Server=' + sServer;
+
+  sysCPUId := vIniFile.ReadString('Estacao','Nome','NI');
+  sysNumId := vIniFile.ReadInteger('Estacao','Numero',0);
+
+  sysEtiquetasPrt := vIniFile.ReadString('Impressoras','Etiquetas','');
+  sysPedidosPrt := vIniFile.ReadString('Impressoras','Pedidos','');
+  sysCaixaPrt := vIniFile.ReadString('Impressoras','Caixa','');
+  sysResumoPrt := vIniFile.ReadString('Impressoras','Resumo','');
+
   vIniFile.Free;
   //
   FDC.Connected := True;

@@ -569,6 +569,7 @@ begin
   uDM.PedWrkTxtMenos.Clear;
   uDM.PedWrkPrensado.AsBoolean := False;
   uDM.PedWrkCortado.AsBoolean := False;
+  uDM.PedWrkEtqImpressa.AsInteger := 0;
 
 end;
 

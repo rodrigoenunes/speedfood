@@ -807,6 +807,19 @@ object FuImpressoes: TFuImpressoes
         Font.Style = []
         ParentFont = False
       end
+      object RLLabCaixa: TRLLabel
+        Left = 0
+        Top = 1
+        Width = 61
+        Height = 14
+        Align = faLeftTop
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clBlack
+        Font.Height = -11
+        Font.Name = '9'
+        Font.Style = []
+        ParentFont = False
+      end
     end
   end
   object RLPedido: TRLReport
@@ -1162,6 +1175,19 @@ object FuImpressoes: TFuImpressoes
         Align = faLeftBottom
         Caption = '--'
       end
+      object RLLabPedido: TRLLabel
+        Left = 0
+        Top = 1
+        Width = 66
+        Height = 14
+        Align = faLeftTop
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clBlack
+        Font.Height = -11
+        Font.Name = '9'
+        Font.Style = []
+        ParentFont = False
+      end
     end
   end
   object RLResumo: TRLReport
@@ -1182,6 +1208,7 @@ object FuImpressoes: TFuImpressoes
     PageSetup.PaperSize = fpCustom
     PageSetup.PaperWidth = 80.000000000000000000
     PageSetup.PaperHeight = 120.000000000000000000
+    BeforePrint = RLResumoBeforePrint
     object RLRes_Cabec: TRLBand
       Left = 19
       Top = 19
@@ -1712,6 +1739,19 @@ object FuImpressoes: TFuImpressoes
         Font.Style = []
         ParentFont = False
       end
+      object RLLabResumo: TRLLabel
+        Left = 0
+        Top = 1
+        Width = 73
+        Height = 14
+        Align = faLeftTop
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clBlack
+        Font.Height = -11
+        Font.Name = '9'
+        Font.Style = []
+        ParentFont = False
+      end
     end
   end
   object RLPedTexto: TRLReport
@@ -1732,13 +1772,11 @@ object FuImpressoes: TFuImpressoes
     PageSetup.PaperSize = fpCustom
     PageSetup.PaperWidth = 80.000000000000000000
     PageSetup.PaperHeight = 120.000000000000000000
-    RecordRange = rrCurrentOnly
-    BeforePrint = RLPedTextoBeforePrint
     object RLBandLinha: TRLBand
       Left = 19
       Top = 19
       Width = 264
-      Height = 20
+      Height = 12
       AutoSize = True
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clBlack
@@ -1746,13 +1784,14 @@ object FuImpressoes: TFuImpressoes
       Font.Name = 'Courier New'
       Font.Style = []
       ParentFont = False
-      object RLMemoTxt: TRLMemo
+      object RLDbLinha: TRLDBText
         Left = 0
         Top = 0
-        Width = 264
-        Height = 20
-        Align = faClient
-        Behavior = [beSiteExpander]
+        Width = 30
+        Height = 12
+        DataField = 'Linha'
+        DataSource = SCDTexto
+        Text = ''
       end
     end
   end

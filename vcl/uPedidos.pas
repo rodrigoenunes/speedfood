@@ -378,6 +378,7 @@ begin
     PedWrkAltPreco.AsBoolean  := wAltPr;
     PedWrkCortado.AsBoolean   := False;
     PedWrkPrensado.AsBoolean  := False;
+    PedWrkEtqImpressa.AsInteger := 0;
     PedWrk.Post;
     PedWrk.Edit;
 
@@ -622,12 +623,18 @@ begin
         if lstPedido = 'S' then
         begin
            DebugMensagem(uDM.lDebug,'Vai imprimir pedido nro ' + IntToStr(nroPedido));
-           ImprimePedidoLst(nroPedido);
+           if ObtemParametro('PedidoTipoImpressao') = 'Txt' then
+              ImprimePedidoLst(nroPedido)
+           else
+              ImprimePedido(nroPedido);    // Impressao normal
         end;
       end;
       nRet := 2;
     end;
-  if nRet = 2 then       // Novo pedido ou pedido cancelado
+  //
+  // nRet = 3 --> Pedido whatsapp... já foi impresso
+  //
+  if nRet <> 1 then       // Novo pedido ou pedido cancelado
   begin
     PanWork.Visible := False;
     if ObtemParametro('LanctoFinalizar') = 'N' then
@@ -739,6 +746,7 @@ begin
     if uDM.PedItensPrensado.AsInteger = 1
        then uDM.PedWrkPrensado.AsBoolean := True
        else uDM.PedWrkPrensado.AsBoolean := False;
+    uDM.PedWrkEtqImpressa.AsInteger := uDM.PedItensEtqImpressa.AsInteger;
     uDM.PedWrk.Post;
     uDM.PedItens.Next;
   end;
@@ -782,15 +790,17 @@ end;
 
 procedure TFuPedidos.FormCreate(Sender: TObject);
 begin
-  PanWork.Align         := alClient;
-  btAbrirPedido.Left    := 20;
-  btAbrirPedido.Top     := 60;
-  btAbrirPedido.Width   := 180;
-  btAbrirPedido.Height  := 80;
-  btBuscarPedido.Left   := btAbrirPedido.Left;
-  btBuscarPedido.Top    := btAbrirPedido.Top + btAbrirPedido.Height + 20;
-  btBuscarPedido.Width  := btAbrirPedido.Width;
-  btBuscarPedido.Height := btAbrirPedido.Height;
+  PanWork.Align          := alClient;
+  btAbrirPedido.Left     := 20;
+  btAbrirPedido.Top      := 60;
+  btAbrirPedido.Width    := 220;
+  btAbrirPedido.Height   := 80;
+  //
+  btBuscarPedido.Left    := btAbrirPedido.Left;
+  btBuscarPedido.Top     := btAbrirPedido.Top + btAbrirPedido.Height + 20;
+  btBuscarPedido.Width   := btAbrirPedido.Width;
+  btBuscarPedido.Height  := btAbrirPedido.Height;
+  //
   btSair.Left           := btAbrirPedido.Left;
   btSair.Top            := btBuscarPedido.Top + btBuscarPedido.Height + 20;
   btSair.Width          := btAbrirPedido.Width;
@@ -805,9 +815,22 @@ begin
 end;
 
 procedure TFuPedidos.FormShow(Sender: TObject);
+var nPos: Integer;
 begin
   edItens.Text := '0';
   edTotal.Text := '0,00';
+  //
+  btAbrirPedido.Caption := ObtemParametro('PedidoAbrir','&Abrir+pedido');
+  nPos := Pos('+',btAbrirPedido.Caption);
+  if nPos > 0 then
+    btAbrirPedido.Caption := Copy(btAbrirPedido.Caption,1,nPos-1) + #13 +
+                             Copy(btAbrirPedido.Caption,nPos+1,Length(btAbrirPedido.Caption)-nPos);
+  btBuscarPedido.Caption := ObtemParametro('PedidoBuscar','&Buscar+pedido');
+  nPos := Pos('+',btBuscarPedido.Caption);
+  if nPos > 0 then
+    btBuscarPedido.Caption := Copy(btBuscarPedido.Caption,1,nPos-1) + #13 +
+                              Copy(btBuscarPedido.Caption,nPos+1,Length(btBuscarPedido.Caption)-nPos);
+  //
   MontaTelaPedidos;
 
 end;
