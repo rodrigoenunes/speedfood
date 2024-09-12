@@ -10,7 +10,7 @@ uses
 type
   TFuPrincipal = class(TForm)
     Image1: TImage;
-    btSuporte: TBitBtn;
+    btManutencao: TBitBtn;
     btSair: TBitBtn;
     btAbrirCaixa: TBitBtn;
     btPedidos: TBitBtn;
@@ -25,8 +25,9 @@ type
     btHelpArgox: TBitBtn;
     btVerifSefaz: TBitBtn;
     LabPedidoInicial: TLabel;
+    btBalcao: TBitBtn;
     procedure btSairClick(Sender: TObject);
-    procedure btSuporteClick(Sender: TObject);
+    procedure btManutencaoClick(Sender: TObject);
     procedure FormActivate(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure btAbrirCaixaClick(Sender: TObject);
@@ -127,7 +128,7 @@ begin
 
 end;
 
-procedure TFuPrincipal.btSuporteClick(Sender: TObject);
+procedure TFuPrincipal.btManutencaoClick(Sender: TObject);
 begin
   if ObtemParametro('SistemaUserPwd','N') = 'S'
   then if not ObtemUsuario(uDM.sysUser)
@@ -182,8 +183,6 @@ begin
     uDM.sitPagto := 3;          // Todas as situações
     uDM.lDebug := False;
     if ObtemParametro('DEBUG') = 'S' then uDM.lDebug := True;
-    if ObtemParametro('VerifSeFaz','N') = 'S' then btVerifSefaz.Visible := True
-                                              else btVerifSefaz.Visible := False;
     //
     FFRCtle.RLPreviewSetup1.ZoomFactor := StrToIntDef(ObtemParametro('FortesZoomFactor'),100);
     FGen.lSalvaForm := True;
@@ -220,6 +219,18 @@ begin
       Image1.Visible := True;
     end;
     ContaExtras;                  // Obtem qtd de ítens 'extras'
+    //
+    btPedidos.Visible := uDM.sysPedidos;
+    btBalcao.Visible := uDM.sysBalcao;
+    btConsPedidos.Visible := False;
+    if btPedidos.Visible or btBalcao.Visible then
+      btConsPedidos.Visible := True;
+    btManutencao.Visible := uDM.sysManut;
+    btAdmin.Visible := uDM.sysAdmin;
+    btUsuario.Visible := uDM.sysUsuar;
+    btVerifSefaz.Visible := uDM.sysSefaz;
+    btHelpGeral.Visible := uDM.sysHelp;
+    btHelpArgox.Visible := uDM.sysHelpArgox;
     //
     wAcaoTurno := VerificaStatusCaixa;               // Sempre posiciona no ULTIMO registro
     if wAcaoTurno = 0 then
@@ -268,10 +279,9 @@ end;
 procedure TFuPrincipal.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
   if MessageDlg('Encerrar turno atual',mtConfirmation,[mbYes,mbNo],0,mbNo,['Sim','Não']) = mrYes
-  then begin
-    if FechamentoDeCaixa = 0
-       then CaixaMovimentacao;
-  end;
+  then if FechamentoDeCaixa = 0
+          then CaixaMovimentacao;
+  //
   uDM.PedDetpag.Active := False;
   uDM.PedItens.Active  := False;
   uDM.Pedidos.Active   := False;

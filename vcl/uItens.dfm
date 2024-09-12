@@ -703,6 +703,15 @@ object FuItens: TFuItens
       Text = 'cbSelec'
       OnChange = cbSelecChange
     end
+    object cbSelCod: TComboBox
+      Left = 296
+      Top = 20
+      Width = 60
+      Height = 24
+      TabOrder = 6
+      Text = 'cbSelCod'
+      Visible = False
+    end
   end
   object OpenPictureDialog1: TOpenPictureDialog
     Filter = 'Imagens|*.bmp;*.jpg'

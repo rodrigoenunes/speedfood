@@ -206,7 +206,10 @@ begin
     uDM.PedidosCPF_CNPJ.EditMask := '';
     uDM.PedidosTurno.AsInteger := uDM.turnoCorrente;
     uDM.PedidosOrigem.AsInteger := uDM.sysNumId;
-
+    //
+    uDM.PedidosIdEstacao.AsString := uDM.sysCPUId;
+    uDM.PedidosNrEstacao.AsInteger := uDM.sysNumId;
+    //
     uDM.PedidosPlaca.AsString := uDM.nroPlaca;
     uDM.PedidosMeioPagto.AsInteger := uDM.meioPgto;
     uDM.PedidosNomeCliente.AsString := uDM.nomeClie;
@@ -526,8 +529,10 @@ begin
     uDM.PedWrk.Next;
   end;
   uDM.PedidosOrigem.AsInteger := 0;
-  uDM.PedidosLctLanches.AsInteger := lanSeq;     // Qtd de lanches no pedido
-  uDM.PedidosLctBebidas.AsInteger := bebSeq;     // Qtd de bebidas no pedido
+  uDM.PedidosLctLanches.AsInteger := lanSeq;         // Qtd de lanches no pedido
+  uDM.PedidosLctBebidas.AsInteger := bebSeq;         // Qtd de bebidas no pedido
+  uDM.PedidosIdEstacao.AsString := uDM.sysCPUId;     // Identificação da estação
+  uDM.PedidosNrEstacao.AsInteger := uDM.sysNumId;    // Ident. numérica da estação
   uDM.Pedidos.Post;
   //
   if uDM.wNroPedido > 0 then
@@ -853,9 +858,11 @@ begin
     end;
     uDM.PedWrk.Next;
   end;
-  uDM.PedidosOrigem.AsInteger := 1;              // Pedido remoto/whatsapp....
-  uDM.PedidosLctLanches.AsInteger := lanSeq;     // Qtd de lanches no pedido
-  uDM.PedidosLctBebidas.AsInteger := bebSeq;     // Qtd de bebidas no pedido
+  uDM.PedidosOrigem.AsInteger := 1;                  // Pedido remoto/whatsapp....
+  uDM.PedidosLctLanches.AsInteger := lanSeq;         // Qtd de lanches no pedido
+  uDM.PedidosLctBebidas.AsInteger := bebSeq;         // Qtd de bebidas no pedido
+  uDM.PedidosIdEstacao.AsString := uDM.sysCPUId;     // Identificação da estação
+  uDM.PedidosNrEstacao.AsInteger := uDM.sysNumId;    // Ident. numérica da estação
   uDM.Pedidos.Post;
   //
   uDM.PedWrk.First;
@@ -1297,23 +1304,22 @@ begin
 end;
 
 procedure TFuFinPedido.FormResize(Sender: TObject);
-var lRemoto: Boolean;
-    nPos: Integer;
+var nPos: Integer;
+    //lRemoto: Boolean
 begin
   if FuFinPedido.Width < 1000 then
      FuFinPedido.Width := 1000;
   if FuFinPedido.Width > Screen.Width then
      FuFinPedido.Width := Screen.Width;
   SBoxPedido.Width := Trunc(FuFinPedido.Width * 0.45);
-
-  if ObtemParametro('PedidoRemoto','S') = 'S' then
-    lRemoto := True
-  else lRemoto := False;
-
+  {  lRemoto: foi trocado por parametro do .ini WhatsApp=S/N  (uDM.sysWhats) por estação
+  if ObtemParametro('PedidoRemoto','S') = 'S'
+     then lRemoto := True
+     else lRemoto := False;    }
   btGravar.Top := 40;
   btGravar.Left := 8;
   btGravar.Height := Trunc(PanCtle.Height * 0.45);
-  if lRemoto then
+  if uDM.sysWhats then                 // lRemoto then
   begin
     btGravar.Width := ((PanCtle.Width - 24) div 3) * 2;
     btRemoto.Top := btGravar.Top;
@@ -1326,7 +1332,7 @@ begin
       then btRemoto.Caption := Copy(btRemoto.Caption,1,nPos-1) + #13 + Copy(btRemoto.Caption,nPos+1,Length(btRemoto.Caption)-nPos);
   end
   else btGravar.Width := PanCtle.Width - 24;
-  btRemoto.Visible := lRemoto;
+  btRemoto.Visible := uDM.sysWhats;
 
   btRetornar.Left := PanCtle.Width div 2;
   btRetornar.Top := btGravar.Top + btGravar.Height + 12;

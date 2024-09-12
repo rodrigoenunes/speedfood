@@ -2,7 +2,7 @@ object FuFinPedido: TFuFinPedido
   Left = 0
   Top = 0
   Caption = 'Finaliza'#231#227'o do pedido'
-  ClientHeight = 567
+  ClientHeight = 594
   ClientWidth = 984
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -18,7 +18,7 @@ object FuFinPedido: TFuFinPedido
   TextHeight = 19
   object PanRodape: TPanel
     Left = 0
-    Top = 544
+    Top = 571
     Width = 984
     Height = 23
     Align = alBottom
@@ -29,12 +29,13 @@ object FuFinPedido: TFuFinPedido
     Font.Style = []
     ParentFont = False
     TabOrder = 2
+    ExplicitTop = 544
   end
   object PanInform: TPanel
     Left = 445
     Top = 41
     Width = 539
-    Height = 503
+    Height = 530
     Align = alClient
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
@@ -43,6 +44,7 @@ object FuFinPedido: TFuFinPedido
     Font.Style = []
     ParentFont = False
     TabOrder = 1
+    ExplicitHeight = 503
     object PanCliente: TPanel
       Left = 1
       Top = 283
@@ -98,9 +100,10 @@ object FuFinPedido: TFuFinPedido
       Left = 1
       Top = 360
       Width = 537
-      Height = 142
+      Height = 169
       Align = alClient
       TabOrder = 3
+      ExplicitHeight = 142
       object btCancelar: TBitBtn
         Left = 5
         Top = 87
@@ -553,7 +556,7 @@ object FuFinPedido: TFuFinPedido
         object Label6: TLabel
           Left = 0
           Top = 0
-          Width = 54
+          Width = 138
           Height = 16
           Align = alTop
           Alignment = taCenter
@@ -564,15 +567,17 @@ object FuFinPedido: TFuFinPedido
           Font.Name = 'Tahoma'
           Font.Style = [fsUnderline]
           ParentFont = False
+          ExplicitWidth = 54
         end
         object LabFalta: TLabel
           Left = 0
           Top = 18
-          Width = 58
+          Width = 138
           Height = 19
           Align = alBottom
           Alignment = taCenter
           Caption = 'LabFalta'
+          ExplicitWidth = 58
         end
       end
     end
@@ -646,9 +651,10 @@ object FuFinPedido: TFuFinPedido
     Left = 0
     Top = 41
     Width = 445
-    Height = 503
+    Height = 530
     Align = alLeft
     TabOrder = 7
+    ExplicitHeight = 503
     object imgPedido: TImage
       Left = 28
       Top = 14

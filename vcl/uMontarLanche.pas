@@ -215,6 +215,8 @@ procedure TFuMontarLanche.GridBaseMouseDown(Sender: TObject;
   Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
 var nCol,nLin,i: Integer;
     wKey: Integer;
+    wDescricao: String;
+    wPreco: Currency;
 begin
   GridBase.MouseToCell(X,Y,nCol,nLin);
   wKey := wCodBas[nLin];
@@ -223,13 +225,21 @@ begin
      then wSelBas[i] := ''
      else wSelBas[i] := 'X';
   GridBase.Refresh;
-  if not uDM.Itens.FindKey([4,wKey]) then Exit;
-  vlrBase := uDM.ItensPreco.AsCurrency;
+  if not uDM.Itens.FindKey([4,wKey])
+  then begin
+    MessageDlg('Item [4,' + IntToStr(wKey) + '] não encontrado, reinforme',mtInformation,[mbOk],0);
+    Exit;
+  end;
+  wDescricao := Trim(uDM.ItensDescricao.AsString) + '(Montar lanche)';
+  wPreco := uDM.ItensPreco.AsCurrency;
+  //
+  vlrBase := wPreco;       //uDM.ItensPreco.AsCurrency;
   vlrComp := ValorComplementos;
   uDM.PedWrkCodProd.AsInteger := wKey;
-  uDM.PedWrkDescricao.AsString := Trim(uDM.ItensDescricao.AsString) + '(Montar lanche)';
+  uDM.PedWrkDescricao.AsString := wDescricao;
   uDM.PedWrkVlrUnit.AsCurrency := vlrBase + vlrComp;
   uDM.PedWrkVlrTotal.AsCurrency := vlrBase + vlrComp;
+  showMessage('ItensDescricao='+uDM.ItensDescricao.AsString + #13 + 'PedWrkDescricao=' + uDM.PedWrkDescricao.AsString);
   //GridBaseDrawCell(nil,nCol,nLin);
 
 end;

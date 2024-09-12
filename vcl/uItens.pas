@@ -69,6 +69,7 @@ type
     ColorDialog1: TColorDialog;
     cbSelec: TComboBox;
     Label19: TLabel;
+    cbSelCod: TComboBox;
     procedure btSairClick(Sender: TObject);
     procedure btIncluirClick(Sender: TObject);
     procedure btOkClick(Sender: TObject);
@@ -110,43 +111,82 @@ Procedure ManutencaoProdutos;
 var i: Integer;
 begin
   uDM.filGrupoItens := 0;
-  uDM.Itens.Filtered := True;
-  //FuItens := TFuItens.Create(nil);
+  uDM.Itens.Filtered := False;
   with FuItens
   do begin
     dbTipo.Items.Clear;
-    dbTipo.Items.Add('Lanches');
-    dbTipo.Items.Add('Extras lanches');
-    dbTipo.Items.Add('Bebidas');
     dbTipo.Values.Clear;
+    dbTipo.Items.Add('Lanches');
     dbTipo.Values.Add('1');
+    dbTipo.Items.Add('Extras lanches');
     dbTipo.Values.Add('2');
+    dbTipo.Items.Add('Bebidas');
     dbTipo.Values.Add('3');
     if ObtemParametro('LanctoMontarLanche') = 'S'
     then begin
       dbTipo.Items.Add('Básicos');
-      dbTipo.Items.Add('Extras básicos');
       dbTipo.Values.Add('4');
+      dbTipo.Items.Add('Extras básicos');
       dbTipo.Values.Add('5');
     end;
-    dbTipo.Items.Add('Diversos');
+    //
+    dbTipo.Items.Add('Diversos');       // Picolés, Chocolates, miudezas....
     dbTipo.Values.Add('6');
+    //
+    if ObtemParametro('LanctoCrepes') = 'S' then
+    begin
+      dbTipo.Items.Add('Crepes');
+      dbTipo.Values.Add('11');
+      dbTipo.Items.Add('Sabores crepes');
+      dbTipo.Values.Add('12');
+    end;
+    if ObtemParametro('LanctoBuffets') = 'S' then         // Buffet de sorvetes e outros se houver
+    begin
+      dbTipo.Items.Add('Buffet');
+      dbTipo.Values.Add('15');
+    end;
+    if ObtemParametro('LanctoQuentes') = 'S' then
+    begin
+      dbTipo.Items.Add('Quentes');
+      dbTipo.Values.Add('21');
+      dbTipo.Items.Add('Extras quentes');
+      dbTipo.Values.Add('22');
+    end;
+    if ObtemParametro('LanctoGelados') = 'S' then        // Açai e outros...
+    begin
+      dbTipo.Items.Add('Gelados');
+      dbTipo.Values.Add('31');
+      dbTipo.Items.Add('Extras gelados');
+      dbTipo.Values.Add('32');
+    end;
+    if ObtemParametro('LanctoMilkshake') = 'S' then
+    begin
+      dbTipo.Items.Add('Milkshake');
+      dbTipo.Values.Add('41');
+    end;
     //
     Top := 12;
     Height := Screen.Height - 96;
     cbSelec.Items.Clear;
     cbSelec.Items.Add('Sem seleção');
-    for i := 0 to dbTipo.Items.Count-1 do
-       cbSelec.Items.add(dbTipo.Items[i]);
+    cbSelCod.Items.Clear;
+    cbSelCod.Items.Add('0');
+    for i := 0 to dbTipo.Items.Count-1
+    do begin
+      cbSelec.Items.add(dbTipo.Items[i]);
+      cbSelCod.Items.Add(dbTipo.Values[i]);
+    end;
     cbSelec.ItemIndex := 0;
+    cbSelCod.ItemIndex := 0;
     uDM.filGrupoItens := 0;
     uDM.Itens.Filtered := True;
-//    uDM.Itens.Refresh;
+    //
     uDM.Itens.Last;
     uDM.Itens.First;
+    cbSelCod.Visible := uDM.lDebug;
     ShowModal;
     uDM.Itens.Filtered := False;
-//    Free;
+
   end;
 
 end;
@@ -379,6 +419,13 @@ begin
     dbCodigo.SetFocus;
     Exit;
   end;
+  if (wAcao = 1) or (wAcao = 2)
+  then if not gbFiscais.Visible
+       then begin
+         uDM.ItensCFOP.Clear;
+         uDM.ItensNCM.Clear;
+       end;
+
   case wAcao of
     1:begin
         Try
@@ -421,7 +468,8 @@ end;
 
 procedure TFuItens.cbSelecChange(Sender: TObject);
 begin
-  uDM.filGrupoItens := cbSelec.ItemIndex;
+  cbSelCod.ItemIndex := cbSelec.ItemIndex;
+  uDM.filGrupoItens := StrToIntDef(cbSelCod.Text,0);
   uDM.Itens.Refresh;
   LabNRegs.Caption := IntToStr(uDM.Itens.RecordCount) + ' itens';
 
@@ -440,9 +488,28 @@ begin
 end;
 
 procedure TFuItens.dbTipoClick(Sender: TObject);
+var nTipo: Integer;
 begin
-  case dbTipo.ItemIndex of
-    0,3:begin     // Lanches
+  nTipo := StrToIntDef(dbTipo.Values[dbTipo.ItemIndex],99);
+  case nTipo of
+  {
+    Cod/Descrição       Fiscal   Cor    Imagem
+    1-Lanches           sim      sim    sim
+    2-Extras lanches     -        -      -
+    3-Bebidas           sim      sim    sim
+    4-Basicos           sim      sim     -
+    5-Extras basico      -       sim     -
+    6-Diversos          sim       -     sim
+    11-Crepes           sim      sim    sim
+    12-Crepes sabores    -       sim     -
+    15-Buffet           sim       -     sim
+    21-Quentes          sim      sim    sim
+    22-Extras quentes    -       sim     -
+    31-Gelados          sim      sim    sim
+    32-Extra gelados     -       sim     -
+    41-Milkshake        sim      sim    sim
+  }
+    1,4,11,21,31,41:begin     // Lanches e preparados
         uDM.ItensCFOP.AsInteger       := 5101;
         uDM.ItensNCM.AsString         := '21069090';
         uDM.ItensCSOSN.AsInteger      := 102;
@@ -453,7 +520,7 @@ begin
         uDM.ItensPcReduz.AsFloat      := 0;
         uDM.ItensAliqICMS.AsFloat     := 0;
       end;
-    2:begin     // Bebidas
+    3:begin     // Bebidas  (3)
         uDM.ItensCFOP.AsInteger       := 5102;
         uDM.ItensNCM.AsString         := '22021000';
         uDM.ItensCSOSN.AsInteger      := 102;
@@ -464,7 +531,7 @@ begin
         uDM.ItensPcReduz.AsFloat      := 0;
         uDM.ItensAliqICMS.AsFloat     := 0;
       end;
-    5:begin     // Diversos
+    6:begin     // Diversos(6)
         uDM.ItensCFOP.AsInteger       := 5102;
         uDM.ItensNCM.AsString         := '22021000';
         uDM.ItensCSOSN.AsInteger      := 102;
@@ -475,7 +542,18 @@ begin
         uDM.ItensPcReduz.AsFloat      := 0;
         uDM.ItensAliqICMS.AsFloat     := 0;
         end;
-    else begin      // Extras para lanches(1) e Extras para basicos(4)
+    15:begin     // Buffet (15)
+        uDM.ItensCFOP.AsInteger       := 5102;
+        uDM.ItensNCM.AsString         := '22021000';
+        uDM.ItensCSOSN.AsInteger      := 102;
+        uDM.ItensCST.AsInteger        := 90;
+        uDM.ItensCST_IPI.AsInteger    := 99;
+        uDM.ItensCST_PIS.AsInteger    := 99;
+        uDM.ItensCST_COFINS.AsInteger := 99;
+        uDM.ItensPcReduz.AsFloat      := 0;
+        uDM.ItensAliqICMS.AsFloat     := 0;
+        end;
+     else begin      // Extras e sabores (2,5,12,22,26)
         uDM.ItensCFOP.Clear;
         uDM.ItensNCM.Clear;
         uDM.ItensCSOSN.Clear;
@@ -492,29 +570,60 @@ end;
 
 procedure TFuItens.edZC_KeyChange(Sender: TObject);
 begin
+{
+    Cod/Descrição       Fiscal   Cor    Imagem
+    1-Lanches           sim      sim    sim
+    2-Extras lanches     -        -      -
+    3-Bebidas           sim      sim    sim
+    4-Basicos           sim      sim     -              (Montar lanches)
+    5-Extras basico      -       sim     -
+    6-Diversos          sim       -     sim
+    11-Crepes           sim      sim    sim
+    12-Crepes sabores    -       sim     -
+    15-Buffet           sim       -     sim
+    21-Quentes          sim      sim    sim
+    22-Extras quentes    -       sim     -
+    31-Gelados          sim      sim    sim
+    32-Extra gelados     -       sim     -
+    41-Milkshake        sim      sim    sim
+}
   gbFiscais.Visible := False;
   imgItem.Visible := False;
   panCor.Visible := False;
-  if (uDM.ItensGrupo.AsInteger = 1)         // Lanches
-     or (uDM.ItensGrupo.AsInteger = 3)      // Bebidas
+  cbAlteraPreco.Visible := False;
+
+  if (uDM.ItensGrupo.AsInteger = 1)
+     or (uDM.ItensGrupo.AsInteger = 3)
      or (uDM.ItensGrupo.AsInteger = 4)      // Basicos (Montar lanche)
      or (uDM.ItensGrupo.AsInteger = 6)      // Diversos
+     or (uDM.ItensGrupo.AsInteger = 11)     // Crepes
+     or (uDM.ItensGrupo.AsInteger = 15)     // Buffet
+     or (uDM.ItensGrupo.AsInteger = 21)     // Quentes
+     or (uDM.ItensGrupo.AsInteger = 31)     // Gelados
+     or (uDM.ItensGrupo.AsInteger = 41)     // Shakes
   then gbFiscais.Visible := True;
 
-  if uDM.ItensGrupo.AsInteger = 1
-     then cbAlteraPreco.Visible := True
-     else cbAlteraPreco.Visible := False;
-  if ((uDM.ItensGrupo.AsInteger = 1)        // Lanches
-      or (uDM.ItensGrupo.AsInteger = 3)     // Bebidas
-      or (uDM.ItensGrupo.AsInteger = 4)     // Basicos
-      or (uDM.ItensGrupo.AsInteger = 5))    // Complementos de basicos
-      and (uDM.usaCorItem)                  // Usa cor de preenchimento
-  then begin
-    PanCor.Visible := True;
-    if uDM.ItensCorItem.AsString = ''
-       then PanCor.Color := PanManut.Color
-       else PanCor.Color := StringToColor(uDM.ItensCorItem.AsString);
-  end;
+  if (uDM.ItensGrupo.AsInteger = 1) or
+     (uDM.ItensGrupo.AsInteger = 6)
+     then cbAlteraPreco.Visible := True;
+
+  if uDM.usaCorItem
+  then if (uDM.ItensGrupo.AsInteger = 1)
+          or (uDM.ItensGrupo.AsInteger = 3)
+          or (uDM.ItensGrupo.AsInteger = 4)
+          or (uDM.ItensGrupo.AsInteger = 5)
+          or (uDM.ItensGrupo.AsInteger = 11)
+          or (uDM.ItensGrupo.AsInteger = 21)
+          or (uDM.ItensGrupo.AsInteger = 22)
+          or (uDM.ItensGrupo.AsInteger = 31)
+          or (uDM.ItensGrupo.AsInteger = 32)
+          or (uDM.ItensGrupo.AsInteger = 41)
+       then begin
+         PanCor.Visible := True;
+         if uDM.ItensCorItem.AsString = ''
+            then PanCor.Color := PanManut.Color
+            else PanCor.Color := StringToColor(uDM.ItensCorItem.AsString);
+       end;
 
   if FileExists(uDM.ItensImagem.AsString)
   then begin

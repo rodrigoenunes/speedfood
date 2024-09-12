@@ -278,6 +278,8 @@ type
     PedWrkEtqImpressa: TSmallintField;
     PedidosIdEstacao: TStringField;
     PedidosNrEstacao: TShortintField;
+    RegCaixaNrCaixa: TIntegerField;
+    LctCaixaNrCaixa: TIntegerField;
     procedure ItensCalcFields(DataSet: TDataSet);
     procedure LctCaixaCalcFields(DataSet: TDataSet);
     procedure PedWrkCalcFields(DataSet: TDataSet);
@@ -307,6 +309,8 @@ type
     usaCorItem: Boolean;
     sysUser,sysCPUId: String;
     sysNumId: Integer;
+    sysPedidos,sysBalcao,sysWhats,sysManut,sysAdmin,
+    sysUsuar,sysSefaz,sysHelp,sysHelpArgox,sysTurnos: Boolean;
     sysEtiquetasPrt,sysPedidosPrt,sysCaixaPrt,sysResumoPrt: String;
     filGrupoItens: Integer;
     meioPgto: Integer;
@@ -317,14 +321,15 @@ type
     sitPagto: Integer;
     lDebug: Boolean;
     wOperCartoes: Integer;
+    filtroCaixa: Integer;
 
   end;
 
 var
   uDM: TuDM;
+  xGrupos: array[1..49] of String;
 
 const
-  xGrupos: array[1..6] of String = ('Lanches','Extras Lanche','Bebidas','Basicos','Extras Basico','Diversos');
   xOperacao: array[0..4] of String = ('Saldo','Receb','Suprim','Pagto','Sangria');
   xOperAbrv: array[0..4] of String = ('Sdo',  'Rec',  'Sup',   'Pgt',  'San');
   xMeioPgto: array[0..5] of String = ('R$', 'CDeb','CCred','PIX','Outros','Misto');
@@ -525,7 +530,8 @@ end;
 procedure TuDM.DataModuleCreate(Sender: TObject);
 Var
   vIniFile: TIniFile;
-  sIniFile, sServer: String;
+  sIniFile, sServer, sPorta: String;
+  i: Integer;
 begin
   FDC.Connected := False;
   sIniFile := ChangeFileExt(ParamStr(0), '.ini');
@@ -533,25 +539,82 @@ begin
   if not FileExists(sIniFile) then
   Begin
     vIniFile.WriteString('DB', 'Host', '');
+    vIniFile.WriteString('DB', 'Port', '');
+
+    vIniFile.WriteString('Estacao','Nome','');
+    vIniFile.WriteInteger('Estacao','Numero',0);
+    vIniFile.WriteBool('Estacao','Pedidos',True);
+    vIniFile.WriteBool('Estacao','Balcao',False);
+    vIniFile.WriteBool('Estacao','WhatsApp',False);
+    vIniFile.WriteBool('Estacao','Manutencao',False);
+    vIniFile.WriteBool('Estacao','Administrativo',False);
+    vIniFile.WriteBool('Estacao','Usuario',False);
+    vIniFile.WriteBool('Estacao','Help',False);
+    vIniFile.WriteBool('Estacao','HelpArgox',False);
+    vIniFile.WriteBool('Estacao','VerSefaz',False);
+    vIniFile.WriteBool('Estacao','Turnos',False);
+    vIniFile.WriteInteger('Estacao','FiltroCaixa',0);       // Nro caixa a filtrar
+
+    vIniFile.WriteString('Impressoras','Etiquetas','');
+    vIniFile.WriteString('Impressoras','Pedidos','');
+    vIniFile.WriteString('Impressoras','Caixa','');
+    vIniFile.WriteString('Impressoras','Resumo','');
+
   End;
-  //
   sServer := vIniFile.ReadString('DB', 'Host', '').Trim;
   if Not sServer.IsEmpty then
     FDC.Params[ FDC.Params.IndexOfName('server') ]:= 'Server=' + sServer;
 
-  sysCPUId := vIniFile.ReadString('Estacao','Nome','NI');
-  sysNumId := vIniFile.ReadInteger('Estacao','Numero',0);
+  sPorta := vIniFile.ReadString('DB', 'Port', '').Trim;
+  if Not sPorta.IsEmpty then
+    FDC.Params[ FDC.Params.IndexOfName('port') ]:= 'Port=' + sPorta;
 
+  sysCPUId := vIniFile.ReadString('Estacao','Nome','');
+  sysNumId := vIniFile.ReadInteger('Estacao','Numero',0);
+  sysPedidos := vIniFile.ReadBool('Estacao','Pedidos',True);
+  sysBalcao := vIniFile.ReadBool('Estacao','Balcao',False);
+  sysWhats := vIniFile.ReadBool('Estacao','WhatsApp',False);
+  sysManut := vIniFile.ReadBool('Estacao','Manutencao',False);
+  sysAdmin := vIniFile.ReadBool('Estacao','Administrativo',False);
+  sysUsuar := vIniFile.ReadBool('Estacao','Usuario',False);
+  sysHelp := vIniFile.ReadBool('Estacao','Help',False);
+  sysHelpArgox := vIniFile.ReadBool('Estacao','HelpArgox',False);
+  sysSefaz := vIniFile.ReadBool('Estacao','VerSefaz',False);
+  sysTurnos := vIniFile.ReadBool('Estacao','Turnos',False);
+  filtroCaixa := vIniFile.ReadInteger('Estacao','FiltroCaixa',0);
+  //
+  if (not sysPedidos) and (not sysBalcao) then
+     MessageDlg('Verifique os parametros de inicialização, Pedidos/Balcao' + #13 +
+                'Arquivo: ' + sIniFile,mtWarning,[mbOk],0);
+  //
   sysEtiquetasPrt := vIniFile.ReadString('Impressoras','Etiquetas','');
   sysPedidosPrt := vIniFile.ReadString('Impressoras','Pedidos','');
   sysCaixaPrt := vIniFile.ReadString('Impressoras','Caixa','');
   sysResumoPrt := vIniFile.ReadString('Impressoras','Resumo','');
-
+  //
   vIniFile.Free;
   //
   FDC.Connected := True;
   //
   wOperCartoes := 0;
+  //
+  for i := 1 to Length(xGrupos)
+     do xGrupos[i] := '';
+  xGrupos[01] := 'Lanches';
+  xGrupos[02] := 'Extras lanches';
+  xGrupos[03] := 'Bebidas';
+  xGrupos[04] := 'Básicos';
+  xGrupos[05] := 'Extras básicos';
+  xGrupos[06] := 'Diversos';
+  xGrupos[11] := 'Crepes';
+  xGrupos[12] := 'Sabores crepes';
+  xGrupos[15] := 'Buffet';
+  xGrupos[21] := 'Quentes';
+  xGrupos[22] := 'Extras quentes';
+  xGrupos[31] := 'Gelados';
+  xGrupos[32] := 'Extras gelados';
+  xGrupos[41]  := 'Milkshake';
+  //
 
 end;
 
@@ -575,9 +638,11 @@ procedure TuDM.ItensCalcFields(DataSet: TDataSet);
 begin
   if uDM = Nil then Exit;
   if not uDM.Itens.Active then Exit;
-  if (uDM.ItensGrupo.AsInteger > 0) and (uDM.ItensGrupo.AsInteger < 6)
+  //
+  if (uDM.ItensGrupo.AsInteger > 0) and (uDM.ItensGrupo.AsInteger <= Length(xGrupos))
      then uDM.ItensZC_Grupo.AsString := xGrupos[uDM.ItensGrupo.AsInteger]
      else uDM.ItensZC_Grupo.AsString := '(' + uDM.ItensGrupo.AsString + ')';
+  //
   uDM.ItensZC_Key.AsString := uDM.ItensGrupo.AsString + uDM.ItensCodigo.AsString;
   if uDM.ItensAlteraPreco.AsBoolean then uDM.ItensZC_AltPreco.AsString := 'P'
   else uDM.ItensZC_AltPreco.AsString := '';
@@ -699,8 +764,8 @@ begin
   end;
 
   case PedidosOrigem.AsInteger of
-    0:PedidosZC_Origem.AsString := 'Onibus';
-    1:PedidosZC_Origem.AsString := 'Onibus-WhatsApp';
+    0:PedidosZC_Origem.AsString := PedidosIdEstacao.AsString;    // 'Onibus';
+    1:PedidosZC_Origem.AsString := Trim(PedidosIdEstacao.AsString) + '-WhatsApp';  // Onibus-WhatsApp
     else PedidosZC_Origem.AsString := '';
   end;
 

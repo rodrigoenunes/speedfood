@@ -910,9 +910,16 @@ object uDM: TuDM
     OnCalcFields = RegCaixaCalcFields
     IndexFieldNames = 'Turno'
     Connection = FDC
+    ResourceOptions.AssignedValues = [rvEscapeExpand]
     TableName = 'speedfood.com_regcaixa'
     Left = 28
     Top = 252
+    object RegCaixaNrCaixa: TIntegerField
+      FieldName = 'NrCaixa'
+      Origin = 'NrCaixa'
+      ProviderFlags = [pfInUpdate, pfInWhere, pfInKey]
+      Required = True
+    end
     object RegCaixaTurno: TIntegerField
       FieldName = 'Turno'
       Origin = 'Turno'
@@ -1137,9 +1144,16 @@ object uDM: TuDM
     MasterSource = DSRegCaixa
     MasterFields = 'Turno'
     Connection = FDC
+    ResourceOptions.AssignedValues = [rvEscapeExpand]
     TableName = 'speedfood.com_lctcaixa'
     Left = 28
     Top = 304
+    object LctCaixaNrCaixa: TIntegerField
+      FieldName = 'NrCaixa'
+      Origin = 'NrCaixa'
+      ProviderFlags = [pfInUpdate, pfInWhere, pfInKey]
+      Required = True
+    end
     object LctCaixaTurno: TIntegerField
       FieldName = 'Turno'
       Origin = 'Turno'

@@ -212,7 +212,7 @@ begin
     Result := 0;       // Abrir novo caixa/turno
     Exit;
   end;
-  //FuCaixa := TFuCaixa.Create(nil);
+  //
   with FuCaixa
   do begin
     LabRotina.Caption := 'Turno aberto';
@@ -226,7 +226,6 @@ begin
     ShowModal;
     Result := wStatusCaixa;     // 0-Abrir novo; 1-Prosseguir
   end;
-  //FuCaixa.Free;
 
 end;
 
