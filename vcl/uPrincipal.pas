@@ -154,14 +154,13 @@ var arqimg: String;
     xValidade: String;
     AA,MM,DD: word;
     dtValid,dtHoje: TDateTime;
-    nDias: Integer;
-    wAcaoTurno: Integer;
+    nDias,nBotoes,nTop,nAlt,wAcaoTurno: Integer;
 begin
   if uDM = Nil then
   begin
     uDM := TuDM.Create(nil);
     //
-    if uDM.sysNumId = 0 then
+    if (uDM.sysNumId = 0) or (uDM.sysCPUId = '') then
     begin
       MessageDlg('Erro de inicialização, verifique arquivo INI' + #13 +
                  'Estacao / Numero: Não pode ser ZERO' + #13 +
@@ -208,9 +207,8 @@ begin
     if nDias < 31 then
       MessageDlg('A validade do sistema termina em ' + IntToStr(nDias) + ' dias',mtInformation,[mbOk],0);
     //
-    Image1.Visible       := False;
-    uDM.pathImagens      := IncludeTrailingPathDelimiter(uDM.SisPessoaPathImagens.AsString);
-    arqimg               := uDM.pathImagens + 'ImgFundo.BMP';
+    uDM.pathImagens := IncludeTrailingPathDelimiter(uDM.SisPessoaPathImagens.AsString);
+    arqimg := uDM.pathImagens + 'ImgFundo.BMP';
     if FileExists(arqimg)
     then begin
       Image1.Picture.LoadFromFile(arqimg);
@@ -220,15 +218,84 @@ begin
     end;
     ContaExtras;                  // Obtem qtd de ítens 'extras'
     //
-    btPedidos.Visible := uDM.sysPedidos;
-    btBalcao.Visible := uDM.sysBalcao;
-    btConsPedidos.Visible := False;
-    if btPedidos.Visible or btBalcao.Visible then
+    // Define 'botões' utilizados
+    nBotoes := 2;               // AbrirCaixa e Sair sempre visiveis
+    if uDM.sysPedidos then nBotoes := nBotoes + 1;
+    if uDM.sysBalcao then nBotoes := nBotoes + 1;
+    if uDM.sysPedidos or uDM.sysBalcao then nBotoes := nBotoes + 1;
+    if uDM.sysManut then nBotoes := nBotoes + 1;
+    if uDM.sysAdmin then nBotoes := nBotoes + 1;
+    if uDM.sysUsuar then nBotoes := nBotoes + 1;
+    if uDM.sysSefaz then nBotoes := nBotoes + 1;
+    //
+    nTop := 0;
+    nAlt := (FuPrincipal.Height - 64) div nBotoes;
+    btAbrirCaixa.Top := nTop;
+    btAbrirCaixa.Height := nAlt;
+    btAbrirCaixa.Left := 12;
+    nTop := nTop + nAlt + 2;
+    if uDM.sysPedidos then
+    begin
+      btPedidos.Top := nTop;
+      btPedidos.Height := nAlt;
+      btPedidos.Left := btAbrirCaixa.Left;
+      btPedidos.Visible := True;
+      nTop := nTop + nAlt + 2;
+    end;
+    if uDM.sysBalcao then
+    begin
+      btBalcao.Top := nTop;
+      btBalcao.Height := nAlt;
+      btBalcao.Visible := True;
+      btBalcao.Left := btAbrirCaixa.Left;
+      nTop := nTop + nAlt + 2;
+    end;
+    if uDM.sysPedidos or uDM.sysBalcao then
+    begin
+      btConsPedidos.Top := nTop;
+      btConsPedidos.Height := nAlt;
       btConsPedidos.Visible := True;
-    btManutencao.Visible := uDM.sysManut;
-    btAdmin.Visible := uDM.sysAdmin;
-    btUsuario.Visible := uDM.sysUsuar;
-    btVerifSefaz.Visible := uDM.sysSefaz;
+      btConsPedidos.Left := btAbrirCaixa.Left;
+      nTop := nTop + nAlt + 2;
+    end;
+    if uDM.sysManut then
+    begin
+      btManutencao.Top := nTop;
+      btManutencao.Height := nAlt;
+      btManutencao.Visible := True;
+      btManutencao.Left := btAbrirCaixa.Left;
+      nTop := nTop + nAlt + 2;
+    end;
+    if uDM.sysAdmin then
+    begin
+      btAdmin.Top := nTop;
+      btAdmin.Height := nAlt;
+      btAdmin.Visible := True;
+      btAdmin.Left := btAbrirCaixa.Left;
+      nTop := nTop + nAlt + 2;
+    end;
+    if uDM.sysUsuar then
+    begin
+      btUsuario.Top := nTop;
+      btUsuario.Height := nAlt;
+      btUsuario.Visible := True;
+      btUsuario.Left := btAbrirCaixa.Left;
+      nTop := nTop + nAlt + 2;
+    end;
+    if uDM.sysSefaz then
+    begin
+      btVerifSefaz.Top := nTop;
+      btVerifSefaz.Height := nAlt;
+      btVerifSefaz.Visible := True;
+      btVerifSefaz.Left := btAbrirCaixa.Left;
+      nTop := nTop + nAlt + 2;
+    end;
+    btSair.Top := nTop;
+    btSair.Height := nAlt;
+    btSair.Visible := True;
+    btSair.Left := btAbrirCaixa.Left;
+    nTop := nTop + nAlt + 2;
+    //
     btHelpGeral.Visible := uDM.sysHelp;
     btHelpArgox.Visible := uDM.sysHelpArgox;
     //
@@ -278,8 +345,10 @@ end;
 
 procedure TFuPrincipal.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
-  if MessageDlg('Encerrar turno atual',mtConfirmation,[mbYes,mbNo],0,mbNo,['Sim','Não']) = mrYes
-  then if FechamentoDeCaixa = 0
+  if uDM.sysTurnos then
+     if MessageDlg('Encerrar turno atual',mtConfirmation,
+                    [mbYes,mbNo],0,mbNo,['Sim','Não']) = mrYes then
+        if FechamentoDeCaixa = 0
           then CaixaMovimentacao;
   //
   uDM.PedDetpag.Active := False;
@@ -298,9 +367,9 @@ end;
 
 procedure TFuPrincipal.FormCreate(Sender: TObject);
 begin
-  FuPrincipal.Width  := (Screen.Width div 5) * 2;
-  FuPrincipal.Height := FuPrincipal.Width;
-  FuPrincipal.Top    := 20;
+  FuPrincipal.Width  := (Screen.Width div 5) * 3;
+  FuPrincipal.Height := (Screen.Height - 80);     // FuPrincipal.Width;
+  FuPrincipal.Top    := 10;                       // 20
   FuPrincipal.Left   := 40;
   FuPrincipal.Image1.Visible := False;
 

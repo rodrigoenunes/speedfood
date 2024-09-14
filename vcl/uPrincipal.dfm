@@ -97,11 +97,12 @@ object FuPrincipal: TFuPrincipal
       A4A4A4A4A4A4A4A4A4A4A4A4A4A4A4A4A4A4A4A4A4A4A4A4A400000000000000
       0000000000000000000000000000000000000000000000000000}
     TabOrder = 3
+    Visible = False
     OnClick = btManutencaoClick
   end
   object btSair: TBitBtn
     Left = 8
-    Top = 332
+    Top = 336
     Width = 257
     Height = 52
     Caption = 'Finalizar/Sair'
@@ -233,6 +234,7 @@ object FuPrincipal: TFuPrincipal
       00000000000FFFFFFFFFFF8F08F08F08F08F08F07FFFFFFFFFFFFFFF8FF8FF8F
       F8FF8FF8FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}
     TabOrder = 1
+    Visible = False
     OnClick = btPedidosClick
   end
   object btUsuario: TBitBtn
@@ -295,6 +297,7 @@ object FuPrincipal: TFuPrincipal
       AA978E968D8EAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
       AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA}
     TabOrder = 5
+    Visible = False
     OnClick = btUsuarioClick
   end
   object btAdmin: TBitBtn
@@ -361,18 +364,22 @@ object FuPrincipal: TFuPrincipal
       FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF
       00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF}
     TabOrder = 4
+    Visible = False
     OnClick = btAdminClick
   end
   object PanTurno: TPanel
     Left = 276
     Top = 8
-    Width = 221
+    Width = 255
     Height = 81
     BevelInner = bvLowered
     Color = clGradientInactiveCaption
     ParentBackground = False
     TabOrder = 8
     Visible = False
+    DesignSize = (
+      255
+      81)
     object LabInicio: TLabel
       Left = 12
       Top = 33
@@ -403,7 +410,7 @@ object FuPrincipal: TFuPrincipal
     object LabTurno: TLabel
       Left = 2
       Top = 2
-      Width = 217
+      Width = 251
       Height = 25
       Align = alTop
       Caption = '  Turno atual'
@@ -416,11 +423,12 @@ object FuPrincipal: TFuPrincipal
       ExplicitWidth = 133
     end
     object LabPedidoInicial: TLabel
-      Left = 136
+      Left = 170
       Top = 64
       Width = 76
       Height = 13
       Alignment = taRightJustify
+      Anchors = [akRight, akBottom]
       Caption = 'LabPedidoInicial'
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
@@ -428,6 +436,7 @@ object FuPrincipal: TFuPrincipal
       Font.Name = 'Tahoma'
       Font.Style = []
       ParentFont = False
+      ExplicitLeft = 136
     end
   end
   object btConsPedidos: TBitBtn
@@ -517,6 +526,7 @@ object FuPrincipal: TFuPrincipal
       0909090909090909090909090909090909090909090909090909090909090909
       0909090909090909090909090909090909090909090909090909}
     TabOrder = 2
+    Visible = False
     OnClick = btConsPedidosClick
   end
   object btHelpGeral: TBitBtn
@@ -577,7 +587,7 @@ object FuPrincipal: TFuPrincipal
     Visible = False
   end
   object btBalcao: TBitBtn
-    Left = 276
+    Left = 274
     Top = 95
     Width = 257
     Height = 52
@@ -650,6 +660,7 @@ object FuPrincipal: TFuPrincipal
       A4A4A4A4A4A4A4A4A4A4A4A4A4A4A4A4A4A4A4A4A4A4A4A4A400000000000000
       0000000000000000000000000000000000000000000000000000}
     TabOrder = 11
+    Visible = False
     OnClick = btPedidosClick
   end
 end

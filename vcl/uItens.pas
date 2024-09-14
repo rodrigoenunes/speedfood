@@ -13,63 +13,67 @@ type
     PanDados: TPanel;
     PanBottom: TPanel;
     PanManut: TPanel;
-    Label2: TLabel;
-    Label3: TLabel;
-    Label4: TLabel;
-    Label5: TLabel;
     GridProds: TDBGrid;
     NavProds: TDBNavigator;
     dbTipo: TDBRadioGroup;
-    dbCodigo: TDBEdit;
-    dbDescricao: TDBEdit;
-    dbTamanho: TDBEdit;
-    dbPreco: TDBEdit;
-    btOk: TBitBtn;
-    btCancel: TBitBtn;
     btIncluir: TBitBtn;
     btAlterar: TBitBtn;
     btExcluir: TBitBtn;
     btSair: TBitBtn;
     LabNRegs: TLabel;
-    Label1: TLabel;
-    dbDescrCompl: TDBMemo;
-    gbFiscais: TGroupBox;
-    Label6: TLabel;
-    dbCFOP: TDBEdit;
-    dbNCM: TDBEdit;
-    Label7: TLabel;
-    Label8: TLabel;
-    DBEdit1: TDBEdit;
-    DBEdit2: TDBEdit;
-    Label9: TLabel;
-    Label10: TLabel;
-    DBEdit3: TDBEdit;
-    DBEdit4: TDBEdit;
-    Label11: TLabel;
-    Label12: TLabel;
-    DBEdit5: TDBEdit;
-    DBEdit6: TDBEdit;
-    Label13: TLabel;
-    Label14: TLabel;
-    DBEdit7: TDBEdit;
-    edZC_Key: TDBEdit;
-    Label15: TLabel;
-    dbImagem: TDBEdit;
-    sbImagem: TSpeedButton;
-    ImgItem: TImage;
     OpenPictureDialog1: TOpenPictureDialog;
-    Label16: TLabel;
-    dbUnid: TDBEdit;
-    Label17: TLabel;
-    dbCodBarras: TDBEdit;
-    cbAlteraPreco: TDBCheckBox;
-    Label18: TLabel;
-    DBEdit8: TDBEdit;
-    PanCor: TPanel;
     ColorDialog1: TColorDialog;
     cbSelec: TComboBox;
     Label19: TLabel;
     cbSelCod: TComboBox;
+    PanDetalhe: TPanel;
+    Label2: TLabel;
+    dbCodigo: TDBEdit;
+    dbDescricao: TDBEdit;
+    Label3: TLabel;
+    Label5: TLabel;
+    dbPreco: TDBEdit;
+    PanCor: TPanel;
+    edZC_Key: TDBEdit;
+    dbUnid: TDBEdit;
+    Label16: TLabel;
+    Label4: TLabel;
+    dbTamanho: TDBEdit;
+    dbCodBarras: TDBEdit;
+    Label17: TLabel;
+    cbAlteraPreco: TDBCheckBox;
+    ImgItem: TImage;
+    Label1: TLabel;
+    dbDescrCompl: TDBMemo;
+    Label15: TLabel;
+    dbImagem: TDBEdit;
+    sbImagem: TSpeedButton;
+    gbFiscais: TGroupBox;
+    Label6: TLabel;
+    Label7: TLabel;
+    Label8: TLabel;
+    Label9: TLabel;
+    Label10: TLabel;
+    Label11: TLabel;
+    Label12: TLabel;
+    Label13: TLabel;
+    Label14: TLabel;
+    Label18: TLabel;
+    dbCFOP: TDBEdit;
+    dbNCM: TDBEdit;
+    DBEdit1: TDBEdit;
+    DBEdit2: TDBEdit;
+    DBEdit3: TDBEdit;
+    DBEdit4: TDBEdit;
+    DBEdit5: TDBEdit;
+    DBEdit6: TDBEdit;
+    DBEdit7: TDBEdit;
+    DBEdit8: TDBEdit;
+    btOk: TBitBtn;
+    btCancel: TBitBtn;
+    cbEtiqueta: TDBCheckBox;
+    btAjustaEtq: TBitBtn;
+    Label20: TLabel;
     procedure btSairClick(Sender: TObject);
     procedure btIncluirClick(Sender: TObject);
     procedure btOkClick(Sender: TObject);
@@ -89,6 +93,7 @@ type
     procedure cbSelecChange(Sender: TObject);
     procedure btIncluirMouseDown(Sender: TObject; Button: TMouseButton;
       Shift: TShiftState; X, Y: Integer);
+    procedure btAjustaEtqClick(Sender: TObject);
   private
     { Private declarations }
   public
@@ -163,6 +168,8 @@ begin
     begin
       dbTipo.Items.Add('Milkshake');
       dbTipo.Values.Add('41');
+      dbTipo.Items.Add('Extras milkshake');
+      dbTipo.Values.Add('42');
     end;
     //
     Top := 12;
@@ -217,12 +224,52 @@ begin
 
 end;
 
+
+Procedure AjustaIndicadorEtiquetas;
+var newEtq: Boolean;
+begin
+  if FuItens.cbSelec.ItemIndex <> 0 then
+  begin
+    MessageDlg('Não pode haver seleção ativa, altere para "' +
+               FuItens.cbSelec.Items[0] + '" e tente novamente',mtWarning,[mbOk],0);
+    Exit;
+  end;
+  if MessageDlg('Ajustar o indicador de "etiquetas" ?',mtConfirmation,
+                [mbYes,mbNo],0,mbNo,['Sim','Não']) <> mrYes then Exit;
+  //
+  FuItens.PanDados.Visible := False;
+  FuItens.PanBottom.Visible := False;
+  uDM.Itens.First;
+  while not uDM.Itens.Eof do
+  begin
+    newEtq := False;
+    if (uDM.ItensGrupo.AsInteger = 1)
+       or (uDM.ItensGrupo.AsInteger = 11)
+       or (uDM.ItensGrupo.AsInteger = 21)
+       or (uDM.ItensGrupo.AsInteger = 31)
+       or (uDM.ItensGrupo.AsInteger = 41)
+    then newEtq := True
+    else if uDM.ItensEtiqueta.AsBoolean
+         then newEtq := True
+         else newEtq := False;
+    uDM.Itens.Edit;
+    uDM.ItensEtiqueta.AsBoolean := newEtq;
+    uDM.Itens.Post;
+    uDM.Itens.Next;
+  end;
+  uDM.Itens.First;
+  FuItens.PanBottom.Visible := True;
+  FuItens.PanDados.Visible := True;
+
+end;
+
+
 procedure TFuItens.FormActivate(Sender: TObject);
 begin
+  //UPDATE uDM.Itens set Etiqueta = False where not Etiqueta;
   uDM.Itens.First;
   wAcao := CtleProds(0,False);
   wMsgRegEmUso := 'Registro em usos por outro usuário' + #13 + 'Tente novamente mais tarde';
-  //uDM.Itens.Refresh;
   Form_Define(FuItens);
 
 end;
@@ -235,9 +282,10 @@ end;
 
 procedure TFuItens.FormResize(Sender: TObject);
 begin
-  if FuItens.Width < 846 then FuItens.Width := 846;
-  if FuItens.Height < 510 then FuItens.Height := 510;
-  DefineGrid(GridProds,[0.11,0.05,0.33,0.11,0.02,0.04,0.10,0.04,0.10],2,0);
+  if FuItens.Width < 920 then FuItens.Width := 920;
+  if FuItens.Height < 580 then FuItens.Height := 580;
+  PanManut.Height := (PanDados.Height * 60) div 100;
+  DefineGrid(GridProds,[0.11,0.05,0.33,0.11,0.02,0.02,0.04,0.10,0.04,0.10],2,0);
 
 end;
 
@@ -308,6 +356,12 @@ begin
 
 end;
 
+procedure TFuItens.btAjustaEtqClick(Sender: TObject);
+begin
+  AjustaIndicadorEtiquetas;
+
+end;
+
 procedure TFuItens.btAlterarClick(Sender: TObject);
 begin
   if uDM.Itens.RecordCount = 0 then Exit;
@@ -353,6 +407,7 @@ begin
   uDM.Itens.Append;
   uDM.ItensDescrCompleta.AsString := '';
   uDM.ItensAlteraPreco.AsBoolean  := False;
+  uDM.ItensEtiqueta.AsBoolean := False;
   if cbSelec.ItemIndex = 0
   then begin
     uDM.ItensGrupo.AsInteger := 0;
@@ -493,24 +548,25 @@ begin
   nTipo := StrToIntDef(dbTipo.Values[dbTipo.ItemIndex],99);
   case nTipo of
   {
-    Cod/Descrição       Fiscal   Cor    Imagem
-    1-Lanches           sim      sim    sim
-    2-Extras lanches     -        -      -
-    3-Bebidas           sim      sim    sim
-    4-Basicos           sim      sim     -
-    5-Extras basico      -       sim     -
-    6-Diversos          sim       -     sim
-    11-Crepes           sim      sim    sim
-    12-Crepes sabores    -       sim     -
-    15-Buffet           sim       -     sim
-    21-Quentes          sim      sim    sim
-    22-Extras quentes    -       sim     -
-    31-Gelados          sim      sim    sim
-    32-Extra gelados     -       sim     -
-    41-Milkshake        sim      sim    sim
+    Cod/Descrição       Fiscal   Cor    Imagem  Etiqueta
+    1-Lanches           sim      sim    sim      sim
+    2-Extras lanches     -        -      -        -
+    3-Bebidas           sim      sim    sim       -
+    4-Basicos           sim      sim     -        -
+    5-Extras basico      -       sim     -        -
+    6-Diversos          sim       -     sim      sim
+    11-Crepes           sim      sim    sim      sim
+    12-Crepes sabores    -       sim     -        -
+    15-Buffet sorvetes  sim       -     sim       -
+    21-Quentes          sim      sim    sim      sim
+    22-Extras quentes    -        -      -        -
+    31-Gelados          sim      sim    sim      sim
+    32-Extra gelados     -        -      -        -
+    41-Milkshake        sim      sim    sim      sim
+    42-Extra milkshake   -        -      -        -
   }
     1,4,11,21,31,41:begin     // Lanches e preparados
-        uDM.ItensCFOP.AsInteger       := 5101;
+        uDM.ItensCFOP.AsInteger       := 5102;
         uDM.ItensNCM.AsString         := '21069090';
         uDM.ItensCSOSN.AsInteger      := 102;
         uDM.ItensCST.AsInteger        := 90;
@@ -553,7 +609,7 @@ begin
         uDM.ItensPcReduz.AsFloat      := 0;
         uDM.ItensAliqICMS.AsFloat     := 0;
         end;
-     else begin      // Extras e sabores (2,5,12,22,26)
+     else begin      // Extras e sabores (2,5,12,22,32,42)
         uDM.ItensCFOP.Clear;
         uDM.ItensNCM.Clear;
         uDM.ItensCSOSN.Clear;
@@ -570,30 +626,14 @@ end;
 
 procedure TFuItens.edZC_KeyChange(Sender: TObject);
 begin
-{
-    Cod/Descrição       Fiscal   Cor    Imagem
-    1-Lanches           sim      sim    sim
-    2-Extras lanches     -        -      -
-    3-Bebidas           sim      sim    sim
-    4-Basicos           sim      sim     -              (Montar lanches)
-    5-Extras basico      -       sim     -
-    6-Diversos          sim       -     sim
-    11-Crepes           sim      sim    sim
-    12-Crepes sabores    -       sim     -
-    15-Buffet           sim       -     sim
-    21-Quentes          sim      sim    sim
-    22-Extras quentes    -       sim     -
-    31-Gelados          sim      sim    sim
-    32-Extra gelados     -       sim     -
-    41-Milkshake        sim      sim    sim
-}
   gbFiscais.Visible := False;
   imgItem.Visible := False;
   panCor.Visible := False;
   cbAlteraPreco.Visible := False;
+  cbEtiqueta.Visible := False;
 
-  if (uDM.ItensGrupo.AsInteger = 1)
-     or (uDM.ItensGrupo.AsInteger = 3)
+  if (uDM.ItensGrupo.AsInteger = 1)         // Lanches
+     or (uDM.ItensGrupo.AsInteger = 3)      // Bebidas
      or (uDM.ItensGrupo.AsInteger = 4)      // Basicos (Montar lanche)
      or (uDM.ItensGrupo.AsInteger = 6)      // Diversos
      or (uDM.ItensGrupo.AsInteger = 11)     // Crepes
@@ -601,11 +641,24 @@ begin
      or (uDM.ItensGrupo.AsInteger = 21)     // Quentes
      or (uDM.ItensGrupo.AsInteger = 31)     // Gelados
      or (uDM.ItensGrupo.AsInteger = 41)     // Shakes
-  then gbFiscais.Visible := True;
+     then gbFiscais.Visible := True;
 
-  if (uDM.ItensGrupo.AsInteger = 1) or
-     (uDM.ItensGrupo.AsInteger = 6)
+  if (uDM.ItensGrupo.AsInteger = 1)
+     or (uDM.ItensGrupo.AsInteger = 6)
+     or (uDM.ItensGrupo.AsInteger = 11)
+     or (uDM.ItensGrupo.AsInteger = 15)
+     or (uDM.ItensGrupo.AsInteger = 21)
+     or (uDM.ItensGrupo.AsInteger = 31)
+     or (uDM.ItensGrupo.AsInteger = 41)
      then cbAlteraPreco.Visible := True;
+
+  if (uDM.ItensGrupo.AsInteger = 1)
+     or (uDM.ItensGrupo.AsInteger = 4)
+     or (uDM.ItensGrupo.AsInteger = 11)
+     or (uDM.ItensGrupo.AsInteger = 21)
+     or (uDM.ItensGrupo.AsInteger = 31)
+     or (uDM.ItensGrupo.AsInteger = 41)
+     then cbEtiqueta.Visible := True;
 
   if uDM.usaCorItem
   then if (uDM.ItensGrupo.AsInteger = 1)
@@ -613,11 +666,13 @@ begin
           or (uDM.ItensGrupo.AsInteger = 4)
           or (uDM.ItensGrupo.AsInteger = 5)
           or (uDM.ItensGrupo.AsInteger = 11)
+          or (uDM.ItensGrupo.AsInteger = 12)
           or (uDM.ItensGrupo.AsInteger = 21)
           or (uDM.ItensGrupo.AsInteger = 22)
           or (uDM.ItensGrupo.AsInteger = 31)
           or (uDM.ItensGrupo.AsInteger = 32)
           or (uDM.ItensGrupo.AsInteger = 41)
+          or (uDM.ItensGrupo.AsInteger = 42)
        then begin
          PanCor.Visible := True;
          if uDM.ItensCorItem.AsString = ''

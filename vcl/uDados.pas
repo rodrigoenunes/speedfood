@@ -280,6 +280,8 @@ type
     PedidosNrEstacao: TShortintField;
     RegCaixaNrCaixa: TIntegerField;
     LctCaixaNrCaixa: TIntegerField;
+    ItensEtiqueta: TBooleanField;
+    ItensZC_Etiqueta: TStringField;
     procedure ItensCalcFields(DataSet: TDataSet);
     procedure LctCaixaCalcFields(DataSet: TDataSet);
     procedure PedWrkCalcFields(DataSet: TDataSet);
@@ -293,6 +295,7 @@ type
     procedure DetpagWrkCalcFields(DataSet: TDataSet);
     procedure PedDetpagCalcFields(DataSet: TDataSet);
     procedure PedDetpagFilterRecord(DataSet: TDataSet; var Accept: Boolean);
+    procedure RegCaixaFilterRecord(DataSet: TDataSet; var Accept: Boolean);
   private
     { Private declarations }
   public
@@ -308,9 +311,10 @@ type
     wVlrExtraTab: array[1..24] of Currency;
     usaCorItem: Boolean;
     sysUser,sysCPUId: String;
-    sysNumId: Integer;
+    sysNumId,sysNrCaixa: Integer;
     sysPedidos,sysBalcao,sysWhats,sysManut,sysAdmin,
     sysUsuar,sysSefaz,sysHelp,sysHelpArgox,sysTurnos: Boolean;
+    sysIdPedidos,sysIdBalcao: String;
     sysEtiquetasPrt,sysPedidosPrt,sysCaixaPrt,sysResumoPrt: String;
     filGrupoItens: Integer;
     meioPgto: Integer;
@@ -321,7 +325,6 @@ type
     sitPagto: Integer;
     lDebug: Boolean;
     wOperCartoes: Integer;
-    filtroCaixa: Integer;
 
   end;
 
@@ -544,7 +547,9 @@ begin
     vIniFile.WriteString('Estacao','Nome','');
     vIniFile.WriteInteger('Estacao','Numero',0);
     vIniFile.WriteBool('Estacao','Pedidos',True);
+    vIniFile.WriteString('Estacao','IdPedidos','Onibus');
     vIniFile.WriteBool('Estacao','Balcao',False);
+    vIniFile.WriteString('Estacao','IBalcao','Balcão 1');
     vIniFile.WriteBool('Estacao','WhatsApp',False);
     vIniFile.WriteBool('Estacao','Manutencao',False);
     vIniFile.WriteBool('Estacao','Administrativo',False);
@@ -553,7 +558,7 @@ begin
     vIniFile.WriteBool('Estacao','HelpArgox',False);
     vIniFile.WriteBool('Estacao','VerSefaz',False);
     vIniFile.WriteBool('Estacao','Turnos',False);
-    vIniFile.WriteInteger('Estacao','FiltroCaixa',0);       // Nro caixa a filtrar
+    vIniFile.WriteInteger('Estacao','CaixaNro',0);       // Nro caixa a filtrar
 
     vIniFile.WriteString('Impressoras','Etiquetas','');
     vIniFile.WriteString('Impressoras','Pedidos','');
@@ -571,8 +576,12 @@ begin
 
   sysCPUId := vIniFile.ReadString('Estacao','Nome','');
   sysNumId := vIniFile.ReadInteger('Estacao','Numero',0);
+
   sysPedidos := vIniFile.ReadBool('Estacao','Pedidos',True);
+  sysIdPedidos := vIniFile.ReadString('Estacao','IdPedidos','Onibus');
   sysBalcao := vIniFile.ReadBool('Estacao','Balcao',False);
+  sysIdBalcao := vIniFile.ReadString('Estacao','IBalcao','Balcão 1');
+
   sysWhats := vIniFile.ReadBool('Estacao','WhatsApp',False);
   sysManut := vIniFile.ReadBool('Estacao','Manutencao',False);
   sysAdmin := vIniFile.ReadBool('Estacao','Administrativo',False);
@@ -581,7 +590,9 @@ begin
   sysHelpArgox := vIniFile.ReadBool('Estacao','HelpArgox',False);
   sysSefaz := vIniFile.ReadBool('Estacao','VerSefaz',False);
   sysTurnos := vIniFile.ReadBool('Estacao','Turnos',False);
-  filtroCaixa := vIniFile.ReadInteger('Estacao','FiltroCaixa',0);
+  sysNrCaixa := vIniFile.ReadInteger('Estacao','CaixaNro',0);
+  if sysNrCaixa = 0 then
+     sysNrCaixa := sysNumId;
   //
   if (not sysPedidos) and (not sysBalcao) then
      MessageDlg('Verifique os parametros de inicialização, Pedidos/Balcao' + #13 +
@@ -647,6 +658,8 @@ begin
   if uDM.ItensAlteraPreco.AsBoolean then uDM.ItensZC_AltPreco.AsString := 'P'
   else uDM.ItensZC_AltPreco.AsString := '';
   uDM.ItensZC_Cor.AsString := '';
+  if uDM.ItensEtiqueta.AsBoolean then uDM.ItensZC_Etiqueta.AsString := 'P'
+  else uDM.ItensZC_Etiqueta.AsString := '';
 
 end;
 
@@ -890,6 +903,15 @@ begin
                                        RegCaixaQtd_Misto.AsInteger;
   RegCaixaZC_VlrSaidas.AsCurrency   := RegCaixaS_Saidas.AsCurrency + RegCaixaS_Sangria.AsCurrency;
   RegCaixaZC_QtdSaidas.AsInteger    := RegCaixaQtd_Saidas.AsInteger + RegCaixaQtd_Sangria.AsInteger;
+
+end;
+
+procedure TuDM.RegCaixaFilterRecord(DataSet: TDataSet; var Accept: Boolean);
+begin
+  Accept := False;
+  if (uDM.sysNrCaixa = 0) or
+     (uDM.RegCaixaNrCaixa.AsInteger = uDM.sysNrCaixa)
+    then Accept := True;
 
 end;
 

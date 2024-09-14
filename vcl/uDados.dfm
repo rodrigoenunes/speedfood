@@ -26,6 +26,7 @@ object uDM: TuDM
   object Itens: TFDTable
     OnCalcFields = ItensCalcFields
     OnFilterRecord = ItensFilterRecord
+    IndexFieldNames = 'Grupo;Codigo'
     Connection = FDC
     ResourceOptions.AssignedValues = [rvEscapeExpand]
     TableName = 'speedfood.com_itens'
@@ -161,6 +162,11 @@ object uDM: TuDM
       Origin = 'CorItem'
       Size = 10
     end
+    object ItensEtiqueta: TBooleanField
+      AutoGenerateValue = arDefault
+      FieldName = 'Etiqueta'
+      Origin = 'Etiqueta'
+    end
     object ItensZC_Grupo: TStringField
       DisplayWidth = 15
       FieldKind = fkCalculated
@@ -184,6 +190,12 @@ object uDM: TuDM
       FieldKind = fkCalculated
       FieldName = 'ZC_Cor'
       Size = 3
+      Calculated = True
+    end
+    object ItensZC_Etiqueta: TStringField
+      FieldKind = fkCalculated
+      FieldName = 'ZC_Etiqueta'
+      Size = 1
       Calculated = True
     end
   end
@@ -908,6 +920,7 @@ object uDM: TuDM
   end
   object RegCaixa: TFDTable
     OnCalcFields = RegCaixaCalcFields
+    OnFilterRecord = RegCaixaFilterRecord
     IndexFieldNames = 'Turno'
     Connection = FDC
     ResourceOptions.AssignedValues = [rvEscapeExpand]
@@ -1142,7 +1155,7 @@ object uDM: TuDM
     OnCalcFields = LctCaixaCalcFields
     IndexFieldNames = 'Turno;Sequencia'
     MasterSource = DSRegCaixa
-    MasterFields = 'Turno'
+    MasterFields = 'NrCaixa;Turno'
     Connection = FDC
     ResourceOptions.AssignedValues = [rvEscapeExpand]
     TableName = 'speedfood.com_lctcaixa'
