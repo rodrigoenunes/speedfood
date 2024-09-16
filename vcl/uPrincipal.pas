@@ -26,6 +26,7 @@ type
     btVerifSefaz: TBitBtn;
     LabPedidoInicial: TLabel;
     btBalcao: TBitBtn;
+    btBuffet: TBitBtn;
     procedure btSairClick(Sender: TObject);
     procedure btManutencaoClick(Sender: TObject);
     procedure FormActivate(Sender: TObject);
@@ -40,6 +41,8 @@ type
       Shift: TShiftState; X, Y: Integer);
     procedure btHelpArgoxMouseDown(Sender: TObject; Button: TMouseButton;
       Shift: TShiftState; X, Y: Integer);
+    procedure btBalcaoClick(Sender: TObject);
+    procedure btBuffetClick(Sender: TObject);
   private
     { Private declarations }
   public
@@ -55,7 +58,7 @@ implementation
 
 uses uItens, uDados, uGenericas, uCaixa, uPedidos, uImpressoes, uUsuario,
   FortesReportCtle, uUserPwd, uHelpSpeedFood,
-  uCaixaMovto, uQueryPedidos, uQueryAdministrativo;
+  uCaixaMovto, uQueryPedidos, uQueryAdministrativo, uBalcao;
 
 procedure TFuPrincipal.btAbrirCaixaClick(Sender: TObject);
 begin
@@ -69,6 +72,22 @@ begin
   then if not ObtemUsuario(uDM.sysUser)
             then btSairClick(nil);
   Administrativo;
+
+end;
+
+procedure TFuPrincipal.btBalcaoClick(Sender: TObject);
+begin
+  if ObtemParametro('UsaCorItem','N') = 'S' then uDM.usaCorItem := True
+     else uDM.usaCorItem := False;
+  FuPrincipal.Hide;
+  Balcao(btBalcao.Caption);
+  FuPrincipal.Visible := True;
+
+end;
+
+procedure TFuPrincipal.btBuffetClick(Sender: TObject);
+begin
+  SHowMessage('??? ');
 
 end;
 
@@ -150,8 +169,7 @@ begin
 end;
 
 procedure TFuPrincipal.FormActivate(Sender: TObject);
-var arqimg: String;
-    xValidade: String;
+var arqImg,xValidade,xIdBalcao: String;
     AA,MM,DD: word;
     dtValid,dtHoje: TDateTime;
     nDias,nBotoes,nTop,nAlt,wAcaoTurno: Integer;
@@ -160,11 +178,12 @@ begin
   begin
     uDM := TuDM.Create(nil);
     //
-    if (uDM.sysNumId = 0) or (uDM.sysCPUId = '') then
+    if (uDM.sysNumId = 0) or (uDM.sysCPUId = '') or (uDM.sysNrCaixa = 0) then
     begin
       MessageDlg('Erro de inicialização, verifique arquivo INI' + #13 +
                  'Estacao / Numero: Não pode ser ZERO' + #13 +
                  'Estacao / Nome: Identificacao da estacao de trabalho' + #13 +
+                 'Estacao / CaixaNro: Não pode ser ZERO' + #13 +
                  'Aplicação não pode ser iniciada',
                  mtError,[mbOk],0);
       Halt(0);
@@ -208,10 +227,10 @@ begin
       MessageDlg('A validade do sistema termina em ' + IntToStr(nDias) + ' dias',mtInformation,[mbOk],0);
     //
     uDM.pathImagens := IncludeTrailingPathDelimiter(uDM.SisPessoaPathImagens.AsString);
-    arqimg := uDM.pathImagens + 'ImgFundo.BMP';
-    if FileExists(arqimg)
+    arqImg := uDM.pathImagens + 'ImgFundo.BMP';
+    if FileExists(arqImg)
     then begin
-      Image1.Picture.LoadFromFile(arqimg);
+      Image1.Picture.LoadFromFile(arqImg);
       Image1.Align   := alClient;
       Image1.Stretch := True;
       Image1.Visible := True;
@@ -222,6 +241,7 @@ begin
     nBotoes := 2;               // AbrirCaixa e Sair sempre visiveis
     if uDM.sysPedidos then nBotoes := nBotoes + 1;
     if uDM.sysBalcao then nBotoes := nBotoes + 1;
+    if uDM.sysBuffet then nBotoes := nBotoes + 1;
     if uDM.sysPedidos or uDM.sysBalcao then nBotoes := nBotoes + 1;
     if uDM.sysManut then nBotoes := nBotoes + 1;
     if uDM.sysAdmin then nBotoes := nBotoes + 1;
@@ -236,6 +256,7 @@ begin
     nTop := nTop + nAlt + 2;
     if uDM.sysPedidos then
     begin
+      btPedidos.Caption := uDM.sysIdPedidos;
       btPedidos.Top := nTop;
       btPedidos.Height := nAlt;
       btPedidos.Left := btAbrirCaixa.Left;
@@ -244,13 +265,25 @@ begin
     end;
     if uDM.sysBalcao then
     begin
+      xIdBalcao := ObtemParametro('IdCaixaBalcao');
+      if xIdBalcao = '' then xIdBalcao := 'Nro';
+      btBalcao.Caption := xIdBalcao + ' ' + uDM.sysIdBalcao;
       btBalcao.Top := nTop;
       btBalcao.Height := nAlt;
       btBalcao.Visible := True;
       btBalcao.Left := btAbrirCaixa.Left;
       nTop := nTop + nAlt + 2;
     end;
-    if uDM.sysPedidos or uDM.sysBalcao then
+    if uDM.sysBuffet then
+    begin
+      btBuffet.Caption := uDM.sysIdBuffet;
+      btBuffet.Top := nTop;
+      btBuffet.Height := nAlt;
+      btBuffet.Visible := True;
+      btBuffet.Left := btAbrirCaixa.Left;
+      nTop := nTop + nAlt + 2;
+    end;
+    if uDM.sysPedidos or uDM.sysBalcao or uDM.sysBuffet then
     begin
       btConsPedidos.Top := nTop;
       btConsPedidos.Height := nAlt;

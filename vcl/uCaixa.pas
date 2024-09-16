@@ -26,6 +26,8 @@ type
     btCancel: TBitBtn;
     LabSaldoFim: TLabel;
     edSaldoFim: TDBEdit;
+    Label2: TLabel;
+    dbNrCaixa: TDBText;
     procedure btOkClick(Sender: TObject);
     procedure btCancelClick(Sender: TObject);
     procedure edInicioKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
@@ -250,6 +252,7 @@ begin
     uDM.RegCaixa.Last;
     wTurno := uDM.RegCaixaTurno.AsInteger + 1;
     uDM.RegCaixa.Append;
+    uDM.RegCaixaNrCaixa.AsInteger := uDM.sysNrCaixa;
     uDM.RegCaixaTurno.AsInteger := wTurno;
     uDM.RegCaixaDtHrInicio.AsDateTime := Now;
     uDM.RegCaixaDtHrFim.Clear;
@@ -327,6 +330,7 @@ begin
         if uDM.LctCaixa.RecordCount = 0 then
         begin             // Se não há lançamentos para o turno, cria o registro de saldo inicial
           uDM.LctCaixa.Append;
+          uDM.LctCaixaNrCaixa.AsInteger   := uDM.sysNrCaixa;
           uDM.LctCaixaTurno.AsInteger     := uDM.RegCaixaTurno.AsInteger;
           uDM.LctCaixaSequencia.AsInteger := 0;
           uDM.LctCaixaOperacao.AsInteger  := 0;         // Informação de saldo

@@ -312,9 +312,9 @@ type
     usaCorItem: Boolean;
     sysUser,sysCPUId: String;
     sysNumId,sysNrCaixa: Integer;
-    sysPedidos,sysBalcao,sysWhats,sysManut,sysAdmin,
+    sysPedidos,sysBalcao,sysWhats,sysManut,sysAdmin,sysBuffet,
     sysUsuar,sysSefaz,sysHelp,sysHelpArgox,sysTurnos: Boolean;
-    sysIdPedidos,sysIdBalcao: String;
+    sysIdPedidos,sysIdBalcao,sysIdBuffet: String;
     sysEtiquetasPrt,sysPedidosPrt,sysCaixaPrt,sysResumoPrt: String;
     filGrupoItens: Integer;
     meioPgto: Integer;
@@ -548,8 +548,10 @@ begin
     vIniFile.WriteInteger('Estacao','Numero',0);
     vIniFile.WriteBool('Estacao','Pedidos',True);
     vIniFile.WriteString('Estacao','IdPedidos','Onibus');
+    vIniFile.WriteBool('Estacao','Buffet',False);
+    vIniFile.WriteString('Estacao','IdBuffet','Buffet');
     vIniFile.WriteBool('Estacao','Balcao',False);
-    vIniFile.WriteString('Estacao','IBalcao','Balcão 1');
+    vIniFile.WriteString('Estacao','IdBalcao','Balcão 1');
     vIniFile.WriteBool('Estacao','WhatsApp',False);
     vIniFile.WriteBool('Estacao','Manutencao',False);
     vIniFile.WriteBool('Estacao','Administrativo',False);
@@ -579,8 +581,12 @@ begin
 
   sysPedidos := vIniFile.ReadBool('Estacao','Pedidos',True);
   sysIdPedidos := vIniFile.ReadString('Estacao','IdPedidos','Onibus');
+
+  sysBuffet := vIniFile.ReadBool('Estacao','Buffet',True);
+  sysIdBuffet := vIniFile.ReadString('Estacao','IdBuffet','Buffet');
+
   sysBalcao := vIniFile.ReadBool('Estacao','Balcao',False);
-  sysIdBalcao := vIniFile.ReadString('Estacao','IBalcao','Balcão 1');
+  sysIdBalcao := vIniFile.ReadString('Estacao','IdBalcao','Balcão 1');
 
   sysWhats := vIniFile.ReadBool('Estacao','WhatsApp',False);
   sysManut := vIniFile.ReadBool('Estacao','Manutencao',False);
@@ -594,8 +600,8 @@ begin
   if sysNrCaixa = 0 then
      sysNrCaixa := sysNumId;
   //
-  if (not sysPedidos) and (not sysBalcao) then
-     MessageDlg('Verifique os parametros de inicialização, Pedidos/Balcao' + #13 +
+  if (not sysPedidos) and (not sysBalcao) and (not sysBuffet) then
+     MessageDlg('Verifique os parametros de inicialização, Pedidos/Balcao/Buffet' + #13 +
                 'Arquivo: ' + sIniFile,mtWarning,[mbOk],0);
   //
   sysEtiquetasPrt := vIniFile.ReadString('Impressoras','Etiquetas','');

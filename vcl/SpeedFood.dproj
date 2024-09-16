@@ -192,6 +192,14 @@
             <Form>FuQueryAdministrativo</Form>
             <FormType>dfm</FormType>
         </DCCReference>
+        <DCCReference Include="..\Balcao\uBalcao.pas">
+            <Form>FuBalcao</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="..\Balcao\uBalcaoLctos.pas">
+            <Form>FuBalcaoLctos</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>
@@ -218,6 +226,12 @@
                 </Excluded_Packages>
             </Delphi.Personality>
             <Deployment Version="4">
+                <DeployFile LocalName="C:\SpeedFood\SpeedFood.exe" Configuration="Debug" Class="ProjectOutput">
+                    <Platform Name="Win32">
+                        <RemoteName>SpeedFood.exe</RemoteName>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
                 <DeployFile LocalName="C:\SpeedFood\SpeedFood.exe" Configuration="Release" Class="ProjectOutput"/>
                 <DeployFile LocalName="C:\SpeedFood\SpeedFood.exe" Configuration="Release" Class="ProjectOutput">
                     <Platform Name="Win32">
@@ -226,12 +240,6 @@
                     </Platform>
                 </DeployFile>
                 <DeployFile LocalName="Win32\Debug\SpeedFood.exe" Configuration="Debug" Class="ProjectOutput"/>
-                <DeployFile LocalName="Win32\Debug\SpeedFood.exe" Configuration="Debug" Class="ProjectOutput">
-                    <Platform Name="Win32">
-                        <RemoteName>SpeedFood.exe</RemoteName>
-                        <Overwrite>true</Overwrite>
-                    </Platform>
-                </DeployFile>
                 <DeployClass Name="AdditionalDebugSymbols">
                     <Platform Name="iOSSimulator">
                         <Operation>1</Operation>

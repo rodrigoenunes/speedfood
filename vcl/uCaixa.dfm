@@ -16,32 +16,32 @@ object FuCaixa: TFuCaixa
   OnCreate = FormCreate
   TextHeight = 16
   object Label1: TLabel
-    Left = 64
-    Top = 37
+    Left = 65
+    Top = 72
     Width = 39
     Height = 16
     Alignment = taRightJustify
     Caption = 'Turno:'
   end
   object LabInicio: TLabel
-    Left = 68
-    Top = 77
+    Left = 69
+    Top = 109
     Width = 35
     Height = 16
     Alignment = taRightJustify
     Caption = 'In'#237'cio:'
   end
   object LabFim: TLabel
-    Left = 77
-    Top = 107
+    Left = 78
+    Top = 139
     Width = 26
     Height = 16
     Alignment = taRightJustify
     Caption = 'Fim:'
   end
   object LabSaldoIni: TLabel
-    Left = 30
-    Top = 137
+    Left = 31
+    Top = 169
     Width = 73
     Height = 16
     Alignment = taRightJustify
@@ -49,7 +49,7 @@ object FuCaixa: TFuCaixa
   end
   object dbTurno: TDBText
     Left = 108
-    Top = 29
+    Top = 68
     Width = 79
     Height = 25
     AutoSize = True
@@ -79,16 +79,39 @@ object FuCaixa: TFuCaixa
     ExplicitWidth = 282
   end
   object LabSaldoFim: TLabel
-    Left = 38
-    Top = 167
+    Left = 39
+    Top = 199
     Width = 65
     Height = 16
     Alignment = taRightJustify
     Caption = 'Saldo final:'
   end
+  object Label2: TLabel
+    Left = 68
+    Top = 42
+    Width = 36
+    Height = 16
+    Alignment = taRightJustify
+    Caption = 'Caixa:'
+  end
+  object dbNrCaixa: TDBText
+    Left = 108
+    Top = 36
+    Width = 96
+    Height = 25
+    AutoSize = True
+    DataField = 'NrCaixa'
+    DataSource = uDM.DSRegCaixa
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -21
+    Font.Name = 'Tahoma'
+    Font.Style = []
+    ParentFont = False
+  end
   object edInicio: TDBEdit
     Left = 108
-    Top = 74
+    Top = 106
     Width = 160
     Height = 24
     DataField = 'DtHrInicio'
@@ -98,7 +121,7 @@ object FuCaixa: TFuCaixa
   end
   object edFinal: TDBEdit
     Left = 108
-    Top = 104
+    Top = 136
     Width = 159
     Height = 24
     DataField = 'DtHrFim'
@@ -108,7 +131,7 @@ object FuCaixa: TFuCaixa
   end
   object edSaldoIni: TDBEdit
     Left = 108
-    Top = 134
+    Top = 166
     Width = 121
     Height = 24
     DataField = 'SaldoInicial'
@@ -117,8 +140,8 @@ object FuCaixa: TFuCaixa
     OnKeyDown = edSaldoIniKeyDown
   end
   object btOk: TBitBtn
-    Left = 20
-    Top = 218
+    Left = 21
+    Top = 242
     Width = 153
     Height = 57
     Caption = '&Ok'
@@ -146,8 +169,8 @@ object FuCaixa: TFuCaixa
     OnClick = btOkClick
   end
   object btCancel: TBitBtn
-    Left = 180
-    Top = 217
+    Left = 181
+    Top = 241
     Width = 153
     Height = 57
     Caption = '&Cancelar'
@@ -176,7 +199,7 @@ object FuCaixa: TFuCaixa
   end
   object edSaldoFim: TDBEdit
     Left = 108
-    Top = 164
+    Top = 196
     Width = 121
     Height = 24
     DataField = 'SaldoFinal'
