@@ -20,7 +20,7 @@ type
     LabBase: TLabel;
     GridComp: TDrawGrid;
     LabComp: TLabel;
-    LabAUx1: TLabel;
+    LabAux1: TLabel;
     dbPrensado: TDBCheckBox;
     dbCortado: TDBCheckBox;
     imgObs: TImage;
@@ -239,7 +239,7 @@ begin
   uDM.PedWrkDescricao.AsString := wDescricao;
   uDM.PedWrkVlrUnit.AsCurrency := vlrBase + vlrComp;
   uDM.PedWrkVlrTotal.AsCurrency := vlrBase + vlrComp;
-  showMessage('ItensDescricao='+uDM.ItensDescricao.AsString + #13 + 'PedWrkDescricao=' + uDM.PedWrkDescricao.AsString);
+  //ShowMessage('ItensDescricao='+uDM.ItensDescricao.AsString + #13 + 'PedWrkDescricao=' + uDM.PedWrkDescricao.AsString);
   //GridBaseDrawCell(nil,nCol,nLin);
 
 end;

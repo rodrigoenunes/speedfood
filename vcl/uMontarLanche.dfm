@@ -44,12 +44,12 @@ object FuMontarLanche: TFuMontarLanche
       Font.Style = [fsBold]
       ParentFont = False
     end
-    object LabAUx1: TLabel
+    object LabAux1: TLabel
       Left = 24
       Top = 260
-      Width = 43
+      Width = 42
       Height = 13
-      Caption = 'LabAUx1'
+      Caption = 'LabAux1'
     end
     object PanIdLanche: TPanel
       Left = 1

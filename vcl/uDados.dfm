@@ -1,7 +1,7 @@
 object uDM: TuDM
   OnCreate = DataModuleCreate
-  Height = 419
-  Width = 648
+  Height = 427
+  Width = 771
   object FDC: TFDConnection
     Params.Strings = (
       'Database=speedfood'
@@ -9,6 +9,7 @@ object uDM: TuDM
       'Password=speed@123'
       'Server=127.0.0.1'
       'DriverID=MySQL')
+    ConnectedStoredUsage = []
     Connected = True
     LoginPrompt = False
     Left = 28
@@ -30,8 +31,8 @@ object uDM: TuDM
     Connection = FDC
     ResourceOptions.AssignedValues = [rvEscapeExpand]
     TableName = 'speedfood.com_itens'
-    Left = 32
-    Top = 160
+    Left = 24
+    Top = 144
     object ItensGrupo: TIntegerField
       FieldName = 'Grupo'
       Origin = 'Grupo'
@@ -201,8 +202,8 @@ object uDM: TuDM
   end
   object DSItens: TDataSource
     DataSet = Itens
-    Left = 76
-    Top = 176
+    Left = 68
+    Top = 160
   end
   object SisPessoa: TFDTable
     IndexFieldNames = 'id'
@@ -385,7 +386,7 @@ object uDM: TuDM
     end
     object PedWrkExtras: TStringField
       FieldName = 'Extras'
-      Size = 24
+      Size = 100
     end
     object PedWrkCod01: TSmallintField
       FieldName = 'Cod01'
@@ -436,6 +437,9 @@ object uDM: TuDM
     end
     object PedWrkEtqImpressa: TSmallintField
       FieldName = 'EtqImpressa'
+    end
+    object PedWrkPeso: TIntegerField
+      FieldName = 'Peso'
     end
     object PedWrkZC_Aviso: TStringField
       FieldKind = fkCalculated
@@ -653,6 +657,24 @@ object uDM: TuDM
       FieldName = 'NrEstacao'
       Origin = 'NrEstacao'
     end
+    object PedidosLctCrepes: TIntegerField
+      AutoGenerateValue = arDefault
+      FieldName = 'LctCrepes'
+      Origin = 'LctCrepes'
+    end
+    object PedidosLctBuffet: TIntegerField
+      AutoGenerateValue = arDefault
+      FieldName = 'LctBuffet'
+      Origin = 'LctBuffet'
+    end
+    object PedidosLctOutros: TIntegerField
+      AutoGenerateValue = arDefault
+      FieldName = 'LctOutros'
+      Origin = 'LctOutros'
+    end
+    object PedidosLctDiversos: TIntegerField
+      FieldName = 'LctDiversos'
+    end
     object PedidosZC_Impresso: TStringField
       FieldKind = fkCalculated
       FieldName = 'ZC_Impresso'
@@ -723,6 +745,7 @@ object uDM: TuDM
     MasterSource = DSPedidos
     MasterFields = 'Numero'
     Connection = FDC
+    ResourceOptions.AssignedValues = [rvEscapeExpand]
     TableName = 'speedfood.com_pedidoitem'
     Left = 212
     Top = 216
@@ -808,7 +831,7 @@ object uDM: TuDM
       FieldName = 'Extras'
       Origin = 'Extras'
       FixedChar = True
-      Size = 24
+      Size = 100
     end
     object PedItensObservacao: TStringField
       AutoGenerateValue = arDefault
@@ -861,6 +884,16 @@ object uDM: TuDM
     object PedItensTxtMenos: TStringField
       FieldName = 'TxtMenos'
       Size = 1024
+    end
+    object PedItensSeqLcto: TIntegerField
+      AutoGenerateValue = arDefault
+      FieldName = 'SeqLcto'
+      Origin = 'SeqLcto'
+    end
+    object PedItensPeso: TIntegerField
+      AutoGenerateValue = arDefault
+      FieldName = 'Peso'
+      Origin = 'Peso'
     end
     object PedItensZC_Tipo: TStringField
       FieldKind = fkCalculated
@@ -917,6 +950,18 @@ object uDM: TuDM
       Size = 50
       Calculated = True
     end
+    object PedItensZC_SeqLcto: TStringField
+      FieldKind = fkCalculated
+      FieldName = 'ZC_SeqLcto'
+      Size = 2
+      Calculated = True
+    end
+    object PedItensZC_TpEtiq: TStringField
+      FieldKind = fkCalculated
+      FieldName = 'ZC_TpEtiq'
+      Size = 30
+      Calculated = True
+    end
   end
   object RegCaixa: TFDTable
     OnCalcFields = RegCaixaCalcFields
@@ -926,16 +971,22 @@ object uDM: TuDM
     ResourceOptions.AssignedValues = [rvEscapeExpand]
     TableName = 'speedfood.com_regcaixa'
     Left = 28
-    Top = 252
+    Top = 292
+    object RegCaixaTurno: TIntegerField
+      FieldName = 'Turno'
+      Origin = 'Turno'
+      ProviderFlags = [pfInUpdate, pfInWhere, pfInKey]
+      Required = True
+    end
     object RegCaixaNrCaixa: TIntegerField
       FieldName = 'NrCaixa'
       Origin = 'NrCaixa'
       ProviderFlags = [pfInUpdate, pfInWhere, pfInKey]
       Required = True
     end
-    object RegCaixaTurno: TIntegerField
-      FieldName = 'Turno'
-      Origin = 'Turno'
+    object RegCaixaCaixaSeq: TIntegerField
+      FieldName = 'CaixaSeq'
+      Origin = 'CaixaSeq'
       ProviderFlags = [pfInUpdate, pfInWhere, pfInKey]
       Required = True
     end
@@ -949,6 +1000,13 @@ object uDM: TuDM
       AutoGenerateValue = arDefault
       FieldName = 'DtHrFim'
       Origin = 'DtHrFim'
+    end
+    object RegCaixaSituacao: TStringField
+      AutoGenerateValue = arDefault
+      FieldName = 'Situacao'
+      Origin = 'Situacao'
+      FixedChar = True
+      Size = 1
     end
     object RegCaixaSaldoInicial: TBCDField
       AutoGenerateValue = arDefault
@@ -1109,12 +1167,19 @@ object uDM: TuDM
       FieldName = 'QtdPedidos'
       Origin = 'QtdPedidos'
     end
-    object RegCaixaSituacao: TStringField
+    object RegCaixaVlrRecebDiv: TBCDField
       AutoGenerateValue = arDefault
-      FieldName = 'Situacao'
-      Origin = 'Situacao'
-      FixedChar = True
-      Size = 1
+      FieldName = 'VlrRecebDiv'
+      Origin = 'VlrRecebDiv'
+      DisplayFormat = ',0.00'
+      EditFormat = '0.00'
+      Precision = 15
+      Size = 2
+    end
+    object RegCaixaQtdRecebDiv: TIntegerField
+      AutoGenerateValue = arDefault
+      FieldName = 'QtdRecebDiv'
+      Origin = 'QtdRecebDiv'
     end
     object RegCaixaZC_IniFim: TStringField
       FieldKind = fkCalculated
@@ -1150,32 +1215,39 @@ object uDM: TuDM
       Size = 10
       Calculated = True
     end
+    object RegCaixaZC_CaixaNrSeq: TStringField
+      FieldKind = fkCalculated
+      FieldName = 'ZC_CaixaNrSeq'
+      Size = 15
+      Calculated = True
+    end
   end
   object LctCaixa: TFDTable
     OnCalcFields = LctCaixaCalcFields
-    IndexFieldNames = 'Turno;Sequencia'
+    OnFilterRecord = LctCaixaFilterRecord
+    IndexFieldNames = 'NrCaixa'
     MasterSource = DSRegCaixa
-    MasterFields = 'NrCaixa;Turno'
+    MasterFields = 'NrCaixa;CaixaSeq'
     Connection = FDC
     ResourceOptions.AssignedValues = [rvEscapeExpand]
     TableName = 'speedfood.com_lctcaixa'
     Left = 28
-    Top = 304
+    Top = 344
     object LctCaixaNrCaixa: TIntegerField
       FieldName = 'NrCaixa'
       Origin = 'NrCaixa'
       ProviderFlags = [pfInUpdate, pfInWhere, pfInKey]
       Required = True
     end
-    object LctCaixaTurno: TIntegerField
-      FieldName = 'Turno'
-      Origin = 'Turno'
+    object LctCaixaCaixaSeq: TIntegerField
+      FieldName = 'CaixaSeq'
+      Origin = 'CaixaSeq'
       ProviderFlags = [pfInUpdate, pfInWhere, pfInKey]
       Required = True
     end
-    object LctCaixaSequencia: TIntegerField
-      FieldName = 'Sequencia'
-      Origin = 'Sequencia'
+    object LctCaixaLctoSeq: TIntegerField
+      FieldName = 'LctoSeq'
+      Origin = 'LctoSeq'
       ProviderFlags = [pfInUpdate, pfInWhere, pfInKey]
       Required = True
     end
@@ -1270,11 +1342,10 @@ object uDM: TuDM
       FieldName = 'NroPedido'
       Origin = 'NroPedido'
     end
-    object LctCaixaDtHrLcto: TStringField
+    object LctCaixaDtHrLcto: TDateTimeField
       AutoGenerateValue = arDefault
       FieldName = 'DtHrLcto'
       Origin = 'DtHrLcto'
-      Size = 45
     end
     object LctCaixaTipo: TStringField
       AutoGenerateValue = arDefault
@@ -1352,12 +1423,12 @@ object uDM: TuDM
   object DSRegCaixa: TDataSource
     DataSet = RegCaixa
     Left = 80
-    Top = 256
+    Top = 296
   end
   object DSLctCaixa: TDataSource
     DataSet = LctCaixa
     Left = 84
-    Top = 312
+    Top = 352
   end
   object DSSisPessoa: TDataSource
     DataSet = SisPessoa
@@ -1435,8 +1506,8 @@ object uDM: TuDM
     IndexFieldNames = 'Nome'
     Connection = FDC
     TableName = 'speedfood.sis_usuarios'
-    Left = 216
-    Top = 368
+    Left = 352
+    Top = 72
     object UsuariosNome: TStringField
       FieldName = 'Nome'
       Origin = 'Nome'
@@ -1594,5 +1665,197 @@ object uDM: TuDM
     DataSet = DetpagWrk
     Left = 552
     Top = 108
+  end
+  object Turnos: TFDTable
+    OnCalcFields = TurnosCalcFields
+    IndexFieldNames = 'NrTurno'
+    Connection = FDC
+    ResourceOptions.AssignedValues = [rvEscapeExpand]
+    TableName = 'speedfood.com_turnos'
+    Left = 24
+    Top = 232
+    object TurnosNrTurno: TIntegerField
+      FieldName = 'NrTurno'
+      Origin = 'NrTurno'
+      ProviderFlags = [pfInUpdate, pfInWhere, pfInKey]
+      Required = True
+    end
+    object TurnosStatus: TIntegerField
+      AutoGenerateValue = arDefault
+      FieldName = 'Status'
+      Origin = '`Status`'
+    end
+    object TurnosDtHrInicio: TDateTimeField
+      AutoGenerateValue = arDefault
+      FieldName = 'DtHrInicio'
+      Origin = 'DtHrInicio'
+    end
+    object TurnosDtHrFim: TDateTimeField
+      AutoGenerateValue = arDefault
+      FieldName = 'DtHrFim'
+      Origin = 'DtHrFim'
+    end
+    object TurnosVlr_Reais: TBCDField
+      AutoGenerateValue = arDefault
+      FieldName = 'Vlr_Reais'
+      Origin = 'Vlr_Reais'
+      DisplayFormat = ',0.00'
+      EditFormat = '0.00'
+      currency = True
+      Precision = 15
+      Size = 2
+    end
+    object TurnosVlr_CDeb: TBCDField
+      AutoGenerateValue = arDefault
+      FieldName = 'Vlr_CDeb'
+      Origin = 'Vlr_CDeb'
+      DisplayFormat = ',0.00'
+      EditFormat = '0.00'
+      currency = True
+      Precision = 15
+      Size = 2
+    end
+    object TurnosVlr_CCred: TBCDField
+      AutoGenerateValue = arDefault
+      FieldName = 'Vlr_CCred'
+      Origin = 'Vlr_CCred'
+      DisplayFormat = ',0.00'
+      EditFormat = '0.00'
+      currency = True
+      Precision = 15
+      Size = 2
+    end
+    object TurnosVlr_PIX: TBCDField
+      AutoGenerateValue = arDefault
+      FieldName = 'Vlr_PIX'
+      Origin = 'Vlr_PIX'
+      DisplayFormat = ',0.00'
+      EditFormat = '0.00'
+      currency = True
+      Precision = 15
+      Size = 2
+    end
+    object TurnosVlr_Outros: TBCDField
+      AutoGenerateValue = arDefault
+      FieldName = 'Vlr_Outros'
+      Origin = 'Vlr_Outros'
+      DisplayFormat = ',0.00'
+      EditFormat = '0.00'
+      currency = True
+      Precision = 15
+      Size = 2
+    end
+    object TurnosQtd_Reais: TIntegerField
+      AutoGenerateValue = arDefault
+      FieldName = 'Qtd_Reais'
+      Origin = 'Qtd_Reais'
+    end
+    object TurnosQtd_CDeb: TIntegerField
+      AutoGenerateValue = arDefault
+      FieldName = 'Qtd_CDeb'
+      Origin = 'Qtd_CDeb'
+    end
+    object TurnosQtd_CCred: TIntegerField
+      AutoGenerateValue = arDefault
+      FieldName = 'Qtd_CCred'
+      Origin = 'Qtd_CCred'
+    end
+    object TurnosQtd_PIX: TIntegerField
+      AutoGenerateValue = arDefault
+      FieldName = 'Qtd_PIX'
+      Origin = 'Qtd_PIX'
+    end
+    object TurnosQtd_Outros: TIntegerField
+      AutoGenerateValue = arDefault
+      FieldName = 'Qtd_Outros'
+      Origin = 'Qtd_Outros'
+    end
+    object TurnosZC_Status: TStringField
+      FieldKind = fkCalculated
+      FieldName = 'ZC_Status'
+      Size = 15
+      Calculated = True
+    end
+    object TurnosZC_Datas: TStringField
+      FieldKind = fkCalculated
+      FieldName = 'ZC_Datas'
+      Size = 32
+      Calculated = True
+    end
+  end
+  object DSTurnos: TDataSource
+    DataSet = Turnos
+    Left = 72
+    Top = 240
+  end
+  object SCDBufet: TDataSource
+    DataSet = CDBuffet
+    Left = 656
+    Top = 72
+  end
+  object CDBuffet: TClientDataSet
+    Aggregates = <>
+    Params = <>
+    Left = 640
+    Top = 24
+    object CDBuffetPeso: TIntegerField
+      FieldName = 'Peso'
+    end
+    object CDBuffetVlrUnit: TCurrencyField
+      FieldName = 'VlrUnit'
+      DisplayFormat = ',0.00'
+      EditFormat = '0.00'
+    end
+    object CDBuffetVlrTotal: TCurrencyField
+      FieldName = 'VlrTotal'
+      DisplayFormat = ',0.00'
+      EditFormat = '0.00'
+    end
+    object CDBuffetDescr: TStringField
+      FieldName = 'Descr'
+      Size = 120
+    end
+  end
+  object CDDiversos: TClientDataSet
+    Aggregates = <>
+    Params = <>
+    Left = 648
+    Top = 168
+    object CDDiversosCodBarras: TStringField
+      FieldName = 'CodBarras'
+      Size = 25
+    end
+    object CDDiversosCodGrupo: TIntegerField
+      FieldName = 'CodGrupo'
+    end
+    object CDDiversosCodItem: TIntegerField
+      FieldName = 'CodItem'
+    end
+    object CDDiversosDescr: TStringField
+      FieldName = 'Descr'
+      Size = 80
+    end
+    object CDDiversosUnid: TStringField
+      FieldName = 'Unid'
+      Size = 5
+    end
+    object CDDiversosQuant: TIntegerField
+      FieldName = 'Quant'
+    end
+    object CDDiversosVlrUnit: TCurrencyField
+      FieldName = 'VlrUnit'
+      DisplayFormat = ',0.00'
+      EditFormat = '0.00'
+    end
+    object CDDiversosVlrTotal: TCurrencyField
+      FieldName = 'VlrTotal'
+      DisplayFormat = ',0.00'
+      EditFormat = '0.00'
+    end
+  end
+  object SCDDiversos: TDataSource
+    DataSet = CDDiversos
+    Left = 664
+    Top = 216
   end
 end

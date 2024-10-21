@@ -6,7 +6,7 @@ uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Mask, Vcl.DBCtrls, Vcl.ExtCtrls,
   Vcl.Buttons, System.UITypes, Vcl.Touch.Keyboard, Data.DB;
-  Function FinalizaPedido(var pNroPedido:Integer): Integer;
+  Function FinalizaPedido(var pNroPedido:Integer; pTotal:Currency; pItens:Integer): Integer;
 
 type
   TFuFinPedido = class(TForm)
@@ -118,12 +118,14 @@ var
   linHifen: String;
   wrkImag: TImage;
   tvLeft,tvTop: Integer;
+  valorPedido: Currency;
+  itensPedido: Integer;
 
 implementation
 
 {$R *.dfm}
 
-uses uDados, uGenericas, uPedidos, uImpressoes, SFEuPrintFortes, uPagtoMisto, uConfirmacao;
+uses uDados, uGenericas, uImpressoes, SFEuPrintFortes, uPagtoMisto, uConfirmacao;
 
 Procedure AjustaFonteImagem;
 begin
@@ -134,7 +136,7 @@ begin
 end;
 
 
-Function FinalizaPedido(var pNroPedido:Integer): Integer;
+Function FinalizaPedido(var pNroPedido:Integer; pTotal:Currency; pItens:Integer): Integer;
 var
   qtdLin,linAux,linMax,i,tMax: Integer;
   posX,posY,posDescr,posSem,posMais,posMenos: Integer;
@@ -142,6 +144,8 @@ var
   posBarra: String;
   altBarra,lrgBarra,altMaxima,lrgMaxima: Integer;
 begin
+  valorPedido := pTotal;
+  itensPedido := pItens;
   with FuFinPedido
   do begin
     cbImprimeNFCe.Checked := False;
@@ -190,9 +194,9 @@ begin
       uDM.PedidosNumero.AsInteger := nrPedido;
       uDM.PedidosData.AsDateTime := Now;
     end;
-    uDM.PedidosLanctos.AsInteger := FuPedidos.itensPedido;
-    uDM.PedidosValor.AsCurrency := FuPedidos.totalPedido;
-    uDM.PedidosVlrReais.AsCurrency := FuPedidos.totalPedido;
+    uDM.PedidosLanctos.AsInteger := itensPedido;
+    uDM.PedidosValor.AsCurrency := valorPedido;
+    uDM.PedidosVlrReais.AsCurrency := valorPedido;
     uDM.PedidosVlrCDeb.Clear;
     uDM.PedidosVlrCCred.Clear;
     uDM.PedidosVlrPIX.Clear;
@@ -201,7 +205,7 @@ begin
     uDM.PedidosSrNFCe.Clear;
     uDM.PedidosArqXML.Clear;
     uDM.PedidosEtqImpressas.AsInteger := 0;
-    uDM.PedidosVlrRecebido.AsCurrency := FuPedidos.totalPedido;
+    uDM.PedidosVlrRecebido.AsCurrency := valorPedido;
     uDM.PedidosVlrTroco.AsCurrency := 0;
     uDM.PedidosCPF_CNPJ.EditMask := '';
     uDM.PedidosTurno.AsInteger := uDM.turnoCorrente;
@@ -379,13 +383,13 @@ begin
     AjustaFonteImagem;
     posX := 20;
     posY := posY + 12;
-    LabTaman.Caption := IntToStr(FuPedidos.itensPedido) + ' ítens';
+    LabTaman.Caption := IntToStr(pItens) + ' ítens';         // FuPedidos.itensPedido
     wrkImag.Canvas.TextOut(posX,posY,LabTaman.Caption);
 
     LabTaman.Font.Size := 20;
     AjustaFonteImagem;
     posY := posY + 20;
-    LabTaman.Caption := 'Total  R$ '+ FloatToStrF(FuPedidos.totalPedido,ffNumber,15,2);
+    LabTaman.Caption := 'Total  R$ '+ FloatToStrF(valorPedido,ffNumber,15,2);
     posX := (wrkImag.Width - LabTaman.Width) div 2;    // (LabTaman.Width+5);
     wrkImag.Canvas.TextOut(posX,posY,LabTaman.Caption);
     posY := posY + LabTaman.Height;
@@ -433,9 +437,9 @@ end;
 Procedure ExibeValorFaltante;
 var vlrFalta: Currency;
 begin
-  vlrFalta := FuPedidos.totalPedido - (uDM.PedidosVlrReais.AsCurrency + uDM.PedidosVlrCDeb.AsCurrency +
-                                       uDM.PedidosVlrCCred.AsCurrency + uDM.PedidosVlrPIX.AsCurrency +
-                                       uDM.PedidosVlrOutros.AsCurrency);
+  vlrFalta := valorPedido - (uDM.PedidosVlrReais.AsCurrency + uDM.PedidosVlrCDeb.AsCurrency +
+                            uDM.PedidosVlrCCred.AsCurrency + uDM.PedidosVlrPIX.AsCurrency +
+                            uDM.PedidosVlrOutros.AsCurrency);
   FuFinPedido.LabFalta.Caption := FloatToStrF(vlrFalta,ffNumber,15,2);
   if vlrFalta < 0 then
     FuFinPedido.PanFalta.Color := clRed
@@ -457,7 +461,9 @@ end;
 
 procedure TFuFinPedido.btGravarClick(Sender: TObject);
 var somaVlr,wSaldo: Currency;
-    newSeq,lanSeq,bebSeq,newSitPagto,wrkSeq,nConf: Integer;
+    newSeq,lanSeq,bebSeq,crpSeq,friSeq,gelSeq,divSeq,outSeq,bufSeq: Integer;
+    newSitPagto,wrkSeq,nConf: Integer;
+    pedSeq: Integer;
     vlrEntradas,vlrSaidas: Currency;
     xEmitirNFCe,xImpressao,wMsg: String;
     wStatus,wAtivarMsg: Boolean;
@@ -517,14 +523,24 @@ begin
   PanAguarde.Visible := True;
   Application.ProcessMessages;
   //
-  lanSeq := 0;     // Qtd de lanches no pedido
-  bebSeq := 0;     // Qtd de bebidas e outros no pedido
+  // Obtendo quantidades de lançamentos
+  lanSeq := 0;     // lanches no pedido
+  bebSeq := 0;     // Bebidas e outros no pedido
+  crpSeq := 0;     // Crepes no pedido
+  friSeq := 0;     // Frituras
+  gelSeq := 0;     // Gelados&Shakes
+  bufSeq := 0;     // buffet
+  divSeq := 0;     // diversos
+  outSeq := 0;     // outros
   uDM.PedWrk.First;
   while not uDM.PedWrk.Eof do
   begin
     case uDM.PedWrkTpProd.AsInteger of
-      1,4:lanSeq := lanSeq + 1;
-        3:bebSeq := bebSeq + 1;
+      1,4:lanSeq := lanSeq + 1;              // Qtd lanches (cachorro-quente)
+        3:bebSeq := bebSeq + 1;              // Qtd bebidas
+       11:crpSeq := crpSeq + 1;              // Qtd crepes
+       21:friSeq := friSeq + 1;              // Qtd frituras
+       31:gelSeq := gelSeq + 1;              // Qtd gelados&shakes
     end;
     uDM.PedWrk.Next;
   end;
@@ -533,6 +549,10 @@ begin
   uDM.PedidosLctBebidas.AsInteger := bebSeq;         // Qtd de bebidas no pedido
   uDM.PedidosIdEstacao.AsString := uDM.sysCPUId;     // Identificação da estação
   uDM.PedidosNrEstacao.AsInteger := uDM.sysNumId;    // Ident. numérica da estação
+  uDM.PedidosLctCrepes.AsInteger := crpSeq;
+  uDM.PedidosLctBuffet.AsInteger := bufSeq;
+  uDM.PedidosLctDiversos.AsInteger := divSeq;
+  uDM.PedidosLctOutros.AsInteger := outSeq;
   uDM.Pedidos.Post;
   //
   if uDM.wNroPedido > 0 then
@@ -545,7 +565,11 @@ begin
   uDM.PedWrk.First;
   lanSeq := 0;
   bebSeq := 100;
-  newSeq := 200;
+  crpSeq := 200;
+  friSeq := 300;
+  gelSeq := 400;
+  newSeq := 900;
+  pedSeq := 0;                   // Sequencia geral no pedido
   while not uDM.PedWrk.Eof do
   begin
     case uDM.PedWrkTpProd.AsInteger of
@@ -557,14 +581,27 @@ begin
             bebSeq := bebSeq + 1;
             wrkSeq := bebSeq;
         end;
+       11:begin
+            crpSeq := crpSeq + 1;
+            wrkSeq := crpSeq;
+          end;
+       21:begin
+            friSeq := friSeq + 1;
+            wrkSeq := friSeq;
+          end;
+       31:begin
+            gelSeq := gelSeq + 1;
+            wrkSeq := gelSeq;
+          end;
         else begin  // Extras
             newSeq := newSeq + 1;
             wrkSeq := newSeq;
         end;
     end;
+    pedSeq := pedSeq + 1;
     uDM.PedItens.Append;
-    uDM.PedItensNumero.AsInteger       := nrPedido;
-    uDM.PedItensNrLcto.AsInteger       := wrkSeq;
+    uDM.PedItensNumero.AsInteger       := nrPedido;          // Chave de acesso
+    uDM.PedItensNrLcto.AsInteger       := wrkSeq;            // Chave de acesso
     uDM.PedItensTpProd.AsInteger       := uDM.PedWrkTpProd.AsInteger;
     uDM.PedItensCodProd.AsInteger      := uDM.PedWrkCodProd.AsInteger;
     uDM.PedItensQuant.AsInteger        := uDM.PedWrkQuant.AsInteger;
@@ -583,7 +620,7 @@ begin
     uDM.PedItensObservacao.AsString    := uDM.PedWrkObserv.AsString;
     uDM.PedItensEtqImpressa.AsInteger  := 0;
     uDM.PedItensVlrUnFiscal.AsCurrency := uDM.PedWrkVlrTotal.AsCurrency / uDM.PedWrkQuant.AsInteger;
-    uDM.PedItensTurno.AsInteger        := uDM.RegCaixaTurno.AsInteger;
+    //uDM.PedItensTurno.AsInteger        := uDM.RegCaixaTurno.AsInteger;
     if uDM.PedWrkAltPreco.AsBoolean
        then uDM.PedItensAlteraPreco.AsInteger := 1
        else uDM.PedItensAlteraPreco.AsInteger := 0;
@@ -594,6 +631,7 @@ begin
        then uDM.PedItensPrensado.AsInteger := 1
        else uDM.PedItensPrensado.AsInteger := 0;
     uDM.PedItensEtqImpressa.AsInteger := uDM.PedWrkEtqImpressa.AsInteger;
+    uDM.PedItensSeqLcto.AsInteger := pedSeq;
     uDM.PedItens.Post;
     uDM.PedWrk.Next;
   end;
@@ -753,10 +791,11 @@ begin
   // Atualiza caixa
   uDM.LctCaixa.Last;
   wSaldo := uDM.LctCaixaSaldo.AsCurrency;
-  newSeq := uDM.LctCaixaSequencia.AsInteger + 1;
+  newSeq := uDM.LctCaixaLctoSeq.AsInteger + 1;
   uDM.LctCaixa.Append;
-  uDM.LctCaixaTurno.AsInteger      := uDM.RegCaixaTurno.AsInteger;
-  uDM.LctCaixaSequencia.AsInteger  := newSeq;
+  uDM.LctCaixaNrCaixa.AsInteger    := uDM.RegCaixaNrCaixa.AsInteger;
+  uDM.LctCaixaCaixaSeq.AsInteger   := uDM.RegCaixaCaixaSeq.AsInteger;
+  uDM.LctCaixaLctoSeq.AsInteger    := newSeq;
   uDM.LctCaixaOperacao.AsInteger   := 1;               // Recebimento
   uDM.LctCaixaValor.AsCurrency     := uDM.PedidosValor.AsCurrency;
   uDM.LctCaixaMeioPgt.AsInteger    := uDM.PedidosMeioPagto.AsInteger;
@@ -769,7 +808,7 @@ begin
   uDM.LctCaixaPgtOutros.AsCurrency := uDM.PedidosVlrOutros.AsCurrency;
   uDM.LctCaixaNroPedido.AsInteger  := uDM.PedidosNumero.AsInteger;
   uDM.LctCaixaDtHrLcto.AsDateTime  := Now;
-  uDM.LctCaixaTipo.AsString        := 'A';
+  uDM.LctCaixaTipo.AsString        := 'A';    // Automático
   uDM.LctCaixa.Post;
   //
   uDM.RegCaixa.Edit;
@@ -906,7 +945,7 @@ begin
     uDM.PedItensObservacao.AsString    := uDM.PedWrkObserv.AsString;
     uDM.PedItensEtqImpressa.AsInteger  := 0;
     uDM.PedItensVlrUnFiscal.AsCurrency := uDM.PedWrkVlrTotal.AsCurrency / uDM.PedWrkQuant.AsInteger;
-    uDM.PedItensTurno.AsInteger        := uDM.RegCaixaTurno.AsInteger;
+    //uDM.PedItensTurno.AsInteger        := uDM.RegCaixaTurno.AsInteger;
     if uDM.PedWrkAltPreco.AsBoolean
        then uDM.PedItensAlteraPreco.AsInteger := 1
        else uDM.PedItensAlteraPreco.AsInteger := 0;
@@ -1026,9 +1065,9 @@ begin
   uDM.PedidosMeioPagto.AsInteger := dbMeioPagto.ItemIndex;
   case dbMeioPagto.ItemIndex of
     0:begin
-        uDM.PedidosVlrReais.AsCurrency  := FuPedidos.totalPedido;
+        uDM.PedidosVlrReais.AsCurrency  := valorPedido;
         if uDM.PedidosVlrRecebido.AsCurrency = 0 then
-           uDM.PedidosVlrRecebido.AsCurrency := FuPedidos.totalPedido;
+           uDM.PedidosVlrRecebido.AsCurrency := valorPedido;
         uDM.PedidosVlrTroco.AsCurrency := uDM.PedidosVlrRecebido.AsCurrency - uDM.PedidosVlrReais.AsCurrency;
         edReceb.Visible  := True;
         LabReceb.Visible := True;
@@ -1037,10 +1076,10 @@ begin
         edReceb.SetFocus;
         Exit;
     end;
-    1:uDM.PedidosVlrCDeb.AsCurrency   := FuPedidos.totalPedido;
-    2:uDM.PedidosVlrCCred.AsCurrency  := FuPedidos.totalPedido;
-    3:uDM.PedidosVlrPIX.AsCurrency    := FuPedidos.totalPedido;
-    4:uDM.PedidosVlrOutros.AsCurrency := FuPedidos.totalPedido;
+    1:uDM.PedidosVlrCDeb.AsCurrency   := valorPedido;
+    2:uDM.PedidosVlrCCred.AsCurrency  := valorPedido;
+    3:uDM.PedidosVlrPIX.AsCurrency    := valorPedido;
+    4:uDM.PedidosVlrOutros.AsCurrency := valorPedido;
     5:begin
         nTop := FuFinPedido.Top + PanInform.Top;
         nLeft := FuFinPedido.Left + PanInform.Left;

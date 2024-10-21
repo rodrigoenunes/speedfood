@@ -122,14 +122,6 @@
             <Form>FGen</Form>
             <FormType>dfm</FormType>
         </DCCReference>
-        <DCCReference Include="uCaixa.pas">
-            <Form>FuCaixa</Form>
-            <FormType>dfm</FormType>
-        </DCCReference>
-        <DCCReference Include="uPedidos.pas">
-            <Form>FuPedidos</Form>
-            <FormType>dfm</FormType>
-        </DCCReference>
         <DCCReference Include="uTrataLanche.pas">
             <Form>FuTrataLanche</Form>
             <FormType>dfm</FormType>
@@ -170,20 +162,12 @@
             <Form>FSFEuPrintFortes</Form>
             <FormType>dfm</FormType>
         </DCCReference>
-        <DCCReference Include="uMontarLanche.pas">
-            <Form>FuMontarLanche</Form>
-            <FormType>dfm</FormType>
-        </DCCReference>
         <DCCReference Include="uBiblioteca.pas"/>
         <DCCReference Include="uPagtoMisto.pas">
             <Form>FuPagtoMisto</Form>
             <FormType>dfm</FormType>
         </DCCReference>
         <DCCReference Include="..\..\UsoGeral\uEmail.pas"/>
-        <DCCReference Include="..\UsoGeral\uConfirmacao.pas">
-            <Form>FuConfirmacao</Form>
-            <FormType>dfm</FormType>
-        </DCCReference>
         <DCCReference Include="uQueryPedidos.pas">
             <Form>FuQueryPedidos</Form>
             <FormType>dfm</FormType>
@@ -192,12 +176,24 @@
             <Form>FuQueryAdministrativo</Form>
             <FormType>dfm</FormType>
         </DCCReference>
-        <DCCReference Include="..\Balcao\uBalcao.pas">
-            <Form>FuBalcao</Form>
+        <DCCReference Include="uMontarLanche.pas">
+            <Form>FuMontarLanche</Form>
             <FormType>dfm</FormType>
         </DCCReference>
-        <DCCReference Include="..\Balcao\uBalcaoLctos.pas">
-            <Form>FuBalcaoLctos</Form>
+        <DCCReference Include="uPedidos.pas">
+            <Form>FuPedidos</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="..\Balcao\uPedidosBalcao.pas">
+            <Form>FuPedidosBalcao</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="uCaixa.pas">
+            <Form>FuCaixa</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="uTurno.pas">
+            <Form>FuTurno</Form>
             <FormType>dfm</FormType>
         </DCCReference>
         <BuildConfiguration Include="Base">

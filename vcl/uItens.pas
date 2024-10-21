@@ -113,7 +113,8 @@ implementation
 uses uDados, uGenericas;
 
 Procedure ManutencaoProdutos;
-var i: Integer;
+var i,nPos: Integer;
+    wTxt: String;
 begin
   uDM.filGrupoItens := 0;
   uDM.Itens.Filtered := False;
@@ -121,68 +122,25 @@ begin
   do begin
     dbTipo.Items.Clear;
     dbTipo.Values.Clear;
-    dbTipo.Items.Add('Lanches');
-    dbTipo.Values.Add('1');
-    dbTipo.Items.Add('Extras lanches');
-    dbTipo.Values.Add('2');
-    dbTipo.Items.Add('Bebidas');
-    dbTipo.Values.Add('3');
-    if ObtemParametro('LanctoMontarLanche') = 'S'
-    then begin
-      dbTipo.Items.Add('Básicos');
-      dbTipo.Values.Add('4');
-      dbTipo.Items.Add('Extras básicos');
-      dbTipo.Values.Add('5');
-    end;
-    //
-    dbTipo.Items.Add('Diversos');       // Picolés, Chocolates, miudezas....
-    dbTipo.Values.Add('6');
-    //
-    if ObtemParametro('LanctoCrepes') = 'S' then
-    begin
-      dbTipo.Items.Add('Crepes');
-      dbTipo.Values.Add('11');
-      dbTipo.Items.Add('Sabores crepes');
-      dbTipo.Values.Add('12');
-    end;
-    if ObtemParametro('LanctoBuffets') = 'S' then         // Buffet de sorvetes e outros se houver
-    begin
-      dbTipo.Items.Add('Buffet');
-      dbTipo.Values.Add('15');
-    end;
-    if ObtemParametro('LanctoQuentes') = 'S' then
-    begin
-      dbTipo.Items.Add('Quentes');
-      dbTipo.Values.Add('21');
-      dbTipo.Items.Add('Extras quentes');
-      dbTipo.Values.Add('22');
-    end;
-    if ObtemParametro('LanctoGelados') = 'S' then        // Açai e outros...
-    begin
-      dbTipo.Items.Add('Gelados');
-      dbTipo.Values.Add('31');
-      dbTipo.Items.Add('Extras gelados');
-      dbTipo.Values.Add('32');
-    end;
-    if ObtemParametro('LanctoMilkshake') = 'S' then
-    begin
-      dbTipo.Items.Add('Milkshake');
-      dbTipo.Values.Add('41');
-      dbTipo.Items.Add('Extras milkshake');
-      dbTipo.Values.Add('42');
-    end;
+    cbSelec.Items.Clear;
+    cbSelCod.Items.Clear;
+    cbSelec.Items.Add('Sem seleção');
+    cbSelCod.Items.Add('0');
+    for i := 1 to Length(uDM.xGrupos) do
+      if uDM.xGrupos[i] <> '' then
+      begin
+        wTxt := uDM.xGrupos[i];
+        nPos := Pos('&',wTxt);
+        if nPos > 0 then
+          wTxt := Copy(wTxt,1,nPos) + '&' + Copy(wTxt,nPos+1,Length(wTxt)-nPos);
+        dbTipo.Items.Add(wTxt);     //uDM.xGrupos[i]
+        dbTipo.Values.Add(IntToStr(i));
+        cbSelec.Items.Add(uDM.xGrupos[i]);
+        cbSelCod.Items.Add(IntToStr(i));
+      end;
     //
     Top := 12;
     Height := Screen.Height - 96;
-    cbSelec.Items.Clear;
-    cbSelec.Items.Add('Sem seleção');
-    cbSelCod.Items.Clear;
-    cbSelCod.Items.Add('0');
-    for i := 0 to dbTipo.Items.Count-1
-    do begin
-      cbSelec.Items.add(dbTipo.Items[i]);
-      cbSelCod.Items.Add(dbTipo.Values[i]);
-    end;
     cbSelec.ItemIndex := 0;
     cbSelCod.ItemIndex := 0;
     uDM.filGrupoItens := 0;
@@ -214,6 +172,7 @@ begin
     btAlterar.Enabled := pModo;
     btExcluir.Enabled := pModo;
     btSair.Enabled    := pModo;
+    btAjustaEtq.Enabled := pModo;
     LabNRegs.Caption := IntToStr(uDM.Itens.RecordCount) + ' itens';
 
     dbTipo.Enabled := True;
@@ -266,7 +225,6 @@ end;
 
 procedure TFuItens.FormActivate(Sender: TObject);
 begin
-  //UPDATE uDM.Itens set Etiqueta = False where not Etiqueta;
   uDM.Itens.First;
   wAcao := CtleProds(0,False);
   wMsgRegEmUso := 'Registro em usos por outro usuário' + #13 + 'Tente novamente mais tarde';
@@ -416,7 +374,7 @@ begin
     dbTipo.SetFocus;
   end
   else begin
-    uDM.ItensGrupo.AsInteger := cbSelec.ItemIndex;
+    uDM.ItensGrupo.AsInteger := StrToInt(cbSelCod.Items[cbSelec.ItemIndex]);
     dbTipo.ItemIndex := cbSelec.ItemIndex - 1;
     dbTipo.Enabled := False;
     dbTipoClick(nil);
@@ -558,8 +516,8 @@ begin
     11-Crepes           sim      sim    sim      sim
     12-Crepes sabores    -       sim     -        -
     15-Buffet sorvetes  sim       -     sim       -
-    21-Quentes          sim      sim    sim      sim
-    22-Extras quentes    -        -      -        -
+    21-Frituras         sim      sim    sim      sim
+    22-Extras frituras   -        -      -        -
     31-Gelados          sim      sim    sim      sim
     32-Extra gelados     -        -      -        -
     41-Milkshake        sim      sim    sim      sim
@@ -638,12 +596,13 @@ begin
      or (uDM.ItensGrupo.AsInteger = 6)      // Diversos
      or (uDM.ItensGrupo.AsInteger = 11)     // Crepes
      or (uDM.ItensGrupo.AsInteger = 15)     // Buffet
-     or (uDM.ItensGrupo.AsInteger = 21)     // Quentes
+     or (uDM.ItensGrupo.AsInteger = 21)     // Frituras
      or (uDM.ItensGrupo.AsInteger = 31)     // Gelados
      or (uDM.ItensGrupo.AsInteger = 41)     // Shakes
      then gbFiscais.Visible := True;
 
   if (uDM.ItensGrupo.AsInteger = 1)
+     or (uDM.ItensGrupo.AsInteger = 3)
      or (uDM.ItensGrupo.AsInteger = 6)
      or (uDM.ItensGrupo.AsInteger = 11)
      or (uDM.ItensGrupo.AsInteger = 15)
@@ -652,12 +611,12 @@ begin
      or (uDM.ItensGrupo.AsInteger = 41)
      then cbAlteraPreco.Visible := True;
 
-  if (uDM.ItensGrupo.AsInteger = 1)
-     or (uDM.ItensGrupo.AsInteger = 4)
-     or (uDM.ItensGrupo.AsInteger = 11)
-     or (uDM.ItensGrupo.AsInteger = 21)
-     or (uDM.ItensGrupo.AsInteger = 31)
-     or (uDM.ItensGrupo.AsInteger = 41)
+  if (uDM.ItensGrupo.AsInteger = 1)         // Lanches
+     or (uDM.ItensGrupo.AsInteger = 4)      // Montar lanches
+     or (uDM.ItensGrupo.AsInteger = 11)     // Crepes
+     or (uDM.ItensGrupo.AsInteger = 21)     // Frituras
+     or (uDM.ItensGrupo.AsInteger = 31)     // Gelados
+     or (uDM.ItensGrupo.AsInteger = 41)     // Shakes
      then cbEtiqueta.Visible := True;
 
   if uDM.usaCorItem

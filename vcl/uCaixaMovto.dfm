@@ -29,18 +29,9 @@ object FuCaixaMovto: TFuCaixaMovto
     ParentFont = False
     TabOrder = 0
     OnEnter = PanTurnosEnter
-    ExplicitLeft = -1
-    ExplicitTop = -5
     DesignSize = (
       979
       57)
-    object Label1: TLabel
-      Left = 8
-      Top = 4
-      Width = 91
-      Height = 19
-      Caption = 'Turno / Data'
-    end
     object sbAnterior: TSpeedButton
       Left = 547
       Top = 9
@@ -78,7 +69,7 @@ object FuCaixaMovto: TFuCaixaMovto
     object sbAtual: TSpeedButton
       Left = 597
       Top = 9
-      Width = 41
+      Width = 45
       Height = 41
       Glyph.Data = {
         36030000424D3603000000000000360000002800000010000000100000000100
@@ -112,7 +103,7 @@ object FuCaixaMovto: TFuCaixaMovto
     object sbProximo: TSpeedButton
       Left = 647
       Top = 9
-      Width = 41
+      Width = 45
       Height = 41
       Glyph.Data = {
         36030000424D3603000000000000360000002800000010000000100000000100
@@ -143,11 +134,24 @@ object FuCaixaMovto: TFuCaixaMovto
         DFAE90D49559BF6218A824FF00FFFF00FFFF00FFFF00FFFF00FF}
       OnClick = sbProximoClick
     end
+    object LabIdCaixa: TLabel
+      Left = 8
+      Top = 2
+      Width = 78
+      Height = 19
+      Caption = 'LabIdCaixa'
+    end
     object cbTurnos: TComboBox
       Left = 8
-      Top = 22
+      Top = 24
       Width = 533
-      Height = 27
+      Height = 26
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -16
+      Font.Name = 'Courier New'
+      Font.Style = []
+      ParentFont = False
       TabOrder = 0
       Text = 'cbTurnos'
       OnChange = cbTurnosChange
@@ -155,7 +159,7 @@ object FuCaixaMovto: TFuCaixaMovto
     end
     object btProsseguir: TBitBtn
       Left = 694
-      Top = 10
+      Top = 9
       Width = 135
       Height = 41
       Anchors = [akTop, akRight]
@@ -380,7 +384,7 @@ object FuCaixaMovto: TFuCaixaMovto
         TabOrder = 0
       end
       object btResumo: TBitBtn
-        Left = 140
+        Left = 139
         Top = 6
         Width = 135
         Height = 41
@@ -578,7 +582,7 @@ object FuCaixaMovto: TFuCaixaMovto
         OnClick = btImprimirClick
       end
       object btAlterar: TBitBtn
-        Left = 420
+        Left = 421
         Top = 6
         Width = 135
         Height = 41
@@ -896,6 +900,15 @@ object FuCaixaMovto: TFuCaixaMovto
         TabOrder = 7
         OnClick = btSair2Click
       end
+      object cbTurnoCaixa: TCheckBox
+        Left = 7
+        Top = 64
+        Width = 218
+        Height = 17
+        Caption = 'Visualizar Caixa/SeqCaixa'
+        TabOrder = 8
+        OnClick = cbTurnoCaixaClick
+      end
     end
     object GridLctos: TDBGrid
       Left = 1
@@ -916,11 +929,30 @@ object FuCaixaMovto: TFuCaixaMovto
       OnExit = btFecharClick
       Columns = <
         item
+          Alignment = taCenter
           Expanded = False
-          FieldName = 'Sequencia'
-          Title.Alignment = taRightJustify
-          Title.Caption = 'Seq'
+          FieldName = 'NrCaixa'
+          Title.Alignment = taCenter
+          Title.Caption = 'Cx'
           Width = 28
+          Visible = True
+        end
+        item
+          Alignment = taCenter
+          Expanded = False
+          FieldName = 'CaixaSeq'
+          Title.Alignment = taCenter
+          Title.Caption = 'SeqCx'
+          Width = 41
+          Visible = True
+        end
+        item
+          Alignment = taCenter
+          Expanded = False
+          FieldName = 'LctoSeq'
+          Title.Alignment = taCenter
+          Title.Caption = 'Nr Lct'
+          Width = 40
           Visible = True
         end
         item
@@ -1011,17 +1043,18 @@ object FuCaixaMovto: TFuCaixaMovto
           Visible = True
         end
         item
-          Alignment = taRightJustify
+          Alignment = taCenter
           Expanded = False
           FieldName = 'ZC_DtHr'
+          Title.Alignment = taCenter
           Title.Caption = 'Data/Hora'
           Width = 110
           Visible = True
         end>
     end
     object PanResumo: TPanel
-      Left = 8
-      Top = 43
+      Left = 10
+      Top = 44
       Width = 504
       Height = 285
       BevelInner = bvLowered
@@ -1066,17 +1099,22 @@ object FuCaixaMovto: TFuCaixaMovto
         Caption = 'Saldo final'
       end
       object Label17: TLabel
-        Left = 12
-        Top = 4
-        Width = 139
+        Left = 2
+        Top = 2
+        Width = 500
         Height = 19
-        Caption = 'Resumo do turno'
+        Align = alTop
+        Caption = '   Resumo do turno'
+        Color = 16580608
         Font.Charset = DEFAULT_CHARSET
-        Font.Color = clWindowText
+        Font.Color = clWhite
         Font.Height = -16
         Font.Name = 'Tahoma'
         Font.Style = [fsBold]
+        ParentColor = False
         ParentFont = False
+        Transparent = False
+        ExplicitWidth = 154
       end
       object dbSdoIni: TDBEdit
         Left = 12
@@ -1508,17 +1546,22 @@ object FuCaixaMovto: TFuCaixaMovto
         452
         269)
       object LabOperacao: TLabel
-        Left = 16
-        Top = 8
-        Width = 166
+        Left = 2
+        Top = 2
+        Width = 448
         Height = 19
-        Caption = 'Inclus'#227'o / Altera'#231#227'o'
+        Align = alTop
+        Caption = '   Inclus'#227'o / Altera'#231#227'o'
+        Color = 16580608
         Font.Charset = DEFAULT_CHARSET
-        Font.Color = clWindowText
+        Font.Color = clWhite
         Font.Height = -16
         Font.Name = 'Tahoma'
         Font.Style = [fsBold]
+        ParentColor = False
         ParentFont = False
+        Transparent = False
+        ExplicitWidth = 181
       end
       object Label2: TLabel
         Left = 132
@@ -1596,7 +1639,7 @@ object FuCaixaMovto: TFuCaixaMovto
       end
       object dbOperacao: TDBRadioGroup
         Left = 16
-        Top = 32
+        Top = 30
         Width = 105
         Height = 108
         Caption = 'Opera'#231#227'o'
@@ -1616,8 +1659,8 @@ object FuCaixaMovto: TFuCaixaMovto
         OnClick = dbOperacaoClick
       end
       object dbMeio: TDBRadioGroup
-        Left = 131
-        Top = 72
+        Left = 127
+        Top = 70
         Width = 310
         Height = 68
         Caption = 'Meio de pagamento'
@@ -1748,6 +1791,113 @@ object FuCaixaMovto: TFuCaixaMovto
           DataSource = uDM.DSLctCaixa
           TabOrder = 4
         end
+      end
+    end
+    object PanSaldo: TPanel
+      Left = 433
+      Top = 237
+      Width = 247
+      Height = 119
+      BevelInner = bvLowered
+      TabOrder = 4
+      Visible = False
+      DesignSize = (
+        247
+        119)
+      object Label1: TLabel
+        Left = 2
+        Top = 2
+        Width = 243
+        Height = 19
+        Align = alTop
+        Caption = '   Saldo inicial'
+        Color = 16580608
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWhite
+        Font.Height = -16
+        Font.Name = 'Tahoma'
+        Font.Style = [fsBold]
+        ParentColor = False
+        ParentFont = False
+        Transparent = False
+        ExplicitWidth = 113
+      end
+      object Label23: TLabel
+        Left = 44
+        Top = 36
+        Width = 35
+        Height = 16
+        Caption = 'Valor:'
+      end
+      object edSaldoInicial: TDBEdit
+        Left = 85
+        Top = 32
+        Width = 97
+        Height = 24
+        DataField = 'Valor'
+        DataSource = uDM.DSLctCaixa
+        TabOrder = 0
+        OnExit = edValorExit
+      end
+      object btGravaSaldo: TBitBtn
+        Left = 7
+        Top = 67
+        Width = 112
+        Height = 41
+        Anchors = [akLeft, akBottom]
+        Caption = 'Gravar'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -16
+        Font.Name = 'Tahoma'
+        Font.Style = []
+        Glyph.Data = {
+          76010000424D7601000000000000760000002800000020000000100000000100
+          04000000000000010000120B0000120B00001000000000000000000000000000
+          8000008000000080800080000000800080008080000080808000C0C0C0000000
+          FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFFFF00555555555555
+          55555555555555555555555550055555555555555FF555555555555552005555
+          5555555557FF5555555555552220555555555555777F55555555555522200555
+          55555555777FF5555555555222220555555555577777F5555555552220220055
+          555555777777FF5555555222052220555555577775777F555555220555522005
+          5555777555577FF5555555555552220555555555555777F55555555555552200
+          55555555555577FF5555555555555220055555555555577FF555555555555522
+          0055555555555577FF5555555555555220005555555555577FFF555555555555
+          5220555555555555577F55555555555555555555555555555555}
+        NumGlyphs = 2
+        ParentFont = False
+        TabOrder = 1
+        OnClick = btGravaSaldoClick
+      end
+      object btCancSaldo: TBitBtn
+        Left = 125
+        Top = 66
+        Width = 112
+        Height = 41
+        Anchors = [akLeft, akBottom]
+        Caption = 'Cancelar'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -16
+        Font.Name = 'Tahoma'
+        Font.Style = []
+        Glyph.Data = {
+          76010000424D7601000000000000760000002800000020000000100000000100
+          04000000000000010000120B0000120B00001000000000000000000000000000
+          8000008000000080800080000000800080008080000080808000C0C0C0000000
+          FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFFFF00666666666666
+          6666666FFFF6666666FF6619996666666996667888F66666688F666199966666
+          99166667888F6666887F66661996666991666666788F666887F6666661996699
+          166666666788FF887F666666619999916666666667888887F666666666199916
+          666666666678887F6666666666999966666666666F8888F66666666669991996
+          66666666F888788F66666666999161996666666F88876788F666666999166619
+          966666F8887666788F6666999166666996666688876666678F66669916666661
+          996666887666666788F66691666666661996668766666666788F666666666666
+          6199666666666666678866666666666666666666666666666666}
+        NumGlyphs = 2
+        ParentFont = False
+        TabOrder = 2
+        OnClick = btCancSaldoClick
       end
     end
   end

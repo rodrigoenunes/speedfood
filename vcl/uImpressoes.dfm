@@ -124,6 +124,21 @@ object FuImpressoes: TFuImpressoes
           ParentFont = False
         end
       end
+      object RLDBText6: TRLDBText
+        Left = 0
+        Top = 31
+        Width = 129
+        Height = 15
+        DataField = 'ZC_CaixaNrSeq'
+        DataSource = uDM.DSRegCaixa
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clBlack
+        Font.Height = -12
+        Font.Name = 'Arial'
+        Font.Style = []
+        ParentFont = False
+        Text = 'Caixa: '
+      end
     end
     object RLCx_Cols: TRLBand
       Left = 19
@@ -192,7 +207,7 @@ object FuImpressoes: TFuImpressoes
         Height = 14
         Alignment = taCenter
         AutoSize = False
-        DataField = 'Sequencia'
+        DataField = 'LctoSeq'
         DataSource = uDM.DSLctCaixa
         Text = ''
       end
@@ -713,7 +728,7 @@ object FuImpressoes: TFuImpressoes
           Height = 14
           Alignment = taCenter
           AutoSize = False
-          DataField = 'Qtd_CartaoDebito'
+          DataField = 'Qtd_Sangria'
           DataSource = uDM.DSRegCaixa
           Text = '[#]'
         end
@@ -724,7 +739,7 @@ object FuImpressoes: TFuImpressoes
           Height = 14
           Alignment = taRightJustify
           AutoSize = False
-          DataField = 'E_CartaoDebito'
+          DataField = 'Qtd_Sangria'
           DataSource = uDM.DSRegCaixa
           Text = ''
         end
@@ -776,20 +791,20 @@ object FuImpressoes: TFuImpressoes
         end
       end
     end
-    object RLBand2: TRLBand
+    object RLCx_Footer: TRLBand
       Left = 19
       Top = 346
       Width = 264
-      Height = 17
+      Height = 30
       BandType = btFooter
       Borders.Sides = sdCustom
       Borders.DrawLeft = False
-      Borders.DrawTop = True
+      Borders.DrawTop = False
       Borders.DrawRight = False
       Borders.DrawBottom = False
-      object RLLabel28: TRLLabel
+      object RLLabId_RLCaixa: TRLLabel
         Left = 175
-        Top = 1
+        Top = 0
         Width = 89
         Height = 10
         Align = faRightTop
@@ -807,10 +822,10 @@ object FuImpressoes: TFuImpressoes
         Font.Style = []
         ParentFont = False
       end
-      object RLLabCaixa: TRLLabel
+      object RLLabCxMov: TRLLabel
         Left = 0
-        Top = 1
-        Width = 61
+        Top = 0
+        Width = 67
         Height = 14
         Align = faLeftTop
         Font.Charset = DEFAULT_CHARSET
@@ -819,6 +834,15 @@ object FuImpressoes: TFuImpressoes
         Font.Name = '9'
         Font.Style = []
         ParentFont = False
+      end
+      object RLCx_Fill: TRLLabel
+        Left = 0
+        Top = 16
+        Width = 264
+        Height = 14
+        Align = faBottom
+        Alignment = taCenter
+        Caption = '----------'
       end
     end
   end
@@ -1092,9 +1116,9 @@ object FuImpressoes: TFuImpressoes
         Text = ''
       end
       object RLMemoItem: TRLMemo
-        Left = 0
+        Left = 30
         Top = 15
-        Width = 261
+        Width = 200
         Height = 14
         Behavior = [beSiteExpander]
       end
@@ -1103,7 +1127,7 @@ object FuImpressoes: TFuImpressoes
       Left = 19
       Top = 116
       Width = 264
-      Height = 42
+      Height = 41
       BandType = btSummary
       Borders.Sides = sdCustom
       Borders.DrawLeft = False
@@ -1112,7 +1136,7 @@ object FuImpressoes: TFuImpressoes
       Borders.DrawBottom = True
       object RLDbTotalPed: TRLDBText
         Left = 188
-        Top = 3
+        Top = 1
         Width = 76
         Height = 16
         Alignment = taRightJustify
@@ -1128,17 +1152,31 @@ object FuImpressoes: TFuImpressoes
       end
       object RLDBText43: TRLDBText
         Left = 3
-        Top = 20
-        Width = 151
+        Top = 3
+        Width = 111
         Height = 14
         DataField = 'MeioPagto'
         DataSource = SCDPed
-        Text = 'Meio de pagamento: '
+        Text = 'Pagamento: '
+      end
+      object RLLabel19: TRLLabel
+        Left = 3
+        Top = 24
+        Width = 122
+        Height = 12
+        Anchors = [fkBottom]
+        Caption = 'Documento sem valor fiscal'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clBlack
+        Font.Height = -9
+        Font.Name = 'Arial'
+        Font.Style = []
+        ParentFont = False
       end
     end
     object RLPedFoot: TRLBand
       Left = 19
-      Top = 158
+      Top = 157
       Width = 264
       Height = 24
       BandType = btFooter
@@ -1191,7 +1229,7 @@ object FuImpressoes: TFuImpressoes
     end
   end
   object RLResumo: TRLReport
-    Left = 334
+    Left = 326
     Top = 219
     Width = 302
     Height = 454
@@ -1213,7 +1251,7 @@ object FuImpressoes: TFuImpressoes
       Left = 19
       Top = 19
       Width = 264
-      Height = 44
+      Height = 62
       BandType = btHeader
       Borders.Sides = sdCustom
       Borders.DrawLeft = False
@@ -1265,7 +1303,7 @@ object FuImpressoes: TFuImpressoes
       end
       object RLLabTurnoIni: TRLLabel
         Left = 0
-        Top = 16
+        Top = 18
         Width = 63
         Height = 12
         Font.Charset = DEFAULT_CHARSET
@@ -1277,7 +1315,7 @@ object FuImpressoes: TFuImpressoes
       end
       object RLLabTurnoFim: TRLLabel
         Left = 0
-        Top = 30
+        Top = 32
         Width = 69
         Height = 12
         Font.Charset = DEFAULT_CHARSET
@@ -1287,10 +1325,24 @@ object FuImpressoes: TFuImpressoes
         Font.Style = []
         ParentFont = False
       end
+      object RLLabCaixas: TRLLabel
+        Left = 0
+        Top = 47
+        Width = 264
+        Height = 14
+        Align = faBottom
+        Alignment = taCenter
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clBlack
+        Font.Height = -11
+        Font.Name = 'Arial'
+        Font.Style = [fsBold]
+        ParentFont = False
+      end
     end
     object RLRes_Cols: TRLBand
       Left = 19
-      Top = 63
+      Top = 81
       Width = 264
       Height = 16
       BandType = btColumnHeader
@@ -1304,7 +1356,6 @@ object FuImpressoes: TFuImpressoes
         Top = 1
         Width = 30
         Height = 14
-        Alignment = taCenter
         Caption = 'Cod'
       end
       object RLLabel35: TRLLabel
@@ -1335,7 +1386,7 @@ object FuImpressoes: TFuImpressoes
     end
     object RLRes_Detal: TRLBand
       Left = 19
-      Top = 79
+      Top = 97
       Width = 264
       Height = 16
       object RLDBText47: TRLDBText
@@ -1343,7 +1394,6 @@ object FuImpressoes: TFuImpressoes
         Top = 1
         Width = 30
         Height = 14
-        Alignment = taCenter
         AutoSize = False
         DataField = 'ZC_Cod'
         DataSource = uDM.SResVendas
@@ -1384,7 +1434,7 @@ object FuImpressoes: TFuImpressoes
     end
     object RLRes_Sum: TRLBand
       Left = 19
-      Top = 95
+      Top = 113
       Width = 264
       Height = 186
       BandType = btSummary
@@ -1708,20 +1758,20 @@ object FuImpressoes: TFuImpressoes
         end
       end
     end
-    object Res_Footer: TRLBand
+    object RLRes_Footer: TRLBand
       Left = 19
-      Top = 281
+      Top = 299
       Width = 264
-      Height = 17
+      Height = 30
       BandType = btFooter
       Borders.Sides = sdCustom
       Borders.DrawLeft = False
-      Borders.DrawTop = True
+      Borders.DrawTop = False
       Borders.DrawRight = False
       Borders.DrawBottom = False
       object RLLabel27: TRLLabel
         Left = 166
-        Top = 1
+        Top = 0
         Width = 98
         Height = 10
         Align = faRightTop
@@ -1741,7 +1791,7 @@ object FuImpressoes: TFuImpressoes
       end
       object RLLabResumo: TRLLabel
         Left = 0
-        Top = 1
+        Top = 0
         Width = 73
         Height = 14
         Align = faLeftTop
@@ -1751,6 +1801,15 @@ object FuImpressoes: TFuImpressoes
         Font.Name = '9'
         Font.Style = []
         ParentFont = False
+      end
+      object RLRes_Fill: TRLLabel
+        Left = 0
+        Top = 16
+        Width = 264
+        Height = 14
+        Align = faBottom
+        Alignment = taCenter
+        Caption = '----------'
       end
     end
   end
@@ -1854,7 +1913,7 @@ object FuImpressoes: TFuImpressoes
     end
     object CDDetExtras: TStringField
       FieldName = 'Extras'
-      Size = 24
+      Size = 100
     end
     object CDDetObserv: TStringField
       FieldName = 'Observ'

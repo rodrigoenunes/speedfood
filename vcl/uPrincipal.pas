@@ -12,26 +12,30 @@ type
     Image1: TImage;
     btManutencao: TBitBtn;
     btSair: TBitBtn;
-    btAbrirCaixa: TBitBtn;
+    btCaixa: TBitBtn;
     btPedidos: TBitBtn;
     btUsuario: TBitBtn;
     btAdmin: TBitBtn;
-    PanTurno: TPanel;
+    PanIdCaixa: TPanel;
     LabInicio: TLabel;
-    LabFinal: TLabel;
-    LabTurno: TLabel;
+    LabCaixa: TLabel;
     btConsPedidos: TBitBtn;
     btHelpGeral: TBitBtn;
     btHelpArgox: TBitBtn;
     btVerifSefaz: TBitBtn;
-    LabPedidoInicial: TLabel;
     btBalcao: TBitBtn;
     btBuffet: TBitBtn;
+    LabConexao: TLabel;
+    LabEstacao: TLabel;
+    LabSeqCaixa: TLabel;
+    LabTurno: TLabel;
+    btCtleCaixas: TBitBtn;
+    btCtleTurnos: TBitBtn;
     procedure btSairClick(Sender: TObject);
     procedure btManutencaoClick(Sender: TObject);
     procedure FormActivate(Sender: TObject);
     procedure FormCreate(Sender: TObject);
-    procedure btAbrirCaixaClick(Sender: TObject);
+    procedure btCaixaClick(Sender: TObject);
     procedure btPedidosClick(Sender: TObject);
     procedure btUsuarioClick(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
@@ -43,6 +47,9 @@ type
       Shift: TShiftState; X, Y: Integer);
     procedure btBalcaoClick(Sender: TObject);
     procedure btBuffetClick(Sender: TObject);
+    procedure SpeedButton1Click(Sender: TObject);
+    procedure btCtleTurnosClick(Sender: TObject);
+    procedure btCtleCaixasClick(Sender: TObject);
   private
     { Private declarations }
   public
@@ -51,6 +58,7 @@ type
 
 var
   FuPrincipal: TFuPrincipal;
+  mdFechaTurno: Integer;
 
 implementation
 
@@ -58,11 +66,17 @@ implementation
 
 uses uItens, uDados, uGenericas, uCaixa, uPedidos, uImpressoes, uUsuario,
   FortesReportCtle, uUserPwd, uHelpSpeedFood,
-  uCaixaMovto, uQueryPedidos, uQueryAdministrativo, uBalcao;
+  uCaixaMovto, uQueryPedidos, uQueryAdministrativo, uPedidosBalcao, uTurno;
 
-procedure TFuPrincipal.btAbrirCaixaClick(Sender: TObject);
+procedure TFuPrincipal.btCaixaClick(Sender: TObject);
 begin
-  CaixaMovimentacao;
+  CaixaMovimentacao(False);       // Somente o caixa atual
+
+end;
+
+procedure TFuPrincipal.btCtleCaixasClick(Sender: TObject);
+begin
+  CaixaMovimentacao(True);
 
 end;
 
@@ -79,21 +93,19 @@ procedure TFuPrincipal.btBalcaoClick(Sender: TObject);
 begin
   if ObtemParametro('UsaCorItem','N') = 'S' then uDM.usaCorItem := True
      else uDM.usaCorItem := False;
-  FuPrincipal.Hide;
-  Balcao(btBalcao.Caption);
-  FuPrincipal.Visible := True;
+  PedidosBalcao(btBalcao.Caption);
 
 end;
 
 procedure TFuPrincipal.btBuffetClick(Sender: TObject);
 begin
-  SHowMessage('??? ');
+  ShowMessage('??? ');
 
 end;
 
 procedure TFuPrincipal.btConsPedidosClick(Sender: TObject);
 begin
-  QueryPedidos(uDM.turnoCorrente);
+  QueryPedidos;
 
 end;
 
@@ -128,22 +140,28 @@ end;
 
 procedure TFuPrincipal.btSairClick(Sender: TObject);
 var wExec,wParm: String;
-
+    nFimTurno: Integer;
 begin
-{
-  CalculaSaldoCaixa(uDM.RegCaixaTurno.AsInteger);
-  if MessageDlg('Imprimir fechamento de caixa ?',mtConfirmation,[mbYes,mbNo],0,mbNo,['Sim','Não']) = mrYes
-     then ImprimeCaixa(uDM.RegCaixaTurno.AsInteger);
-}
-  if uDM.wOperCartoes > 0 then
-     if MessageDlg('Executar operação adicional (cartões) ?',
-                    mtConfirmation,[mbYes,mbNo],0,mbNo,['Sim','Não']) = mrYes
-     then begin
+  if FechaCaixa then
+  begin
+    CaixaMovimentacao(False);     // Somente caixa atual
+    if uDM.wOperCartoes > 0 then
+       if MessageDlg('Executar operação adicional (cartões) ?',
+                      mtConfirmation,[mbYes,mbNo],0,mbNo,['Sim','Não']) = mrYes
+    then begin
        wExec := ObtemParametro('ACNFE_EXE');
        wParm := '/TEF /CANCELAR X';
        ShellExecute(0,'open',pChar(wExec),pChar(wParm),'',1);
-     end;
+    end;
+    FechaTurno(mdFechaTurno);
+  end;
   FuPrincipal.Close;
+
+end;
+
+procedure TFuPrincipal.btCtleTurnosClick(Sender: TObject);
+begin
+  ShowMessage('Manutenção de turnos....');
 
 end;
 
@@ -172,25 +190,31 @@ procedure TFuPrincipal.FormActivate(Sender: TObject);
 var arqImg,xValidade,xIdBalcao: String;
     AA,MM,DD: word;
     dtValid,dtHoje: TDateTime;
-    nDias,nBotoes,nTop,nAlt,wAcaoTurno: Integer;
+    nDias,nBotoes,nTop,nAlt,wAcao: Integer;
 begin
+  LabConexao.Visible := True;
+  Application.ProcessMessages;
   if uDM = Nil then
   begin
+    LabConexao.Caption := 'Conectando, aguarde...';
+    Application.ProcessMessages;
     uDM := TuDM.Create(nil);
-    //
-    if (uDM.sysNumId = 0) or (uDM.sysCPUId = '') or (uDM.sysNrCaixa = 0) then
+    if (uDM.sysNumId < 1) or (uDM.sysNumId > 3) or (uDM.sysCPUId = '') then
     begin
       MessageDlg('Erro de inicialização, verifique arquivo INI' + #13 +
-                 'Estacao / Numero: Não pode ser ZERO' + #13 +
+                 'Estacao / Numero: Deve ser de 1 a 3' + #13 +
                  'Estacao / Nome: Identificacao da estacao de trabalho' + #13 +
-                 'Estacao / CaixaNro: Não pode ser ZERO' + #13 +
                  'Aplicação não pode ser iniciada',
                  mtError,[mbOk],0);
       Halt(0);
     end;
-    //
-    uDM.FDC.Connected:= True;
+    CarregaGrupos;
+    LabConexao.Caption := 'Conexão ATIVA     ' +
+                          uDM.FDC.Params[uDM.FDC.Params.IndexOfName('server')];
+    Application.ProcessMessages;
+
     uDM.SisPessoa.Active := True;
+    uDM.Turnos.Active    := True;
     uDM.Itens.Active     := True;
     uDM.RegCaixa.Active  := True;
     uDM.LctCaixa.Active  := True;
@@ -249,17 +273,17 @@ begin
     if uDM.sysSefaz then nBotoes := nBotoes + 1;
     //
     nTop := 0;
-    nAlt := (FuPrincipal.Height - 64) div nBotoes;
-    btAbrirCaixa.Top := nTop;
-    btAbrirCaixa.Height := nAlt;
-    btAbrirCaixa.Left := 12;
+    nAlt := (FuPrincipal.Height - 90) div nBotoes;
+    btCaixa.Top := nTop;
+    btCaixa.Height := nAlt;
+    btCaixa.Left := 12;
     nTop := nTop + nAlt + 2;
     if uDM.sysPedidos then
     begin
       btPedidos.Caption := uDM.sysIdPedidos;
       btPedidos.Top := nTop;
       btPedidos.Height := nAlt;
-      btPedidos.Left := btAbrirCaixa.Left;
+      btPedidos.Left := btCaixa.Left;
       btPedidos.Visible := True;
       nTop := nTop + nAlt + 2;
     end;
@@ -271,7 +295,7 @@ begin
       btBalcao.Top := nTop;
       btBalcao.Height := nAlt;
       btBalcao.Visible := True;
-      btBalcao.Left := btAbrirCaixa.Left;
+      btBalcao.Left := btCaixa.Left;
       nTop := nTop + nAlt + 2;
     end;
     if uDM.sysBuffet then
@@ -280,7 +304,7 @@ begin
       btBuffet.Top := nTop;
       btBuffet.Height := nAlt;
       btBuffet.Visible := True;
-      btBuffet.Left := btAbrirCaixa.Left;
+      btBuffet.Left := btCaixa.Left;
       nTop := nTop + nAlt + 2;
     end;
     if uDM.sysPedidos or uDM.sysBalcao or uDM.sysBuffet then
@@ -288,7 +312,7 @@ begin
       btConsPedidos.Top := nTop;
       btConsPedidos.Height := nAlt;
       btConsPedidos.Visible := True;
-      btConsPedidos.Left := btAbrirCaixa.Left;
+      btConsPedidos.Left := btCaixa.Left;
       nTop := nTop + nAlt + 2;
     end;
     if uDM.sysManut then
@@ -296,7 +320,7 @@ begin
       btManutencao.Top := nTop;
       btManutencao.Height := nAlt;
       btManutencao.Visible := True;
-      btManutencao.Left := btAbrirCaixa.Left;
+      btManutencao.Left := btCaixa.Left;
       nTop := nTop + nAlt + 2;
     end;
     if uDM.sysAdmin then
@@ -304,7 +328,7 @@ begin
       btAdmin.Top := nTop;
       btAdmin.Height := nAlt;
       btAdmin.Visible := True;
-      btAdmin.Left := btAbrirCaixa.Left;
+      btAdmin.Left := btCaixa.Left;
       nTop := nTop + nAlt + 2;
     end;
     if uDM.sysUsuar then
@@ -312,7 +336,7 @@ begin
       btUsuario.Top := nTop;
       btUsuario.Height := nAlt;
       btUsuario.Visible := True;
-      btUsuario.Left := btAbrirCaixa.Left;
+      btUsuario.Left := btCaixa.Left;
       nTop := nTop + nAlt + 2;
     end;
     if uDM.sysSefaz then
@@ -320,81 +344,95 @@ begin
       btVerifSefaz.Top := nTop;
       btVerifSefaz.Height := nAlt;
       btVerifSefaz.Visible := True;
-      btVerifSefaz.Left := btAbrirCaixa.Left;
+      btVerifSefaz.Left := btCaixa.Left;
       nTop := nTop + nAlt + 2;
     end;
     btSair.Top := nTop;
     btSair.Height := nAlt;
     btSair.Visible := True;
-    btSair.Left := btAbrirCaixa.Left;
+    btSair.Left := btCaixa.Left;
     nTop := nTop + nAlt + 2;
+    //
+    btCtleCaixas.Visible := uDM.sysCtleCaixas;
+    btCtleTurnos.Visible := uDM.sysCtleTurnos;
     //
     btHelpGeral.Visible := uDM.sysHelp;
     btHelpArgox.Visible := uDM.sysHelpArgox;
     //
-    wAcaoTurno := VerificaStatusCaixa;               // Sempre posiciona no ULTIMO registro
-    if wAcaoTurno = 0 then
-    begin          // Encerra turno e abre novo
-      if uDM.RegCaixaSituacao.AsString <> 'F'
-      then begin
-        wAcaoTurno := FechamentoDeCaixa;
-        if wAcaoTurno = 0 then
-        begin
-          CaixaMovimentacao;
-          uDM.turnoCorrente := AberturaDeCaixa;
-        end
-        else uDM.turnoCorrente := uDM.RegCaixaTurno.AsInteger;
+    if not AbreTurno then
+    begin
+      if MessageDlg('Turno não utilizado' + #13 + 'Finalizar turno atual ?',
+                    mtConfirmation,[mbYes,mbNo],0,mbNo,['Sim','Não']) = mrYes then
+      begin
+        mdFechaTurno := 1;
+        btSairClick(nil);
       end
-      else uDM.turnoCorrente := AberturaDeCaixa;
-    end
-    else begin     // Prossegue o turno
-      uDM.RegCaixa.Last;
-      uDM.turnoCorrente := uDM.RegCaixaTurno.AsInteger;
+      else begin
+        MessageDlg('Turno não finalizado, processo cancelado',mtInformation,[mbOk],0);
+        Halt(0);
+      end;
     end;
     //
-    if uDM.turnoCorrente < 0 then
+    if not AbreCaixa(uDM.turnoCorrente,uDM.sysNrCaixa) then
     begin
-      MessageDlg('Abertura de turno cancelada' + #13#13 +
-                 'Aplicação finalizada',mtInformation,[mbOk],0);
-      Application.Terminate;
+      MessageDlg('Cancelamento de abertura pelo usuário, ou' + #13 +
+                 'não foi possível criar o registro de caixa.' + #13 +
+                 'Processo cancelado', mtError, [mbOk], 0);
+      Halt(0);
     end;
-    LabTurno.Caption  := '  Turno: ' + IntToStr(uDM.turnoCorrente);
-    LabInicio.Caption := 'Início:' + uDM.RegCaixaDtHrInicio.AsString;
-    LabFinal.Caption  := 'Final:' + uDM.RegCaixaDtHrFim.AsString;
-    uDM.Pedidos.Last;
-    uDM.nrInicialPedido := uDM.PedidosNumero.AsInteger;
-    while (uDM.PedidosTurno.AsInteger = uDM.turnoCorrente) and (not uDM.Pedidos.Bof) do
-    begin
-      uDM.nrInicialPedido := uDM.PedidosNumero.AsInteger;
-      uDM.Pedidos.Prior;
-    end;
-    LabPedidoInicial.Caption := IntToStr(uDM.nrInicialPedido);
-    PanTurno.Visible  := True;
     //
-    FuPrincipal.Visible := True;
+    LabCaixa.Caption := 'Caixa: ' + IntToStr(uDM.sysNrCaixa);
+    LabSeqCaixa.Caption := 'Sequencia: ' + uDM.RegCaixaCaixaSeq.AsString;
+    LabInicio.Caption := 'Início: ' + uDM.RegCaixaDtHrInicio.AsString;
+    LabEstacao.Caption := 'Estação: ' + uDM.sysCPUId + '   [ ' + IntToStr(uDM.sysNumId) + ' ]';
+    LabTurno.Caption := 'Turno: '+ IntToStr(uDM.turnoCorrente);
+    PanIdCaixa.Visible := True;
+    //
+
   end;
 
 end;
 
 procedure TFuPrincipal.FormClose(Sender: TObject; var Action: TCloseAction);
+var wExec,wParm: String;
 begin
-  if uDM.sysTurnos then
-     if MessageDlg('Encerrar turno atual',mtConfirmation,
-                    [mbYes,mbNo],0,mbNo,['Sim','Não']) = mrYes then
-        if FechamentoDeCaixa = 0
-          then CaixaMovimentacao;
+{
+  if wAcaoCaixa = 1
+  then begin
+    if FechamentoDeCaixa = 0
+       then CaixaMovimentacao;
+    if uDM.wOperCartoes > 0
+    then begin
+      if MessageDlg('Executar operação adicional (cartões) ?',
+                     mtConfirmation,[mbYes,mbNo],0,mbNo,['Sim','Não']) = mrYes
+      then begin
+        wExec := ObtemParametro('ACNFE_EXE');
+        wParm := '/TEF /CANCELAR X';
+        ShellExecute(0,'open',pChar(wExec),pChar(wParm),'',1);
+      end;
+    end;
+    if uDM.sysTurnos then
+       if MessageDlg('Encerrar turno atual',mtConfirmation, [mbYes,mbNo],0,mbNo,['Sim','Não']) = mrYes
+       then begin
+         //FechamentoDeTurno;
+         //Não pode haver caixas ativos....
+         //uDM.TurnosCaixasAtivos = ''.....
+       end;
+  end;
+}
   //
+
   uDM.PedDetpag.Active := False;
   uDM.PedItens.Active  := False;
   uDM.Pedidos.Active   := False;
   uDM.LctCaixa.Active  := False;
   uDM.RegCaixa.Active  := False;
+  uDM.Turnos.Active    := False;
   uDM.Itens.Active     := False;
   uDM.SisPessoa.Active := False;
+
   uDM.FDC.Connected    := False;
-  //
   Form_Salva(FuPrincipal);
-  Application.Terminate;
 
 end;
 
@@ -405,6 +443,14 @@ begin
   FuPrincipal.Top    := 10;                       // 20
   FuPrincipal.Left   := 40;
   FuPrincipal.Image1.Visible := False;
+  mdFechaTurno := 0;     // 0=Questionar ao sair se fecha o turno  1=Fecha o turno
+
+end;
+
+procedure TFuPrincipal.SpeedButton1Click(Sender: TObject);
+begin
+  FuPrincipal.Width := 560;
+  FuPrincipal.Height := 520;
 
 end;
 

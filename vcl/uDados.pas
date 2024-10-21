@@ -10,12 +10,14 @@ uses
   FireDAC.Stan.Param, FireDAC.DatS, FireDAC.DApt.Intf, FireDAC.DApt,
   FireDAC.Comp.DataSet, FireDAC.Comp.Client, FireDAC.Comp.UI, FireDAC.Stan.ExprFuncs,
   FireDAC.Stan.Expr, Datasnap.DBClient, Dialogs;
+  Procedure CarregaGrupos;
   Procedure ContaExtras;
   Procedure CarregaExtras(pCols,pLins: Integer);
   Function CriaAbrePedidoWrk(pNro:Integer): Integer;
   Function CriaResumoVendas: Boolean;
   Function ObtemParametro(idParam:String; retDefault:String = ''): String;
   Procedure ExcluePedido(pNumero:Integer);
+  Procedure DefineGuiaPedidos(pLeGrava:String; var pTamFonte:Integer; var pMultiline:Boolean);
 
 type
   TuDM = class(TDataModule)
@@ -117,7 +119,6 @@ type
     PedidosArqXML: TMemoField;
     PedidosNumero: TLongWordField;
     RegCaixa: TFDTable;
-    RegCaixaTurno: TIntegerField;
     RegCaixaDtHrInicio: TDateTimeField;
     RegCaixaDtHrFim: TDateTimeField;
     RegCaixaSaldoInicial: TBCDField;
@@ -140,8 +141,6 @@ type
     RegCaixaQtd_Sangria: TIntegerField;
     RegCaixaQtd_Misto: TIntegerField;
     LctCaixa: TFDTable;
-    LctCaixaTurno: TIntegerField;
-    LctCaixaSequencia: TIntegerField;
     LctCaixaOperacao: TIntegerField;
     LctCaixaValor: TBCDField;
     LctCaixaMeioPgt: TIntegerField;
@@ -153,7 +152,6 @@ type
     LctCaixaPgtPIX: TBCDField;
     LctCaixaPgtOutros: TBCDField;
     LctCaixaNroPedido: TIntegerField;
-    LctCaixaDtHrLcto: TStringField;
     DSRegCaixa: TDataSource;
     DSLctCaixa: TDataSource;
     LctCaixaZC_Operacao: TStringField;
@@ -282,6 +280,57 @@ type
     LctCaixaNrCaixa: TIntegerField;
     ItensEtiqueta: TBooleanField;
     ItensZC_Etiqueta: TStringField;
+    RegCaixaCaixaSeq: TIntegerField;
+    LctCaixaCaixaSeq: TIntegerField;
+    LctCaixaLctoSeq: TIntegerField;
+    Turnos: TFDTable;
+    TurnosNrTurno: TIntegerField;
+    TurnosDtHrInicio: TDateTimeField;
+    TurnosDtHrFim: TDateTimeField;
+    TurnosStatus: TIntegerField;
+    TurnosVlr_Reais: TBCDField;
+    TurnosVlr_CDeb: TBCDField;
+    TurnosVlr_CCred: TBCDField;
+    TurnosVlr_PIX: TBCDField;
+    TurnosVlr_Outros: TBCDField;
+    TurnosQtd_Reais: TIntegerField;
+    TurnosQtd_CDeb: TIntegerField;
+    TurnosQtd_CCred: TIntegerField;
+    TurnosQtd_PIX: TIntegerField;
+    TurnosQtd_Outros: TIntegerField;
+    DSTurnos: TDataSource;
+    RegCaixaTurno: TIntegerField;
+    LctCaixaDtHrLcto: TDateTimeField;
+    RegCaixaZC_CaixaNrSeq: TStringField;
+    TurnosZC_Status: TStringField;
+    TurnosZC_Datas: TStringField;
+    RegCaixaVlrRecebDiv: TBCDField;
+    RegCaixaQtdRecebDiv: TIntegerField;
+    PedidosLctCrepes: TIntegerField;
+    PedidosLctBuffet: TIntegerField;
+    PedidosLctOutros: TIntegerField;
+    PedidosLctDiversos: TIntegerField;
+    PedItensSeqLcto: TIntegerField;
+    PedItensZC_SeqLcto: TStringField;
+    PedItensZC_TpEtiq: TStringField;
+    PedWrkPeso: TIntegerField;
+    PedItensPeso: TIntegerField;
+    SCDBufet: TDataSource;
+    CDBuffet: TClientDataSet;
+    CDBuffetVlrUnit: TCurrencyField;
+    CDBuffetVlrTotal: TCurrencyField;
+    CDBuffetPeso: TIntegerField;
+    CDBuffetDescr: TStringField;
+    CDDiversos: TClientDataSet;
+    SCDDiversos: TDataSource;
+    CDDiversosCodBarras: TStringField;
+    CDDiversosCodGrupo: TIntegerField;
+    CDDiversosCodItem: TIntegerField;
+    CDDiversosDescr: TStringField;
+    CDDiversosUnid: TStringField;
+    CDDiversosQuant: TIntegerField;
+    CDDiversosVlrUnit: TCurrencyField;
+    CDDiversosVlrTotal: TCurrencyField;
     procedure ItensCalcFields(DataSet: TDataSet);
     procedure LctCaixaCalcFields(DataSet: TDataSet);
     procedure PedWrkCalcFields(DataSet: TDataSet);
@@ -296,6 +345,8 @@ type
     procedure PedDetpagCalcFields(DataSet: TDataSet);
     procedure PedDetpagFilterRecord(DataSet: TDataSet; var Accept: Boolean);
     procedure RegCaixaFilterRecord(DataSet: TDataSet; var Accept: Boolean);
+    procedure LctCaixaFilterRecord(DataSet: TDataSet; var Accept: Boolean);
+    procedure TurnosCalcFields(DataSet: TDataSet);
   private
     { Private declarations }
   public
@@ -310,12 +361,16 @@ type
     wTxtExtraTab: array[1..24] of String;
     wVlrExtraTab: array[1..24] of Currency;
     usaCorItem: Boolean;
-    sysUser,sysCPUId: String;
-    sysNumId,sysNrCaixa: Integer;
-    sysPedidos,sysBalcao,sysWhats,sysManut,sysAdmin,sysBuffet,
-    sysUsuar,sysSefaz,sysHelp,sysHelpArgox,sysTurnos: Boolean;
+    sysIniFile,sysUser,sysCPUId: String;
+    sysNumId,sysNrCaixa,sysCaixaSeq: Integer;
+    sysPedidos,sysBalcao,sysWhats,sysManut,sysAdmin,sysBuffet: Boolean;
+    sysUsuar,sysSefaz,sysHelp,sysHelpArgox,sysTurnos,sysAltLctos: Boolean;
     sysIdPedidos,sysIdBalcao,sysIdBuffet: String;
     sysEtiquetasPrt,sysPedidosPrt,sysCaixaPrt,sysResumoPrt: String;
+    sysIniBalcao,sysAbasFonte: Integer;
+    sysAbasMultiline: Boolean;
+    sysCtleCaixas,sysCtleTurnos: Boolean;
+    balLanches,balBebidas,balCrepes,balFrituras,balGelados,balBufDiv: Boolean;
     filGrupoItens: Integer;
     meioPgto: Integer;
     nomeClie,CPFCNPJ,nroPlaca: String;
@@ -323,14 +378,14 @@ type
     turnoCorrente: Integer;
     nrInicialPedido: Integer;
     sitPagto: Integer;
-    lDebug: Boolean;
+    lDebug,lConexao: Boolean;
     wOperCartoes: Integer;
+    xGrupos: array[1..49] of String;
 
   end;
 
 var
   uDM: TuDM;
-  xGrupos: array[1..49] of String;
 
 const
   xOperacao: array[0..4] of String = ('Saldo','Receb','Suprim','Pagto','Sangria');
@@ -341,11 +396,62 @@ const
                                        'PIX', 'Outros', 'Misto');
 implementation
 
-Uses IniFiles;
+Uses IniFiles, uGenericas;
 
 {%CLASSGROUP 'Vcl.Controls.TControl'}
 
 {$R *.dfm}
+
+Procedure CarregaGrupos;
+var i: Integer;
+    xParm: String;
+begin
+  for i := 1 to Length(uDM.xGrupos) do
+    uDM.xGrupos[i] := '';
+  xParm := ObtemParametro('LanctoMontarLanche');
+  if (xParm = '') or (xParm = 'N') then
+  begin
+    uDM.xGrupos[4] := 'N';
+    uDM.xGrupos[5] := 'N';
+  end;
+  xParm := ObtemParametro('LanctoCrepes');
+  if (xParm = '') or (xParm = 'N') then
+  begin
+    uDM.xGrupos[11] := 'N';
+    uDM.xGrupos[12] := 'N';
+  end;
+  xParm := ObtemParametro('LanctoBufDiv');
+  if (xParm = '') or (xParm = 'N') then
+  begin
+    uDM.xGrupos[6] := 'N';     // Diversos
+    uDM.xGrupos[15] := 'N';    // Buffet sorvetes
+  end;
+  xParm := ObtemParametro('LanctoFrituras');
+  if (xParm = '') or (xParm = 'N') then
+  begin
+    uDM.xGrupos[21] := 'N';
+    uDM.xGrupos[22] := 'N';
+  end;
+  xParm := ObtemParametro('LanctoGeladosShakes');
+  if (xParm = '') or (xParm = 'N') then
+  begin
+    uDM.xGrupos[31] := 'N';
+    uDM.xGrupos[32] := 'N';
+  end;
+  //
+  for i := 1 to Length(uDM.xGrupos) do
+    if uDM.xGrupos[i] = '' then
+    begin
+      xParm := 'Grupo_' + IntToStr(i);
+      uDM.xGrupos[i] := ObtemParametro(xParm,'NoMsg');
+    end;
+  //
+  for i := 1 to Length(uDM.xGrupos) do
+    if uDM.xGrupos[i] = 'N' then
+      uDM.xGrupos[i] := '';
+
+end;
+
 
 Procedure ContaExtras;
 begin
@@ -418,7 +524,7 @@ begin
     PedWrk.FieldDefs.Add('Observ',    ftMemo, 10);      // Comentários
     PedWrk.FieldDefs.Add('Quant',     ftSmallint);
     PedWrk.FieldDefs.Add('VlrUnit',   ftCurrency);
-    PedWrk.FieldDefs.Add('Extras',    ftString, 24);
+    PedWrk.FieldDefs.Add('Extras',    ftString, 100);
     PedWrk.FieldDefs.Add('Cod01',     ftSmallint);
     PedWrk.FieldDefs.Add('Vlr01',     ftCurrency);
     PedWrk.FieldDefs.Add('Cod02',     ftSmallint);
@@ -433,6 +539,7 @@ begin
     PedWrk.FieldDefs.Add('Cortado',   ftBoolean);
     PedWrk.FieldDefs.Add('Prensado',  ftBoolean);
     PedWrk.FieldDefs.Add('EtqImpressa', ftSmallint);
+    PedWrk.FieldDefs.Add('Peso',      ftInteger);       // Peso em GRAMAS
     PedWrk.IndexDefs.Clear;
     PedWrk.IndexDefs.Add('','NrLcto',[ixPrimary,ixUnique]);
     PedWrk.CreateDataSet;
@@ -460,8 +567,44 @@ begin
       Exit;
     End;
     //
+    CDBuffet.Active := False;
+    CDBuffet.FieldDefs.Clear;
+    CDBuffet.FieldDefs.Add('Peso',    ftInteger);
+    CDBuffet.FieldDefs.Add('VlrUnit', ftCurrency);
+    CDBuffet.FieldDefs.Add('VlrTotal',ftCurrency);
+    CDBuffet.FieldDefs.Add('Descr',   ftString, 120);
+    CDBuffet.CreateDataSet;
+    Try
+      CDBuffet.Active := True;
+      CDBuffet.Active := False;
+    Except
+      Result := 4;
+      Exit;
+    End;
+    //
+    CDDiversos.Active := False;
+    CDDiversos.FieldDefs.Clear;
+    CDDiversos.FieldDefs.Add('CodBarras', ftString, 25);
+    CDDiversos.FieldDefs.Add('CodGrupo',  ftInteger);
+    CDDiversos.FieldDefs.Add('CodItem',   ftInteger);
+    CDDiversos.FieldDefs.Add('Descr',     ftString, 80);
+    CDDiversos.FieldDefs.Add('Unid',      ftString,5);
+    CDDiversos.FieldDefs.Add('Quant',     ftInteger);
+    CDDiversos.FieldDefs.Add('VlrUnit',   ftCurrency);
+    CDDiversos.FieldDefs.Add('VlrTotal',  ftCurrency);
+    CDDiversos.CreateDataSet;
+    Try
+      CDDiversos.Active := True;
+      CDDiversos.Active := False;
+    Except
+      Result := 5;
+      Exit;
+    End;
+    //
     PedWrk.Active := True;
     DetpagWrk.Active := True;
+    CDBuffet.Active := True;
+    CDDiversos.Active := True;
     uDM.wNroPedido := pNro;
     uDM.nroPlaca := '';
     uDM.meioPgto := 0;
@@ -503,14 +646,26 @@ end;
 
 
 Function ObtemParametro(idParam:String; retDefault:String = ''): String;
+var lMsg: Boolean;
 begin
+  lMsg := True;
+  if retDefault = 'NoMsg' then
+  begin
+    retDefault := '';
+    lMsg := False;
+  end;
+  //
   Result := retDefault;
   if not uDM.Parametros.Active then
     uDM.Parametros.Active := True;
   if uDM.Parametros.FindKey([idParam]) then
-    Result := uDM.ParametrosValor.AsString
-  else MessageDlg('Parametro [' + idParam + '] não informado' + #13 +
-                  'Default [' + retDefault + ']',mtWarning,[mbOk],0);
+  begin
+    Result := uDM.ParametrosValor.AsString;
+    Exit;
+  end;
+  if lMsg then
+    MessageDlg('Parametro [' + idParam + '] não informado' + #13 +
+               'Default [' + retDefault + ']',mtWarning,[mbOk],0);
 
 end;
 
@@ -530,28 +685,52 @@ begin
 end;
 
 
+Procedure DefineGuiaPedidos(pLeGrava:String; var pTamFonte:Integer; var pMultiline:Boolean);
+Var
+  vIniFile: TIniFile;
+  sIniFile: String;
+  sServer: String;
+  idServer: array [1..2] of String;
+  sPorta: String;
+  i: Integer;
+begin
+  sIniFile := ChangeFileExt(ParamStr(0), '.ini');
+  vIniFile := TIniFile.Create(sIniFile);
+  if pLeGrava = 'L' then
+  begin
+
+    Exit;
+  end;
+end;
+
+
 procedure TuDM.DataModuleCreate(Sender: TObject);
 Var
   vIniFile: TIniFile;
-  sIniFile, sServer, sPorta: String;
+  sServer: String;
+  idServer: array [1..2] of String;
+  sPorta: String;
   i: Integer;
 begin
   FDC.Connected := False;
-  sIniFile := ChangeFileExt(ParamStr(0), '.ini');
-  vIniFile := TIniFile.Create(sIniFile);
-  if not FileExists(sIniFile) then
+  sysIniFile := ChangeFileExt(ParamStr(0), '.ini');
+  vIniFile := TIniFile.Create(sysIniFile);
+  if not FileExists(sysIniFile) then
   Begin
     vIniFile.WriteString('DB', 'Host', '');
     vIniFile.WriteString('DB', 'Port', '');
+    vIniFile.WriteString('DB', 'Host2', '');
+    vIniFile.WriteString('DB', 'Port2', '');
 
-    vIniFile.WriteString('Estacao','Nome','');
-    vIniFile.WriteInteger('Estacao','Numero',0);
-    vIniFile.WriteBool('Estacao','Pedidos',True);
+    vIniFile.WriteString('Estacao','Nome','');               // Nome da estação
+    vIniFile.WriteInteger('Estacao','Numero',0);             // Nro da estação é o nro do CAIXA
+    vIniFile.WriteBool('Estacao','Pedidos',True);            // Pedidos de cachorro quente ? (Onibus)
     vIniFile.WriteString('Estacao','IdPedidos','Onibus');
     vIniFile.WriteBool('Estacao','Buffet',False);
     vIniFile.WriteString('Estacao','IdBuffet','Buffet');
     vIniFile.WriteBool('Estacao','Balcao',False);
     vIniFile.WriteString('Estacao','IdBalcao','Balcão 1');
+    vIniFile.WriteInteger('Estacao','IniBalcao',0);          // Pag. inicial (0, 1, 2....)
     vIniFile.WriteBool('Estacao','WhatsApp',False);
     vIniFile.WriteBool('Estacao','Manutencao',False);
     vIniFile.WriteBool('Estacao','Administrativo',False);
@@ -559,34 +738,52 @@ begin
     vIniFile.WriteBool('Estacao','Help',False);
     vIniFile.WriteBool('Estacao','HelpArgox',False);
     vIniFile.WriteBool('Estacao','VerSefaz',False);
-    vIniFile.WriteBool('Estacao','Turnos',False);
-    vIniFile.WriteInteger('Estacao','CaixaNro',0);       // Nro caixa a filtrar
+    vIniFile.WriteBool('Estacao','Turnos',False);             // Tratativa de turnos
+    vIniFile.WriteBool('Estacao','CaixaAltLctos',False);
 
     vIniFile.WriteString('Impressoras','Etiquetas','');
     vIniFile.WriteString('Impressoras','Pedidos','');
     vIniFile.WriteString('Impressoras','Caixa','');
     vIniFile.WriteString('Impressoras','Resumo','');
 
+    vIniFile.WriteBool('AbasDisponiveis','Lanches',True);
+    vIniFile.WriteBool('AbasDisponiveis','Bebidas',True);
+    vIniFile.WriteBool('AbasDisponiveis','Crepes',False);
+    vIniFile.WriteBool('AbasDisponiveis','Frituras',False);
+    vIniFile.WriteBool('AbasDisponiveis','Gelados',False);
+    vIniFile.WriteBool('AbasDisponiveis','Buffet',False);
+    vIniFile.WriteBool('AbasDisponiveis','Diversos',True);
+    vIniFile.WriteBool('AbasDisponiveis','Shake',False);
+
+    vIniFile.WriteInteger('AbasPedidos','Fonte',12);
+    vIniFile.WriteBool('AbasPedidos','Multiline',False);
+
+    vIniFile.WriteBool('Controle','Caixas',False);
+    vIniFile.WriteBool('Controle','Turnos',False);
+
   End;
+
+  idServer[1] := vIniFile.ReadString('DB', 'Host', '127.0.0.1').Trim;
+  idServer[2] := vIniFile.ReadString('DB', 'Host2', '255.255.255.1').Trim;
+  sPorta := vIniFile.ReadString('DB', 'Port', '').Trim;
+{
   sServer := vIniFile.ReadString('DB', 'Host', '').Trim;
   if Not sServer.IsEmpty then
     FDC.Params[ FDC.Params.IndexOfName('server') ]:= 'Server=' + sServer;
-
-  sPorta := vIniFile.ReadString('DB', 'Port', '').Trim;
   if Not sPorta.IsEmpty then
     FDC.Params[ FDC.Params.IndexOfName('port') ]:= 'Port=' + sPorta;
-
+}
   sysCPUId := vIniFile.ReadString('Estacao','Nome','');
   sysNumId := vIniFile.ReadInteger('Estacao','Numero',0);
+  sysNrCaixa := sysNumId;
 
   sysPedidos := vIniFile.ReadBool('Estacao','Pedidos',True);
   sysIdPedidos := vIniFile.ReadString('Estacao','IdPedidos','Onibus');
-
   sysBuffet := vIniFile.ReadBool('Estacao','Buffet',True);
   sysIdBuffet := vIniFile.ReadString('Estacao','IdBuffet','Buffet');
-
   sysBalcao := vIniFile.ReadBool('Estacao','Balcao',False);
   sysIdBalcao := vIniFile.ReadString('Estacao','IdBalcao','Balcão 1');
+  sysIniBalcao := vIniFile.ReadInteger('Estacao','IniBalcao',0);
 
   sysWhats := vIniFile.ReadBool('Estacao','WhatsApp',False);
   sysManut := vIniFile.ReadBool('Estacao','Manutencao',False);
@@ -596,42 +793,61 @@ begin
   sysHelpArgox := vIniFile.ReadBool('Estacao','HelpArgox',False);
   sysSefaz := vIniFile.ReadBool('Estacao','VerSefaz',False);
   sysTurnos := vIniFile.ReadBool('Estacao','Turnos',False);
-  sysNrCaixa := vIniFile.ReadInteger('Estacao','CaixaNro',0);
-  if sysNrCaixa = 0 then
-     sysNrCaixa := sysNumId;
+  //
+  sysAltLctos := vIniFile.ReadBool('Estacao','CaixaAltLctos',False);
+  //
+  balLanches := vIniFile.ReadBool('AbasDisponiveis','Lanches',True);
+  balBebidas := vIniFile.ReadBool('AbasDisponiveis','Bebidas',True);
+  balCrepes := vIniFile.ReadBool('AbasDisponiveis','Crepes',False);
+  balFrituras := vIniFile.ReadBool('AbasDisponiveis','Frituras',False);
+  balGelados := vIniFile.ReadBool('AbasDisponiveis','Gelados',False);
+  balBufDiv := vIniFile.ReadBool('AbasDisponiveis','BuffetDiversos',False);
   //
   if (not sysPedidos) and (not sysBalcao) and (not sysBuffet) then
      MessageDlg('Verifique os parametros de inicialização, Pedidos/Balcao/Buffet' + #13 +
-                'Arquivo: ' + sIniFile,mtWarning,[mbOk],0);
-  //
+                'Arquivo: ' + sysIniFile,mtWarning,[mbOk],0);
+
   sysEtiquetasPrt := vIniFile.ReadString('Impressoras','Etiquetas','');
   sysPedidosPrt := vIniFile.ReadString('Impressoras','Pedidos','');
   sysCaixaPrt := vIniFile.ReadString('Impressoras','Caixa','');
   sysResumoPrt := vIniFile.ReadString('Impressoras','Resumo','');
-  //
+
+  sysAbasFonte := vIniFile.ReadInteger('AbasPedidos','Fonte',12);
+  sysAbasMultiLine := vIniFile.ReadBool('AbasPedidos','Multiline',False);
+
+  sysCtleCaixas := vIniFile.ReadBool('Controle','Caixas',False);
+  sysCtleTurnos := vIniFile.ReadBool('Controle','Turnos',False);
+
   vIniFile.Free;
   //
-  FDC.Connected := True;
+  // Conexão BD
+  lConexao := False;
+  for i := 1 to 2 do
+  begin
+    sServer := idServer[i];
+    FDC.Params[FDC.Params.IndexOfName('server')]:= 'Server=' + sServer;
+    Try
+      FDC.Connected := True;
+      lConexao := True;
+      Break;
+    Except
+      FDC.Connected := False;
+    End;
+  end;
+  if not lConexao then
+  begin
+    MessageDlg('Conexão BD impossibilitada' + #13 +
+               'Serv#1: ' + idServer[1] + #13 +
+               'Serv#2: ' + idServer[2] + #13 +
+               'verifique.' + #13 +
+               'Aplicação finalizada',mtError,[mbOk],0);
+    Halt(0);
+  End;
   //
-  wOperCartoes := 0;
+  wOperCartoes := 0;       // COntador de operaçoes com cartões
   //
-  for i := 1 to Length(xGrupos)
-     do xGrupos[i] := '';
-  xGrupos[01] := 'Lanches';
-  xGrupos[02] := 'Extras lanches';
-  xGrupos[03] := 'Bebidas';
-  xGrupos[04] := 'Básicos';
-  xGrupos[05] := 'Extras básicos';
-  xGrupos[06] := 'Diversos';
-  xGrupos[11] := 'Crepes';
-  xGrupos[12] := 'Sabores crepes';
-  xGrupos[15] := 'Buffet';
-  xGrupos[21] := 'Quentes';
-  xGrupos[22] := 'Extras quentes';
-  xGrupos[31] := 'Gelados';
-  xGrupos[32] := 'Extras gelados';
-  xGrupos[41]  := 'Milkshake';
-  //
+  RegCaixa.Filtered := True;
+  LctCaixa.Filtered := True;
 
 end;
 
@@ -698,10 +914,7 @@ begin
        uDM.LctCaixaZC_MeioPgt.AsString := '(' + uDM.LctCaixaMeioPgt.AsString + ')';
        uDM.LctCaixaZC_MpAbrv.AsString  := '(' + uDM.LctCaixaMeioPgt.AsString + ')';
      end;
-  uDM.LctCaixaZC_DtHr.AsString := Copy(uDM.LctCaixaDtHrLcto.AsString,9,2) + '/' +
-                                  Copy(uDM.LctCaixaDtHrLcto.AsString,6,2) + '/' +
-                                  Copy(uDM.LctCaixaDtHrLcto.AsString,3,2) + ' ' +
-                                  Copy(uDM.LctCaixaDtHrLcto.AsString,12,5);
+  uDM.LctCaixaZC_DtHr.AsString := DataHoraString(uDM.LctCaixaDtHrLcto.AsDateTime, 2, 4);
   uDM.LctCaixaZC_Reais.AsString  := '';
   uDM.LctCaixaZC_CDeb.AsString   := '';
   uDM.LctCaixaZC_CCred.AsString  := '';
@@ -723,6 +936,15 @@ begin
                                       uDM.LctCaixaPgtCCred.AsCurrency +
                                       uDM.LctCaixaPgtPIX.AsCurrency +
                                       uDM.LctCaixaPgtOutros.AsCurrency;
+
+end;
+
+procedure TuDM.LctCaixaFilterRecord(DataSet: TDataSet; var Accept: Boolean);
+begin
+  Accept := False;
+  if (uDM.sysNrCaixa = 0) or
+     (uDM.LctCaixaNrCaixa.AsInteger = uDM.sysNrCaixa)
+    then Accept := True;
 
 end;
 
@@ -820,19 +1042,53 @@ procedure TuDM.PedItensCalcFields(DataSet: TDataSet);
 var nrAux: String;
 begin
   case PedItensTpProd.AsInteger of
-    1:PedItensZC_Tipo.AsString := 'Lan';
-    3:PedItensZC_Tipo.AsString := 'Beb';
-    4:PedItensZC_Tipo.AsString := 'Mon';
-    6:PedItensZC_Tipo.AsString := 'Div';
-    else PedItensZC_Tipo.AsString := '';
+    1:begin
+        PedItensZC_Tipo.AsString := 'Lan';
+        PedItensZC_Tp.AsString := 'L';
+        PedItensZC_TpEtiq.AsString := 'Lanche';
+    end;
+    3:begin
+        PedItensZC_Tipo.AsString := 'Beb';
+        PedItensZC_Tp.AsString := 'B';
+        PedItensZC_TpEtiq.AsString := 'Bebidas';
+    end;
+    4:begin
+        PedItensZC_Tipo.AsString := 'Mon';
+        PedItensZC_Tp.AsString := 'M';
+        PedItensZC_TpEtiq.AsString := 'Lanche montado';
+    end;
+    6:begin
+       PedItensZC_Tipo.AsString := 'Div';
+       PedItensZC_Tp.AsString := 'D';
+       PedItensZC_TpEtiq.AsString := 'Diversos';
+    end;
+    11:begin
+       PedItensZC_Tipo.AsString := 'Crp';
+       PedItensZC_Tp.AsString := 'C';
+       PedItensZC_TpEtiq.AsString := 'CREPE'
+    end;
+    15:begin
+       PedItensZC_Tipo.AsString := 'BSo';
+       PedItensZC_Tp.AsString := 'V';
+       PedItensZC_TpEtiq.AsString := 'Buffet'
+    end;
+    21:begin
+       PedItensZC_Tipo.AsString := 'Fri';
+       PedItensZC_Tp.AsString := 'F';
+       PedItensZC_TpEtiq.AsString := 'FRITURA';
+    end;
+    31:begin
+       PedItensZC_Tipo.AsString := 'Sha';
+       PedItensZC_Tp.AsString := 'S';
+       PedItensZC_TpEtiq.AsString := 'Shake';
+    end
+    else begin
+      PedItensZC_Tipo.AsString := '';
+      PedItensZC_Tp.AsString := '';
+      PedItensZC_TpEtiq.AsString := '';
+    end;
   end;
-  case PedItensTpProd.AsInteger of
-    1:PedItensZC_Tp.AsString := 'L';
-    3:PedItensZC_Tp.AsString := 'B';
-    4:PedItensZC_Tp.AsString := 'M';
-    6:PedItensZC_Tp.AsString := 'D';
-    else PedItensZC_Tp.AsString := '';
-  end;
+
   PedItensZC_PrensCort.AsString := '';
   if PedItensPrensado.AsInteger <> 0
 
@@ -867,6 +1123,11 @@ begin
     PedItensZC_PedLcto.AsString := nrAux;
     PedItensZC_PlacaLcto.AsString := PedidosPlaca.AsString
   end;
+  if PedItensSeqLcto.AsInteger > 0 then
+    PedItensZC_SeqLcto.AsString := PedItensSeqLcto.AsString
+  else
+    PedItensZC_SeqLcto.AsString := '';
+
   if StrToIntDef(PedidosPlaca.AsString,0) <> 0 then
     PedItensZC_SenhaLst.AsString := PedItensZC_PlacaLcto.AsString
   else
@@ -889,16 +1150,12 @@ begin
   if RegCaixaSituacao.AsString = 'F' then
   begin
     RegCaixaZC_Situacao.AsString := 'Finalizado';
-    RegCaixaZC_IniFim.AsString := Copy(RegCaixaDtHrInicio.AsString,1,6) +
-                                  Copy(RegCaixaDtHrInicio.AsString,9,8) + ' - ' +
-                                  Copy(RegCaixaDtHrFim.AsString,1,6) +
-                                  Copy(RegCaixaDtHrFim.AsString,9,8);
+    RegCaixaZC_IniFim.AsString := DataHoraString(RegCaixaDtHrInicio.AsDateTime,2,4) + '-' +
+                                  DataHoraString(RegCaixaDtHrFim.AsDateTime,2,4);
   end
   else begin
     RegCaixaZC_Situacao.AsString := 'Aberto';
-    RegCaixaZC_IniFim.AsString := Copy(RegCaixaDtHrInicio.AsString,1,6) +
-                                  Copy(RegCaixaDtHrInicio.AsString,9,8) + ' - ' +
-                                  '......' + '........';
+    RegCaixaZC_IniFim.AsString := DataHoraString(RegCaixaDtHrInicio.AsDateTime,2,4) + '- ................';
   end;
   RegCaixaZC_VlrEntradas.AsCurrency := RegCaixaE_Dinheiro.AsCurrency + RegCaixaE_CartaoDebito.AsCurrency +
                                        RegCaixaE_CartaoCredito.AsCurrency + RegCaixaE_PIX.AsCurrency +
@@ -909,6 +1166,8 @@ begin
                                        RegCaixaQtd_Misto.AsInteger;
   RegCaixaZC_VlrSaidas.AsCurrency   := RegCaixaS_Saidas.AsCurrency + RegCaixaS_Sangria.AsCurrency;
   RegCaixaZC_QtdSaidas.AsInteger    := RegCaixaQtd_Saidas.AsInteger + RegCaixaQtd_Sangria.AsInteger;
+
+  RegCaixaZC_CaixaNrSeq.AsString    := RegCaixaNrCaixa.AsString + ' / ' + uDM.RegCaixaCaixaSeq.AsString;
 
 end;
 
@@ -925,6 +1184,26 @@ procedure TuDM.ResVendasCalcFields(DataSet: TDataSet);
 begin
   ResVendasZC_Cod.AsString := ResVendasTpProd.AsString + '.' + ResVendasCodProd.AsString;
 
+end;
+
+procedure TuDM.TurnosCalcFields(DataSet: TDataSet);
+begin
+  case TurnosStatus.AsInteger of
+    0:begin
+        TurnosZC_Status.AsString := 'Aberto';
+        TurnosZC_Datas.AsString := DataHoraString(TurnosDtHrInicio.AsDateTime, 2, 4) + ' - ......';
+    end;
+    1:begin
+        TurnosZC_Status.AsString := 'Finalizado';
+        TurnosZC_Datas.AsString := DataHoraString(TurnosDtHrInicio.AsDateTime, 2, 4) + ' - '+
+                                   DataHoraString(TurnosDtHrFim.AsDateTime, 2, 4);
+    end;
+    else begin
+      TurnosZC_Status.AsString := '>> ' + TurnosStatus.AsString + ' <<';
+      TurnosZC_Datas.AsString := DataHoraString(TurnosDtHrInicio.AsDateTime, 2, 4) + ' - '+
+                                 DataHoraString(TurnosDtHrFim.AsDateTime, 2, 4);
+    end;
+  end;
 end;
 
 end.

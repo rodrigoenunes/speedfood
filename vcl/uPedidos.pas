@@ -7,7 +7,6 @@ uses
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ExtCtrls, Vcl.Buttons, Vcl.CheckLst,
   Data.DB, Vcl.DBCtrls, Vcl.Grids, Vcl.DBGrids, Vcl.ComCtrls, Vcl.Mask, System.UITypes;
   Procedure LancamentoPedidos;
-  Procedure TotalizaPedido;
 
 type
   TFuPedidos = class(TForm)
@@ -101,19 +100,9 @@ uses uDados, uGenericas, uFinPedido, uTrataLanche, uBiblioteca, uMontarLanche, u
 
 Procedure LancamentoPedidos;
 begin
-  //FuPedidos := TFuPedidos.Create(nil);
-  //FuTrataLanche := TFuTrataLanche.Create(nil);
-  //FuMontarLanche := TFuMontarLanche.Create(nil);
-  //FuFinPedido := TFuFinPedido.Create(nil);
-
   nExec := 0;
-  nMaxExtras := StrToIntDef(ObtemParametro('PedidoMaxExtras'),7);
+  nMaxExtras := StrToIntDef(ObtemParametro('PedidoMaxExtras'),5);
   FuPedidos.ShowModal;
-
-  //FuFinPedido.Free;
-  //FuMontarLanche.Free;
-  //FuTrataLanche.Free;
-  //FuPedidos.Free;
 
 end;
 
@@ -605,7 +594,7 @@ begin
   PanAlteraBebida.Visible := False;
   if FuPedidos.totalPedido = 0
     then nRet := 2                              // Pedido sem valor, cancela o pedido
-    else nRet := FinalizaPedido(nroPedido);     // Finalização do pedido
+    else nRet := FinalizaPedido(nroPedido, FuPedidos.totalPedido, FuPedidos.itensPedido);     // Finalização do pedido
   if nRet = 0
     then begin
       // Obs.1

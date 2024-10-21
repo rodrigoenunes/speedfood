@@ -2,26 +2,46 @@ object FuPrincipal: TFuPrincipal
   Left = 0
   Top = 0
   Caption = 'SpeddFood'
-  ClientHeight = 452
-  ClientWidth = 539
+  ClientHeight = 478
+  ClientWidth = 668
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
   Font.Height = -16
   Font.Name = 'Tahoma'
   Font.Style = []
+  Position = poDesigned
   OnActivate = FormActivate
   OnClose = FormClose
   OnCreate = FormCreate
   DesignSize = (
-    539
-    452)
+    668
+    478)
   TextHeight = 19
   object Image1: TImage
-    Left = 291
-    Top = 158
+    Left = 287
+    Top = 199
     Width = 105
     Height = 105
+  end
+  object LabConexao: TLabel
+    Left = 0
+    Top = 455
+    Width = 668
+    Height = 23
+    Align = alBottom
+    Alignment = taCenter
+    Caption = 'Conectando...'
+    Color = clNavy
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWhite
+    Font.Height = -19
+    Font.Name = 'Tahoma'
+    Font.Style = []
+    ParentColor = False
+    ParentFont = False
+    Transparent = False
+    ExplicitWidth = 117
   end
   object btManutencao: TBitBtn
     Left = 8
@@ -130,7 +150,7 @@ object FuPrincipal: TFuPrincipal
     TabOrder = 8
     OnClick = btSairClick
   end
-  object btAbrirCaixa: TBitBtn
+  object btCaixa: TBitBtn
     Left = 8
     Top = 8
     Width = 257
@@ -204,7 +224,7 @@ object FuPrincipal: TFuPrincipal
       FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
       FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}
     TabOrder = 0
-    OnClick = btAbrirCaixaClick
+    OnClick = btCaixaClick
   end
   object btPedidos: TBitBtn
     Left = 8
@@ -238,8 +258,8 @@ object FuPrincipal: TFuPrincipal
     OnClick = btPedidosClick
   end
   object btUsuario: TBitBtn
-    Left = 8
-    Top = 278
+    Left = 24
+    Top = 282
     Width = 257
     Height = 52
     Caption = 'Usu'#225'rio do Sistema'
@@ -367,22 +387,19 @@ object FuPrincipal: TFuPrincipal
     Visible = False
     OnClick = btAdminClick
   end
-  object PanTurno: TPanel
-    Left = 276
+  object PanIdCaixa: TPanel
+    Left = 320
     Top = 8
     Width = 255
-    Height = 81
+    Height = 152
     BevelInner = bvLowered
     Color = clGradientInactiveCaption
     ParentBackground = False
     TabOrder = 10
     Visible = False
-    DesignSize = (
-      255
-      81)
     object LabInicio: TLabel
-      Left = 12
-      Top = 33
+      Left = 20
+      Top = 72
       Width = 64
       Height = 19
       Caption = 'LabInicio'
@@ -393,50 +410,43 @@ object FuPrincipal: TFuPrincipal
       Font.Style = []
       ParentFont = False
     end
-    object LabFinal: TLabel
-      Left = 12
-      Top = 57
-      Width = 58
-      Height = 19
-      Caption = 'LabFinal'
-      Font.Charset = DEFAULT_CHARSET
-      Font.Color = clWindowText
-      Font.Height = -16
-      Font.Name = 'Tahoma'
-      Font.Style = []
-      ParentFont = False
-      Visible = False
-    end
-    object LabTurno: TLabel
+    object LabCaixa: TLabel
       Left = 2
       Top = 2
       Width = 251
       Height = 25
       Align = alTop
-      Caption = '  Turno atual'
+      Alignment = taCenter
+      Caption = 'LabCaixa'
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -21
       Font.Name = 'Tahoma'
       Font.Style = [fsBold]
       ParentFont = False
-      ExplicitWidth = 133
+      ExplicitWidth = 97
     end
-    object LabPedidoInicial: TLabel
-      Left = 170
-      Top = 64
-      Width = 76
-      Height = 13
+    object LabEstacao: TLabel
+      Left = 20
+      Top = 104
+      Width = 78
+      Height = 19
+      Caption = 'LabEstacao'
+    end
+    object LabSeqCaixa: TLabel
+      Left = 20
+      Top = 40
+      Width = 89
+      Height = 19
+      Caption = 'LabSeqCaixa'
+    end
+    object LabTurno: TLabel
+      Left = 176
+      Top = 124
+      Width = 68
+      Height = 19
       Alignment = taRightJustify
-      Anchors = [akRight, akBottom]
-      Caption = 'LabPedidoInicial'
-      Font.Charset = DEFAULT_CHARSET
-      Font.Color = clWindowText
-      Font.Height = -11
-      Font.Name = 'Tahoma'
-      Font.Style = []
-      ParentFont = False
-      ExplicitLeft = 136
+      Caption = 'LabTurno'
     end
   end
   object btConsPedidos: TBitBtn
@@ -530,10 +540,10 @@ object FuPrincipal: TFuPrincipal
     OnClick = btConsPedidosClick
   end
   object btHelpGeral: TBitBtn
-    Left = 393
-    Top = 358
+    Left = 529
+    Top = 368
     Width = 131
-    Height = 25
+    Height = 33
     Anchors = [akRight, akBottom]
     Caption = 'Parametros'
     Glyph.Data = {
@@ -551,13 +561,14 @@ object FuPrincipal: TFuPrincipal
       333333333777733333333333FBFBFB3333333333333333333333}
     NumGlyphs = 2
     TabOrder = 11
+    Visible = False
     OnMouseDown = btHelpGeralMouseDown
   end
   object btHelpArgox: TBitBtn
-    Left = 393
-    Top = 388
+    Left = 529
+    Top = 407
     Width = 131
-    Height = 25
+    Height = 33
     Anchors = [akRight, akBottom]
     Caption = 'Argox'
     Glyph.Data = {
@@ -575,6 +586,7 @@ object FuPrincipal: TFuPrincipal
       333333333777733333333333FBFBFB3333333333333333333333}
     NumGlyphs = 2
     TabOrder = 12
+    Visible = False
     OnMouseDown = btHelpArgoxMouseDown
   end
   object btVerifSefaz: TBitBtn
@@ -587,8 +599,8 @@ object FuPrincipal: TFuPrincipal
     Visible = False
   end
   object btBalcao: TBitBtn
-    Left = 274
-    Top = 95
+    Left = 271
+    Top = 166
     Width = 257
     Height = 52
     Caption = 'Balc'#227'o'
@@ -670,8 +682,8 @@ object FuPrincipal: TFuPrincipal
     OnClick = btBalcaoClick
   end
   object btBuffet: TBitBtn
-    Left = 274
-    Top = 269
+    Left = 271
+    Top = 310
     Width = 257
     Height = 52
     Caption = 'Buffet'
@@ -745,5 +757,25 @@ object FuPrincipal: TFuPrincipal
     TabOrder = 3
     Visible = False
     OnClick = btBuffetClick
+  end
+  object btCtleCaixas: TBitBtn
+    Left = 480
+    Top = 208
+    Width = 180
+    Height = 49
+    Anchors = [akRight, akBottom]
+    Caption = 'Todos caixas'
+    TabOrder = 13
+    OnClick = btCtleCaixasClick
+  end
+  object btCtleTurnos: TBitBtn
+    Left = 480
+    Top = 263
+    Width = 180
+    Height = 49
+    Anchors = [akRight, akBottom]
+    Caption = 'Turnos'
+    TabOrder = 14
+    OnClick = btCtleTurnosClick
   end
 end

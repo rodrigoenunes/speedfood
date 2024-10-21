@@ -9,9 +9,10 @@ uses
   Procedure ImprimePedido(pNroPedido:Integer; pSys:Boolean = True);
   Procedure ImprimePedidoLst(pNroPedido:Integer);
   Function EmiteNFCe(pNroPedido:Integer;pImprimir:Boolean;var pStatus:Boolean): TRetorno;
-  Procedure ImprimeCaixa(pSequencia: Integer);
+  Procedure ImprimeCaixa(pTurno,pCaixa,pCxSeq: Integer);
   Procedure ImprimeResumo(pIni,pFim:String;pVlr:array of Currency; pQtd:array of Integer;
-                                           pVlrDoc:array of Currency; pqtdDoc:array of Integer);
+                                           pVlrDoc:array of Currency; pqtdDoc:array of Integer;
+                                           pIdCaixa:String);
 
 type
   TFuImpressoes = class(TForm)
@@ -131,10 +132,10 @@ type
     RLDbResQtd: TRLDBText;
     RLDbResTotal: TRLDBText;
     RLDbSenha: TRLDBText;
-    Res_Footer: TRLBand;
+    RLRes_Footer: TRLBand;
     RLLabel27: TRLLabel;
-    RLBand2: TRLBand;
-    RLLabel28: TRLLabel;
+    RLCx_Footer: TRLBand;
+    RLLabId_RLCaixa: TRLLabel;
     RLPanel8: TRLPanel;
     RLLabel39: TRLLabel;
     RLLabReais: TRLLabel;
@@ -196,10 +197,15 @@ type
     CDTextoLinha: TStringField;
     RLBandLinha: TRLBand;
     RLLabel11: TRLLabel;
-    RLLabCaixa: TRLLabel;
+    RLLabCxMov: TRLLabel;
     RLLabPedido: TRLLabel;
     RLLabResumo: TRLLabel;
     RLDbLinha: TRLDBText;
+    RLDBText6: TRLDBText;
+    RLLabCaixas: TRLLabel;
+    RLLabel19: TRLLabel;
+    RLRes_Fill: TRLLabel;
+    RLCx_Fill: TRLLabel;
     procedure RLCaixaBeforePrint(Sender: TObject; var PrintIt: Boolean);
     procedure RLPedDetalBeforePrint(Sender: TObject; var PrintIt: Boolean);
     procedure RLPedidoBeforePrint(Sender: TObject; var PrintIt: Boolean);
@@ -217,7 +223,7 @@ type
 
 var
   FuImpressoes: TFuImpressoes;
-  nAltura,tmPagina: Integer;
+  nAltura,tmPagina,nAltLinha: Integer;
   idPrinter: String;
   portaPrt,driverPrt: String;
   indexPrt: Integer;
@@ -310,19 +316,27 @@ begin
 end;
 }
 
-Function MontaTextoImpressao
-: Integer;
+Function MontaTextoImpressao: Integer;
 var xExtra,txtAux: String;
-    i:Integer;
+    i,nPos:Integer;
+const x0DA: char = chr(13); 
 begin
   Result := 0;
   FuImpressoes.RLMemoItem.Lines.Clear;
   FuImpressoes.RLMemoItem.Visible := False;
   if (FuImpressoes.CDDetTipo.AsString <> 'L')                  // Lanche
      and (FuImpressoes.CDDetTipo.AsString <> 'M')              // Lanche montado
+     and (FuImpressoes.CDDetTipo.AsString <> 'C')              // Crepe
+     and (FuImpressoes.CDDetTipo.AsString <> 'F')              // Fritura
+     and (FuImpressoes.CDDetTipo.AsString <> 'S')              // Shake / Gelados
+     and (FuImpressoes.CDDetTipo.AsString <> 'B')              // Buffet
   then Exit;
   //
-  if FuImpressoes.CDDetExtras.AsString = stringFiller('.',24) then Exit;
+  if (FuImpressoes.CDDetTipo.AsString = 'L')                   // Lanche
+     or (FuImpressoes.CDDetTipo.AsString = 'M')                // Lanche montado
+  then if FuImpressoes.CDDetExtras.AsString = stringFiller('.',24) then
+          Exit;
+  //
   xExtra := FuImpressoes.CDDetExtras.AsString;
   if FuImpressoes.CDDetTipo.AsString = 'L' then
   begin
@@ -353,25 +367,42 @@ begin
           txtAux := txtAux + uDM.ItensDescricao.AsString + '; ';
         FuImpressoes.RLMemoItem.Lines.Add(txtAux);
     end;
-  end
-  else begin         // Lanche montado
-    if Pos('+',xExtra) > 0
-    then begin       // Há indicação MAIS
+  end;
+  //
+  if FuImpressoes.CDDetTipo.AsString = 'M' then         // Lanche montado
+  begin
+    if Pos('+',xExtra) > 0 then
+    begin       // Há indicação MAIS
       txtAux := 'COM ';
       for i := 1 to 24 do
-      if xExtra[i] = '+' then
-        if uDM.Itens.FindKey([5,i]) then
-          txtAux := txtAux + uDM.ItensDescricao.AsString + '; ';
+        if xExtra[i] = '+' then
+           if uDM.Itens.FindKey([5,i]) then
+             txtAux := txtAux + uDM.ItensDescricao.AsString + '; ';
       FuImpressoes.RLMemoItem.Lines.Add(txtAux);
     end;
   end;
   //
-  if uDM.PedItensObservacao.AsString <> '' then
-    FuImpressoes.RLMemoItem.Lines.Add(uDM.PedItensObservacao.AsString);
+  if (FuImpressoes.CDDetTipo.AsString = 'C') or           // Crepes
+     (FuImpressoes.CDDetTipo.AsString = 'F') then         // Frituras
+  begin
+    txtAux := Trim(FuImpressoes.CDDetObserv.AsString);
+    nPos := Pos(x0DA,txtAux);
+    while nPos > 0 do
+    begin
+      FuImpressoes.RLMemoItem.Lines.Add(Copy(txtAux,1,nPos-1));
+      txtAux := Copy(txtAux,nPos+1,Length(txtAux)-nPos);
+      nPos := Pos(x0DA,txtAux);
+    end;
+    if txtAux <> '' then
+       FuImpressoes.RLMemoItem.Lines.Add(txtAux);
+  end
+  else if FuImpressoes.CDDetObserv.AsString <> '' then
+         FuImpressoes.RLMemoItem.Lines.Add(FuImpressoes.CDDetObserv.AsString);
+  //
   txtAux := '';
-  if uDM.PedItensPrensado.AsInteger > 0 then
+  if FuImpressoes.CDDetPrensado.AsInteger > 0 then
     txtAux := '     PRENSADO';
-  if uDM.PedItensCortado.AsInteger > 0 then
+  if FuImpressoes.CDDetCortado.AsInteger > 0 then
     txtAux := txtAux + '     CORTADO';
   if txtAux <> '' then
     FuImpressoes.RLMemoItem.Lines.Add(txtAux);
@@ -489,7 +520,7 @@ begin
     CDDet.FieldDefs.Add('Descricao', ftString, 40);
     CDDet.FieldDefs.Add('Unitar', ftString, 12);
     CDDet.FieldDefs.Add('Total', ftString, 12);
-    CDDet.FieldDefs.Add('Extras', ftString, 24);
+    CDDet.FieldDefs.Add('Extras', ftString, 100);
     CDDet.FieldDefs.Add('Observ', ftString, 120);
     CDDet.FieldDefs.Add('Prensado', ftSmallint);
     CDDet.FieldDefs.Add('Cortado', ftSmallint);
@@ -652,22 +683,21 @@ begin
 
   end;
   FuImpressoes.Free;
-
+  
 end;
 
 Procedure ImprimePedido(pNroPedido:Integer; pSys:Boolean = True);
 var i: Integer;
     lSeparador: Boolean;
 begin
-  FuImpressoes := TFuImpressoes.Create(nil);
   if ObtemParametro('PedidoLinhaSep') = 'S' then lSeparador := True
     else lSeparador := False;
   if not uDM.Pedidos.FindKey([pNroPedido])
   then begin
-    FuImpressoes.Free;
     Exit;
   end;
   //
+  FuImpressoes := TFuImpressoes.Create(nil);
   if not CriaArqTmp
   then begin
     MessageDlg('Erro criação ArqTmp',mtError,[mbOk],0);
@@ -676,6 +706,7 @@ begin
   end;
   with FuImpressoes
   do begin
+    // Copia pedido e lancamentos para área de trabalho (CDDdet)
     CDPed.Active := True;
     CDPed.EmptyDataSet;
     CDDet.Active := True;
@@ -688,13 +719,12 @@ begin
     CDPedTotal.AsString := FloatToStrF(uDM.PedidosValor.AsCurrency,ffNumber,15,2);
     CDPedMeioPagto.AsString := uDM.PedidosZC_MPExtenso.AsString;
     CDPed.Post;
-    //
     uDM.PedItens.First;
     while not uDM.PedItens.Eof
     do begin
       CDDet.Append;
-      CDDetNrLcto.AsString := uDM.PedItensZC_PedLcto.AsString;
-      CDDetTipo.AsString := uDM.PedItensZC_Tipo.AsString;             // L B M D
+      CDDetNrLcto.AsString := uDM.PedItensZC_SeqLcto.AsString;
+      CDDetTipo.AsString := uDM.PedItensZC_Tp.AsString;               // Lanche Bebida Montagem Diversos Crepes   ....
       CDDetQuant.AsString := uDM.PedItensQuant.AsString;
       CDDetDescricao.AsString := uDM.PedItensZC_Descricao.AsString;
       CDDetUnitar.AsString := FloatToStrF(uDM.PedItensVlrUnitario.AsCurrency,ffNumber,12,2);
@@ -703,6 +733,11 @@ begin
       CDDetObserv.AsString := uDM.PedItensObservacao.AsString;
       CDDetPrensado.AsInteger := uDM.PedItensPrensado.AsInteger;
       CDDetCortado.AsInteger := uDM.PedItensCortado.AsInteger;
+      if uDM.PedItensZC_Tp.AsString = 'V' then    // Buffet sorvetes
+      begin
+        CDDetDescricao.AsString := uDM.PedItensObservacao.AsString;
+        CDDetObserv.Clear;
+      end;
       CDDet.Post;
       uDM.PedItens.Next;
     end;
@@ -741,18 +776,19 @@ begin
     RLDbTotalItem.Left := 220 - nDesloc;
     RLMemoItem.Width := 261 - nDesloc;
     RLDbTotalPed.Left := 186 - nDesloc;
-    nAltura := RLPedCab.Height + RLPedColCab.Height + RLPedSum.Height + RLPedFoot.Height +
-               (uDM.PedItens.RecordCount * 16);
+    nAltura := RLPedCab.Height + RLPedColCab.Height + RLPedSum.Height + RLPedFoot.Height;
+               // + (uDM.PedItens.RecordCount * 16);
     CDDet.First;
     while not CDDet.Eof do
     begin
-      nAltura := nAltura + MontaTextoImpressao;
+      nAltLinha := 16 + MontaTextoImpressao;     // Altura da linha padrão + comentarios, observações, etc...
+      nAltura := nAltura + nAltLinha;
       if CDDetTipo.AsString = 'M'
          then nAltura := nAltura + 15;
       CDDet.Next;
     end;
     //
-    nAltura := nAltura + 60;
+    nAltura := nAltura + (CDDet.RecordCount * 10);         //  120;     // XXXXXXXXXX
     tmPagina := Trunc(nAltura / 3.7795) + 1;
     if tmPagina < 80 then tmPagina := 80
     else if tmPagina > tmMax then tmPagina := tmMax;
@@ -774,8 +810,10 @@ begin
 
     CDPed.Active := False;
     CDDet.Active := False;
+
+    FuImpressoes.Free;
+
   end;
-  FuImpressoes.Free
 
 end;
 
@@ -798,15 +836,20 @@ begin
 
 end;
 
-Procedure ImprimeCaixa(pSequencia: Integer);
+Procedure ImprimeCaixa(pTurno,pCaixa,pCxSeq:Integer);
 var i: Integer;
 begin
-  if not uDM.RegCaixa.FindKey([pSequencia]) then
+  if not uDM.RegCaixa.FindKey([pTurno,pCaixa,pCxSeq]) then
   begin
-    MessageDlg('Registro de caixa Turno ' + IntToStr(pSequencia) + ' não encontrado',mtError,[mbOk],0);
+    MessageDlg('Registro não encontrado' + #13 +
+               'Turno:' + IntToStr(pTurno) +
+               '   Caixa:' + IntToStr(pCaixa) +
+               '   CxSeq:' + IntToStr(pCxSeq) + #13 +
+               'Impressão cancelada',mtError,[mbOk],0);
     Exit;
   end;
 
+  FuImpressoes := TFuImpressoes.Create(nil);
   idPrinter := uDM.sysCaixaPrt;
   if idPrinter = '' then
      idPrinter := ObtemParametro('CaixaPrinter');
@@ -823,14 +866,13 @@ begin
     else lDialog := False;
   if not DefineImpressora(True,idPrinter,portaPrt,driverPrt,indexPrt) then
     lPreview := True;
-  FuImpressoes := TFuImpressoes.Create(nil);
   //
   uDM.LctCaixa.Refresh;
   with FuImpressoes
   do begin
     nAltura := RLCx_Cabec.Height + RLCx_Cols.Height +
                (uDM.LctCaixa.RecordCount * RLCx_Detal.Height) +
-               RLCx_Sum.Height + 60;
+               RLCx_Sum.Height + RLCx_Footer.Height + 60;
     tmPagina := Trunc(nAltura / 3.7795) + 1;
     if tmPagina < 100 then tmPagina := 100;
     if tmPagina > tmMax then tmPagina := tmMax;
@@ -864,11 +906,11 @@ begin
 end;
 
 Procedure ImprimeResumo(pIni,pFim:String;pVlr:array of Currency; pQtd:array of Integer;
-                                         pVlrDoc:array of Currency; pqtdDoc:array of Integer);
+                                         pVlrDoc:array of Currency; pqtdDoc:array of Integer;
+                                         pIdCaixa:String);
 var i: Integer;
 begin
-  FuImpressoes := TFuImpressoes.Create(nil);
-
+  FuImpressoes := TFuIMpressoes.Create(nil);
   idPrinter := uDM.sysResumoPrt;
   if idPrinter = '' then
      idPrinter := ObtemParametro('ResumoPrinter');
@@ -899,6 +941,7 @@ begin
       RLLabTurnoIni.Caption := 'Turno inicial: ' + pIni;
       RLLabTurnoFim.Caption := 'Turno final: ' + pFim;
     end;
+    RLLabCaixas.Caption := pIdCaixa;
     RLLabReais.Caption := FloatToStrF(pVlr[0],ffNumber,15,2);
     RLLabCDeb.Caption := FloatToStrF(pVlr[1],ffNumber,15,2);
     RLLabCCred.Caption := FloatToStrF(pVlr[2],ffNumber,15,2);
@@ -924,7 +967,7 @@ begin
 
     nAltura := RLRes_Cabec.Height + RLRes_Cols.Height +
                (uDM.ResVendas.RecordCount * RLRes_Detal.Height) +
-               RLRes_Sum.Height + 60;
+               RLRes_Sum.Height + RLRes_Footer.Height + 60;
     tmPagina := Trunc(nAltura / 3.7795) + 1;
     if tmPagina < 100 then tmPagina := 100;
     if tmPagina > tmMax then tmPagina := tmMax;
@@ -953,9 +996,9 @@ begin
     if lPreview then RLResumo.Preview
       else for i := 1 to copias
            do RLResumo.Print;
-    FuImpressoes.Free;
 
   end;
+  FuImpressoes.Free;
 
 end;
 
@@ -968,8 +1011,9 @@ end;
 
 procedure TFuImpressoes.RLCaixaBeforePrint(Sender: TObject; var PrintIt: Boolean);
 begin
-  RLLabEmis.Caption := 'Emissão: ' + DateTimeToStr(Now);
-  RLLabCaixa.Caption := 'Est: ' + uDM.sysCPUId;
+  RLLabEmis.Caption := 'Emissão: ' + DataHoraString(Now,2,4);
+  RLLabCxMov.Caption := 'Cx-' + IntToStr(uDM.sysNrCaixa) + '  Est:' + uDM.sysCPUId;
+  RLLabId_RLCaixa.Caption := 'RLCaixa - SpeedFood ' + ObtemParametro('VersaoSpeedFood','1.1');
 
 end;
 
@@ -1001,13 +1045,13 @@ procedure TFuImpressoes.RLPedidoBeforePrint(Sender: TObject;
 begin
   uDM.Pedidos.Refresh;
   DebugMensagem(uDM.lDebug,'RLPedidoBeforePrint: ' + uDM.PedidosNumero.AsString);
-  RLLabPedido.Caption := 'Est: ' + uDM.sysCPUId;
+  RLLabPedido.Caption := 'Cx-' + IntToStr(uDM.sysNrCaixa) + '  Est:' + uDM.sysCPUId;
 
 end;
 
 procedure TFuImpressoes.RLResumoBeforePrint(Sender: TObject; var PrintIt: Boolean);
 begin
-  RLLabResumo.Caption := 'Est: ' + uDM.sysCPUId;
+  RLLabResumo.Caption := 'Cx-' + IntToStr(uDM.sysNrCaixa) + '  Est:' + uDM.sysCPUId;
 
 end;
 

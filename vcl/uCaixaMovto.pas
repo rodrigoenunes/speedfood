@@ -6,12 +6,11 @@ uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ExtCtrls, Vcl.StdCtrls, Vcl.Buttons,
   Data.DB, Vcl.DBCtrls, Vcl.Grids, Vcl.DBGrids, Vcl.Mask, System.UITypes;
-  Procedure CaixaMovimentacao;    //(pAtual:Boolean=True);
+  Procedure CaixaMovimentacao(pTodasDatas:Boolean=True);
 
 type
   TFuCaixaMovto = class(TForm)
     PanTurnos: TPanel;
-    Label1: TLabel;
     cbTurnos: TComboBox;
     btProsseguir: TBitBtn;
     btSair: TBitBtn;
@@ -95,6 +94,14 @@ type
     GroupBox3: TGroupBox;
     DBEdit18: TDBEdit;
     DBEdit19: TDBEdit;
+    LabIdCaixa: TLabel;
+    cbTurnoCaixa: TCheckBox;
+    PanSaldo: TPanel;
+    Label1: TLabel;
+    Label23: TLabel;
+    edSaldoInicial: TDBEdit;
+    btGravaSaldo: TBitBtn;
+    btCancSaldo: TBitBtn;
     procedure FormShow(Sender: TObject);
     procedure btSairClick(Sender: TObject);
     procedure btProsseguirClick(Sender: TObject);
@@ -119,6 +126,9 @@ type
     procedure cbTurnosEnter(Sender: TObject);
     procedure btImprimirClick(Sender: TObject);
     procedure btSair2Click(Sender: TObject);
+    procedure cbTurnoCaixaClick(Sender: TObject);
+    procedure btGravaSaldoClick(Sender: TObject);
+    procedure btCancSaldoClick(Sender: TObject);
   private
     { Private declarations }
   public
@@ -127,8 +137,9 @@ type
 
 var
   FuCaixaMovto: TFuCaixaMovto;
-  xTurno: String;
+  wTurnos,wSeqs: TStringList;
   lProsseguiu: Boolean;
+  wrkTurno,wrkCxSeq: Integer;
 
 implementation
 
@@ -136,34 +147,54 @@ implementation
 
 uses uDados, uGenericas, uCaixa, uImpressoes;
 
-Procedure CaixaMovimentacao;    //(pAtual:Boolean=True);
+Procedure CaixaMovimentacao(pTodasDatas:Boolean=True);
+// pTodos
+var turnoTxt: String;
 begin
-  //FuCaixaMovto := TFuCaixaMovto.Create(nil);
   lProsseguiu := False;
+  wTurnos := TStringList.Create;
+  wSeqs := TStringList.Create;
   with FuCaixaMovto
   do begin
+    LabIdCaixa.Caption := 'Caixa: ' + IntToStr(uDM.sysNrCaixa)  +  ' /Seq: ' + IntToStr(uDM.sysCaixaSeq) +
+                          '  [' + uDM.sysCPUId + '-' + IntToStr(uDM.sysNumId) + ']' +
+                          stringFiller(' ',15) + 'Turno atual: ' + IntToStr(uDM.turnoCorrente);
     cbTurnos.Clear;
     uDM.RegCaixa.Last;
     while not uDM.RegCaixa.Bof do
     begin
-      xTurno := uDM.RegCaixaTurno.AsString + '  ' + uDM.RegCaixaDtHrInicio.AsString + ' - ';
+      turnoTxt := 'T:' + stringCompleta(uDM.RegCaixaTurno.AsString,'E',' ',5) +
+                  ' Seq:' + stringCompleta(uDM.RegCaixaCaixaSeq.AsString,'E',' ',3) + ' [ ' +
+                  DataHoraString(uDM.RegCaixaDtHrInicio.AsDateTime,2,4) + ' ] [ ';
       if uDM.RegCaixaSituacao.AsString <> 'F' then
-        xTurno := xTurno + '... aberto ...'
+        turnoTxt := turnoTxt + '... aberto ... ]'
       else
-        xTurno := xTurno + uDM.RegCaixaDtHrFim.AsString;
-      cbTurnos.AddItem(xTurno,nil);
+        turnoTxt := turnoTxt + DataHoraString(uDM.RegCaixaDtHrFim.AsDateTime,2,4) + ' ]';
+      cbTurnos.AddItem(turnoTxt,nil);
+      wTurnos.Add(uDM.RegCaixaTurno.AsString);
+      wSeqs.Add(uDM.RegCaixaCaixaSeq.AsString);
+      if not pTodasDatas then
+         uDM.RegCaixa.First;
       uDM.RegCaixa.Prior;
     end;
     cbTurnos.ItemIndex := 0;
-  {
-    if pAtual then
-      cbTurnos.Enabled := False             // Somente movto do dia
-    else
-      cbTurnos.Enabled := True;             // Todas as datas disponiveis
-  }
+    //cbTurnos.Enabled := pTodasDatas;     // Se TODOS=True Todas as datas,  senão Somente o último
     ShowModal;
   end;
-  //FuCaixaMovto.Free;
+  wTurnos.Free;
+  wSeqs.Free;
+
+end;
+
+
+Procedure PreparaTelaLanctos(pOcultaExibe:Boolean);
+begin
+  with FuCaixaMovto
+  do begin
+    PanTurnos.Enabled := pOcultaExibe;
+    PanRodape.Enabled := pOcultaExibe;
+    GridLctos.Enabled := pOcultaExibe;
+  end;
 
 end;
 
@@ -171,16 +202,14 @@ end;
 procedure TFuCaixaMovto.btRecalcularClick(Sender: TObject);
 begin
   GridLctos.Visible := False;
-  CalculaSaldoCaixa(uDM.RegCaixaTurno.AsInteger);
+  CalculaSaldoCaixa(wrkTurno, uDM.sysNrCaixa, wrkCxSeq, False);
   GridLctos.Visible := True;
 
 end;
 
 procedure TFuCaixaMovto.btResumoClick(Sender: TObject);
 begin
-  GridLctos.Visible := False;
-  CalculaSaldoCaixa(uDM.RegCaixaTurno.AsInteger);
-  GridLctos.Visible := True;
+  btRecalcularClick(nil);
   PanTurnos.Enabled := False;
   PanRodape.Enabled := False;
   PanResumo.Top     := 40;
@@ -193,50 +222,73 @@ end;
 procedure TFuCaixaMovto.btAlterarClick(Sender: TObject);
 begin
   if uDM.LctCaixa.RecordCount = 0 then Exit;
-  if uDM.LctCaixaOperacao.AsInteger = 0 then
+  if ((uDM.LctCaixaTipo.AsString = 'A') or  (uDM.LctCaixaOperacao.AsInteger = 0))
+     and (not uDM.sysAltLctos) then
   begin
-    MessageDlg('Para alterar o saldo inicial utilize a "Abertura do caixa"',mtWarning,[mbOk],0);
+    MessageDlg('Lançamento automático ou informação de saldo inicial' + #13 +
+               'Alteração não permitida [CaixaAltLctos]',mtError,[mbOk],0);
     Exit;
   end;
-  if uDM.LctCaixaTipo.AsString <> 'M' then
-  begin
-    MessageDlg('Lançamento automático, alteração não permitida',mtError,[mbOk],0);
-    Exit;
-  end;
+  //
   Try
     uDM.LctCaixa.Edit;
   Except
     MessageDlg('Registro em uso, tente mais tarde',mtWarning,[mbOk],0);
     Exit;
   End;
-  PanTurnos.Enabled    := False;
-  PanRodape.Enabled    := False;
-  PanManutLcto.Top     := 40;
-  PanManutLcto.Left    := 80;
-  PanManutLcto.Width   := 560;
-  PanManutLcto.Visible := True;
-  dbMeio.Visible       := False;
-  gbDetal.Visible      := False;
-  if uDM.LctCaixaOperacao.AsInteger = 1 then
-  begin
-    dbMeio.Visible := True;
-    if uDM.LctCaixaMeioPgt.AsInteger = 5 then
-      gbDetal.Visible := True;
-   end;
-  btManutCan.SetFocus;
+  //
+  PreparaTelaLanctos(False);
+  if uDM.LctCaixaOperacao.AsInteger = 0 then
+  begin                          // Alteração de saldo incial
+    PanSaldo.Top := 40;
+    PanSaldo.Left := 80;
+    PanSaldo.Visible := True;
+    btCancSaldo.SetFocus;
+  end
+  else begin                     // Alteração de lançamento
+    LabOperacao.Caption := 'Alteração';
+    PanManutLcto.Top := 40;
+    PanManutLcto.Left := 80;
+    PanManutLcto.Width := 560;
+    dbOperacao.Enabled := False;
+    if uDM.LctCaixaOperacao.AsInteger = 1 then
+      dbMeio.Visible := True
+    else
+      dbMeio.Visible := False;
+    gbDetal.Visible := dbMeio.Visible;
+    PanManutLcto.Visible := True;
+    btManutCan.SetFocus;
+  end;
+
+end;
+
+procedure TFuCaixaMovto.btCancSaldoClick(Sender: TObject);
+begin
+  uDM.LctCaixa.Cancel;
+  PanSaldo.Visible := False;
+  PreparaTelaLanctos(True);
 
 end;
 
 procedure TFuCaixaMovto.btExcluirClick(Sender: TObject);
 begin
   if uDM.LctCaixa.RecordCount = 0 then Exit;
-  if uDM.LctCaixaTipo.AsString <> 'M' then
+  if uDM.LctCaixaOperacao.AsInteger = 0 then
   begin
-    MessageDlg('Lançamento automático, exclusão não permitida',mtError,[mbOk],0);
+    MessageDlg('"Saldo inicial não pode ser excluído',mtWarning,[mbOk],0);
     Exit;
+  end;
+  if uDM.LctCaixaTipo.AsString = 'A' then
+  begin
+    if not uDM.sysAltLctos then     // NÃO tem permissão para alterar/excluir lançamento automaticos
+    begin
+      MessageDlg('Lançamento automático, exclusão não permitida',mtError,[mbOk],0);
+      Exit;
+    end;
   end;
   if MessageDlg('Excluir lançamento ?',mtConfirmation,[mbYes,mbNo],0,mbNo,['Sim','Não']) <> mrYes then Exit;
   uDM.LctCaixa.Delete;
+  uDM.LctCaixa.Refresh;
 
 end;
 
@@ -248,10 +300,20 @@ begin
 
 end;
 
+procedure TFuCaixaMovto.btGravaSaldoClick(Sender: TObject);
+begin
+  uDM.LctCaixaSaldo.AsCurrency := uDM.LctCaixaValor.AsCurrency;
+  uDM.LctCaixa.Post;
+  PanSaldo.Visible := False;
+  PreparaTelaLanctos(True);
+  btRecalcularClick(nil);
+
+end;
+
 procedure TFuCaixaMovto.btImprimirClick(Sender: TObject);
 begin
-  CalculaSaldoCaixa(uDM.RegCaixaTurno.AsInteger);
-  ImprimeCaixa(uDM.RegCaixaTurno.AsInteger);
+  btRecalcularClick(nil);
+  ImprimeCaixa(wrkTurno, uDM.sysNrCaixa, wrkCxSeq);
 
 end;
 
@@ -259,18 +321,19 @@ procedure TFuCaixaMovto.btIncluirClick(Sender: TObject);
 var nSeq: Integer;
 begin
   uDM.LctCaixa.Last;
-  nSeq := uDM.LctCaixaSequencia.AsInteger + 1;
+  nSeq := uDM.LctCaixaLctoSeq.AsInteger + 1;
   uDM.LctCaixa.Append;
-  uDM.LctCaixaTurno.AsInteger := uDM.RegCaixaTurno.AsInteger;
-  uDM.LctCaixaSequencia.AsInteger := nSeq;
+  uDM.LctCaixaNrCaixa.AsInteger := uDM.sysNrCaixa;
+  uDM.LctCaixaCaixaSeq.AsInteger := wrkCxSeq;
+  uDM.LctCaixaLctoSeq.AsInteger := nSeq;
   uDM.LctCaixaOperacao.AsInteger := -1;
-  uDM.LctCaixaTipo.AsString := 'M';
-
-  PanTurnos.Enabled    := False;
-  PanRodape.Enabled    := False;
-  PanManutLcto.Top     := 40;
-  PanManutLcto.Left    := 80;
-  PanManutLcto.Width   := 560;
+  uDM.LctCaixaTipo.AsString := 'M';          // Manual
+  PreparaTelaLanctos(False);
+  LabOperacao.Caption := 'Inclusão';
+  PanManutLcto.Top := 40;
+  PanManutLcto.Left := 80;
+  PanManutLcto.Width := 560;
+  dbOperacao.Enabled := True;
   PanManutLcto.Visible := True;
   dbOperacao.SetFocus;
 
@@ -280,57 +343,58 @@ procedure TFuCaixaMovto.btManutCanClick(Sender: TObject);
 begin
   uDM.LctCaixa.Cancel;
   PanManutLcto.Visible := False;
-  PanTurnos.Enabled    := True;
-  PanRodape.Enabled    := True;
+  PreparaTelaLanctos(True);
 
 end;
 
 procedure TFuCaixaMovto.btManutOkClick(Sender: TObject);
 begin
-  if uDM.LctCaixaValor.AsCurrency <> uDM.LctCaixaZC_SomaMP.AsCurrency
-  then begin
-    MessageDlg('SOma dos meios de pagamento difere do valor total',mtError,[mbOk],0);
+  if uDM.LctCaixaValor.AsCurrency <> uDM.LctCaixaZC_SomaMP.AsCurrency then
+  begin
+    MessageDlg('Soma dos meios de pagamento difere do valor total',mtError,[mbOk],0);
     edReais.SetFocus;
     Exit;
   end;
   uDM.LctCaixa.Post;
   PanManutLcto.Visible := False;
-  PanTurnos.Enabled    := True;
-  PanRodape.Enabled    := True;
+  PreparaTelaLanctos(True);
+  btRecalcularClick(nil);
 
 end;
 
 procedure TFuCaixaMovto.btProsseguirClick(Sender: TObject);
-var i,nTurno: Integer;
-    lMovto: Boolean;
+var i: Integer;
+    xIdTurno: String;
 begin
-  i := Pos(' ',cbTurnos.Text) - 1;
-  nTurno := StrToIntDef(Copy(cbTurnos.Text,1,i),0);
-  if nTurno = 0 then
+  i := cbTurnos.ItemIndex;
+  wrkTurno := StrToIntDef(wTurnos[i],0);
+  wrkCxSeq := StrToIntDef(wSeqs[i],0);
+  xIdTurno := ' [T:' + wTurnos[i] + ' Cx:' + IntToStr(uDM.sysNrCaixa) + ' Sq:' + wSeqs[i] + ']';
+  if (wrkTurno = 0) or (wrkCxSeq = 0) then
   begin
-    MessageDlg('Turno inválido [' + Copy(cbTurnos.Text,1,i) + ']',mtError,[mbOk],0);
+    MessageDlg('Turno/Caixa/CxSeq inválido' + xIdTurno,mtError,[mbOk],0);
     btSair.SetFocus;
     Exit;
   end;
-  if not uDM.RegCaixa.FindKey([nTurno])
+  if not uDM.RegCaixa.FindKey([wrkTurno,uDM.sysNrCaixa,wrkCxSeq])
   then begin
-    MessageDlg('Turno inexistente [' + Copy(cbTurnos.Text,1,i) + ']',mtError,[mbOk],0);
+    MessageDlg('Turno/Caixa/Seq não encontrado' + xIdTurno,mtError,[mbOk],0);
     btSair.SetFocus;
     Exit;
   end;
   //
-  lMovto := True;
+  btIncluir.Enabled := True;
   if cbTurnos.ItemIndex <> 0 then
-    lMovto := False;
-  btIncluir.Enabled := lMovto;
-  btAlterar.Enabled := lMovto;
-  btExcluir.Enabled := lMovto;
+    btIncluir.Enabled := False;
+  btAlterar.Enabled := btIncluir.Enabled;
+  btExcluir.Enabled := btIncluir.Enabled;
 
   uDM.LctCaixa.Refresh;
   uDM.LctCaixa.Last;
   LabNRegs.Caption := IntToStr(uDM.LctCaixa.RecordCount) + ' lanctos';
   PanLanctos.Visible := True;
   FormResize(nil);
+  btRecalcularClick(nil);
   lProsseguiu := True;
 
 end;
@@ -347,9 +411,22 @@ begin
 
 end;
 
+procedure TFuCaixaMovto.cbTurnoCaixaClick(Sender: TObject);
+begin
+  FuCaixaMovto.FormResize(nil);
+
+end;
+
 procedure TFuCaixaMovto.cbTurnosChange(Sender: TObject);
 begin
+  if cbTurnos.ItemIndex = 0 then
+    btIncluir.Enabled := True       // Permite lançamentos no caixa corrente
+  else
+    btIncluir.Enabled := False;
+  btAlterar.Enabled := btIncluir.Enabled;
+  btExcluir.Enabled := btIncluir.Enabled;
   btProsseguir.SetFocus;
+
 
 end;
 
@@ -385,14 +462,23 @@ begin
   case dbOperacao.ItemIndex of
     0:begin
       dbMeio.Enabled := True;
-      if uDM.LctCaixaHistorico.AsString = '' then
+      gbDetal.Enabled := True;
+      if (uDM.LctCaixaHistorico.AsString = '') or
+         (uDM.LctCaixaHistorico.AsString = 'Suprimento') or
+         (uDM.LctCaixaHistorico.AsString = 'Pagar') or
+         (uDM.LctCaixaHistorico.AsString = 'Sangria')
+       then
          uDM.LctCaixaHistorico.AsString := 'Receber ';
     end;
     1:begin
       uDM.LctCaixaHistorico.AsString := 'Suprimento';
     end;
     2:begin
-      if uDM.LctCaixaHistorico.AsString = '' then
+      if (uDM.LctCaixaHistorico.AsString = '') or
+         (uDM.LctCaixaHistorico.AsString = 'Suprimento') or
+         (uDM.LctCaixaHistorico.AsString = 'Receber') or
+         (uDM.LctCaixaHistorico.AsString = 'Sangria')
+      then
          uDM.LctCaixaHistorico.AsString := 'Pagar ';
     end;
     3:begin
@@ -404,7 +490,7 @@ end;
 
 procedure TFuCaixaMovto.edValorExit(Sender: TObject);
 begin
-  if uDM.LctCaixaOperacao.AsInteger <> 0 then
+  if uDM.LctCaixaOperacao.AsInteger <> 1 then
   begin
     uDM.LctCaixaPgtReais.AsCurrency := uDM.LctCaixaValor.AsCurrency;
     uDM.LctCaixaPgtCDeb.Clear;
@@ -421,7 +507,7 @@ begin
   if lProsseguiu then
   begin
     GridLctos.Visible := False;
-    CalculaSaldoCaixa(uDM.RegCaixaTurno.AsInteger);
+    //CalculaSaldoCaixa(uDM.RegCaixaTurno.AsInteger);
     GridLctos.Visible := True;
   end;
 
@@ -429,7 +515,26 @@ end;
 
 procedure TFuCaixaMovto.FormResize(Sender: TObject);
 begin
-  GridLctos := DefineGrid(GridLctos,[0.03, 0.05, 0.07, 0.05, 0.08, 0.33, 0.07, 0.07, 0.07, 0.07, 0.07, 0.05, 0.10], 5, 0);
+  if FuCaixaMovto.Width < 995 then FuCaixaMovto.Width := 995;
+  if FuCaixaMovto.Height < 550 then FuCaixaMovto.Width := 550;
+  cbTurnos.Width := Trunc(FuCaixaMovto.Width * 0.60);
+  if cbTurnos.Width < 530 then cbTurnos.Width := 530
+  else if cbTurnos.Width > 800 then cbTurnos.Width := 800;
+  sbAnterior.Left := cbTurnos.Left + cbTurnos.Width + 6;
+  sbAtual.Left := sbAnterior.Left + sbAnterior.Width + 5;
+  sbProximo.Left := sbAtual.Left + sbAtual.Width + 5;
+  if cbTurnoCaixa.Checked then
+  begin
+    GridLctos.Columns[0].Visible := True;
+    GridLctos.Columns[1].Visible := True;
+    GridLctos := DefineGrid(GridLctos,[0.03, 0.04, 0.04, 0.05, 0.07, 0.05, 0.08, 0.33, 0.07, 0.07, 0.07, 0.07, 0.07, 0.05, 0.10], 7, 0);
+  end
+  else begin
+    GridLctos.Columns[0].Visible := False;
+    GridLctos.Columns[1].Visible := False;
+    GridLctos := DefineGrid(GridLctos,[0.00, 0.04, 0.04, 0.05, 0.07, 0.05, 0.08, 0.33, 0.07, 0.07, 0.07, 0.07, 0.07, 0.05, 0.10], 7, 0);
+  end;
+  //GridLctos := DefineGrid(GridLctos,[0.03, 0.05, 0.03, 0.05, 0.07, 0.05, 0.08, 0.33, 0.07, 0.07, 0.07, 0.07, 0.07, 0.05, 0.10], 7, 0);
 
 end;
 
@@ -437,7 +542,7 @@ procedure TFuCaixaMovto.FormShow(Sender: TObject);
 begin
   FuCaixaMovto.Align := alClient;
   FormResize(nil);
-  btProsseguir.SetFocus;
+  cbTurnosChange(nil);
 
 end;
 

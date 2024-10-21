@@ -2,7 +2,7 @@ object FSFEuPrintFortes: TFSFEuPrintFortes
   Left = 0
   Top = 0
   Caption = 'FSFEuPrintFortes'
-  ClientHeight = 451
+  ClientHeight = 567
   ClientWidth = 857
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -12,7 +12,7 @@ object FSFEuPrintFortes: TFSFEuPrintFortes
   Font.Style = []
   TextHeight = 13
   object RLEtiqLanche: TRLReport
-    Left = 8
+    Left = 12
     Top = 8
     Width = 397
     Height = 272
@@ -636,6 +636,228 @@ object FSFEuPrintFortes: TFSFEuPrintFortes
         Width = 76
         Height = 18
         Caption = 'Descri'#231#227'o'
+      end
+    end
+  end
+  object RLEtiq_CFS: TRLReport
+    Left = 12
+    Top = 286
+    Width = 397
+    Height = 272
+    Margins.LeftMargin = 6.000000000000000000
+    Margins.TopMargin = 4.000000000000000000
+    Margins.RightMargin = 2.000000000000000000
+    Margins.BottomMargin = 3.000000000000000000
+    DataSource = uDM.DSPedItens
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clBlack
+    Font.Height = -27
+    Font.Name = 'Arial'
+    Font.Style = []
+    PageSetup.PaperSize = fpCustom
+    PageSetup.PaperWidth = 105.000000000000000000
+    PageSetup.PaperHeight = 72.000000000000000000
+    PrintEmpty = False
+    RecordRange = rrCurrentOnly
+    object RLBand2: TRLBand
+      Left = 23
+      Top = 47
+      Width = 366
+      Height = 195
+      AutoExpand = False
+      Borders.Sides = sdCustom
+      Borders.DrawLeft = False
+      Borders.DrawTop = False
+      Borders.DrawRight = False
+      Borders.DrawBottom = True
+      object RLDraw3: TRLDraw
+        Left = 12
+        Top = 5
+        Width = 342
+        Height = 46
+      end
+      object RLDBText4: TRLDBText
+        Left = 16
+        Top = 12
+        Width = 332
+        Height = 32
+        Alignment = taCenter
+        AutoSize = False
+        DataField = 'ZC_Descricao'
+        DataSource = uDM.DSPedItens
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clBlack
+        Font.Height = -27
+        Font.Name = 'Arial'
+        Font.Style = [fsBold]
+        ParentFont = False
+        Text = ''
+      end
+      object RLDraw4: TRLDraw
+        Left = 12
+        Top = 57
+        Width = 342
+        Height = 130
+      end
+      object RLDBMemo2: TRLDBMemo
+        Left = 16
+        Top = 65
+        Width = 332
+        Height = 111
+        Alignment = taCenter
+        AutoSize = False
+        Behavior = [beSiteExpander]
+        DataField = 'Observacao'
+        DataSource = uDM.DSPedItens
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clBlack
+        Font.Height = -21
+        Font.Name = 'Arial'
+        Font.Style = []
+        ParentFont = False
+      end
+    end
+    object RLBand3: TRLBand
+      Left = 23
+      Top = 15
+      Width = 366
+      Height = 32
+      BandType = btHeader
+      Borders.Sides = sdCustom
+      Borders.DrawLeft = False
+      Borders.DrawTop = False
+      Borders.DrawRight = False
+      Borders.DrawBottom = True
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clBlack
+      Font.Height = -16
+      Font.Name = 'Arial'
+      Font.Style = []
+      ParentFont = False
+      object RLDBText6: TRLDBText
+        Left = 298
+        Top = 17
+        Width = 68
+        Height = 14
+        Align = faRightBottom
+        Alignment = taRightJustify
+        DataField = 'ZC_DataHora'
+        DataSource = uDM.DSPedidos
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clBlack
+        Font.Height = -11
+        Font.Name = 'Arial'
+        Font.Style = []
+        ParentFont = False
+        Text = ''
+      end
+      object RLDBText7: TRLDBText
+        Left = 326
+        Top = 0
+        Width = 40
+        Height = 16
+        Align = faRightTop
+        Alignment = taRightJustify
+        DataField = 'nome'
+        DataSource = uDM.DSSisPessoa
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clBlack
+        Font.Height = -13
+        Font.Name = 'Arial'
+        Font.Style = [fsBold]
+        ParentFont = False
+        Text = ''
+      end
+      object RLLabel8: TRLLabel
+        Left = 0
+        Top = 4
+        Width = 60
+        Height = 12
+        Caption = 'Pedido/Senha'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clBlack
+        Font.Height = -9
+        Font.Name = 'Arial'
+        Font.Style = []
+        ParentFont = False
+        Transparent = False
+      end
+      object RLDBText19: TRLDBText
+        Left = 0
+        Top = 15
+        Width = 86
+        Height = 16
+        Align = faLeftBottom
+        DataField = 'ZC_SenhaLst'
+        DataSource = uDM.DSPedItens
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clBlack
+        Font.Height = -13
+        Font.Name = 'Arial'
+        Font.Style = [fsBold]
+        ParentFont = False
+        Text = ''
+      end
+      object RLDBText22: TRLDBText
+        Left = 92
+        Top = 12
+        Width = 200
+        Height = 18
+        Alignment = taCenter
+        AutoSize = False
+        DataField = 'ZC_TpEtiq'
+        DataSource = uDM.DSPedItens
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clBlack
+        Font.Height = -16
+        Font.Name = 'Arial'
+        Font.Style = [fsBold]
+        ParentFont = False
+        Text = ''
+      end
+    end
+    object RLBand4: TRLBand
+      Left = 23
+      Top = 242
+      Width = 366
+      Height = 18
+      BandType = btFooter
+      Borders.Sides = sdCustom
+      Borders.DrawLeft = False
+      Borders.DrawTop = False
+      Borders.DrawRight = False
+      Borders.DrawBottom = False
+      object RLDBText20: TRLDBText
+        Left = 3
+        Top = 1
+        Width = 95
+        Height = 14
+        Anchors = [fkBottom]
+        DataField = 'NomeCliente'
+        DataSource = uDM.DSPedidos
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clBlack
+        Font.Height = -11
+        Font.Name = 'Arial'
+        Font.Style = []
+        ParentFont = False
+        Text = 'Nome: '
+      end
+      object RLDBText21: TRLDBText
+        Left = 270
+        Top = 3
+        Width = 93
+        Height = 14
+        Alignment = taRightJustify
+        DataField = 'ZC_NroLst'
+        DataSource = uDM.DSPedidos
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clBlack
+        Font.Height = -11
+        Font.Name = 'Arial'
+        Font.Style = []
+        ParentFont = False
+        Text = 'Pedido: '
       end
     end
   end

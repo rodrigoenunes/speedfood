@@ -6,6 +6,9 @@ uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, RLReport, RLPrinters, RLRichText;
   procedure SetRecordRangeLanche(pModo:Integer);
+  //procedure SetRecordRangeCrepe(pModo:Integer);
+  //procedure SetRecordRangeFritura(pModo:Integer);
+  procedure SetRecordRange_CFS(pModo:Integer);     // Crepe Fritura Shake
   procedure DefinePrinterEtiqueta;
   procedure EmiteEtiquetas(pmtPedido:Integer; pmtItem:Integer; pmtNaoImpressa:Boolean);
 
@@ -55,6 +58,21 @@ type
     RLSem: TRLMemo;
     RLMenos: TRLMemo;
     RLMais: TRLMemo;
+    RLEtiq_CFS: TRLReport;
+    RLBand2: TRLBand;
+    RLDraw3: TRLDraw;
+    RLDBText4: TRLDBText;
+    RLDraw4: TRLDraw;
+    RLDBMemo2: TRLDBMemo;
+    RLBand3: TRLBand;
+    RLDBText6: TRLDBText;
+    RLDBText7: TRLDBText;
+    RLLabel8: TRLLabel;
+    RLDBText19: TRLDBText;
+    RLBand4: TRLBand;
+    RLDBText20: TRLDBText;
+    RLDBText21: TRLDBText;
+    RLDBText22: TRLDBText;
     procedure RLEtiqBebidaBeforePrint(Sender: TObject; var PrintIt: Boolean);
     procedure RLDetLancheBeforePrint(Sender: TObject; var PrintIt: Boolean);
   private
@@ -86,11 +104,24 @@ begin
 
 end;
 
+
+procedure SetRecordRange_CFS(pModo:Integer);     // Crepe Fritura Shake/Gelados
+begin
+  if pModo = 1 then
+    FSFEuPrintFortes.RLEtiq_CFS.RecordRange := rrAllRecords
+  else
+    FSFEuPrintFortes.RLEtiq_CFS.RecordRange := rrCurrentOnly;
+
+end;
+
 procedure DefinePrinterEtiqueta;
 begin
   with FSFEuPrintFortes
   do begin
-    idPrinter := ObtemParametro('EtiquetaPrinter');
+    idPrinter := uDM.sysEtiquetasPrt;
+    if idPrinter = '' then
+       idPrinter := ObtemParametro('EtiquetaPrinter');
+    //
     if ObtemParametro('EtiquetaPreview') = 'S' then
       lPreview := True
     else
@@ -128,6 +159,13 @@ begin
     RLEtiqBebida.Margins.RightMargin := etqDir;
     RLEtiqBebida.Margins.TopMargin := etqTop;
     RLEtiqBebida.Margins.BottomMargin := etqBot;
+    //
+    RLEtiq_CFS.PrintDialog := lDialog;
+    RLEtiq_CFS.PageSetup.PaperHeight := etqAlt;
+    RLEtiq_CFS.Margins.LeftMargin := etqEsq;
+    RLEtiq_CFS.Margins.RightMargin := etqDir;
+    RLEtiq_CFS.Margins.TopMargin := etqTop;
+    RLEtiq_CFS.Margins.BottomMargin := etqBot;
 
   end;
 end;
@@ -136,6 +174,9 @@ end;
 Procedure EmiteEtiquetas(pmtPedido:Integer; pmtItem:Integer; pmtNaoImpressa:Boolean);
 var filAnt: Boolean;
     filTxtAnt: String;
+    i: Integer;
+const
+    tpProds: array[1..4] of String = ('11','21','31','32');
 begin
   if not uDM.Pedidos.FindKey([pmtPedido]) then
   begin
@@ -150,12 +191,15 @@ begin
     if uDM.PedItens.FindKey([pmtPedido,pmtItem])
     then begin
       SetRecordRangeLanche(0);      // rrCurrentOnly;
+      //SetRecordRangeCrepe(0);      // rrCurrentOnly;
+      //SetRecordRangeFritura(0);      // rrCurrentOnly;
+      SetRecordRange_CFS(0);
       case uDM.PedItensTpProd.AsInteger of
-        1,4:if lPreview then
-               FSFEuPrintFortes.RLEtiqLanche.Preview
-            else
-               FSFEuPrintFortes.RLEtiqLanche.Print;
-          3:begin
+          1,4:if lPreview then
+                 FSFEuPrintFortes.RLEtiqLanche.Preview
+              else
+                 FSFEuPrintFortes.RLEtiqLanche.Print;
+          3:begin                // Todas as bebidas em uma unica etiqueta
               filAnt := uDM.PedItens.Filtered;
               filTxtAnt := uDM.PedItens.Filter;
               uDM.PedItens.Filtered := True;
@@ -176,7 +220,12 @@ begin
               uDM.PedItens.Filtered := filAnt;
               uDM.PedItens.Filter := filTxtAnt;
               uDM.PedItens.Refresh;
-          end;
+            end;
+          11,21,31:if lPreview then
+                     FSFEuPrintFortes.RLEtiq_CFS.Preview
+                   else
+                     FSFEuPrintFortes.RLEtiq_CFS.Print;
+
       end;
     end
     else MessageDlg('Item não encontrado' + #13 +
@@ -187,6 +236,7 @@ begin
     filAnt := uDM.PedItens.Filtered;
     filTxtAnt := uDM.PedItens.Filter;
     uDM.PedItens.Filtered := True;
+    // Lanches
     uDM.PedItens.Filter := 'TpProd=1 or TpProd=4';
     if pmtNaoImpressa then
        uDM.PedItens.Filter := '(TpProd=1 or TpProd=4) and EtqImpressa=0';
@@ -200,6 +250,7 @@ begin
       else
         FSFEuPrintFortes.RLEtiqLanche.Print;
     end;
+    //   Bebidas
     SetRecordRangeLanche(0);      // rrCurrentOnly;
     uDM.PedItens.Filter := 'TpProd=3';
     if pmtNaoImpressa then
@@ -213,6 +264,25 @@ begin
       else
         FSFEuPrintFortes.RLEtiqBebida.Print;
     end;
+    // Crepes(11), Frituras(21), Gelados(31)
+    for i := 1 to 4 do     // Array "tpProds"  (11,21,31,32)
+    begin
+      uDM.PedItens.Filter := 'TpProd=' + tpProds[i];
+      if pmtNaoImpressa then
+         uDM.PedItens.Filter := 'TpProd=' + tpProds[i] + ' and EtqImpressa=0';
+      uDM.PedItens.Refresh;
+      if uDM.PedItens.RecordCount > 0 then
+      begin
+        uDM.PedItens.First;
+        SetRecordRange_CFS(1);      // rrAllRecords;
+        if lPreview then
+          FSFEuPrintFortes.RLEtiq_CFS.Preview
+        else
+          FSFEuPrintFortes.RLEtiq_CFS.Print;
+      end;
+    end;
+
+    // Restaura filtros
     uDM.PedItens.Filtered := filAnt;
     uDM.PedItens.Filter := filTxtAnt;
     uDM.PedItens.Refresh;
@@ -220,7 +290,6 @@ begin
   FSFEuPrintFortes.Free;
 
 end;
-
 
 
 
