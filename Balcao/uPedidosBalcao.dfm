@@ -220,6 +220,7 @@ object FuPedidosBalcao: TFuPedidosBalcao
           NumGlyphs = 2
           ParentFont = False
           TabOrder = 1
+          Visible = False
           OnClick = btEditarClick
         end
         object btExcluir: TBitBtn
@@ -1303,7 +1304,8 @@ object FuPedidosBalcao: TFuPedidosBalcao
             ParentBackground = False
             ParentFont = False
             TabOrder = 1
-            ExplicitLeft = 4
+            OnEnter = PanDiversosEnter
+            ExplicitLeft = -1
             object Label6: TLabel
               Left = 160
               Top = 32
@@ -1312,7 +1314,7 @@ object FuPedidosBalcao: TFuPedidosBalcao
               Caption = 'C'#243'digo barras'
             end
             object Label7: TLabel
-              Left = 169
+              Left = 160
               Top = 89
               Width = 97
               Height = 23
@@ -1361,7 +1363,7 @@ object FuPedidosBalcao: TFuPedidosBalcao
               Caption = 'Valor'
             end
             object Label11: TLabel
-              Left = 289
+              Left = 280
               Top = 88
               Width = 80
               Height = 23
@@ -1384,8 +1386,6 @@ object FuPedidosBalcao: TFuPedidosBalcao
               ParentBackground = False
               ParentFont = False
               TabOrder = 8
-              ExplicitLeft = 2
-              ExplicitTop = 9
             end
             object btAcrescDiversos: TBitBtn
               Left = 12
@@ -1557,47 +1557,58 @@ object FuPedidosBalcao: TFuPedidosBalcao
             end
             object edCodBarras: TDBEdit
               Left = 160
-              Top = 52
+              Top = 53
               Width = 201
               Height = 31
               DataField = 'CodBarras'
               DataSource = uDM.SCDDiversos
               Enabled = False
               TabOrder = 1
+              OnEnter = edCodBarrasEnter
+              OnExit = edCodBarrasExit
+              OnKeyDown = edCodBarrasKeyDown
             end
             object edGrupo: TDBEdit
-              Left = 169
-              Top = 109
+              Left = 160
+              Top = 110
               Width = 41
               Height = 31
               DataField = 'CodGrupo'
               DataSource = uDM.SCDDiversos
               Enabled = False
               TabOrder = 4
+              OnEnter = edGrupoEnter
+              OnExit = edGrupoExit
+              OnKeyDown = edGrupoKeyDown
             end
             object edItem: TDBEdit
-              Left = 216
-              Top = 109
+              Left = 207
+              Top = 110
               Width = 53
               Height = 31
               DataField = 'CodItem'
               DataSource = uDM.SCDDiversos
               Enabled = False
               TabOrder = 5
+              OnEnter = edItemEnter
+              OnKeyDown = edItemKeyDown
             end
             object edQuant: TDBEdit
               Left = 375
-              Top = 51
+              Top = 53
               Width = 58
               Height = 31
               DataField = 'Quant'
               DataSource = uDM.SCDDiversos
               Enabled = False
               TabOrder = 2
+              OnEnter = edQuantEnter
+              OnExit = edQuantExit
+              OnKeyDown = edQuantKeyDown
             end
             object edVlrDiversos: TDBEdit
               Left = 579
-              Top = 52
+              Top = 53
               Width = 121
               Height = 31
               DataField = 'VlrTotal'
@@ -1606,14 +1617,16 @@ object FuPedidosBalcao: TFuPedidosBalcao
               TabOrder = 3
             end
             object edDescr: TDBEdit
-              Left = 290
-              Top = 108
+              Left = 281
+              Top = 110
               Width = 410
               Height = 31
               DataField = 'Descr'
               DataSource = uDM.SCDDiversos
               Enabled = False
               TabOrder = 6
+              OnEnter = edDescrEnter
+              OnExit = edDescrExit
             end
             object btConfirmaDiversos: TBitBtn
               Left = 588
@@ -1667,6 +1680,7 @@ object FuPedidosBalcao: TFuPedidosBalcao
             ParentBackground = False
             ParentFont = False
             TabOrder = 0
+            OnEnter = PanBuffetEnter
             ExplicitTop = -5
             object Label3: TLabel
               Left = 160
@@ -1766,14 +1780,16 @@ object FuPedidosBalcao: TFuPedidosBalcao
             end
             object edPeso: TDBEdit
               Left = 160
-              Top = 52
+              Top = 53
               Width = 106
               Height = 31
               DataField = 'Peso'
               DataSource = uDM.SCDBufet
               Enabled = False
               TabOrder = 1
+              OnEnter = edPesoEnter
               OnExit = edPesoExit
+              OnKeyDown = edPesoKeyDown
             end
             object edVlrBuffet: TDBEdit
               Left = 448
@@ -1888,7 +1904,7 @@ object FuPedidosBalcao: TFuPedidosBalcao
           end
         end
       end
-      object Panel4: TPanel
+      object PanRodape: TPanel
         Left = 1
         Top = 517
         Width = 740
@@ -1949,8 +1965,8 @@ object FuPedidosBalcao: TFuPedidosBalcao
     end
   end
   object PanAlteraBebida: TPanel
-    Left = 431
-    Top = 439
+    Left = 423
+    Top = 348
     Width = 277
     Height = 129
     Color = clAqua
@@ -2153,8 +2169,8 @@ object FuPedidosBalcao: TFuPedidosBalcao
     end
   end
   object PanBuscaPedido: TPanel
-    Left = 40
-    Top = 429
+    Left = 32
+    Top = 338
     Width = 385
     Height = 149
     Color = clAqua
@@ -2288,5 +2304,15 @@ object FuPedidosBalcao: TFuPedidosBalcao
       Text = 'cbPedidos'
       OnExit = cbPedidosExit
     end
+  end
+  object Teclado: TTouchKeyboard
+    Left = 914
+    Top = 348
+    Width = 180
+    Height = 180
+    GradientEnd = clSilver
+    GradientStart = clGray
+    Layout = 'NumPad'
+    Visible = False
   end
 end

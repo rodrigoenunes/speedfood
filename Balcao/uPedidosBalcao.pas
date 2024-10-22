@@ -9,7 +9,7 @@ uses
   IniFiles, FireDAC.Stan.Intf, FireDAC.Stan.Option, FireDAC.Stan.Param,
   FireDAC.Stan.Error, FireDAC.DatS, FireDAC.Phys.Intf, FireDAC.DApt.Intf,
   FireDAC.Stan.Async, FireDAC.DApt, FireDAC.Comp.DataSet, FireDAC.Comp.Client,
-  Datasnap.DBClient;
+  Datasnap.DBClient, Vcl.Touch.Keyboard;
   Procedure PedidosBalcao(pmtCaption:String);
 
 type
@@ -57,7 +57,7 @@ type
     TSFrituras: TTabSheet;
     TSBufDiv: TTabSheet;
     TSGelados: TTabSheet;
-    Panel4: TPanel;
+    PanRodape: TPanel;
     sbAbasMenor: TSpeedButton;
     sbAbasMaior: TSpeedButton;
     sbAbasMulti: TSpeedButton;
@@ -106,6 +106,7 @@ type
     Label11: TLabel;
     edDescr: TDBEdit;
     btConfirmaDiversos: TBitBtn;
+    Teclado: TTouchKeyboard;
     procedure btAbrirPedidoClick(Sender: TObject);
     procedure btFinalizarClick(Sender: TObject);
     procedure GridLanchesDrawCell(Sender: TObject; ACol, ARow: Integer;
@@ -172,6 +173,26 @@ type
     procedure btConfirmaBuffetClick(Sender: TObject);
     procedure btAcrescBuffetClick(Sender: TObject);
     procedure btAcrescDiversosClick(Sender: TObject);
+    procedure edCodBarrasKeyDown(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
+    procedure edQuantKeyDown(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
+    procedure edGrupoKeyDown(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
+    procedure edItemKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
+    procedure edQuantEnter(Sender: TObject);
+    procedure edQuantExit(Sender: TObject);
+    procedure edCodBarrasEnter(Sender: TObject);
+    procedure PanDiversosEnter(Sender: TObject);
+    procedure edCodBarrasExit(Sender: TObject);
+    procedure edDescrEnter(Sender: TObject);
+    procedure edDescrExit(Sender: TObject);
+    procedure edGrupoEnter(Sender: TObject);
+    procedure edGrupoExit(Sender: TObject);
+    procedure edItemEnter(Sender: TObject);
+    procedure edPesoEnter(Sender: TObject);
+    procedure PanBuffetEnter(Sender: TObject);
+    procedure edPesoKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
   private
     { Private declarations }
   public
@@ -209,6 +230,8 @@ var
   lrgLanche,altLanche,lrgBebida,altBebida: Integer;
   wColor: TColor;
   nMaxExtras: Integer;
+  tvTop,tvLeft: Integer;
+  genTop,genLeft: Integer;         // Generico TOP e LEFT para cada área que pode ter teclado visual
 
 implementation
 
@@ -219,7 +242,34 @@ uses uDados, uGenericas, uFinPedido, uTrataLanche, uBiblioteca, uMontarLanche, u
 Procedure PedidosBalcao(pmtCaption:String);
 begin
   nMaxExtras := StrToIntDef(ObtemParametro('PedidoMaxExtras'),5);
+  CarregaItensCodBarra;
   FuPedidosBalcao.ShowModal;
+
+end;
+
+
+Procedure ExibeTecladoVirtual(pTipo:String; pTop,pLeft:Integer);
+var xTipo: String;
+begin
+  if not uDM.SisPessoaTecladoVirtual.AsBoolean then Exit;
+  xTipo := AnsiUpperCase(pTipo);
+  with FuPedidosBalcao
+  do begin
+    if (xTipo='N') or (xTipo='NUM') or (xTipo='NUMPAD') then
+    begin
+      Teclado.Layout := 'NumPad';
+      Teclado.Width := 300;
+      Teclado.Height := 300;
+    end
+    else begin
+      Teclado.Layout := 'Standard';
+      Teclado.Width := 860;
+      Teclado.Height := 300;
+    end;
+    Teclado.Top     := pTop;
+    Teclado.Left    := pLeft;
+    Teclado.Visible := True;
+  end;
 
 end;
 
@@ -1253,6 +1303,8 @@ begin
   for i := 1 to 100 do
     wrkSabores := wrkSabores + xSabores[i];
   InclueLancheBalcao(11,wKey,wrkSabores,lstSabores);
+  TotalizaPedidoBalcao;
+  FuPedidosBalcao.FormResize(nil);
   btCancelaCrepeClick(nil);       // Limpa as informações de crepe
 
 end;
@@ -1288,6 +1340,8 @@ begin
     end;
   end;
   InclueLancheBalcao(21,wKey,'',lstComplementos,wValor);
+  TotalizaPedidoBalcao;
+  FuPedidosBalcao.FormResize(nil);
   btCancelaFrituraClick(nil);       // Limpa as informações da fritura
 
 end;
@@ -1348,6 +1402,8 @@ begin
     end;
   end;
   InclueLancheBalcao(31,wKey,'',lstComplementos,wValor);
+  TotalizaPedidoBalcao;
+  FuPedidosBalcao.FormResize(nil);
   btCancelaGeladoClick(nil);       // Limpa as informações do Gelado
 
 end;
@@ -1380,10 +1436,118 @@ begin
 
 end;
 
+procedure TFuPedidosBalcao.edCodBarrasEnter(Sender: TObject);
+begin
+  tvLeft := genLeft + edCodBarras.Left - 3;
+  tvTop := genTop + edCodBarras.Top + edCodBarras.Height + 3;
+  ExibeTecladoVirtual('NumPad',tvTop,tvLeft);
+
+end;
+
+procedure TFuPedidosBalcao.edCodBarrasExit(Sender: TObject);
+begin
+  Teclado.Visible := False;
+
+end;
+
+procedure TFuPedidosBalcao.edCodBarrasKeyDown(Sender: TObject; var Key: Word;
+  Shift: TShiftState);
+begin
+  if Key = vk_Return then SelectNext((Sender as TwinControl), True, True);
+
+end;
+
+procedure TFuPedidosBalcao.edDescrEnter(Sender: TObject);
+begin
+  tvLeft := genLeft + edDescr.Left - 3;
+  tvTop := genTop + edDescr.Top + edDescr.Height + 3;
+  ExibeTecladoVirtual('Standard',tvTop,tvLeft);
+
+end;
+
+procedure TFuPedidosBalcao.edDescrExit(Sender: TObject);
+begin
+  Teclado.Visible := False;
+
+end;
+
+procedure TFuPedidosBalcao.edGrupoEnter(Sender: TObject);
+begin
+  tvLeft := genLeft + edGrupo.Left - 3;
+  tvTop := genTop + edGrupo.Top + edGrupo.Height + 3;
+  ExibeTecladoVirtual('NumPad',tvTop,tvLeft);
+
+end;
+
+procedure TFuPedidosBalcao.edGrupoExit(Sender: TObject);
+begin
+  Teclado.Visible := False;
+
+end;
+
+procedure TFuPedidosBalcao.edGrupoKeyDown(Sender: TObject; var Key: Word;
+  Shift: TShiftState);
+begin
+  if Key = vk_Return then SelectNext((Sender as TwinControl), True, True);
+
+end;
+
+procedure TFuPedidosBalcao.edItemEnter(Sender: TObject);
+begin
+  tvLeft := genLeft + edItem.Left - 3;
+  tvTop := genTop + edItem.Top + edItem.Height + 3;
+  ExibeTecladoVirtual('NumPad',tvTop,tvLeft);
+
+end;
+
+procedure TFuPedidosBalcao.edItemKeyDown(Sender: TObject; var Key: Word;
+  Shift: TShiftState);
+begin
+  if Key = vk_Return then SelectNext((Sender as TwinControl), True, True);
+
+end;
+
+procedure TFuPedidosBalcao.edPesoEnter(Sender: TObject);
+begin
+  tvLeft := genLeft + edPeso.Left - 3;
+  tvTop := genTop + edPeso.Top + edPeso.Height + 3;
+  ExibeTecladoVirtual('NumPad',tvTop,tvLeft);
+
+end;
+
 procedure TFuPedidosBalcao.edPesoExit(Sender: TObject);
 begin
+  Teclado.Visible := False;
   uDM.CDBuffetVlrTotal.AsCurrency := (uDM.CDBuffetPeso.AsInteger * uDM.CDBuffetVlrUnit.AsCurrency) / 1000;
   btConfirmaBuffet.SetFocus;
+
+end;
+
+procedure TFuPedidosBalcao.edPesoKeyDown(Sender: TObject; var Key: Word;
+  Shift: TShiftState);
+begin
+  if Key = vk_Return then SelectNext((Sender as TwinControl), True, True);
+
+end;
+
+procedure TFuPedidosBalcao.edQuantEnter(Sender: TObject);
+begin
+  tvLeft := genLeft + edQuant.Left - 3;
+  tvTop := genTop + edQuant.Top + edQuant.Height + 3;
+  ExibeTecladoVirtual('NumPad',tvTop,tvLeft);
+
+end;
+
+procedure TFuPedidosBalcao.edQuantExit(Sender: TObject);
+begin
+  Teclado.Visible := False;
+
+end;
+
+procedure TFuPedidosBalcao.edQuantKeyDown(Sender: TObject; var Key: Word;
+  Shift: TShiftState);
+begin
+  if Key = vk_Return then SelectNext((Sender as TwinControl), True, True);
 
 end;
 
@@ -1535,6 +1699,7 @@ begin
   wKey := wCodBebida[nCol,nLin];
   if wKey = 0 then Exit;
   InclueBebida(wKey);
+  FormResize(nil);
 
 end;
 
@@ -2087,12 +2252,27 @@ begin
   wKey := wCodLanche[nCol,nLin];
   if wKey = 0 then Exit;
   InclueLancheBalcao(1,wKey,'','');
+  FormResize(nil);
 
 end;
 
 procedure TFuPedidosBalcao.GridPedidoDblClick(Sender: TObject);
 begin
   btEditarClick(nil);
+
+end;
+
+procedure TFuPedidosBalcao.PanBuffetEnter(Sender: TObject);
+begin
+  genLeft := PanWork.Left + PanPgCtle.Left + PgControleBalcao.Left + TSBufDiv.Left + PanBuffet.Left;
+  genTop := PanWork.Top + PanPgCtle.Top + PgControleBalcao.Top + TSBufDiv.Top + PanBuffet.Top;
+
+end;
+
+procedure TFuPedidosBalcao.PanDiversosEnter(Sender: TObject);
+begin
+  genLeft := PanWork.Left + PanPgCtle.Left + PgControleBalcao.Left + TSBufDiv.Left + PanDiversos.Left;
+  genTop := PanWork.Top + PanPgCtle.Top + PgControleBalcao.Top + TSBufDiv.Top + PanDiversos.Top;
 
 end;
 

@@ -10,7 +10,6 @@ object uDM: TuDM
       'Server=127.0.0.1'
       'DriverID=MySQL')
     ConnectedStoredUsage = []
-    Connected = True
     LoginPrompt = False
     Left = 28
     Top = 8
@@ -1857,5 +1856,41 @@ object uDM: TuDM
     DataSet = CDDiversos
     Left = 664
     Top = 216
+  end
+  object SCDItens: TDataSource
+    DataSet = CDItens
+    Left = 696
+    Top = 328
+  end
+  object CDItens: TClientDataSet
+    Aggregates = <>
+    Params = <>
+    Left = 656
+    Top = 312
+    object CDItensCodGrpItem: TStringField
+      FieldName = 'CodGrpItem'
+      Size = 5
+    end
+    object CDItensCodBarras: TStringField
+      FieldName = 'CodBarras'
+      Size = 25
+    end
+    object CDItensGrupo: TIntegerField
+      FieldName = 'Grupo'
+    end
+    object CDItensCodigo: TIntegerField
+      FieldName = 'Codigo'
+    end
+    object CDItensDescricao: TStringField
+      FieldName = 'Descricao'
+      Size = 80
+    end
+    object CDItensUnidade: TStringField
+      FieldName = 'Unidade'
+      Size = 5
+    end
+    object CDItensPreco: TCurrencyField
+      FieldName = 'Preco'
+    end
   end
 end

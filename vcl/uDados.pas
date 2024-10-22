@@ -17,7 +17,8 @@ uses
   Function CriaResumoVendas: Boolean;
   Function ObtemParametro(idParam:String; retDefault:String = ''): String;
   Procedure ExcluePedido(pNumero:Integer);
-  Procedure DefineGuiaPedidos(pLeGrava:String; var pTamFonte:Integer; var pMultiline:Boolean);
+  //Procedure DefineGuiaPedidos(pLeGrava:String; var pTamFonte:Integer; var pMultiline:Boolean);
+  Function CarregaItensCodBarra: Boolean;
 
 type
   TuDM = class(TDataModule)
@@ -331,6 +332,15 @@ type
     CDDiversosQuant: TIntegerField;
     CDDiversosVlrUnit: TCurrencyField;
     CDDiversosVlrTotal: TCurrencyField;
+    SCDItens: TDataSource;
+    CDItens: TClientDataSet;
+    CDItensGrupo: TIntegerField;
+    CDItensCodigo: TIntegerField;
+    CDItensDescricao: TStringField;
+    CDItensPreco: TCurrencyField;
+    CDItensUnidade: TStringField;
+    CDItensCodGrpItem: TStringField;
+    CDItensCodBarras: TStringField;
     procedure ItensCalcFields(DataSet: TDataSet);
     procedure LctCaixaCalcFields(DataSet: TDataSet);
     procedure PedWrkCalcFields(DataSet: TDataSet);
@@ -685,6 +695,7 @@ begin
 end;
 
 
+{
 Procedure DefineGuiaPedidos(pLeGrava:String; var pTamFonte:Integer; var pMultiline:Boolean);
 Var
   vIniFile: TIniFile;
@@ -701,6 +712,66 @@ begin
 
     Exit;
   end;
+end;
+}
+
+Function CarregaItensCodBarra: Boolean;
+var i: Integer;
+    wGrp: array[1..2] of Integer;
+    kGrp: Integer;
+begin
+  Result := False;
+  with uDM
+  do begin
+    CDItens.Active := False;
+    CDItens.FieldDefs.Clear;
+    CDItens.FieldDefs.Add('CodGrpItem', ftString, 5);
+    CDItens.FieldDefs.Add('CodBarras',  ftString, 25);
+    CDItens.FieldDefs.Add('Grupo',      ftInteger);
+    CDItens.FieldDefs.Add('Codigo',     ftInteger);
+    CDItens.FieldDefs.Add('Descricao',  ftString, 80);
+    CDItens.FieldDefs.Add('Unidade',    ftString,5);
+    CDItens.FieldDefs.Add('Preco',      ftCurrency);
+    CDItens.IndexDefs.Clear;
+    CDItens.IndexDefs.Add('','CodGrpItem',[ixPrimary,ixUnique]);
+    CDItens.IndexDefs.Add('CODIGOBARRAS','CodBarras;CodGrpItem',[]);
+    CDItens.IndexDefs.Add('ALFABETICA','Descricao;CodGrpItem',[]);
+    CDItens.CreateDataSet;
+    Try
+      CDItens.Active := True;
+    Except
+      Exit;
+    End;
+    //
+    wGrp[1] := 3;
+    wGrp[2] := 6;
+    for i := 1 to Length(wGrp) do
+    begin
+      kGrp := wGrp[i];
+      Itens.FindNearest([kGrp,0]);
+      while ItensGrupo.AsInteger = kGrp do
+      begin
+        CDItens.Append;
+        CDItensCodGrpItem.AsString := stringCompleta(ItensGrupo.AsString,'E','0',2) +
+                                      stringCompleta(ItensCodigo.AsString,'E','0',3);
+        CDItensCodBarras.AsString := ItensCodBarras.AsString;
+        CDItensGrupo.AsInteger := ItensGrupo.AsInteger;
+        CDItensCodigo.AsInteger := ItensCodigo.AsInteger;
+        CDItensDescricao.AsString := ItensDescricao.AsString;
+        CDItensUnidade.AsString := ItensUnidade.AsString;
+        CDItensPreco.AsCurrency := ItensPreco.AsCurrency;
+        Try
+          CDItens.Post;
+        Except
+          ShowMessage('Chave=' + CDItensCodGrpItem.AsString);
+          CDItens.Cancel;
+        End;
+        Itens.Next;
+      end;
+    end;
+  end;
+  Result := True;
+
 end;
 
 

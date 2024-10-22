@@ -68,6 +68,7 @@ uses uItens, uDados, uGenericas, uCaixa, uPedidos, uImpressoes, uUsuario,
   FortesReportCtle, uUserPwd, uHelpSpeedFood,
   uCaixaMovto, uQueryPedidos, uQueryAdministrativo, uPedidosBalcao, uTurno;
 
+
 procedure TFuPrincipal.btCaixaClick(Sender: TObject);
 begin
   CaixaMovimentacao(False);       // Somente o caixa atual
