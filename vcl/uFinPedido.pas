@@ -125,7 +125,7 @@ implementation
 
 {$R *.dfm}
 
-uses uDados, uGenericas, uImpressoes, SFEuPrintFortes, uPagtoMisto, uConfirmacao;
+uses uDados, uGenericas, uImpressoes, SFEuPrintFortes, uPagtoMisto;
 
 Procedure AjustaFonteImagem;
 begin

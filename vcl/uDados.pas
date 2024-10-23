@@ -757,7 +757,8 @@ begin
         CDItensCodBarras.AsString := ItensCodBarras.AsString;
         CDItensGrupo.AsInteger := ItensGrupo.AsInteger;
         CDItensCodigo.AsInteger := ItensCodigo.AsInteger;
-        CDItensDescricao.AsString := ItensDescricao.AsString;
+        CDItensDescricao.AsString := stringReplace(uDM.ItensDescricao.AsString,'#',' ',[rfIgnoreCase, rfReplaceAll]);
+        ItensDescricao.AsString;
         CDItensUnidade.AsString := ItensUnidade.AsString;
         CDItensPreco.AsCurrency := ItensPreco.AsCurrency;
         Try

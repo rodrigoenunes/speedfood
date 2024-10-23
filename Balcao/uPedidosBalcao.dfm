@@ -1305,7 +1305,6 @@ object FuPedidosBalcao: TFuPedidosBalcao
             ParentFont = False
             TabOrder = 1
             OnEnter = PanDiversosEnter
-            ExplicitLeft = -1
             object Label6: TLabel
               Left = 160
               Top = 32
@@ -1662,7 +1661,7 @@ object FuPedidosBalcao: TFuPedidosBalcao
                 FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}
               ParentFont = False
               TabOrder = 7
-              OnClick = btConfirmaBuffetClick
+              OnClick = btConfirmaDiversosClick
             end
           end
           object PanBuffet: TPanel
@@ -1681,7 +1680,6 @@ object FuPedidosBalcao: TFuPedidosBalcao
             ParentFont = False
             TabOrder = 0
             OnEnter = PanBuffetEnter
-            ExplicitTop = -5
             object Label3: TLabel
               Left = 160
               Top = 32
@@ -1965,8 +1963,8 @@ object FuPedidosBalcao: TFuPedidosBalcao
     end
   end
   object PanAlteraBebida: TPanel
-    Left = 423
-    Top = 348
+    Left = 410
+    Top = 372
     Width = 277
     Height = 129
     Color = clAqua
@@ -2169,8 +2167,8 @@ object FuPedidosBalcao: TFuPedidosBalcao
     end
   end
   object PanBuscaPedido: TPanel
-    Left = 32
-    Top = 338
+    Left = 19
+    Top = 362
     Width = 385
     Height = 149
     Color = clAqua

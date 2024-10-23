@@ -193,6 +193,7 @@ type
     procedure edPesoEnter(Sender: TObject);
     procedure PanBuffetEnter(Sender: TObject);
     procedure edPesoKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
+    procedure btConfirmaDiversosClick(Sender: TObject);
   private
     { Private declarations }
   public
@@ -441,7 +442,7 @@ begin
     end;
     //
     TSCrepes.TabVisible := uDM.balCrepes;       // Aba CREPES
-    if TSCrepes.TabVisible then
+    if TSCrepes.TabVisible and (nCrepes > 0) then
     begin
       TSCrepes.Caption := ObtemParametro('LanctoCrepes');
       if TSCrepes.Caption = '' then TSCrepes.Caption := '< Crepes >';
@@ -472,7 +473,7 @@ begin
     end;
     //
     TSFrituras.TabVisible := uDM.balFrituras;
-    if TSFrituras.TabVisible then                  // Aba FRITURAS
+    if TSFrituras.TabVisible and (nFrituras > 0) then                  // Aba FRITURAS
     begin
       TSFrituras.Caption := ObtemParametro('LanctoFrituras');
       if TSFrituras.Caption = '' then TSFrituras.Caption := '< Frituras >';
@@ -503,7 +504,7 @@ begin
     end;
     //
     TSGelados.TabVisible := uDM.balGelados;
-    if TSGelados.TabVisible then                  // Aba Gelados & Shakes
+    if TSGelados.TabVisible and (nGelados > 0) then                  // Aba Gelados & Shakes
     begin
       TSGelados.Caption := ObtemParametro('LanctoGeladosShakes');
       if TSGelados.Caption = '' then TSGelados.Caption := '< Gelados && Shakes >';
@@ -538,10 +539,6 @@ begin
     begin
       TSBufDiv.Caption := ObtemParametro('LanctoBufDiv');
       if TSBufDiv.Caption = '' then TSBufDiv.Caption := '< Sorvetes && Diversos >';
-
-
-
-
     end;
     //
     //
@@ -714,7 +711,7 @@ var nLct: Integer;
     wDescr,wExtra,wObserv: String;
     wValor,wTotal: Currency;
     wAltPr: Boolean;
-    wPeso: Integer;
+    wPeso,wQuant: Integer;
     wKg: Real;
 {
    Parametros   pTipo:      Cachorro-quente, Montado, Crepe, Fritura...
@@ -738,6 +735,16 @@ begin
           wAltPr := uDM.ItensAlteraPreco.AsBoolean;
           wExtra := stringFiller('.',24);
           wTotal := wValor;
+          wQuant := 1;
+        end;
+      3,6:begin        // Diversos
+          wDescr := uDM.CDDiversosDescr.AsString;
+          wValor := uDM.CDDiversosVlrUnit.AsCurrency;
+          wAltPr := False;
+          wExtra := '';
+          wObserv := '';
+          wTotal := uDM.CDDiversosVlrTotal.AsCurrency;
+          wQuant := uDM.CDDiversosQuant.AsInteger;
         end;
       4:begin        // Cachorro quente montado
           wDescr := 'Montar lanche - ';
@@ -746,6 +753,7 @@ begin
           wExtra := '';
           wObserv := '';
           wTotal := wValor;
+          wQuant := 1;
         end;
       11:begin       // Crepe
           if not uDM.Itens.FindKey([11,pCodLanche]) then Exit;
@@ -753,6 +761,7 @@ begin
           wValor := uDM.ItensPreco.AsCurrency;
           wAltPr := uDM.ItensAlteraPreco.AsBoolean;
           wTotal := wValor;
+          wQuant := 1;
         end;
       15:begin       // Buffet sorvete  (Obtem dados de CDBuffet)
           if uDM.CDBuffet.RecordCount = 0 then Exit;
@@ -764,18 +773,21 @@ begin
           wTotal := uDM.CDBuffetVlrTotal.AsCurrency;
           wPeso  := uDM.CDBuffetPeso.AsInteger;
           wObserv := wDescr;
+          wQuant := 1;
         end;
       21:begin      // Frituras
           if not uDM.Itens.FindKey([21,pCodLanche]) then Exit;
           wDescr := stringReplace(uDM.ItensDescricao.AsString,'#',' ',[rfIgnoreCase, rfReplaceAll]);
           wAltPr := uDM.ItensAlteraPreco.AsBoolean;
           wTotal := wValor;
+          wQuant := 1;
         end;
       31:begin      // Gelados & Frituras
           if not uDM.Itens.FindKey([31,pCodLanche]) then Exit;
           wDescr := stringReplace(uDM.ItensDescricao.AsString,'#',' ',[rfIgnoreCase, rfReplaceAll]);
           wAltPr := uDM.ItensAlteraPreco.AsBoolean;
           wTotal := wValor;
+          wQuant := 1;
         end;
       else Exit;
     end;
@@ -787,7 +799,7 @@ begin
     PedWrkTpProd.AsInteger    := pTipo;            // 1-Lanche, 2-Bebida, 4-Lanche montado, 11-Crepe  .....
     PedWrkCodProd.AsInteger   := pCodLanche;
     PedWrkDescricao.AsString  := wDescr;
-    PedWrkQuant.AsInteger     := 1;
+    PedWrkQuant.AsInteger     := wQuant;
     PedWrkVlrUnit.AsCurrency  := wValor;
     PedWrkVlrTotal.AsCurrency := wTotal;
     PedWrkExtras.AsString     := wExtra;
@@ -1310,6 +1322,26 @@ begin
 end;
 
 
+procedure TFuPedidosBalcao.btConfirmaDiversosClick(Sender: TObject);
+begin
+  if uDM.CDDiversosQuant.AsInteger = 0 then
+  begin
+    uDM.CDDiversos.Cancel;
+    btFinalizar.SetFocus;
+    Exit;
+  end;
+  uDM.CDDiversos.Post;
+  InclueLancheBalcao(uDM.CDDiversosCodGrupo.AsInteger,
+                     uDM.CDDiversosCodItem.AsInteger,
+                     '','');
+  uDM.PedWrk.Post;
+  TotalizaPedidoBalcao;
+  FuPedidosBalcao.FormResize(nil);
+  uDM.CDDiversos.Delete;
+  btDummy.SetFocus;
+
+end;
+
 procedure TFuPedidosBalcao.btConfirmaFrituraClick(Sender: TObject);
 var i,wKey,wKCompl: Integer;
     wValor: Real;
@@ -1445,8 +1477,27 @@ begin
 end;
 
 procedure TFuPedidosBalcao.edCodBarrasExit(Sender: TObject);
+var wCdBar: String;
 begin
   Teclado.Visible := False;
+  wCdBar := uDM.CDDiversosCodBarras.AsString;
+  if wCdBar = '' then
+    Exit;
+  //
+  uDM.CDItens.IndexName := 'CODIGOBARRAS';
+  if not uDM.CDItens.FindKey([wCdBar]) then
+  begin
+    MessageDlg('Código informado não existe no cadastro, reinforme',mtError,[mbOk],0);
+    uDM.CDDiversosCodBarras.AsString := '';
+    edCodBarras.SetFocus;
+    Exit;
+  end;
+  uDM.CDDiversosQuant.AsInteger := 1;
+  uDM.CDDiversosVlrUnit.AsCurrency := uDM.CDItensPreco.AsCurrency;
+  uDM.CDDiversosVlrTotal.AsCurrency := uDM.CDDiversosQuant.AsInteger * uDM.CDItensPreco.AsCurrency;
+  uDM.CDDiversosCodGrupo.AsInteger := uDM.CDItensGrupo.AsInteger;
+  uDM.CDDiversosCodItem.AsInteger := uDM.CDItensCodigo.AsInteger;
+  uDM.CDDiversosDescr.AsString := uDM.CDItensDescricao.AsString;
 
 end;
 
@@ -1541,6 +1592,10 @@ end;
 procedure TFuPedidosBalcao.edQuantExit(Sender: TObject);
 begin
   Teclado.Visible := False;
+  uDM.CDDiversosVlrTotal.AsCurrency := uDM.CDDiversosQuant.AsInteger * uDM.CDItensPreco.AsCurrency;
+  uDM.CDDiversos.Post;
+  uDM.CDDiversos.Edit;
+  btConfirmaDiversos.SetFocus;
 
 end;
 

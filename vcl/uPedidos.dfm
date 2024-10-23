@@ -54,7 +54,7 @@ object FuPedidos: TFuPedidos
     Visible = False
   end
   object btBuscarPedido: TBitBtn
-    Left = 109
+    Left = 117
     Top = 8
     Width = 112
     Height = 45
@@ -98,7 +98,7 @@ object FuPedidos: TFuPedidos
     OnClick = btBuscarPedidoClick
   end
   object btSair: TBitBtn
-    Left = 227
+    Left = 235
     Top = 8
     Width = 115
     Height = 45

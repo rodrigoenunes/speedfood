@@ -5,7 +5,8 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ExtCtrls, Vcl.Buttons, Vcl.CheckLst,
-  Data.DB, Vcl.DBCtrls, Vcl.Grids, Vcl.DBGrids, Vcl.ComCtrls, Vcl.Mask, System.UITypes;
+  Data.DB, Vcl.DBCtrls, Vcl.Grids, Vcl.DBGrids, Vcl.ComCtrls, Vcl.Mask, System.UITypes,
+  System.DateUtils;
   Procedure LancamentoPedidos;
 
 type
@@ -529,7 +530,14 @@ end;
 
 
 procedure TFuPedidos.btBuscarPedidoClick(Sender: TObject);
+var wrkDate: TDateTime;
 begin
+  uDM.Pedidos.Last;
+  wrkDate := DateOf(uDM.PedidosData.AsDateTime) - 2;
+  while (not uDM.Pedidos.Bof) and (DateOf(uDM.PedidosData.AsDateTime) > wrkDate)
+  do uDM.Pedidos.Prior;
+  uDM.nrInicialPedido := uDM.PedidosNumero.AsInteger;
+  //
   PanBuscaPedido.Left := btBuscarPedido.Left + btBuscarPedido.Width + 12;
   PanBuscaPedido.Top := btBuscarPedido.Top - 6;
   cbPedidos.Items.Clear;
