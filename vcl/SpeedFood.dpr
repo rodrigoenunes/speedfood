@@ -25,7 +25,8 @@ uses
   uPedidos in 'uPedidos.pas' {FuPedidos},
   uPedidosBalcao in '..\Balcao\uPedidosBalcao.pas' {FuPedidosBalcao},
   uCaixa in 'uCaixa.pas' {FuCaixa},
-  uTurno in 'uTurno.pas' {FuTurno};
+  uTurno in 'uTurno.pas' {FuTurno},
+  uMsgInfo in '..\UsoGeral\uMsgInfo.pas' {FuMsgInfo};
 
 {$R *.res}
 
@@ -48,6 +49,7 @@ begin
   Application.CreateForm(TFuPedidos, FuPedidos);
   Application.CreateForm(TFuPedidosBalcao, FuPedidosBalcao);
   Application.CreateForm(TFuTurno, FuTurno);
+  Application.CreateForm(TFuMsgInfo, FuMsgInfo);
   Application.Run;
 
 end.

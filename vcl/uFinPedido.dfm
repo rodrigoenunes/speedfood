@@ -553,7 +553,7 @@ object FuFinPedido: TFuFinPedido
         object Label6: TLabel
           Left = 0
           Top = 0
-          Width = 54
+          Width = 138
           Height = 16
           Align = alTop
           Alignment = taCenter
@@ -564,15 +564,17 @@ object FuFinPedido: TFuFinPedido
           Font.Name = 'Tahoma'
           Font.Style = [fsUnderline]
           ParentFont = False
+          ExplicitWidth = 54
         end
         object LabFalta: TLabel
           Left = 0
           Top = 18
-          Width = 58
+          Width = 138
           Height = 19
           Align = alBottom
           Alignment = taCenter
           Caption = 'LabFalta'
+          ExplicitWidth = 58
         end
       end
     end

@@ -200,10 +200,10 @@ begin
     LabConexao.Caption := 'Conectando, aguarde...';
     Application.ProcessMessages;
     uDM := TuDM.Create(nil);
-    if (uDM.sysNumId < 1) or (uDM.sysNumId > 3) or (uDM.sysCPUId = '') then
+    if (uDM.sysNumId < 1) or (uDM.sysNumId > 9) or (uDM.sysCPUId = '') then
     begin
       MessageDlg('Erro de inicialização, verifique arquivo INI' + #13 +
-                 'Estacao / Numero: Deve ser de 1 a 3' + #13 +
+                 'Estacao / Numero: Deve ser de 1 a 9' + #13 +
                  'Estacao / Nome: Identificacao da estacao de trabalho' + #13 +
                  'Aplicação não pode ser iniciada',
                  mtError,[mbOk],0);

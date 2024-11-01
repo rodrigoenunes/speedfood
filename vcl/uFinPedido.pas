@@ -125,7 +125,7 @@ implementation
 
 {$R *.dfm}
 
-uses uDados, uGenericas, uImpressoes, SFEuPrintFortes, uPagtoMisto;
+uses uDados, uGenericas, uImpressoes, SFEuPrintFortes, uPagtoMisto, uMsgInfo;
 
 Procedure AjustaFonteImagem;
 begin
@@ -451,8 +451,12 @@ end;
 
 procedure TFuFinPedido.btCancelarClick(Sender: TObject);
 begin
-  if MessageDlg('Cancelar pedido ?',mtConfirmation,
-                [mbYes,mbNo],0,mbNo,['Sim','Não']) <> mrYes then Exit;
+  //if MessageDlg('Cancelar pedido ?',mtConfirmation,
+  //              [mbYes,mbNo],0,mbNo,['Sim','Não']) <> mrYes then Exit;
+  if MsgInformacao('Confirmação',
+                   'Cancelamento de pedido',
+                   'Realmente cancelar o pedido ?',
+                   ['Sim','Não',''],3,2,10) <> 1 then Exit;
   uDM.Pedidos.Cancel;
   nRetorno := 2;
   FuFinPedido.Close;
@@ -472,7 +476,16 @@ begin
   if ObtemParametro('PedidoPlaca') = 'S' then
      if StrToIntDef(uDM.PedidosPlaca.AsString,0) = 0 then
      begin
-       MessageDlg('Nro de placa não informado, dado obrigatorio',mtError,[mbOk],0);
+       //MessageDlg('Nro de placa não informado, dado obrigatorio',mtError,[mbOk],0);
+       MsgInformacao('Aviso',
+                     'Placa/Senha',
+                     'Nro da placa/senha não informado' + #13 +
+                     'Dado obrigatório' + #13 +
+                     'Informe',
+                     ['Ok','',''],
+                     1,
+                     1,
+                     10);     // pEsq:Integer=0; pTop:Integer=0): Integer;
        dbPlaca.SetFocus;
        Exit;
      end;
