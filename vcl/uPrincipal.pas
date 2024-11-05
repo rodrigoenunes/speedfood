@@ -362,16 +362,8 @@ begin
     //
     if not AbreTurno then
     begin
-      if MessageDlg('Turno não utilizado' + #13 + 'Finalizar turno atual ?',
-                    mtConfirmation,[mbYes,mbNo],0,mbNo,['Sim','Não']) = mrYes then
-      begin
-        mdFechaTurno := 1;
-        btSairClick(nil);
-      end
-      else begin
-        MessageDlg('Turno não finalizado, processo cancelado',mtInformation,[mbOk],0);
-        Halt(0);
-      end;
+      MessageDlg('Abertura/Utilização de turno: Processo cancelado',mtInformation,[mbOk],0);
+      Halt(0);
     end;
     //
     if not AbreCaixa(uDM.turnoCorrente,uDM.sysNrCaixa) then
@@ -397,32 +389,6 @@ end;
 procedure TFuPrincipal.FormClose(Sender: TObject; var Action: TCloseAction);
 var wExec,wParm: String;
 begin
-{
-  if wAcaoCaixa = 1
-  then begin
-    if FechamentoDeCaixa = 0
-       then CaixaMovimentacao;
-    if uDM.wOperCartoes > 0
-    then begin
-      if MessageDlg('Executar operação adicional (cartões) ?',
-                     mtConfirmation,[mbYes,mbNo],0,mbNo,['Sim','Não']) = mrYes
-      then begin
-        wExec := ObtemParametro('ACNFE_EXE');
-        wParm := '/TEF /CANCELAR X';
-        ShellExecute(0,'open',pChar(wExec),pChar(wParm),'',1);
-      end;
-    end;
-    if uDM.sysTurnos then
-       if MessageDlg('Encerrar turno atual',mtConfirmation, [mbYes,mbNo],0,mbNo,['Sim','Não']) = mrYes
-       then begin
-         //FechamentoDeTurno;
-         //Não pode haver caixas ativos....
-         //uDM.TurnosCaixasAtivos = ''.....
-       end;
-  end;
-}
-  //
-
   uDM.PedDetpag.Active := False;
   uDM.PedItens.Active  := False;
   uDM.Pedidos.Active   := False;

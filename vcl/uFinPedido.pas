@@ -549,11 +549,14 @@ begin
   while not uDM.PedWrk.Eof do
   begin
     case uDM.PedWrkTpProd.AsInteger of
-      1,4:lanSeq := lanSeq + 1;              // Qtd lanches (cachorro-quente)
-        3:bebSeq := bebSeq + 1;              // Qtd bebidas
-       11:crpSeq := crpSeq + 1;              // Qtd crepes
-       21:friSeq := friSeq + 1;              // Qtd frituras
-       31:gelSeq := gelSeq + 1;              // Qtd gelados&shakes
+      1,4:lanSeq := lanSeq + 1;              // Qtd lanches (cachorro-quente)  Ok
+        3:bebSeq := bebSeq + 1;              // Qtd bebidas     Ok
+        6:divSeq := divSeq + 1;              // Qtd diversos    Ok
+       11:crpSeq := crpSeq + 1;              // Qtd crepes      Ok
+       15:bufSeq := bufSeq + 1;              // Qtd buffets     Ok
+       21:friSeq := friSeq + 1;              // Qtd frituras    Ok
+       31:gelSeq := gelSeq + 1;              // Qtd gelados&shakes  Ok
+       else outSeq := outSeq + 1;            // Qtd outros      Ok
     end;
     uDM.PedWrk.Next;
   end;
@@ -565,7 +568,10 @@ begin
   uDM.PedidosLctCrepes.AsInteger := crpSeq;
   uDM.PedidosLctBuffet.AsInteger := bufSeq;
   uDM.PedidosLctDiversos.AsInteger := divSeq;
+  uDM.PedidosLctFrituras.AsInteger := friSeq;
+  uDM.PedidosLctGelados.AsInteger := gelSeq;
   uDM.PedidosLctOutros.AsInteger := outSeq;
+
   uDM.Pedidos.Post;
   //
   if uDM.wNroPedido > 0 then
@@ -594,19 +600,19 @@ begin
             bebSeq := bebSeq + 1;
             wrkSeq := bebSeq;
         end;
-       11:begin
+       11:begin    // Crepes
             crpSeq := crpSeq + 1;
             wrkSeq := crpSeq;
           end;
-       21:begin
+       21:begin   // Frituras
             friSeq := friSeq + 1;
             wrkSeq := friSeq;
           end;
-       31:begin
+       31:begin   // Gelados
             gelSeq := gelSeq + 1;
             wrkSeq := gelSeq;
           end;
-        else begin  // Extras
+        else begin  // Diveros(6) e Buffet(15)
             newSeq := newSeq + 1;
             wrkSeq := newSeq;
         end;

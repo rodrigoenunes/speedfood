@@ -9,7 +9,7 @@ uses
   IniFiles, FireDAC.Stan.Intf, FireDAC.Stan.Option, FireDAC.Stan.Param,
   FireDAC.Stan.Error, FireDAC.DatS, FireDAC.Phys.Intf, FireDAC.DApt.Intf,
   FireDAC.Stan.Async, FireDAC.DApt, FireDAC.Comp.DataSet, FireDAC.Comp.Client,
-  Datasnap.DBClient, Vcl.Touch.Keyboard;
+  Datasnap.DBClient, Vcl.Touch.Keyboard, AdPort;
   Procedure PedidosBalcao(pmtCaption:String);
 
 type
@@ -107,6 +107,9 @@ type
     edDescr: TDBEdit;
     btConfirmaDiversos: TBitBtn;
     Teclado: TTouchKeyboard;
+    tBalanca: TTimer;
+    cbTVBuffet: TCheckBox;
+    cbBalConectada: TCheckBox;
     procedure btAbrirPedidoClick(Sender: TObject);
     procedure btFinalizarClick(Sender: TObject);
     procedure GridLanchesDrawCell(Sender: TObject; ACol, ARow: Integer;
@@ -194,8 +197,15 @@ type
     procedure PanBuffetEnter(Sender: TObject);
     procedure edPesoKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure btConfirmaDiversosClick(Sender: TObject);
+    procedure FormDestroy(Sender: TObject);
+    procedure tBalancaTimer(Sender: TObject);
+    procedure TSLanchesEnter(Sender: TObject);
   private
     { Private declarations }
+    FApdComPort: TApdComPort;
+    Procedure CriarApdComPort;
+    Procedure ApdComPortTriggerAvail(CP: TObject; Count: Word);
+    Procedure ApdComPortTriggerLineError(CP: TObject; Error: Word; LineBreak: Boolean);
   public
     { Public declarations }
     itensPedido: Integer;
@@ -233,6 +243,8 @@ var
   nMaxExtras: Integer;
   tvTop,tvLeft: Integer;
   genTop,genLeft: Integer;         // Generico TOP e LEFT para cada área que pode ter teclado visual
+
+  S: String;
 
 implementation
 
@@ -770,7 +782,7 @@ begin
                     '(' + FloatToStrF(wKg,ffNumber,8,3) + 'Kg)';
           wValor := uDM.CDBuffetVlrUnit.AsCurrency;
           wAltPr := False;
-          wTotal := uDM.CDBuffetVlrTotal.AsCurrency;
+          wTotal := uDM.CDBuffetZC_Valor.AsCurrency;
           wPeso  := uDM.CDBuffetPeso.AsInteger;
           wObserv := wDescr;
           wQuant := 1;
@@ -1112,7 +1124,7 @@ begin
   uDM.CDBuffetPeso.Clear;
   uDM.CDBuffetDescr.AsString := uDM.ItensDescricao.AsString;
   uDM.CDBuffetVlrUnit.AsCurrency := uDM.ItensPreco.AsCurrency;
-  uDM.CDBuffetVlrTotal.AsCurrency := 0;
+  //uDM.CDBuffetVlrTotal.AsCurrency := 0;
   edPeso.Enabled := True;
   edPeso.SetFocus;
 
@@ -1440,6 +1452,59 @@ begin
 
 end;
 
+procedure TFuPedidosBalcao.ApdComPortTriggerAvail(CP: TObject; Count: Word);
+Var
+  I: Integer;
+  C: AnsiChar;
+  S2: String;
+begin
+  If pgControleBalcao.ActivePage <> TSBufDiv Then
+    Exit;
+
+  if (edPeso.DataSource = Nil) or (edPeso.DataSource.DataSet = Nil) or
+      Not(edPeso.DataSource.DataSet.Active) or
+      Not(edPeso.DataSource.DataSet.State in [dsInsert, dsEdit]) then
+    Exit;
+
+  for I := 1 to Count do
+  begin
+    C := FApdComPort.GetChar;
+    S:= S + C;
+    If C in ['', 'q', ' '] Then
+      S:= EmptyStr;
+  end;
+
+
+  S2:= EmptyStr;
+  for I:= 1 to S.Length do
+    if S[I] in ['0'..'9'] then
+      S2:= S2 +  S[I];
+
+  If Length(S2) >= 5 Then
+  Begin
+    S:= Copy(S2, 1, 5);
+
+    Try
+      S:= (StrToInt64(S)/1).ToString;
+      if edPeso.DataSource.DataSet[edPeso.Field.FieldName] <> S then
+        edPeso.DataSource.DataSet[edPeso.Field.FieldName]:= S;
+    Except
+    End;
+
+    S:= EmptyStr;
+    FApdComPort.Open:= False;
+
+  End;
+
+end;
+
+procedure TFuPedidosBalcao.ApdComPortTriggerLineError(CP: TObject; Error: Word;
+  LineBreak: Boolean);
+begin
+  S:= EmptyStr;
+  FApdComPort.Open:= False
+end;
+
 procedure TFuPedidosBalcao.btAbrirPedidoClick(Sender: TObject);
 begin
   pgControleBalcao.ActivePageIndex := uDM.sysIniBalcao;
@@ -1466,6 +1531,21 @@ begin
     btNrOk.SetFocus
   else btNrCanc.SetFocus;
 
+end;
+
+procedure TFuPedidosBalcao.CriarApdComPort;
+begin
+  Self.FApdComPort:= TApdComPort.Create(Self);
+
+  Self.FApdComPort.Baud:= 2400;
+  Self.FApdComPort.ComNumber:= 1;
+  Self.FApdComPort.DataBits:= 8;
+  // Self.FApdComPort.LogName
+  Self.FApdComPort.UseEventWord:= False;
+  Self.FApdComPort.AutoOpen:= True;
+  Self.FApdComPort.OnTriggerAvail:= ApdComPortTriggerAvail;
+  Self.FApdComPort.OnTriggerLineError:= ApdComPortTriggerLineError;
+  S:= '';
 end;
 
 procedure TFuPedidosBalcao.edCodBarrasEnter(Sender: TObject);
@@ -1560,17 +1640,20 @@ end;
 
 procedure TFuPedidosBalcao.edPesoEnter(Sender: TObject);
 begin
-  tvLeft := genLeft + edPeso.Left - 3;
-  tvTop := genTop + edPeso.Top + edPeso.Height + 3;
-  ExibeTecladoVirtual('NumPad',tvTop,tvLeft);
+  if cbTVBuffet.Checked then
+  begin
+    tvLeft := genLeft + edPeso.Left - 3;
+    tvTop := genTop + edPeso.Top + edPeso.Height + 3;
+    ExibeTecladoVirtual('NumPad',tvTop,tvLeft);
+  end;
 
 end;
 
 procedure TFuPedidosBalcao.edPesoExit(Sender: TObject);
 begin
   Teclado.Visible := False;
-  uDM.CDBuffetVlrTotal.AsCurrency := (uDM.CDBuffetPeso.AsInteger * uDM.CDBuffetVlrUnit.AsCurrency) / 1000;
   btConfirmaBuffet.SetFocus;
+//  btConfirmaBuffetClick(nil);
 
 end;
 
@@ -1637,13 +1720,28 @@ begin
   btSair.Width          := btAbrirPedido.Width;
   btSair.Height         := btAbrirPedido.Height;
   //
+  cbTVBuffet.Checked := False;
+  cbBalConectada.Checked := True;
+  //
   edItens.Text := '0';
   edTotal.Text := '0,00';
+  //
+  panBuffet.Height := 300;
+  panDiversos.Height := 300;
+  btConfirmaDiversos.Top := 150;
 
+  CriarApdComPort;
+
+end;
+
+procedure TFuPedidosBalcao.FormDestroy(Sender: TObject);
+begin
+  FApdComPort.Open:= False;
 end;
 
 procedure TFuPedidosBalcao.FormResize(Sender: TObject);
 begin
+  PanGridPed.Width := FuPedidosBalcao.Width div 4;    // PanWork.Width div 4;
   GridPedido := DefineGrid(GridPedido, [0.06, 0.33, 0.05, 0.22], 1, 0);
 
 end;
@@ -1987,7 +2085,7 @@ end;
 
 procedure TFuPedidosBalcao.GridFriturasComplMouseDown(Sender: TObject;
   Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
-var nCol,nLin,nCodCompl,i: Integer;
+var nCol,nLin,nCodCompl: Integer;
 begin
   GridFriturasCompl.MouseToCell(X,Y,nCol,nLin);
   nCodCompl := wCodFrituraCompl[nLin];
@@ -2333,10 +2431,12 @@ end;
 
 procedure TFuPedidosBalcao.pgControleBalcaoChange(Sender: TObject);
 begin
+  btMontarLanche.Enabled := False;
+  tBalanca.Enabled := False;
   if pgControleBalcao.ActivePageIndex = 0 then
-    btMontarLanche.Enabled := True
-  else
-    btMontarLanche.Enabled := False;
+    btMontarLanche.Enabled := True;
+  if pgControleBalcao.ActivePageIndex = 5 then
+    tBalanca.Enabled := True;
 
 end;
 
@@ -2372,6 +2472,31 @@ begin
   if pgControleBalcao.MultiLine
      then PgControleBalcao.MultiLine := False
      else PgControleBalcao.Multiline := True;
+
+end;
+
+procedure TFuPedidosBalcao.tBalancaTimer(Sender: TObject);
+begin
+  if not cbBalConectada.checked then Exit;
+
+  if pgControleBalcao.ActivePage <> TSBufDiv Then
+    Exit;
+
+  if (edPeso.DataSource = Nil) or (edPeso.DataSource.DataSet = Nil) or
+      Not(edPeso.DataSource.DataSet.Active) or
+      Not(edPeso.DataSource.DataSet.State in [dsInsert, dsEdit]) then
+    Exit; // btAcrescBuffet.Click;
+
+  if Not FApdComPort.Open then
+    FApdComPort.Open:= True;
+
+  FApdComPort.PutString(#05);
+
+end;
+
+procedure TFuPedidosBalcao.TSLanchesEnter(Sender: TObject);
+begin
+  tBalanca.Enabled := True;
 
 end;
 

@@ -258,8 +258,8 @@ object FuPrincipal: TFuPrincipal
     OnClick = btPedidosClick
   end
   object btUsuario: TBitBtn
-    Left = 24
-    Top = 282
+    Left = 8
+    Top = 278
     Width = 257
     Height = 52
     Caption = 'Usu'#225'rio do Sistema'

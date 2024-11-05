@@ -319,7 +319,6 @@ type
     SCDBufet: TDataSource;
     CDBuffet: TClientDataSet;
     CDBuffetVlrUnit: TCurrencyField;
-    CDBuffetVlrTotal: TCurrencyField;
     CDBuffetPeso: TIntegerField;
     CDBuffetDescr: TStringField;
     CDDiversos: TClientDataSet;
@@ -341,6 +340,20 @@ type
     CDItensUnidade: TStringField;
     CDItensCodGrpItem: TStringField;
     CDItensCodBarras: TStringField;
+    CDBuffetZC_Valor: TCurrencyField;
+    PedDetpagNSU: TStringField;
+    PedDetpagCodAutorizacao: TStringField;
+    PedDetpagNroReferencia: TStringField;
+    PedDetpagDigCartao: TStringField;
+    PedDetpagCodBandeira: TStringField;
+    PedDetpagAutDataHora: TStringField;
+    PedDetpagAutClieArqImpr: TStringField;
+    PedDetpagAutEstabArqImpr: TStringField;
+    PedDetpagCancDataHora: TStringField;
+    PedDetpagCancClieArqImpr: TStringField;
+    PedDetpagCancEstabArqImpr: TStringField;
+    PedidosLctFrituras: TIntegerField;
+    PedidosLctGelados: TIntegerField;
     procedure ItensCalcFields(DataSet: TDataSet);
     procedure LctCaixaCalcFields(DataSet: TDataSet);
     procedure PedWrkCalcFields(DataSet: TDataSet);
@@ -357,6 +370,7 @@ type
     procedure RegCaixaFilterRecord(DataSet: TDataSet; var Accept: Boolean);
     procedure LctCaixaFilterRecord(DataSet: TDataSet; var Accept: Boolean);
     procedure TurnosCalcFields(DataSet: TDataSet);
+    procedure CDBuffetCalcFields(DataSet: TDataSet);
   private
     { Private declarations }
   public
@@ -371,10 +385,10 @@ type
     wTxtExtraTab: array[1..24] of String;
     wVlrExtraTab: array[1..24] of Currency;
     usaCorItem: Boolean;
-    sysIniFile,sysUser,sysCPUId: String;
+    sysIniFile,sysUser,sysCPUId,sysVersao: String;
     sysNumId,sysNrCaixa,sysCaixaSeq: Integer;
     sysPedidos,sysBalcao,sysWhats,sysManut,sysAdmin,sysBuffet: Boolean;
-    sysUsuar,sysSefaz,sysHelp,sysHelpArgox,sysTurnos,sysAltLctos: Boolean;
+    sysUsuar,sysSefaz,sysHelp,sysHelpArgox,sysAltLctos: Boolean;
     sysIdPedidos,sysIdBalcao,sysIdBuffet: String;
     sysEtiquetasPrt,sysPedidosPrt,sysCaixaPrt,sysResumoPrt: String;
     sysIniBalcao,sysAbasFonte: Integer;
@@ -581,7 +595,7 @@ begin
     CDBuffet.FieldDefs.Clear;
     CDBuffet.FieldDefs.Add('Peso',    ftInteger);
     CDBuffet.FieldDefs.Add('VlrUnit', ftCurrency);
-    CDBuffet.FieldDefs.Add('VlrTotal',ftCurrency);
+    //CDBuffet.FieldDefs.Add('VlrTotal',ftCurrency);
     CDBuffet.FieldDefs.Add('Descr',   ftString, 120);
     CDBuffet.CreateDataSet;
     Try
@@ -776,6 +790,12 @@ begin
 end;
 
 
+procedure TuDM.CDBuffetCalcFields(DataSet: TDataSet);
+begin
+  CDBuffetZC_Valor.AsCurrency := (CDBuffetPeso.AsInteger * CDBuffetVlrUnit.AsCurrency) / 1000;
+
+end;
+
 procedure TuDM.DataModuleCreate(Sender: TObject);
 Var
   vIniFile: TIniFile;
@@ -812,6 +832,7 @@ begin
     vIniFile.WriteBool('Estacao','VerSefaz',False);
     vIniFile.WriteBool('Estacao','Turnos',False);             // Tratativa de turnos
     vIniFile.WriteBool('Estacao','CaixaAltLctos',False);
+    vIniFile.WriteString('Estacao','Versao','');
 
     vIniFile.WriteString('Impressoras','Etiquetas','');
     vIniFile.WriteString('Impressoras','Pedidos','');
@@ -864,9 +885,9 @@ begin
   sysHelp := vIniFile.ReadBool('Estacao','Help',False);
   sysHelpArgox := vIniFile.ReadBool('Estacao','HelpArgox',False);
   sysSefaz := vIniFile.ReadBool('Estacao','VerSefaz',False);
-  sysTurnos := vIniFile.ReadBool('Estacao','Turnos',False);
   //
   sysAltLctos := vIniFile.ReadBool('Estacao','CaixaAltLctos',False);
+  sysVersao := vIniFile.ReadString('Estacao','Versao','XXX');
   //
   balLanches := vIniFile.ReadBool('AbasDisponiveis','Lanches',True);
   balBebidas := vIniFile.ReadBool('AbasDisponiveis','Bebidas',True);

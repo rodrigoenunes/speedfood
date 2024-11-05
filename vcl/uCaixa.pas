@@ -516,7 +516,7 @@ end;
 procedure TFuCaixa.FormCreate(Sender: TObject);
 begin
   Height := 410;
-  Width := 380;
+  Width := 400;
   Top := (Screen.Height - Height) div 2;
   Left := (Screen.Width - Width) div 2;
 

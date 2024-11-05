@@ -4,7 +4,7 @@ object FuPedidosBalcao: TFuPedidosBalcao
   BorderStyle = bsSingle
   Caption = 'Pedidos'
   ClientHeight = 604
-  ClientWidth = 1000
+  ClientWidth = 1056
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -14,10 +14,11 @@ object FuPedidosBalcao: TFuPedidosBalcao
   Position = poDesigned
   OnClose = FormClose
   OnCreate = FormCreate
+  OnDestroy = FormDestroy
   OnResize = FormResize
   OnShow = FormShow
   DesignSize = (
-    1000
+    1056
     604)
   TextHeight = 19
   object imgFundoBalcao: TImage
@@ -56,7 +57,7 @@ object FuPedidosBalcao: TFuPedidosBalcao
     Visible = False
   end
   object btSair: TBitBtn
-    Left = 227
+    Left = 243
     Top = 8
     Width = 115
     Height = 45
@@ -91,9 +92,10 @@ object FuPedidosBalcao: TFuPedidosBalcao
     ParentFont = False
     TabOrder = 1
     OnClick = btSairClick
+    ExplicitLeft = 209
   end
   object btAbrirPedido: TBitBtn
-    Left = 5
+    Left = 8
     Top = 8
     Width = 112
     Height = 45
@@ -164,6 +166,7 @@ object FuPedidosBalcao: TFuPedidosBalcao
     ParentFont = False
     TabOrder = 0
     OnClick = btAbrirPedidoClick
+    ExplicitLeft = 1
   end
   object PanWork: TPanel
     Left = 2
@@ -193,6 +196,9 @@ object FuPedidosBalcao: TFuPedidosBalcao
         Height = 342
         Align = alBottom
         TabOrder = 0
+        DesignSize = (
+          248
+          342)
         object btEditar: TBitBtn
           Left = 88
           Top = 4
@@ -266,6 +272,7 @@ object FuPedidosBalcao: TFuPedidosBalcao
           Top = 66
           Width = 237
           Height = 122
+          Anchors = [akLeft, akTop, akRight]
           Caption = '&Finalizar pedido'
           Font.Charset = DEFAULT_CHARSET
           Font.Color = clWindowText
@@ -393,6 +400,7 @@ object FuPedidosBalcao: TFuPedidosBalcao
           Top = 280
           Width = 161
           Height = 56
+          Anchors = [akLeft, akTop, akRight]
           Caption = '&Cancelar '
           Font.Charset = DEFAULT_CHARSET
           Font.Color = clWindowText
@@ -446,6 +454,7 @@ object FuPedidosBalcao: TFuPedidosBalcao
           Top = 304
           Width = 37
           Height = 25
+          Anchors = [akTop, akRight]
           Caption = '...'
           TabOrder = 6
           TabStop = False
@@ -455,6 +464,7 @@ object FuPedidosBalcao: TFuPedidosBalcao
           Top = 194
           Width = 237
           Height = 80
+          Anchors = [akLeft, akTop, akRight]
           Caption = 'Montar lanche'
           Font.Charset = DEFAULT_CHARSET
           Font.Color = clWindowText
@@ -721,6 +731,7 @@ object FuPedidosBalcao: TFuPedidosBalcao
           Font.Name = 'Tahoma'
           Font.Style = []
           ParentFont = False
+          OnEnter = TSLanchesEnter
           object GridLanches: TDrawGrid
             Left = 8
             Top = 3
@@ -1291,9 +1302,9 @@ object FuPedidosBalcao: TFuPedidosBalcao
           ImageIndex = 4
           object PanDiversos: TPanel
             Left = 0
-            Top = 129
+            Top = 113
             Width = 732
-            Height = 218
+            Height = 152
             Align = alTop
             Color = clSkyBlue
             Font.Charset = DEFAULT_CHARSET
@@ -1305,6 +1316,7 @@ object FuPedidosBalcao: TFuPedidosBalcao
             ParentFont = False
             TabOrder = 1
             OnEnter = PanDiversosEnter
+            ExplicitTop = 97
             object Label6: TLabel
               Left = 160
               Top = 32
@@ -1628,8 +1640,8 @@ object FuPedidosBalcao: TFuPedidosBalcao
               OnExit = edDescrExit
             end
             object btConfirmaDiversos: TBitBtn
-              Left = 588
-              Top = 152
+              Left = 579
+              Top = 90
               Width = 133
               Height = 52
               Caption = 'Confirmar'
@@ -1668,7 +1680,7 @@ object FuPedidosBalcao: TFuPedidosBalcao
             Left = 0
             Top = 0
             Width = 732
-            Height = 129
+            Height = 113
             Align = alTop
             Color = clSkyBlue
             Font.Charset = DEFAULT_CHARSET
@@ -1680,6 +1692,10 @@ object FuPedidosBalcao: TFuPedidosBalcao
             ParentFont = False
             TabOrder = 0
             OnEnter = PanBuffetEnter
+            ExplicitTop = -5
+            DesignSize = (
+              732
+              113)
             object Label3: TLabel
               Left = 160
               Top = 32
@@ -1744,7 +1760,8 @@ object FuPedidosBalcao: TFuPedidosBalcao
               Left = 588
               Top = 32
               Width = 133
-              Height = 52
+              Height = 68
+              Anchors = [akLeft, akTop, akRight, akBottom]
               Caption = 'Confirmar'
               Font.Charset = DEFAULT_CHARSET
               Font.Color = clWindowText
@@ -1775,6 +1792,7 @@ object FuPedidosBalcao: TFuPedidosBalcao
               ParentFont = False
               TabOrder = 3
               OnClick = btConfirmaBuffetClick
+              ExplicitHeight = 52
             end
             object edPeso: TDBEdit
               Left = 160
@@ -1794,7 +1812,7 @@ object FuPedidosBalcao: TFuPedidosBalcao
               Top = 53
               Width = 121
               Height = 31
-              DataField = 'VlrTotal'
+              DataField = 'ZC_Valor'
               DataSource = uDM.SCDBufet
               ReadOnly = True
               TabOrder = 2
@@ -1959,12 +1977,42 @@ object FuPedidosBalcao: TFuPedidosBalcao
           OnClick = sbAbasMultiClick
           ExplicitLeft = 47
         end
+        object cbTVBuffet: TCheckBox
+          Left = 164
+          Top = 4
+          Width = 166
+          Height = 17
+          Caption = 'Telado virtual buffet'
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -15
+          Font.Name = 'Tahoma'
+          Font.Style = []
+          ParentFont = False
+          TabOrder = 0
+        end
+        object cbBalConectada: TCheckBox
+          Left = 339
+          Top = 4
+          Width = 166
+          Height = 17
+          Caption = 'Balan'#231'a conectada'
+          Checked = True
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -15
+          Font.Name = 'Tahoma'
+          Font.Style = []
+          ParentFont = False
+          State = cbChecked
+          TabOrder = 1
+        end
       end
     end
   end
   object PanAlteraBebida: TPanel
-    Left = 410
-    Top = 372
+    Left = 399
+    Top = 407
     Width = 277
     Height = 129
     Color = clAqua
@@ -2167,8 +2215,8 @@ object FuPedidosBalcao: TFuPedidosBalcao
     end
   end
   object PanBuscaPedido: TPanel
-    Left = 19
-    Top = 362
+    Left = 8
+    Top = 407
     Width = 385
     Height = 149
     Color = clAqua
@@ -2304,13 +2352,18 @@ object FuPedidosBalcao: TFuPedidosBalcao
     end
   end
   object Teclado: TTouchKeyboard
-    Left = 914
-    Top = 348
+    Left = 598
+    Top = 356
     Width = 180
     Height = 180
     GradientEnd = clSilver
     GradientStart = clGray
     Layout = 'NumPad'
     Visible = False
+  end
+  object tBalanca: TTimer
+    OnTimer = tBalancaTimer
+    Left = 392
+    Top = 158
   end
 end

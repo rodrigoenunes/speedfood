@@ -10,6 +10,7 @@ object uDM: TuDM
       'Server=127.0.0.1'
       'DriverID=MySQL')
     ConnectedStoredUsage = []
+    Connected = True
     LoginPrompt = False
     Left = 28
     Top = 8
@@ -673,6 +674,16 @@ object uDM: TuDM
     end
     object PedidosLctDiversos: TIntegerField
       FieldName = 'LctDiversos'
+    end
+    object PedidosLctFrituras: TIntegerField
+      AutoGenerateValue = arDefault
+      FieldName = 'LctFrituras'
+      Origin = 'LctFrituras'
+    end
+    object PedidosLctGelados: TIntegerField
+      AutoGenerateValue = arDefault
+      FieldName = 'LctGelados'
+      Origin = 'LctGelados'
     end
     object PedidosZC_Impresso: TStringField
       FieldKind = fkCalculated
@@ -1527,6 +1538,7 @@ object uDM: TuDM
     MasterSource = DSPedidos
     MasterFields = 'Numero'
     Connection = FDC
+    ResourceOptions.AssignedValues = [rvEscapeExpand]
     TableName = 'speedfood.com_pedidodetpag'
     Left = 216
     Top = 292
@@ -1623,6 +1635,68 @@ object uDM: TuDM
       AutoGenerateValue = arDefault
       FieldName = 'Sit'
       Origin = 'Sit'
+    end
+    object PedDetpagNSU: TStringField
+      AutoGenerateValue = arDefault
+      FieldName = 'NSU'
+      Origin = 'NSU'
+      Size = 200
+    end
+    object PedDetpagCodAutorizacao: TStringField
+      AutoGenerateValue = arDefault
+      FieldName = 'CodAutorizacao'
+      Origin = 'CodAutorizacao'
+      Size = 200
+    end
+    object PedDetpagNroReferencia: TStringField
+      AutoGenerateValue = arDefault
+      FieldName = 'NroReferencia'
+      Origin = 'NroReferencia'
+      Size = 200
+    end
+    object PedDetpagDigCartao: TStringField
+      AutoGenerateValue = arDefault
+      FieldName = 'DigCartao'
+      Origin = 'DigCartao'
+    end
+    object PedDetpagCodBandeira: TStringField
+      AutoGenerateValue = arDefault
+      FieldName = 'CodBandeira'
+      Origin = 'CodBandeira'
+    end
+    object PedDetpagAutDataHora: TStringField
+      AutoGenerateValue = arDefault
+      FieldName = 'AutDataHora'
+      Origin = 'AutDataHora'
+    end
+    object PedDetpagAutClieArqImpr: TStringField
+      AutoGenerateValue = arDefault
+      FieldName = 'AutClieArqImpr'
+      Origin = 'AutClieArqImpr'
+      Size = 240
+    end
+    object PedDetpagAutEstabArqImpr: TStringField
+      AutoGenerateValue = arDefault
+      FieldName = 'AutEstabArqImpr'
+      Origin = 'AutEstabArqImpr'
+      Size = 240
+    end
+    object PedDetpagCancDataHora: TStringField
+      AutoGenerateValue = arDefault
+      FieldName = 'CancDataHora'
+      Origin = 'CancDataHora'
+    end
+    object PedDetpagCancClieArqImpr: TStringField
+      AutoGenerateValue = arDefault
+      FieldName = 'CancClieArqImpr'
+      Origin = 'CancClieArqImpr'
+      Size = 240
+    end
+    object PedDetpagCancEstabArqImpr: TStringField
+      AutoGenerateValue = arDefault
+      FieldName = 'CancEstabArqImpr'
+      Origin = 'CancEstabArqImpr'
+      Size = 240
     end
     object PedDetpagZC_nrCartao: TStringField
       FieldKind = fkCalculated
@@ -1795,6 +1869,7 @@ object uDM: TuDM
   object CDBuffet: TClientDataSet
     Aggregates = <>
     Params = <>
+    OnCalcFields = CDBuffetCalcFields
     Left = 640
     Top = 24
     object CDBuffetPeso: TIntegerField
@@ -1805,14 +1880,14 @@ object uDM: TuDM
       DisplayFormat = ',0.00'
       EditFormat = '0.00'
     end
-    object CDBuffetVlrTotal: TCurrencyField
-      FieldName = 'VlrTotal'
-      DisplayFormat = ',0.00'
-      EditFormat = '0.00'
-    end
     object CDBuffetDescr: TStringField
       FieldName = 'Descr'
       Size = 120
+    end
+    object CDBuffetZC_Valor: TCurrencyField
+      FieldKind = fkCalculated
+      FieldName = 'ZC_Valor'
+      Calculated = True
     end
   end
   object CDDiversos: TClientDataSet

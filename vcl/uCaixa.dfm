@@ -3,8 +3,8 @@ object FuCaixa: TFuCaixa
   Top = 0
   BorderIcons = [biSystemMenu]
   Caption = 'C a i x a'
-  ClientHeight = 366
-  ClientWidth = 364
+  ClientHeight = 371
+  ClientWidth = 384
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -18,7 +18,7 @@ object FuCaixa: TFuCaixa
   object LabRotina: TLabel
     Left = 0
     Top = 0
-    Width = 364
+    Width = 384
     Height = 25
     Align = alTop
     Alignment = taCenter
@@ -37,10 +37,12 @@ object FuCaixa: TFuCaixa
   object PanCaixa: TPanel
     Left = 0
     Top = 25
-    Width = 364
-    Height = 261
+    Width = 384
+    Height = 271
     Align = alClient
     TabOrder = 0
+    ExplicitWidth = 364
+    ExplicitHeight = 261
     object Label2: TLabel
       Left = 74
       Top = 52
@@ -177,15 +179,16 @@ object FuCaixa: TFuCaixa
   end
   object PanControle: TPanel
     Left = 0
-    Top = 286
-    Width = 364
-    Height = 80
+    Top = 296
+    Width = 384
+    Height = 75
     Align = alBottom
     TabOrder = 1
+    ExplicitTop = 291
     object btOk: TBitBtn
-      Left = 26
-      Top = 6
-      Width = 153
+      Left = 14
+      Top = 8
+      Width = 169
       Height = 57
       Caption = '&Ok'
       Font.Charset = DEFAULT_CHARSET
@@ -214,9 +217,9 @@ object FuCaixa: TFuCaixa
       OnClick = btOkClick
     end
     object btCancel: TBitBtn
-      Left = 185
+      Left = 200
       Top = 8
-      Width = 153
+      Width = 169
       Height = 57
       Caption = '&Cancelar'
       Font.Charset = DEFAULT_CHARSET

@@ -87,7 +87,8 @@
         <AppDPIAwarenessMode>PerMonitorV2</AppDPIAwarenessMode>
         <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
         <VerInfo_Locale>1033</VerInfo_Locale>
-        <DCC_UnitSearchPath>C:\Projetos\speedfood\UsoGeral;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
+        <DCC_UnitSearchPath>C:\Projetos\speedfood\UsoGeral;C:\Projetos\speedfood\UsoGeral\tpapro_5.00\run;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
+        <Icon_MainIcon>SpeedFood_Icon.ico</Icon_MainIcon>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_2)'!=''">
         <DCC_LocalDebugSymbols>false</DCC_LocalDebugSymbols>
@@ -101,6 +102,7 @@
         <VerInfo_Locale>1033</VerInfo_Locale>
         <Icon_MainIcon>SpeedFood.ico</Icon_MainIcon>
         <DCC_ExeOutput>C:\SpeedFood\</DCC_ExeOutput>
+        <DCC_UnitSearchPath>C:\Projetos\speedfood\UsoGeral\tpapro_5.00\run;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
     </PropertyGroup>
     <ItemGroup>
         <DelphiCompile Include="$(MainSource)">

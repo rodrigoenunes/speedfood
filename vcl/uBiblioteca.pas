@@ -1014,7 +1014,21 @@ Begin
   Begin
     if Trim(slRetorno[I]).IsEmpty then
       Continue;
-
+    if uDM.sysVersao = 'NOVA' then
+       uDM.FDC.ExecSQL(
+       'UPDATE com_pedidodetpag ' +
+               'set NSU = ' + slRetorno[I].Substring(0,200).Trim.QuotedString + ', ' +
+               '    CodAutorizacao = ' + slRetorno[I].Substring(200,200).Trim.QuotedString + ', ' +
+               '    NroReferencia  = ' + slRetorno[I].Substring(400,200).Trim.QuotedString + ', ' +
+               '    DigCartao = ' + slRetorno[I].Substring(600, 20).Trim.QuotedString + ', ' +
+               '    CodBandeira = ' + slRetorno[I].Substring(620, 20).Trim.QuotedString + ', ' +
+               '    AutDataHora = ' + slRetorno[I].Substring(640, 20).Trim.QuotedString + ', ' +
+               '    AutClieArqImpr = ' + slRetorno[I].Substring(660,240).Trim.QuotedString + ', ' +
+               '    AutEstabArqImpr = ' + slRetorno[I].Substring(900,240).Trim.QuotedString + ', ' +
+               '    tpIntegra = 2 ' +
+               'where numero = ' + pCom_Pedido_Numero.ToString +
+               '  and seq    = ' + slDetPags[I])
+    else  // Versao anterior........
     uDM.FDC.ExecSQL(
       'UPDATE com_pedidodetpag ' +
       'set cAut      = ' + slRetorno[I].Substring(20, 20).Trim.QuotedString + ', ' +
