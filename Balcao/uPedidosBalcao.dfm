@@ -92,7 +92,6 @@ object FuPedidosBalcao: TFuPedidosBalcao
     ParentFont = False
     TabOrder = 1
     OnClick = btSairClick
-    ExplicitLeft = 209
   end
   object btAbrirPedido: TBitBtn
     Left = 8
@@ -166,7 +165,6 @@ object FuPedidosBalcao: TFuPedidosBalcao
     ParentFont = False
     TabOrder = 0
     OnClick = btAbrirPedidoClick
-    ExplicitLeft = 1
   end
   object PanWork: TPanel
     Left = 2
@@ -1316,7 +1314,6 @@ object FuPedidosBalcao: TFuPedidosBalcao
             ParentFont = False
             TabOrder = 1
             OnEnter = PanDiversosEnter
-            ExplicitTop = 97
             object Label6: TLabel
               Left = 160
               Top = 32
@@ -1692,7 +1689,6 @@ object FuPedidosBalcao: TFuPedidosBalcao
             ParentFont = False
             TabOrder = 0
             OnEnter = PanBuffetEnter
-            ExplicitTop = -5
             DesignSize = (
               732
               113)
@@ -1792,7 +1788,6 @@ object FuPedidosBalcao: TFuPedidosBalcao
               ParentFont = False
               TabOrder = 3
               OnClick = btConfirmaBuffetClick
-              ExplicitHeight = 52
             end
             object edPeso: TDBEdit
               Left = 160

@@ -1023,8 +1023,8 @@ Begin
                '    DigCartao = ' + slRetorno[I].Substring(600, 20).Trim.QuotedString + ', ' +
                '    CodBandeira = ' + slRetorno[I].Substring(620, 20).Trim.QuotedString + ', ' +
                '    AutDataHora = ' + slRetorno[I].Substring(640, 20).Trim.QuotedString + ', ' +
-               '    AutClieArqImpr = ' + slRetorno[I].Substring(660,240).Trim.QuotedString + ', ' +
-               '    AutEstabArqImpr = ' + slRetorno[I].Substring(900,240).Trim.QuotedString + ', ' +
+               '    AutClieArqImpr = ' + slRetorno[I].Substring(660,240).Trim.Replace('\', '\\').QuotedString + ', ' +
+               '    AutEstabArqImpr = ' + slRetorno[I].Substring(900,240).Trim.Replace('\', '\\').QuotedString + ', ' +
                '    tpIntegra = 2 ' +
                'where numero = ' + pCom_Pedido_Numero.ToString +
                '  and seq    = ' + slDetPags[I])
@@ -1037,8 +1037,7 @@ Begin
       '    codVenda  = ' + slRetorno[I].Substring(20, 20).Trim.QuotedString + ', ' +
       '    tpIntegra = 2 ' +
       'where numero = ' + pCom_Pedido_Numero.ToString +
-      '  and seq    = ' + slDetPags[I]
-    );
+      '  and seq    = ' + slDetPags[I]);
 
 
 

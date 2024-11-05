@@ -1508,6 +1508,8 @@ end;
 procedure TFuPedidosBalcao.btAbrirPedidoClick(Sender: TObject);
 begin
   pgControleBalcao.ActivePageIndex := uDM.sysIniBalcao;
+  uDM.sysAtivo := 'BALCAO';
+  uDM.sysPedePlaca := False;
   if CriaAbrePedidoWrk(0) <> 0 then Exit;
   itensPedido := 0;
   edItens.Text := IntToStr(itensPedido);

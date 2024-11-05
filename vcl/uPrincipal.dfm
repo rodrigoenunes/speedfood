@@ -451,7 +451,7 @@ object FuPrincipal: TFuPrincipal
   end
   object btConsPedidos: TBitBtn
     Left = 8
-    Top = 116
+    Top = 118
     Width = 257
     Height = 52
     Caption = 'Consultar pedidos'

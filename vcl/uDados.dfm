@@ -10,7 +10,6 @@ object uDM: TuDM
       'Server=127.0.0.1'
       'DriverID=MySQL')
     ConnectedStoredUsage = []
-    Connected = True
     LoginPrompt = False
     Left = 28
     Top = 8

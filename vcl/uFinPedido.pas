@@ -256,9 +256,15 @@ begin
     posX := wrkImag.Width-2;
     wrkImag.Canvas.LineTo(posX,posY);
     //
+    if uDM.sysAtivo = 'BALCAO' then
+       uDM.sysPedePlaca := False
+    else
+       uDM.sysPedePlaca := True;
     uDM.PedWrk.First;
     while not uDM.PedWrk.Eof
     do begin
+      if uDM.PedWrkTpProd.AsInteger in [1, 4, 11, 21]  then
+         uDM.sysPedePlaca := True;
       posX := 2;
       posY := posY + 2;
       LabTaman.Font.Size := 11;
@@ -473,7 +479,7 @@ var somaVlr,wSaldo: Currency;
     wStatus,wAtivarMsg: Boolean;
     wAnswer: Integer;
 begin
-  if ObtemParametro('PedidoPlaca') = 'S' then
+  if  (ObtemParametro('PedidoPlaca') = 'S') and uDM.sysPedePlaca then
      if StrToIntDef(uDM.PedidosPlaca.AsString,0) = 0 then
      begin
        //MessageDlg('Nro de placa não informado, dado obrigatorio',mtError,[mbOk],0);
@@ -489,6 +495,7 @@ begin
        dbPlaca.SetFocus;
        Exit;
      end;
+
   if uDM.PedidosMeioPagto.AsInteger = 0 then   // Dinheiro
     if uDM.PedidosVlrRecebido.AsCurrency < uDM.PedidosValor.AsCurrency then
     begin
@@ -529,7 +536,8 @@ begin
   wAtivarMsg := False;
   if uDM.PedidosMeioPagto.AsInteger <> 0            // Não é dinheiro 1-CDeb 2-CCred 3-PIX 4-Outro 5-Misto
   then begin
-    LabInstrucao.Caption := 'Siga as instruções do PINPAD !!!';
+    if uDM.sysTefPos = 1 then
+       LabInstrucao.Caption := 'Siga as instruções do PINPAD !!!';
     wAtivarMsg := True;
   end;
   PanAguarde.Color := clHighlight;
@@ -671,8 +679,8 @@ begin
       if (uDM.DetpagWrktPag.AsString = '03')         // Cartao crédito
          or (uDM.DetpagWrktPag.AsString = '04')      // Cartao debito
          or (uDM.DetpagWrktPag.AsString = '17')      // PIX  09/01/2024
-      then uDM.PedDetpagtpIntegra.AsInteger := uDM.SisPessoaTefPos.AsInteger
-      else uDM.PedDetpagtpIntegra.AsInteger := 2;
+      then uDM.PedDetpagtpIntegra.AsInteger := uDM.sysTefPos     // uDM.SisPessoaTefPos.AsInteger
+      else uDM.PedDetpagtpIntegra.AsInteger := 2;       // Não integrado
       uDM.PedDetpag.Post;
       uDM.DetpagWrk.Next;
     end;
@@ -683,7 +691,7 @@ begin
     uDM.PedDetpagNumero.AsInteger    := nrPedido;          // uDM.PedidosNumero.AsInteger;
     uDM.PedDetpagSeq.AsInteger       := 1;
     uDM.PedDetpagindPag.AsInteger    := 0;      // Sempre 0 (A vista) (1-Prazo)
-    uDM.PedDetpagtpIntegra.AsInteger := uDM.SisPessoaTefPos.AsInteger;     // 09/01/24
+    uDM.PedDetpagtpIntegra.AsInteger := uDM.sysTefPos;     // uDM.SisPessoaTefPos.AsInteger;
     if uDM.PedidosVlrReais.AsCurrency > 0 then
     begin
       uDM.PedDetpagtPag.AsString := '01';       // Reais
@@ -696,19 +704,19 @@ begin
       begin
         uDM.PedDetpagValor.AsCurrency := uDM.PedidosVlrCCred.AsCurrency;
         uDM.PedDetpagtPag.AsString := '03';
-        uDM.PedDetpagtpIntegra.AsInteger := uDM.SisPessoaTefPos.ASInteger;      // 09/01/24
+        uDM.PedDetpagtpIntegra.AsInteger := uDM.sysTefPos;  // uDM.SisPessoaTefPos.ASInteger;
       end;
       if uDM.PedidosVlrCDeb.AsCurrency > 0 then
       begin
         uDM.PedDetpagValor.AsCurrency := uDM.PedidosVlrCDeb.AsCurrency;
         uDM.PedDetpagtPag.AsString := '04';
-        uDM.PedDetpagtpIntegra.AsInteger := uDM.SisPessoaTefPos.ASInteger;      // 09/01/24
+        uDM.PedDetpagtpIntegra.AsInteger := uDM.sysTefPos;  // uDM.SisPessoaTefPos.ASInteger;
       end;
       if uDM.PedidosVlrPIX.AsCurrency > 0 then
       begin
         uDM.PedDetpagValor.AsCurrency := uDM.PedidosVlrPIX.AsCurrency;
         uDM.PedDetpagtPag.AsString := '17';
-        uDM.PedDetpagtpIntegra.AsInteger := uDM.SisPessoaTefPos.ASInteger;      // 09/01/24
+        uDM.PedDetpagtpIntegra.AsInteger := uDM.sysTefPos;  // uDM.SisPessoaTefPos.ASInteger;
       end;
       if uDM.PedidosVlrOutros.AsCurrency > 0 then
       begin
@@ -1150,8 +1158,7 @@ end;
 
 procedure TFuFinPedido.dbPlacaEnter(Sender: TObject);
 begin
-//  dbPlaca.Text := '';
-//  uDM.PedidosPlaca.Clear;
+  if not uDM.sysPedePlaca then Exit;
   tvLeft := PanInform.Left + dbPlaca.Left - 8;
   if (tvLeft + 300) >= FuFinPedido.Width
      then tvLeft := FuFinPedido.Width - 328;
