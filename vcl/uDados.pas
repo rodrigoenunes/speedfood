@@ -417,10 +417,15 @@ var
 const
   xOperacao: array[0..4] of String = ('Saldo','Receb','Suprim','Pagto','Sangria');
   xOperAbrv: array[0..4] of String = ('Sdo',  'Rec',  'Sup',   'Pgt',  'San');
-  xMeioPgto: array[0..5] of String = ('R$', 'CDeb','CCred','PIX','Outros','Misto');
-  xMeioAbrv: array[0..5] of String = ('R$', 'CDb', 'CCr',  'PIX','Ou',    'Mis');
-  xMPExtenso: array[0..5] of String = ('Dinheiro', 'Cartão débito','Cartão crédito',
-                                       'PIX', 'Outros', 'Misto');
+  xMeioPgto: array[0..6] of String = ('R$', 'CDeb','CCred','PIX','Outros','Misto','Banri');
+  xMeioAbrv: array[0..6] of String = ('R$', 'CDb', 'CCr',  'PIX','Ou',    'Mis',  'Ban');
+  xMPExtenso: array[0..6] of String = ('Dinheiro',
+                                       'Cartão débito',
+                                       'Cartão crédito',
+                                       'PIX',
+                                       'Outros',
+                                       'Misto',
+                                       'Banricompras');
 implementation
 
 Uses IniFiles, uGenericas;
@@ -1094,7 +1099,7 @@ begin
     PedidosZC_Impresso.AsString := 'Impresso';
   xData := PedidosData.AsString;
   PedidosZC_DataHora.AsString := Copy(xData,1,6) + Copy(xData,9,8);
-  if (PedidosMeioPagto.AsInteger >= 0) and (PedidosMeioPagto.AsInteger <= 5)
+  if (PedidosMeioPagto.AsInteger >= 0) and (PedidosMeioPagto.AsInteger <= 6)
   then begin
     PedidosZC_MeioPagto.AsString := xMeioAbrv[PedidosMeioPagto.AsInteger];
     PedidosZC_MPExtenso.AsString := xMPExtenso[PedidosMeioPagto.AsInteger];

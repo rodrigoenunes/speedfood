@@ -489,6 +489,7 @@ object FuFinPedido: TFuFinPedido
           'Cart'#227'o D'#233'bito'
           'Cart'#227'o Cr'#233'dito'
           'PIX'
+          'Banricompras'
           'Outros'
           '<Misto/Multiplo>')
         ParentBackground = False
@@ -499,6 +500,7 @@ object FuFinPedido: TFuFinPedido
           '1'
           '2'
           '3'
+          '6'
           '4'
           '5')
         OnClick = dbMeioPagtoClick

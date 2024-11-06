@@ -729,7 +729,6 @@ object FuPedidosBalcao: TFuPedidosBalcao
           Font.Name = 'Tahoma'
           Font.Style = []
           ParentFont = False
-          OnEnter = TSLanchesEnter
           object GridLanches: TDrawGrid
             Left = 8
             Top = 3

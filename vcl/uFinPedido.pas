@@ -534,7 +534,7 @@ begin
   btRemoto.Enabled := False;
   LabInstrucao.Caption := 'Aguarde o final do processo';   // R$(*0) ou Outros(4)
   wAtivarMsg := False;
-  if uDM.PedidosMeioPagto.AsInteger <> 0            // Não é dinheiro 1-CDeb 2-CCred 3-PIX 4-Outro 5-Misto
+  if uDM.PedidosMeioPagto.AsInteger <> 0            // Não é dinheiro 1-CDeb 2-CCred 3-PIX 4-Outro 5-Misto 6-Banricompras
   then begin
     if uDM.sysTefPos = 1 then
        LabInstrucao.Caption := 'Siga as instruções do PINPAD !!!';
@@ -741,11 +741,12 @@ begin
     xEmitirNFCe := 'Q';
     case uDM.PedidosMeioPagto.AsInteger of
       0:xEmitirNFCe := ObtemParametro('NFCe_Reais');        // Pagto em Reais (dinheiro)
-      1:xEmitirNFCe := ObtemParametro('NFCe_CDebito');      // Pagto Cartao de débito
+      1,6:xEmitirNFCe := ObtemParametro('NFCe_CDebito');    // Pagto Cartao de débito/Banricompras
       2:xEmitirNFCe := ObtemParametro('NFCe_CCredito');     // Pagto Cartao de crédito
       3:xEmitirNFCe := ObtemParametro('NFCe_PIX');          // Pagto PIX
       4:xEmitirNFCe := ObtemParametro('NFCe_Outros');       // Pagto Outros
       5:xEmitirNFCe := ObtemParametro('NFCe_Misto');        // Pagto Misto
+      else xEmitirNFCe := 'Q';
     end;
     if (xEmitirNFCe = 'Q') or (xEmitirNFCe = '') then
       if MessageDlg('Geração / Emissão de NFCe' + #13 +
@@ -1072,6 +1073,7 @@ end;
 procedure TFuFinPedido.dbMeioPagtoClick(Sender: TObject);
 var nTop,nLeft,nWidth,nHeight: Integer;
     vlReais,vlCCred,vlCDeb,vlPIX,vlOutros: Currency;
+    xMeioPagto: String;
 begin
   ExibeValorFaltante;
   edReais.Enabled  := False;
@@ -1089,9 +1091,10 @@ begin
   uDM.PedidosVlrCCred.AsCurrency := 0;
   uDM.PedidosVlrPIX.AsCurrency := 0;
   uDM.PedidosVlrOutros.AsCurrency := 0;
-  uDM.PedidosMeioPagto.AsInteger := dbMeioPagto.ItemIndex;
+  //ShowMessage('MeioPagto'+ uDM.PedidosMeioPagto.AsString);
+
   case dbMeioPagto.ItemIndex of
-    0:begin
+    0:begin    // Reais
         uDM.PedidosVlrReais.AsCurrency  := valorPedido;
         if uDM.PedidosVlrRecebido.AsCurrency = 0 then
            uDM.PedidosVlrRecebido.AsCurrency := valorPedido;
@@ -1103,11 +1106,11 @@ begin
         edReceb.SetFocus;
         Exit;
     end;
-    1:uDM.PedidosVlrCDeb.AsCurrency   := valorPedido;
-    2:uDM.PedidosVlrCCred.AsCurrency  := valorPedido;
-    3:uDM.PedidosVlrPIX.AsCurrency    := valorPedido;
-    4:uDM.PedidosVlrOutros.AsCurrency := valorPedido;
-    5:begin
+    1,4:uDM.PedidosVlrCDeb.AsCurrency   := valorPedido;           // Débito ou Banricompras
+    2:uDM.PedidosVlrCCred.AsCurrency  := valorPedido;             // Crédito
+    3:uDM.PedidosVlrPIX.AsCurrency    := valorPedido;             // PIX
+    5:uDM.PedidosVlrOutros.AsCurrency := valorPedido;             // Outros
+    6:begin                                                       // Misto
         nTop := FuFinPedido.Top + PanInform.Top;
         nLeft := FuFinPedido.Left + PanInform.Left;
         nHeight := FuFinPedido.Height - (PanInform.Top * 2);

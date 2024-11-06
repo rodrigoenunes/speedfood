@@ -199,7 +199,6 @@ type
     procedure btConfirmaDiversosClick(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure tBalancaTimer(Sender: TObject);
-    procedure TSLanchesEnter(Sender: TObject);
   private
     { Private declarations }
     FApdComPort: TApdComPort;
@@ -2493,12 +2492,6 @@ begin
     FApdComPort.Open:= True;
 
   FApdComPort.PutString(#05);
-
-end;
-
-procedure TFuPedidosBalcao.TSLanchesEnter(Sender: TObject);
-begin
-  tBalanca.Enabled := True;
 
 end;
 
