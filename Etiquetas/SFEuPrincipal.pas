@@ -196,7 +196,7 @@ end;
 procedure TFuPrincipalEtq.btPrintAllClick(Sender: TObject);
 begin
   Timer1.Enabled := False;
-  EmiteEtiquetas(uDM.PedidosNumero.AsInteger,0);
+  EmiteEtiquetas(uDM.PedidosNumero.AsInteger,0,True);
   uDM.PedItens.Filtered := False;
   uDM.PedItens.Refresh;
   uDM.PedItens.First;
@@ -225,7 +225,7 @@ begin
   Timer1.Enabled := False;
   nKey1 := uDM.PedItensNumero.AsInteger;
   nKey2 := uDM.PedItensNrLcto.AsInteger;
-  EmiteEtiquetas(nKey1,nKey2);
+  EmiteEtiquetas(nKey1,nKey2,False);
   uDM.PedItens.Refresh;
   if uDM.PedItens.FindKey([nKey1,nKey2]) then
   begin

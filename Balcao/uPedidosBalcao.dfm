@@ -1301,7 +1301,7 @@ object FuPedidosBalcao: TFuPedidosBalcao
             Left = 0
             Top = 113
             Width = 732
-            Height = 152
+            Height = 202
             Align = alTop
             Color = clSkyBlue
             Font.Charset = DEFAULT_CHARSET
@@ -1313,6 +1313,10 @@ object FuPedidosBalcao: TFuPedidosBalcao
             ParentFont = False
             TabOrder = 1
             OnEnter = PanDiversosEnter
+            ExplicitTop = 114
+            DesignSize = (
+              732
+              202)
             object Label6: TLabel
               Left = 160
               Top = 32
@@ -1571,9 +1575,10 @@ object FuPedidosBalcao: TFuPedidosBalcao
               DataSource = uDM.SCDDiversos
               Enabled = False
               TabOrder = 1
-              OnEnter = edCodBarrasEnter
+              OnDblClick = edCodBarrasDblClick
               OnExit = edCodBarrasExit
               OnKeyDown = edCodBarrasKeyDown
+              OnMouseDown = edCodBarrasMouseDown
             end
             object edGrupo: TDBEdit
               Left = 160
@@ -1636,10 +1641,11 @@ object FuPedidosBalcao: TFuPedidosBalcao
               OnExit = edDescrExit
             end
             object btConfirmaDiversos: TBitBtn
-              Left = 579
-              Top = 90
-              Width = 133
-              Height = 52
+              Left = 566
+              Top = 147
+              Width = 155
+              Height = 51
+              Anchors = [akLeft, akTop, akRight, akBottom]
               Caption = 'Confirmar'
               Font.Charset = DEFAULT_CHARSET
               Font.Color = clWindowText

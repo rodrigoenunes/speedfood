@@ -185,7 +185,6 @@ type
     procedure edItemKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure edQuantEnter(Sender: TObject);
     procedure edQuantExit(Sender: TObject);
-    procedure edCodBarrasEnter(Sender: TObject);
     procedure PanDiversosEnter(Sender: TObject);
     procedure edCodBarrasExit(Sender: TObject);
     procedure edDescrEnter(Sender: TObject);
@@ -199,6 +198,9 @@ type
     procedure btConfirmaDiversosClick(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure tBalancaTimer(Sender: TObject);
+    procedure edCodBarrasDblClick(Sender: TObject);
+    procedure edCodBarrasMouseDown(Sender: TObject; Button: TMouseButton;
+      Shift: TShiftState; X, Y: Integer);
   private
     { Private declarations }
     FApdComPort: TApdComPort;
@@ -1549,7 +1551,7 @@ begin
   S:= '';
 end;
 
-procedure TFuPedidosBalcao.edCodBarrasEnter(Sender: TObject);
+procedure TFuPedidosBalcao.edCodBarrasDblClick(Sender: TObject);
 begin
   tvLeft := genLeft + edCodBarras.Left - 3;
   tvTop := genTop + edCodBarras.Top + edCodBarras.Height + 3;
@@ -1586,6 +1588,17 @@ procedure TFuPedidosBalcao.edCodBarrasKeyDown(Sender: TObject; var Key: Word;
   Shift: TShiftState);
 begin
   if Key = vk_Return then SelectNext((Sender as TwinControl), True, True);
+
+end;
+
+procedure TFuPedidosBalcao.edCodBarrasMouseDown(Sender: TObject;
+  Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
+begin
+  if Button <> mbRight then
+    Exit;
+  tvLeft := genLeft + edCodBarras.Left - 3;
+  tvTop := genTop + edCodBarras.Top + edCodBarras.Height + 3;
+  ExibeTecladoVirtual('NumPad',tvTop,tvLeft);
 
 end;
 

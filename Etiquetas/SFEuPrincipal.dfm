@@ -10,13 +10,11 @@ object FuPrincipalEtq: TFuPrincipalEtq
   Font.Height = -19
   Font.Name = 'Tahoma'
   Font.Style = []
-  OldCreateOrder = False
   Position = poDesktopCenter
   OnActivate = FormActivate
   OnClose = FormClose
   OnCreate = FormCreate
   OnResize = FormResize
-  PixelsPerInch = 96
   TextHeight = 23
   object PanTurnos: TPanel
     Left = 0
