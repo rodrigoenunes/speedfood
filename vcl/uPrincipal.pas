@@ -371,6 +371,7 @@ begin
       Halt(0);
     end;
     //
+    //ShowMessage('Turno=' + IntToStr(uDM.turnoCorrente) + '  Caixa='+ IntToStr(uDM.sysNrCaixa));
     if not AbreCaixa(uDM.turnoCorrente,uDM.sysNrCaixa) then
     begin
       MessageDlg('Cancelamento de abertura pelo usuário, ou' + #13 +

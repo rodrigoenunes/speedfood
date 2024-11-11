@@ -143,6 +143,7 @@ var
   xObserv: String;
   posBarra: String;
   altBarra,lrgBarra,altMaxima,lrgMaxima: Integer;
+  lDuplicidade: Boolean;
 begin
   valorPedido := pTotal;
   itensPedido := pItens;
@@ -190,9 +191,21 @@ begin
     else begin    // Pedido NOVO
       uDM.Pedidos.Last;
       nrPedido := uDM.PedidosNumero.AsInteger + 1;
-      uDM.Pedidos.Append;
-      uDM.PedidosNumero.AsInteger := nrPedido;
-      uDM.PedidosData.AsDateTime := Now;
+      lDuplicidade := True;
+      while lDuplicidade do
+      begin
+        uDM.Pedidos.Append;
+        uDM.PedidosNumero.AsInteger := nrPedido;
+        uDM.PedidosData.AsDateTime := Now;
+        Try
+          uDM.Pedidos.Post;
+          lDuplicidade := False;
+        Except
+          uDM.Pedidos.Cancel;
+          nrPedido := nrPedido + 1;
+        End;
+      end;
+      uDM.Pedidos.Edit;
     end;
     uDM.PedidosLanctos.AsInteger := itensPedido;
     uDM.PedidosValor.AsCurrency := valorPedido;
@@ -218,7 +231,7 @@ begin
     uDM.PedidosMeioPagto.AsInteger := uDM.meioPgto;
     uDM.PedidosNomeCliente.AsString := uDM.nomeClie;
     uDM.PedidosCPF_CNPJ.AsString := uDM.CPFCNPJ;
-    uDM.PedidosSitPagto.AsInteger := 0;                  // NÃO PAGO
+    uDM.PedidosSitPagto.AsInteger := 1;                  // := 0;     !!!!NÃO PAGO
     //
     pNroPedido := nrPedido;                  // <---- Variavel de retorno, nro do pedido
     //
@@ -478,6 +491,7 @@ var somaVlr,wSaldo: Currency;
     xEmitirNFCe,xImpressao,wMsg: String;
     wStatus,wAtivarMsg: Boolean;
     wAnswer: Integer;
+    lEtiqBebida: Boolean;
 begin
   if  (ObtemParametro('PedidoPlaca') = 'S') and uDM.sysPedePlaca then
      if StrToIntDef(uDM.PedidosPlaca.AsString,0) = 0 then
@@ -506,7 +520,7 @@ begin
   somaVlr := uDM.PedidosVlrReais.AsCurrency + uDM.PedidosVlrCDeb.AsCurrency +
              uDM.PedidosVlrCCred.AsCurrency + uDM.PedidosVlrPIX.AsCurrency +
              uDM.PedidosVlrOutros.AsCurrency;
-  if uDM.PedidosValor.AsCurrency <> somaVlr then
+  if Abs(uDM.PedidosValor.AsCurrency - somaVlr) > 0.01 then
   begin
     MessageDlg('Somatório dos valores difere do total do pedido',mtError,[mbOk],0);
     dbMeioPagto.SetFocus;
@@ -771,14 +785,25 @@ begin
      if (uDM.PedidosMeioPagto.AsInteger = 1) or        // Cartão dédito
         (uDM.PedidosMeioPagto.AsInteger = 2)           // Cartão crédito
         then uDM.wOperCartoes := uDM.wOperCartoes + 1;
+
+  {
     newSitPagto := 1;
     if uDM.PedidosMeioPagto.AsInteger = 0 then
       if MessageDlg('Pagamento em REAIS' + #13 + 'Confirme o pagamento',
                     mtConfirmation,[mbYes,mbNo],0,mbNo,['Sim','Não']) = mrNo then
                     newSitPagto := 0;                   // Não pago
-    uDM.Pedidos.Edit;
-    uDM.PedidosSitPagto.AsInteger := newSitPagto;
+    //ShowMessage('Pgt reais 1   Nr:'+ uDM.PedidosNumero.AsString);
+    if uDM.Pedidos.State <> dsEdit then
+       uDM.Pedidos.Edit;
+    //ShowMessage('Pgt reais 1.5');
+    sleep(500);
+    uDM.Pedidos['SitPagto'] := newSitPagto;
+
+    //ShowMessage('Pgt reais 1.6');
+
     uDM.Pedidos.Post;
+    //ShowMessage('Pgt reais 2');
+  }
   end;
   if (not wStatus) or
      (uDM.PedidosSitPagto.AsInteger = 0) then
@@ -880,9 +905,14 @@ begin
                   'Imprimir etiquetas ?',
                   mtConfirmation,[mbYes,mbNo],0,mbNo,['Sim','Não']) = mrYes
     then xImpressao := 'S';
+  if uDM.sysVersao = 'NOVA' then
+     lEtiqBebida := uDM.sysImprimeBebidaBalcao
+  else
+     lEtiqBebida := True;
+
   if xImpressao = 'S' then
   begin
-    EmiteEtiquetas(nrPedido, 0, True);           //uDM.PedidosNumero.AsInteger, 0, True); // Todos os ítens do pedido ainda nao impressos
+    EmiteEtiquetas(nrPedido, 0, True, lEtiqBebida);          //uDM.PedidosNumero.AsInteger, 0, True); // Todos os ítens do pedido ainda nao impressos
     uDM.PedItens.Filtered := False;
     uDM.PedItens.Refresh;
     uDM.PedItens.First;

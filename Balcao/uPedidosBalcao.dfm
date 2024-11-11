@@ -1313,7 +1313,6 @@ object FuPedidosBalcao: TFuPedidosBalcao
             ParentFont = False
             TabOrder = 1
             OnEnter = PanDiversosEnter
-            ExplicitTop = 114
             DesignSize = (
               732
               202)

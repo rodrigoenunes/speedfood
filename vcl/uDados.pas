@@ -397,6 +397,7 @@ type
     sysAtivo: String;
     sysPedePlaca: Boolean;
     sysTefPosIni,sysTefPos: Integer;
+    sysImprimePedidoBalcao,sysImprimeBebidaBalcao: Boolean;
     balLanches,balBebidas,balCrepes,balFrituras,balGelados,balBufDiv: Boolean;
     filGrupoItens: Integer;
     meioPgto: Integer;
@@ -840,6 +841,8 @@ begin
     vIniFile.WriteBool('Estacao','VerSefaz',False);
     vIniFile.WriteBool('Estacao','Turnos',False);             // Tratativa de turnos
     vIniFile.WriteBool('Estacao','CaixaAltLctos',False);
+    vIniFile.WriteBool('Estacao','ImprimePedidoBalcao',False);
+
     vIniFile.WriteString('Estacao','Versao','XXX');
     vIniFile.WriteString('Estacao','TEFPOS','TEF');
 
@@ -895,6 +898,8 @@ begin
   sysHelpArgox := vIniFile.ReadBool('Estacao','HelpArgox',False);
   sysSefaz := vIniFile.ReadBool('Estacao','VerSefaz',False);
   sysAltLctos := vIniFile.ReadBool('Estacao','CaixaAltLctos',False);
+  sysImprimePedidoBalcao := vIniFile.ReadBool('Estacao','ImprimePedidoBalcao',False);
+  sysImprimeBebidaBalcao := vIniFile.ReadBool('Estacao','ImprimeBebidaBalcao',False);
   sysVersao := AnsiUpperCase(vIniFile.ReadString('Estacao','Versao','XXX'));
   //
   if AnsiUpperCase(vIniFile.ReadString('Estacao','TEFPOS','TEF')) = 'TEF'

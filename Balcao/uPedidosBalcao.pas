@@ -1079,7 +1079,7 @@ begin
       // Obs.1
       DebugMensagem(uDM.lDebug,'Gravou pedido, atualizou caixa e emitiu NFCe(se for o caso)' + #13 +
                                'Vai imprimir pedido nr: ' + IntToStr(nroPedido));
-      if nroPedido > 0 then
+      if (nroPedido > 0) and uDM.sysImprimePedidoBalcao then
       begin
         lstPedido := ObtemParametro('PedidoImprimir');
         if Pos(lstPedido,'SNQ') = 0 then lstPedido := 'Q';       // Sim  Não  Questiona

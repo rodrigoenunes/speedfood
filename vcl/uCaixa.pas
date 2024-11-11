@@ -80,8 +80,15 @@ begin
     nSeq := uDM.RegCaixaCaixaSeq.AsInteger;
     if uDM.RegCaixaSituacao.AsString = 'F' then
       lNovo := True
-    else
-      lNovo := False;
+    else if uDM.RegCaixaTurno.AsInteger <> pTurno
+         then begin
+           uDM.RegCaixa.Edit;
+           uDM.RegCaixaDtHrFim.AsDateTime := Now;
+           uDM.RegCaixaSituacao.AsString := 'F';
+           uDM.RegCaixa.Post;
+           lNovo := True;
+         end
+         else lNovo := False;
   end;
   if lNovo then
   begin

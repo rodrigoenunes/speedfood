@@ -10,7 +10,7 @@ uses
   //procedure SetRecordRangeFritura(pModo:Integer);
   procedure SetRecordRange_CFS(pModo:Integer);     // Crepe Fritura Shake
   procedure DefinePrinterEtiqueta;
-  procedure EmiteEtiquetas(pmtPedido:Integer; pmtItem:Integer; pmtNaoImpressa:Boolean);
+  procedure EmiteEtiquetas(pmtPedido:Integer; pmtItem:Integer; pmtNaoImpressa:Boolean; pmtEtiqBebidas:Boolean=True);
 
 type
   TFSFEuPrintFortes = class(TForm)
@@ -171,7 +171,7 @@ begin
 end;
 
 
-Procedure EmiteEtiquetas(pmtPedido:Integer; pmtItem:Integer; pmtNaoImpressa:Boolean);
+Procedure EmiteEtiquetas(pmtPedido:Integer; pmtItem:Integer; pmtNaoImpressa:Boolean; pmtEtiqBebidas:Boolean=True);
 var filAnt: Boolean;
     filTxtAnt: String;
     i: Integer;
@@ -251,18 +251,21 @@ begin
         FSFEuPrintFortes.RLEtiqLanche.Print;
     end;
     //   Bebidas
-    SetRecordRangeLanche(0);      // rrCurrentOnly;
-    uDM.PedItens.Filter := 'TpProd=3';
-    if pmtNaoImpressa then
-       uDM.PedItens.Filter := uDM.PedItens.Filter + ' and EtqImpressa=0';
-    uDM.PedItens.Refresh;
-    if uDM.PedItens.RecordCount > 0 then
-    begin      // Imprime TODAS as bebidas em uma etiqueta
-      uDM.PedItens.First;
-      if lPreview then
-        FSFEuPrintFortes.RLEtiqBebida.Preview
-      else
-        FSFEuPrintFortes.RLEtiqBebida.Print;
+    if pmtEtiqBebidas
+    then begin
+      SetRecordRangeLanche(0);      // rrCurrentOnly;
+      uDM.PedItens.Filter := 'TpProd=3';
+      if pmtNaoImpressa then
+         uDM.PedItens.Filter := uDM.PedItens.Filter + ' and EtqImpressa=0';
+      uDM.PedItens.Refresh;
+      if uDM.PedItens.RecordCount > 0 then
+      begin      // Imprime TODAS as bebidas em uma etiqueta
+        uDM.PedItens.First;
+        if lPreview then
+          FSFEuPrintFortes.RLEtiqBebida.Preview
+        else
+          FSFEuPrintFortes.RLEtiqBebida.Print;
+      end;
     end;
     // Crepes(11), Frituras(21), Gelados(31)
     for i := 1 to 4 do     // Array "tpProds"  (11,21,31,32)
