@@ -1702,6 +1702,11 @@ object uDM: TuDM
       FieldName = 'ZC_nrCartao'
       Calculated = True
     end
+    object PedDetpagtpPagTela: TIntegerField
+      AutoGenerateValue = arDefault
+      FieldName = 'tpPagTela'
+      Origin = 'tpPagTela'
+    end
   end
   object DSPedDetpag: TDataSource
     DataSet = PedDetpag

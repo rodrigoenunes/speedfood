@@ -354,6 +354,7 @@ type
     PedDetpagCancEstabArqImpr: TStringField;
     PedidosLctFrituras: TIntegerField;
     PedidosLctGelados: TIntegerField;
+    PedDetpagtpPagTela: TIntegerField;
     procedure ItensCalcFields(DataSet: TDataSet);
     procedure LctCaixaCalcFields(DataSet: TDataSet);
     procedure PedWrkCalcFields(DataSet: TDataSet);
@@ -385,7 +386,7 @@ type
     wTxtExtraTab: array[1..24] of String;
     wVlrExtraTab: array[1..24] of Currency;
     usaCorItem: Boolean;
-    sysIniFile,sysUser,sysCPUId,sysVersao: String;
+    sysIniFile,sysUser,sysCPUId,sysVersao,sysLocal: String;
     sysNumId,sysNrCaixa,sysCaixaSeq: Integer;
     sysPedidos,sysBalcao,sysWhats,sysManut,sysAdmin,sysBuffet: Boolean;
     sysUsuar,sysSefaz,sysHelp,sysHelpArgox,sysAltLctos: Boolean;
@@ -900,7 +901,8 @@ begin
   sysAltLctos := vIniFile.ReadBool('Estacao','CaixaAltLctos',False);
   sysImprimePedidoBalcao := vIniFile.ReadBool('Estacao','ImprimePedidoBalcao',False);
   sysImprimeBebidaBalcao := vIniFile.ReadBool('Estacao','ImprimeBebidaBalcao',False);
-  sysVersao := AnsiUpperCase(vIniFile.ReadString('Estacao','Versao','XXX'));
+  sysVersao := AnsiUpperCase(vIniFile.ReadString('Estacao','Versao','XXXX'));
+  sysLocal := AnsiUpperCase(vIniFile.ReadString('Estacao','Local','Onibus'));
   //
   if AnsiUpperCase(vIniFile.ReadString('Estacao','TEFPOS','TEF')) = 'TEF'
      then sysTEFPOSIni := 1              // Integrado

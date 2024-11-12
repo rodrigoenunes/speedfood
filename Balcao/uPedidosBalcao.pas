@@ -243,7 +243,7 @@ var
   wColor: TColor;
   nMaxExtras: Integer;
   tvTop,tvLeft: Integer;
-  genTop,genLeft: Integer;         // Generico TOP e LEFT para cada área que pode ter teclado visual
+  genTop, genLeft, vTentativasLeituraBalanca: Integer;         // Generico TOP e LEFT para cada área que pode ter teclado visual
 
   S: String;
 
@@ -1475,7 +1475,6 @@ begin
       S:= EmptyStr;
   end;
 
-
   S2:= EmptyStr;
   for I:= 1 to S.Length do
     if S[I] in ['0'..'9'] then
@@ -1745,6 +1744,8 @@ begin
   btConfirmaDiversos.Top := 150;
 
   CriarApdComPort;
+
+  vTentativasLeituraBalanca:= 0;
 
 end;
 
@@ -2501,10 +2502,30 @@ begin
       Not(edPeso.DataSource.DataSet.State in [dsInsert, dsEdit]) then
     Exit; // btAcrescBuffet.Click;
 
+  if vTentativasLeituraBalanca > 8 then
+  Begin
+    FApdComPort.Open:= False;
+    // Caption:= 'Pedidos - Reiniciado conexao balanca';
+    Application.ProcessMessages;
+    FApdComPort.Open:= True;
+    vTentativasLeituraBalanca:= 0;
+    // Sleep(2000);
+  End;
+  {
+  Else if Caption <> 'Pedidos' then
+  Begin
+    Caption:= 'Pedidos';
+    Application.ProcessMessages;
+  End;
+  }
+
   if Not FApdComPort.Open then
     FApdComPort.Open:= True;
 
   FApdComPort.PutString(#05);
+
+  Inc(vTentativasLeituraBalanca);
+
 
 end;
 

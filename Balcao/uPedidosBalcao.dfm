@@ -2361,6 +2361,7 @@ object FuPedidosBalcao: TFuPedidosBalcao
     Visible = False
   end
   object tBalanca: TTimer
+    Interval = 250
     OnTimer = tBalancaTimer
     Left = 392
     Top = 158

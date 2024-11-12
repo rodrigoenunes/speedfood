@@ -695,6 +695,9 @@ begin
          or (uDM.DetpagWrktPag.AsString = '17')      // PIX  09/01/2024
       then uDM.PedDetpagtpIntegra.AsInteger := uDM.sysTefPos     // uDM.SisPessoaTefPos.AsInteger
       else uDM.PedDetpagtpIntegra.AsInteger := 2;       // Não integrado
+
+      uDM.PedDetpagtpPagTela.AsInteger:= uDM.PedidosMeioPagto.AsInteger;
+
       uDM.PedDetpag.Post;
       uDM.DetpagWrk.Next;
     end;
@@ -739,6 +742,7 @@ begin
         uDM.PedDetpagtpIntegra.AsInteger := 2;                                  // 09/01/24
       end;
     end;
+    uDM.PedDetpagtpPagTela.AsInteger:= uDM.PedidosMeioPagto.AsInteger;
     uDM.PedDetpag.Post;
   end;
 
@@ -910,7 +914,7 @@ begin
   else
      lEtiqBebida := True;
 
-  if xImpressao = 'S' then
+  if (xImpressao = 'S') and (uDM.sysLocal <> 'BALCAO') then
   begin
     EmiteEtiquetas(nrPedido, 0, True, lEtiqBebida);          //uDM.PedidosNumero.AsInteger, 0, True); // Todos os ítens do pedido ainda nao impressos
     uDM.PedItens.Filtered := False;
@@ -927,6 +931,7 @@ begin
     uDM.PedidosEtqImpressas.AsInteger := 1;
     uDM.Pedidos.Post;
   end;
+
   //
   FuFinPedido.Close;
 
