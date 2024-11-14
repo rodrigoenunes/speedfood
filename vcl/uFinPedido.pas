@@ -29,23 +29,7 @@ type
     btRetornar: TBitBtn;
     btGravar: TBitBtn;
     PanPagto: TPanel;
-    PanDetPgto: TPanel;
-    LabReais: TLabel;
-    LabCDeb: TLabel;
-    LabCCred: TLabel;
-    LabPix: TLabel;
-    LabOutros: TLabel;
-    edReais: TDBEdit;
-    edCDeb: TDBEdit;
-    edCCred: TDBEdit;
-    edPIX: TDBEdit;
-    edOutros: TDBEdit;
     dbMeioPagto: TDBRadioGroup;
-    Label10: TLabel;
-    edReceb: TDBEdit;
-    LabReceb: TLabel;
-    edTroco: TDBEdit;
-    LabTroco: TLabel;
     Teclado: TTouchKeyboard;
     dbSem: TDBMemo;
     dbMais: TDBMemo;
@@ -65,6 +49,25 @@ type
     LabInstrucao: TLabel;
     TimerMsgPinpad: TTimer;
     btRemoto: TBitBtn;
+    PanLevar: TPanel;
+    ImgTick: TImage;
+    LabLevarSimNao: TLabel;
+    gbDetPgto: TGroupBox;
+    LabReais: TLabel;
+    edReais: TDBEdit;
+    LabReceb: TLabel;
+    edReceb: TDBEdit;
+    LabTroco: TLabel;
+    edTroco: TDBEdit;
+    LabCDeb: TLabel;
+    edCDeb: TDBEdit;
+    LabCCred: TLabel;
+    edCCred: TDBEdit;
+    LabPix: TLabel;
+    edPIX: TDBEdit;
+    LabOutros: TLabel;
+    edOutros: TDBEdit;
+    ImgNoTick: TImage;
     procedure btGravarClick(Sender: TObject);
     procedure btRetornarClick(Sender: TObject);
     procedure btCancelarClick(Sender: TObject);
@@ -105,6 +108,7 @@ type
     procedure dbMeioPagtoExit(Sender: TObject);
     procedure TimerMsgPinpadTimer(Sender: TObject);
     procedure btRemotoClick(Sender: TObject);
+    procedure LabLevarSimNaoClick(Sender: TObject);
   private
     { Private declarations }
   public
@@ -197,6 +201,7 @@ begin
         uDM.Pedidos.Append;
         uDM.PedidosNumero.AsInteger := nrPedido;
         uDM.PedidosData.AsDateTime := Now;
+        ShowMessage('Chave= ' + IntToStr(nrPedido));
         Try
           uDM.Pedidos.Post;
           lDuplicidade := False;
@@ -232,6 +237,7 @@ begin
     uDM.PedidosNomeCliente.AsString := uDM.nomeClie;
     uDM.PedidosCPF_CNPJ.AsString := uDM.CPFCNPJ;
     uDM.PedidosSitPagto.AsInteger := 1;                  // := 0;     !!!!NÃO PAGO
+    uDM.PedidosParaLevar.AsInteger := 0;                 // 0= Não levar
     //
     pNroPedido := nrPedido;                  // <---- Variavel de retorno, nro do pedido
     //
@@ -1452,6 +1458,22 @@ begin
   FormResize(nil);
   dbPlaca.SetFocus;
   ExibeValorFaltante;
+
+end;
+
+procedure TFuFinPedido.LabLevarSimNaoClick(Sender: TObject);
+begin
+  if uDM.PedidosParaLevar.AsInteger = 0 then
+  begin
+    imgLevarExib.Picture.Assign(imgLevar.Picture);
+
+    uDM.PedidosParaLevar.AsInteger := 1;
+  end
+  else begin
+    imgLevarExib.Picture.Assign(imgNaoLevar.Picture);
+    uDM.PedidosParaLevar.AsInteger := 0;
+  end;
+}
 
 end;
 

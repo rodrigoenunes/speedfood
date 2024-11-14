@@ -45,11 +45,12 @@ object FuFinPedido: TFuFinPedido
     TabOrder = 1
     object PanCliente: TPanel
       Left = 1
-      Top = 283
+      Top = 321
       Width = 537
       Height = 77
       Align = alTop
       TabOrder = 2
+      ExplicitTop = 283
       object Label4: TLabel
         Left = 4
         Top = 47
@@ -95,11 +96,10 @@ object FuFinPedido: TFuFinPedido
       end
     end
     object PanCtle: TPanel
-      Left = 1
-      Top = 360
+      Left = 6
+      Top = 369
       Width = 537
-      Height = 169
-      Align = alClient
+      Height = 145
       TabOrder = 3
       object btCancelar: TBitBtn
         Left = 5
@@ -304,83 +304,176 @@ object FuFinPedido: TFuFinPedido
       Left = 1
       Top = 40
       Width = 537
-      Height = 243
+      Height = 281
       Align = alTop
       TabOrder = 1
-      object PanDetPgto: TPanel
-        Left = 200
+      object dbMeioPagto: TDBRadioGroup
+        Left = 1
         Top = 1
-        Width = 336
-        Height = 241
-        Align = alClient
-        BevelOuter = bvNone
+        Width = 208
+        Height = 239
+        Align = alLeft
+        BiDiMode = bdLeftToRight
+        Caption = 'Pagamento'
+        DataField = 'MeioPagto'
+        DataSource = uDM.DSPedidos
+        Items.Strings = (
+          'Dinheiro R$'
+          'Cart'#227'o D'#233'bito'
+          'Cart'#227'o Cr'#233'dito'
+          'PIX'
+          'Outros'
+          '<Misto/Multiplo>'
+          'Banricompras')
+        ParentBackground = False
+        ParentBiDiMode = False
         TabOrder = 1
+        Values.Strings = (
+          '0'
+          '1'
+          '2'
+          '3'
+          '4'
+          '5'
+          '6')
+        OnClick = dbMeioPagtoClick
+        OnExit = dbMeioPagtoExit
+        ExplicitTop = 0
+      end
+      object PanLevar: TPanel
+        Left = 1
+        Top = 240
+        Width = 535
+        Height = 40
+        Align = alBottom
+        BevelOuter = bvNone
+        TabOrder = 0
+        ExplicitTop = 1
+        object ImgTick: TImage
+          Left = 160
+          Top = 2
+          Width = 36
+          Height = 36
+          Picture.Data = {
+            07544269746D61705E010000424D5E010000000000003E000000280000002400
+            0000240000000100010000000000200100000000000000000000020000000000
+            000000000000FFFFFF00000000000000000000000000000000003FFFFFFFC000
+            00003FFFFFFFC00000003F87FFFFC00000003F83FFFFC00000003F81FFFFC000
+            00003F01FFFFC00000003F01FFFFC00000003E00FFFFC00000003E00FFFFC000
+            00003C107FFFC00000003C183FFFC0000000381C3FFFC0000000303C1FFFC000
+            0000307E1FFFC000000038FF0FFFC00000003FFF07FFC00000003FFF83FFC000
+            00003FFFC3FFC00000003FFFE1FFC00000003FFFF0FFC00000003FFFF87FC000
+            00003FFFFC3FC00000003FFFFE1FC00000003FFFFF0FC00000003FFFFF87C000
+            00003FFFFFC3C00000003FFFFFE1C00000003FFFFFF0C00000003FFFFFFCC000
+            00003FFFFFFFC00000003FFFFFFFC00000003FFFFFFFC0000000000000000000
+            00000000000000000000}
+        end
+        object LabLevarSimNao: TLabel
+          Left = 208
+          Top = 0
+          Width = 161
+          Height = 39
+          Caption = 'Levar'
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -32
+          Font.Name = 'Tahoma'
+          Font.Style = []
+          ParentFont = False
+          OnClick = LabLevarSimNaoClick
+        end
+        object ImgNoTick: TImage
+          Left = 96
+          Top = 2
+          Width = 36
+          Height = 36
+          Picture.Data = {
+            07544269746D61705E010000424D5E010000000000003E000000280000002400
+            0000240000000100010000000000200100000000000000000000020000000000
+            000000000000FFFFFF00000000000000000000000000000000003FFFFFFFC000
+            00003FFFFFFFC00000003FFFFFFFC00000003FFFFFFFC00000003FFFFFFFC000
+            00003FFFFFFFC00000003FFFFFFFC00000003FFFFFFFC00000003FFFFFFFC000
+            00003FFFFFFFC00000003FFFFFFFC00000003FFFFFFFC00000003FFFFFFFC000
+            00003FFFFFFFC00000003FFFFFFFC00000003FFFFFFFC00000003FFFFFFFC000
+            00003FFFFFFFC00000003FFFFFFFC00000003FFFFFFFC00000003FFFFFFFC000
+            00003FFFFFFFC00000003FFFFFFFC00000003FFFFFFFC00000003FFFFFFFC000
+            00003FFFFFFFC00000003FFFFFFFC00000003FFFFFFFC00000003FFFFFFFC000
+            00003FFFFFFFC00000003FFFFFFFC00000003FFFFFFFC0000000000000000000
+            00000000000000000000}
+          Stretch = True
+        end
+      end
+      object gbDetPgto: TGroupBox
+        Left = 209
+        Top = 1
+        Width = 327
+        Height = 239
+        Align = alClient
+        Caption = 'Recebimento'
+        TabOrder = 2
+        ExplicitLeft = 242
+        ExplicitTop = 48
+        ExplicitWidth = 234
+        ExplicitHeight = 247
         object LabReais: TLabel
-          Left = 94
-          Top = 34
+          Left = 99
+          Top = 26
           Width = 25
           Height = 19
           Alignment = taRightJustify
           Caption = 'R$:'
         end
+        object LabReceb: TLabel
+          Left = 16
+          Top = 56
+          Width = 108
+          Height = 19
+          Alignment = taRightJustify
+          Caption = 'Valor recebido:'
+        end
+        object LabTroco: TLabel
+          Left = 77
+          Top = 86
+          Width = 47
+          Height = 19
+          Alignment = taRightJustify
+          Caption = 'Troco:'
+        end
         object LabCDeb: TLabel
-          Left = 52
-          Top = 124
+          Left = 57
+          Top = 116
           Width = 67
           Height = 19
           Alignment = taRightJustify
           Caption = 'C.D'#233'bito:'
         end
         object LabCCred: TLabel
-          Left = 47
-          Top = 154
+          Left = 52
+          Top = 146
           Width = 72
           Height = 19
           Alignment = taRightJustify
           Caption = 'C.Cr'#233'dito:'
         end
         object LabPix: TLabel
-          Left = 89
-          Top = 184
+          Left = 94
+          Top = 176
           Width = 30
           Height = 19
           Alignment = taRightJustify
           Caption = 'PIX:'
         end
         object LabOutros: TLabel
-          Left = 65
-          Top = 214
+          Left = 70
+          Top = 205
           Width = 54
           Height = 19
           Alignment = taRightJustify
           Caption = 'Outros:'
         end
-        object Label10: TLabel
-          Left = 16
-          Top = 5
-          Width = 91
-          Height = 19
-          Caption = 'Recebimento'
-        end
-        object LabReceb: TLabel
-          Left = 28
-          Top = 64
-          Width = 91
-          Height = 19
-          Alignment = taRightJustify
-          Caption = 'Vlr recebido:'
-        end
-        object LabTroco: TLabel
-          Left = 72
-          Top = 94
-          Width = 47
-          Height = 19
-          Alignment = taRightJustify
-          Caption = 'Troco:'
-        end
         object edReais: TDBEdit
-          Left = 120
-          Top = 30
+          Left = 128
+          Top = 22
           Width = 121
           Height = 27
           DataField = 'VlrReais'
@@ -392,9 +485,34 @@ object FuFinPedido: TFuFinPedido
           OnKeyDown = edReaisKeyDown
           OnKeyPress = MudaPontoVirgula
         end
+        object edReceb: TDBEdit
+          Left = 128
+          Top = 53
+          Width = 121
+          Height = 27
+          DataField = 'VlrRecebido'
+          DataSource = uDM.DSPedidos
+          TabOrder = 1
+          OnEnter = edRecebEnter
+          OnExit = edRecebExit
+          OnKeyDown = edRecebKeyDown
+          OnKeyPress = MudaPontoVirgula
+        end
+        object edTroco: TDBEdit
+          Left = 128
+          Top = 82
+          Width = 121
+          Height = 27
+          DataField = 'VlrTroco'
+          DataSource = uDM.DSPedidos
+          Enabled = False
+          ReadOnly = True
+          TabOrder = 2
+          OnKeyPress = MudaPontoVirgula
+        end
         object edCDeb: TDBEdit
-          Left = 120
-          Top = 120
+          Left = 128
+          Top = 112
           Width = 121
           Height = 27
           DataField = 'VlrCDeb'
@@ -407,8 +525,8 @@ object FuFinPedido: TFuFinPedido
           OnKeyPress = MudaPontoVirgula
         end
         object edCCred: TDBEdit
-          Left = 120
-          Top = 150
+          Left = 128
+          Top = 142
           Width = 121
           Height = 27
           DataField = 'VlrCCred'
@@ -421,8 +539,8 @@ object FuFinPedido: TFuFinPedido
           OnKeyPress = MudaPontoVirgula
         end
         object edPIX: TDBEdit
-          Left = 120
-          Top = 180
+          Left = 128
+          Top = 172
           Width = 121
           Height = 27
           DataField = 'VlrPIX'
@@ -435,8 +553,8 @@ object FuFinPedido: TFuFinPedido
           OnKeyPress = MudaPontoVirgula
         end
         object edOutros: TDBEdit
-          Left = 120
-          Top = 210
+          Left = 128
+          Top = 201
           Width = 121
           Height = 27
           DataField = 'VlrOutros'
@@ -448,63 +566,6 @@ object FuFinPedido: TFuFinPedido
           OnKeyDown = edOutrosKeyDown
           OnKeyPress = MudaPontoVirgula
         end
-        object edReceb: TDBEdit
-          Left = 120
-          Top = 60
-          Width = 121
-          Height = 27
-          DataField = 'VlrRecebido'
-          DataSource = uDM.DSPedidos
-          TabOrder = 1
-          OnEnter = edRecebEnter
-          OnExit = edRecebExit
-          OnKeyDown = edRecebKeyDown
-          OnKeyPress = MudaPontoVirgula
-        end
-        object edTroco: TDBEdit
-          Left = 120
-          Top = 90
-          Width = 121
-          Height = 27
-          DataField = 'VlrTroco'
-          DataSource = uDM.DSPedidos
-          Enabled = False
-          ReadOnly = True
-          TabOrder = 2
-          OnKeyPress = MudaPontoVirgula
-        end
-      end
-      object dbMeioPagto: TDBRadioGroup
-        Left = 1
-        Top = 1
-        Width = 199
-        Height = 241
-        Align = alLeft
-        BiDiMode = bdLeftToRight
-        Caption = 'Pagamento'
-        DataField = 'MeioPagto'
-        DataSource = uDM.DSPedidos
-        Items.Strings = (
-          'Dinheiro R$'
-          'Cart'#227'o D'#233'bito'
-          'Cart'#227'o Cr'#233'dito'
-          'PIX'
-          'Banricompras'
-          'Outros'
-          '<Misto/Multiplo>')
-        ParentBackground = False
-        ParentBiDiMode = False
-        TabOrder = 0
-        Values.Strings = (
-          '0'
-          '1'
-          '2'
-          '3'
-          '6'
-          '4'
-          '5')
-        OnClick = dbMeioPagtoClick
-        OnExit = dbMeioPagtoExit
       end
     end
     object PanPlaca: TPanel

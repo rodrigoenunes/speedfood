@@ -719,7 +719,11 @@ begin
 end;
 
 
-Procedure InclueLancheBalcao(pTipo:Integer;pCodLanche:Integer;pExtras:String;pObserv:String;pValor:Currency=0);
+Procedure InclueLancheBalcao(pTipo:Integer;
+                             pCodLanche:Integer;
+                             pExtras:String;
+                             pObserv:String;
+                             pValor:Currency=0);
 var nLct: Integer;
     wDescr,wExtra,wObserv: String;
     wValor,wTotal: Currency;
@@ -727,10 +731,11 @@ var nLct: Integer;
     wPeso,wQuant: Integer;
     wKg: Real;
 {
-   Parametros   pTipo:      Cachorro-quente, Montado, Crepe, Fritura...
-                pCodLanche: Código do ítem
-                pExtras:    Indicação extra de complementos (Cachorro-quente)  Sabores(Crepe)
-                pObserv:    Observações (Crepe=Sabores por extenso)
+ pTipo:      Cachorro-quente, Montado, Crepe, Fritura...
+ pCodLanche: Código do ítem
+ pExtras:    Indicação extra de complementos (Cachorro-quente)  Sabores(Crepe)
+ pObserv:    Observações (Crepe=Sabores por extenso)
+ pValor:     Valor a ser considerado
 }
 begin
   with uDM

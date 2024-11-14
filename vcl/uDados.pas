@@ -355,6 +355,7 @@ type
     PedidosLctFrituras: TIntegerField;
     PedidosLctGelados: TIntegerField;
     PedDetpagtpPagTela: TIntegerField;
+    PedidosParaLevar: TShortintField;
     procedure ItensCalcFields(DataSet: TDataSet);
     procedure LctCaixaCalcFields(DataSet: TDataSet);
     procedure PedWrkCalcFields(DataSet: TDataSet);
@@ -801,8 +802,12 @@ end;
 
 
 procedure TuDM.CDBuffetCalcFields(DataSet: TDataSet);
+var wVlrUnitar,wVlrVenda,wVlrFinal: Integer;
 begin
-  CDBuffetZC_Valor.AsCurrency := (CDBuffetPeso.AsInteger * CDBuffetVlrUnit.AsCurrency) / 1000;
+  wVlrUnitar := Round(CDBuffetVlrUnit.AsCurrency * 100);      // Valor unitario KG
+  wVlrVenda := CDBuffetPeso.AsInteger * wVlrUnitar;           // Peso em G (gramas)
+  wVlrFinal := Round(wVlrVenda / 1000);                       // Valor da venda ( * 100)
+  CDBuffetZC_Valor.AsCurrency := wVlrFinal / 100;             // Valor em reais
 
 end;
 

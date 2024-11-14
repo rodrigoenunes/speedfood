@@ -684,6 +684,11 @@ object uDM: TuDM
       FieldName = 'LctGelados'
       Origin = 'LctGelados'
     end
+    object PedidosParaLevar: TShortintField
+      AutoGenerateValue = arDefault
+      FieldName = 'ParaLevar'
+      Origin = 'ParaLevar'
+    end
     object PedidosZC_Impresso: TStringField
       FieldKind = fkCalculated
       FieldName = 'ZC_Impresso'
