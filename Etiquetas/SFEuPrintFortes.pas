@@ -73,6 +73,7 @@ type
     RLDBText20: TRLDBText;
     RLDBText21: TRLDBText;
     RLDBText22: TRLDBText;
+    RLLabParaLevar: TRLLabel;
     procedure RLEtiqBebidaBeforePrint(Sender: TObject; var PrintIt: Boolean);
     procedure RLDetLancheBeforePrint(Sender: TObject; var PrintIt: Boolean);
   private
@@ -185,21 +186,26 @@ begin
   end;
   FSFEuPrintFortes := TFSFEuPrintFortes.Create(nil);
   DefinePrinterEtiqueta;       // Define... define idPrinter, lPreview e lDialog das etiquetas
+  //FSFEuPrintFortes.RLLabParaLevar.Caption := '';
+  FSFEuPrintFortes.RLLabParaLevar.Visible := False;
+  if uDM.PedidosParaLevar.AsInteger = 1 then
+  begin
+    FSFEuPrintFortes.RLLabParaLevar.Caption := ObtemParametro('PedidoTxtParaLevarPrint','-- Para levar --');
+    FSFEuPrintFortes.RLLabParaLevar.Visible := True;
+  end;
   //
   if pmtItem <> 0
   then begin
     if uDM.PedItens.FindKey([pmtPedido,pmtItem])
     then begin
       SetRecordRangeLanche(0);      // rrCurrentOnly;
-      //SetRecordRangeCrepe(0);      // rrCurrentOnly;
-      //SetRecordRangeFritura(0);      // rrCurrentOnly;
       SetRecordRange_CFS(0);
       case uDM.PedItensTpProd.AsInteger of
           1,4:if lPreview then
                  FSFEuPrintFortes.RLEtiqLanche.Preview
               else
                  FSFEuPrintFortes.RLEtiqLanche.Print;
-          3:begin                // Todas as bebidas em uma unica etiqueta
+           3:begin                // Todas as bebidas em uma unica etiqueta
               filAnt := uDM.PedItens.Filtered;
               filTxtAnt := uDM.PedItens.Filter;
               uDM.PedItens.Filtered := True;

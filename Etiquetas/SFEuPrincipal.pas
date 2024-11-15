@@ -6,7 +6,9 @@ uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ExtCtrls, Vcl.Buttons,
   Data.DB, Vcl.Grids, Vcl.DBGrids, Vcl.DBCtrls, System.UITypes, RLPrinters,
-  Vcl.Mask;
+  Vcl.Mask, FireDAC.Stan.Intf, FireDAC.Stan.Option, FireDAC.Stan.Param,
+  FireDAC.Stan.Error, FireDAC.DatS, FireDAC.Phys.Intf, FireDAC.DApt.Intf,
+  FireDAC.Stan.Async, FireDAC.DApt, FireDAC.Comp.DataSet, FireDAC.Comp.Client;
 
 type
   TFuPrincipalEtq = class(TForm)
@@ -46,6 +48,7 @@ type
     Label4: TLabel;
     dbNroPedido: TDBEdit;
     LabNrPedido: TLabel;
+    FDQPedidos: TFDQuery;
     procedure FormCreate(Sender: TObject);
     procedure FormActivate(Sender: TObject);
     procedure btCarregaClick(Sender: TObject);
@@ -84,6 +87,7 @@ var
   filAnt: Boolean;
   filTxtAnt: String;
   wrkTurno: Integer;
+  sysSelecao: String;
 
 const
   txtNoEtiq: String = 'Não há pedidos à imprimir';
@@ -96,33 +100,31 @@ implementation
 uses uGenericas, SFEuPrintFortes, FortesReportCtle, uSysPrinters, uDados, uHelpSpeedFood;
 
 procedure CarregaTurnos;
-var lCarrega: Boolean;
-    wrkTurno: String;
+var wrkTurno: String;
+    nMax: Integer;
 begin
   with FuPrincipalEtq
   do begin
+    nMax := StrToInt(ObtemParametro(' MaximoTurnos','5'));
     cbTurnos.Clear;
-    lCarrega := True;
-    uDM.RegCaixa.Last;
-    while lCarrega do
+    uDM.Turnos.Last;
+    while (cbTurnos.Items.Count <= nMax) and (not uDM.Turnos.Bof) do
     begin
-      wrkTurno := uDM.RegCaixaTurno.AsString + '  ' +
-                  uDM.RegCaixaDtHrInicio.AsString + ' - ' + uDM.RegCaixaDtHrFim.AsString;
+      wrkTurno := uDM.TurnosNrTurno.AsString + '  ' + uDM.TurnosZC_Datas.AsString;
       cbTurnos.AddItem(wrkTurno,nil);
-      uDM.RegCaixa.Prior;
-      if uDM.RegCaixa.Bof or (cbTurnos.Items.Count > 60) then
-        lCarrega := False;
+      uDM.Turnos.Prior;
     end;
+    cbTurnos.Items.Add('0  Todos os turnos');
     cbTurnos.ItemIndex := 0;
   end;
 
 end;
 
-Procedure ReloadPedidos;
+Procedure ReloadPedidos(pmtTurno:Integer=0; pmtEtqImpress:Integer=2);
+var xCampos, xSelecao: String;
+    nRegs: Integer;
 begin
-  FuPrincipalEtq.PanReload.Visible := True;
-  Application.ProcessMessages;
-  Sleep(500);
+  {
   uDM.Pedidos.Refresh;
   if uDM.Pedidos.RecordCount = 0 then
      FuPrincipalEtq.LabNrPeds.Caption := 'Sem pedidos'
@@ -133,6 +135,39 @@ begin
   else
      FuPrincipalEtq.LabNrEtqs.Caption := IntToStr(uDM.PedItens.RecordCount) + ' ítens';
   FuPrincipalEtq.PanReload.Visible := False;
+  }
+
+  with FuPrincipalEtq do
+  begin
+    Timer1.Enabled := False;
+    PanReload.Visible := True;
+    Application.ProcessMessages;
+    Sleep(500);
+
+    xCampos := 'Numero, EtqImpressas, NomeCLiente, Turno, Placa, SitPagto, LctLanches, ' +
+               'LctBebidas, LctCrepes, LctFrituras, LctGelados ';
+    if pmtTurno = 0 then
+      xSelecao := 'Turno>0'
+    else
+      xSelecao := 'Turno=' + IntToStr(pmtTurno);
+    case pmtEtqImpress of
+      0:xSelecao := xSelecao + ' and EtqImpressas=0';
+      1:xSelecao := xSelecao + ' and EtqImpressas>0';
+    end;
+
+    FDQPedidos.SQL.Text := 'Select ' + xCampos + 'from com_pedido ' +
+                           'where ' + xSelecao;
+    FDQPedidos.Open;
+    FDQPedidos.Last;
+    FDQPedidos.First;         // .Last;
+    nRegs := FDQPedidos.RecordCount;
+    if nRegs > 0 then
+      LabNrPeds.Caption := IntToStr(nRegs) + ' pedidos'
+    else
+      LabNrPeds.Caption := 'Não há pedidos selecionados';
+    sleep(500);
+    Timer1.Enabled := True;
+  end;
 
 end;
 
@@ -189,7 +224,6 @@ begin
   Timer1.Enabled := False;
   CarregaTurnos;
   btProsseguirClick(nil);
-  //btProsseguir.SetFocus;
 
 end;
 
@@ -313,7 +347,7 @@ end;
 procedure TFuPrincipalEtq.btReloadClick(Sender: TObject);
 begin
   Timer1.Enabled := False;
-  ReloadPedidos;
+  ReloadPedidos(wrkTurno, cbSelPedidos.ItemIndex);
   Timer1.Enabled := True;
 
 end;
@@ -365,7 +399,7 @@ begin
     uDM.FDC.Connected     := True;
     uDM.SisPessoa.Active  := True;
     uDM.Itens.Active      := True;
-    uDM.RegCaixa.Active   := True;
+    uDM.Turnos.Active     := True;
     uDM.Pedidos.Active    := True;
     uDM.PedItens.Active   := True;
     uDM.Parametros.Active := True;
@@ -375,6 +409,10 @@ begin
     LabTmp.Caption := IntToStr(nTempo);
     Timer1.Interval := nTempo * 1000;
     FFRCtle.RLPreviewSetup1.ZoomFactor := StrToIntDef(ObtemParametro('FortesZoomFactor'),100);
+
+    FDQPedidos.Connection := uDM.FDC;
+    FDQPedidos.Close;
+
     CarregaTurnos;
     cbTurnos.SetFocus;
   end;

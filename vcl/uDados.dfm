@@ -1474,12 +1474,6 @@ object uDM: TuDM
       Origin = 'Valor'
       Size = 999
     end
-    object Parametrossis_parametroscol: TStringField
-      AutoGenerateValue = arDefault
-      FieldName = 'sis_parametroscol'
-      Origin = 'sis_parametroscol'
-      Size = 45
-    end
   end
   object ResVendas: TClientDataSet
     Aggregates = <>

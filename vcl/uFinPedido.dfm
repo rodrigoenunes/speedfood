@@ -18,9 +18,9 @@ object FuFinPedido: TFuFinPedido
   TextHeight = 19
   object PanRodape: TPanel
     Left = 0
-    Top = 571
+    Top = 581
     Width = 984
-    Height = 23
+    Height = 13
     Align = alBottom
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
@@ -34,7 +34,7 @@ object FuFinPedido: TFuFinPedido
     Left = 445
     Top = 41
     Width = 539
-    Height = 530
+    Height = 540
     Align = alClient
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
@@ -50,7 +50,6 @@ object FuFinPedido: TFuFinPedido
       Height = 77
       Align = alTop
       TabOrder = 2
-      ExplicitTop = 283
       object Label4: TLabel
         Left = 4
         Top = 47
@@ -96,10 +95,11 @@ object FuFinPedido: TFuFinPedido
       end
     end
     object PanCtle: TPanel
-      Left = 6
-      Top = 369
+      Left = 1
+      Top = 398
       Width = 537
-      Height = 145
+      Height = 141
+      Align = alClient
       TabOrder = 3
       object btCancelar: TBitBtn
         Left = 5
@@ -338,7 +338,6 @@ object FuFinPedido: TFuFinPedido
           '6')
         OnClick = dbMeioPagtoClick
         OnExit = dbMeioPagtoExit
-        ExplicitTop = 0
       end
       object PanLevar: TPanel
         Left = 1
@@ -348,42 +347,22 @@ object FuFinPedido: TFuFinPedido
         Align = alBottom
         BevelOuter = bvNone
         TabOrder = 0
-        ExplicitTop = 1
-        object ImgTick: TImage
-          Left = 160
-          Top = 2
-          Width = 36
-          Height = 36
-          Picture.Data = {
-            07544269746D61705E010000424D5E010000000000003E000000280000002400
-            0000240000000100010000000000200100000000000000000000020000000000
-            000000000000FFFFFF00000000000000000000000000000000003FFFFFFFC000
-            00003FFFFFFFC00000003F87FFFFC00000003F83FFFFC00000003F81FFFFC000
-            00003F01FFFFC00000003F01FFFFC00000003E00FFFFC00000003E00FFFFC000
-            00003C107FFFC00000003C183FFFC0000000381C3FFFC0000000303C1FFFC000
-            0000307E1FFFC000000038FF0FFFC00000003FFF07FFC00000003FFF83FFC000
-            00003FFFC3FFC00000003FFFE1FFC00000003FFFF0FFC00000003FFFF87FC000
-            00003FFFFC3FC00000003FFFFE1FC00000003FFFFF0FC00000003FFFFF87C000
-            00003FFFFFC3C00000003FFFFFE1C00000003FFFFFF0C00000003FFFFFFCC000
-            00003FFFFFFFC00000003FFFFFFFC00000003FFFFFFFC0000000000000000000
-            00000000000000000000}
-        end
-        object LabLevarSimNao: TLabel
-          Left = 208
+        object LabParaLevar: TLabel
+          Left = 64
           Top = 0
-          Width = 161
+          Width = 143
           Height = 39
-          Caption = 'Levar'
+          Caption = 'Para levar'
           Font.Charset = DEFAULT_CHARSET
           Font.Color = clWindowText
           Font.Height = -32
           Font.Name = 'Tahoma'
           Font.Style = []
           ParentFont = False
-          OnClick = LabLevarSimNaoClick
+          OnClick = LabParaLevarClick
         end
         object ImgNoTick: TImage
-          Left = 96
+          Left = 4
           Top = 2
           Width = 36
           Height = 36
@@ -401,6 +380,27 @@ object FuFinPedido: TFuFinPedido
             00003FFFFFFFC00000003FFFFFFFC00000003FFFFFFFC0000000000000000000
             00000000000000000000}
           Stretch = True
+          OnClick = LabParaLevarClick
+        end
+        object ImgTick: TImage
+          Left = 22
+          Top = 2
+          Width = 36
+          Height = 36
+          Picture.Data = {
+            07544269746D61705E010000424D5E010000000000003E000000280000002400
+            0000240000000100010000000000200100000000000000000000020000000000
+            000000000000FFFFFF00000000000000000000000000000000003FFFFFFFC000
+            00003FFFFFFFC00000003F87FFFFC00000003F83FFFFC00000003F81FFFFC000
+            00003F01FFFFC00000003F01FFFFC00000003E00FFFFC00000003E00FFFFC000
+            00003C107FFFC00000003C183FFFC0000000381C3FFFC0000000303C1FFFC000
+            0000307E1FFFC000000038FF0FFFC00000003FFF07FFC00000003FFF83FFC000
+            00003FFFC3FFC00000003FFFE1FFC00000003FFFF0FFC00000003FFFF87FC000
+            00003FFFFC3FC00000003FFFFE1FC00000003FFFFF0FC00000003FFFFF87C000
+            00003FFFFFC3C00000003FFFFFE1C00000003FFFFFF0C00000003FFFFFFCC000
+            00003FFFFFFFC00000003FFFFFFFC00000003FFFFFFFC0000000000000000000
+            00000000000000000000}
+          OnClick = LabParaLevarClick
         end
       end
       object gbDetPgto: TGroupBox
@@ -411,10 +411,6 @@ object FuFinPedido: TFuFinPedido
         Align = alClient
         Caption = 'Recebimento'
         TabOrder = 2
-        ExplicitLeft = 242
-        ExplicitTop = 48
-        ExplicitWidth = 234
-        ExplicitHeight = 247
         object LabReais: TLabel
           Left = 99
           Top = 26
@@ -711,7 +707,7 @@ object FuFinPedido: TFuFinPedido
     Left = 0
     Top = 41
     Width = 445
-    Height = 530
+    Height = 540
     Align = alLeft
     TabOrder = 7
     object imgPedido: TImage

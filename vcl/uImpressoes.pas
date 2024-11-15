@@ -206,6 +206,8 @@ type
     RLLabel19: TRLLabel;
     RLRes_Fill: TRLLabel;
     RLCx_Fill: TRLLabel;
+    RLDBText7: TRLDBText;
+    CDPedParaLevar: TStringField;
     procedure RLCaixaBeforePrint(Sender: TObject; var PrintIt: Boolean);
     procedure RLPedDetalBeforePrint(Sender: TObject; var PrintIt: Boolean);
     procedure RLPedidoBeforePrint(Sender: TObject; var PrintIt: Boolean);
@@ -504,6 +506,7 @@ begin
     CDPed.FieldDefs.Add('DataHora', ftString, 30);
     CDPed.FieldDefs.Add('Total', ftString, 15);
     CDPed.FieldDefs.Add('MeioPagto', ftString, 20);
+    CDPed.FieldDefs.Add('ParaLevar', ftString, 20);
     CDPed.IndexDefs.Clear;
     CDPed.CreateDataSet;
     Try
@@ -718,6 +721,10 @@ begin
     CDPedDataHora.AsString := uDM.PedidosZC_DataHora.AsString;
     CDPedTotal.AsString := FloatToStrF(uDM.PedidosValor.AsCurrency,ffNumber,15,2);
     CDPedMeioPagto.AsString := uDM.PedidosZC_MPExtenso.AsString;
+    if uDM.PedidosParaLevar.AsInteger = 0 then
+      CDPedParaLevar.AsString := ''
+    else
+      CDPedParaLevar.AsString := ObtemParametro('PedidoTxtParaLevarPrint','-- Para levar --');
     CDPed.Post;
     uDM.PedItens.First;
     while not uDM.PedItens.Eof

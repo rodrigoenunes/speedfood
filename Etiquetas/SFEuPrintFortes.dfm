@@ -115,7 +115,7 @@ object FSFEuPrintFortes: TFSFEuPrintFortes
           Left = 122
           Top = 0
           Width = 122
-          Height = 143
+          Height = 127
           Align = faClient
           AutoSize = True
           Transparent = False
@@ -153,7 +153,7 @@ object FSFEuPrintFortes: TFSFEuPrintFortes
           Left = 0
           Top = 0
           Width = 122
-          Height = 143
+          Height = 127
           Align = faLeft
           AutoSize = True
           Borders.Sides = sdCustom
@@ -196,7 +196,7 @@ object FSFEuPrintFortes: TFSFEuPrintFortes
           Left = 244
           Top = 0
           Width = 122
-          Height = 143
+          Height = 127
           Align = faRight
           AutoSize = True
           Borders.Sides = sdCustom
@@ -234,6 +234,20 @@ object FSFEuPrintFortes: TFSFEuPrintFortes
             Behavior = [beSiteExpander]
             Transparent = False
           end
+        end
+        object RLLabParaLevar: TRLLabel
+          Left = 0
+          Top = 127
+          Width = 366
+          Height = 16
+          Align = faBottom
+          Alignment = taCenter
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clBlack
+          Font.Height = -13
+          Font.Name = 'Arial'
+          Font.Style = [fsBold]
+          ParentFont = False
         end
       end
     end

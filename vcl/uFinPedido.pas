@@ -51,7 +51,7 @@ type
     btRemoto: TBitBtn;
     PanLevar: TPanel;
     ImgTick: TImage;
-    LabLevarSimNao: TLabel;
+    LabParaLevar: TLabel;
     gbDetPgto: TGroupBox;
     LabReais: TLabel;
     edReais: TDBEdit;
@@ -108,7 +108,7 @@ type
     procedure dbMeioPagtoExit(Sender: TObject);
     procedure TimerMsgPinpadTimer(Sender: TObject);
     procedure btRemotoClick(Sender: TObject);
-    procedure LabLevarSimNaoClick(Sender: TObject);
+    procedure LabParaLevarClick(Sender: TObject);
   private
     { Private declarations }
   public
@@ -153,6 +153,8 @@ begin
   itensPedido := pItens;
   with FuFinPedido
   do begin
+    LabReceb.Visible := True;
+    edReceb.Visible := True;
     cbImprimeNFCe.Checked := False;
     if uDM.SisPessoaTecladoVirtual.AsBoolean then
     begin
@@ -201,13 +203,13 @@ begin
         uDM.Pedidos.Append;
         uDM.PedidosNumero.AsInteger := nrPedido;
         uDM.PedidosData.AsDateTime := Now;
-        ShowMessage('Chave= ' + IntToStr(nrPedido));
         Try
           uDM.Pedidos.Post;
           lDuplicidade := False;
         Except
           uDM.Pedidos.Cancel;
           nrPedido := nrPedido + 1;
+          Sleep(1000);
         End;
       end;
       uDM.Pedidos.Edit;
@@ -427,6 +429,7 @@ begin
     imgPedido.Picture.Assign(wrkImag.Picture);
     wrkImag.Free;
     nRetorno := 1;
+    LabParaLevar.Caption := ObtemParametro('PedidoTxtParaLevar','Para levar');
     ShowModal;
     // nRetorno 0:Ok, 1:Tela anterior, 2:Cancelado
     Result := nRetorno;
@@ -560,6 +563,18 @@ begin
        LabInstrucao.Caption := 'Siga as instruções do PINPAD !!!';
     wAtivarMsg := True;
   end;
+  {
+  else begin
+    Try
+      uDM.Pedidos.Edit;
+      uDM.PedidosVlrRecebido.AsCurrency := uDM.PedidosValor.AsCurrency;
+      uDM.PedidosVlrTroco.AsCurrency := 0;
+      uDM.Pedidos.Post;
+    Except
+      uDM.Pedidos.Cancel;
+    End;
+  end;
+  }
   PanAguarde.Color := clHighlight;
   PanAguarde.Visible := True;
   Application.ProcessMessages;
@@ -908,19 +923,23 @@ begin
     ImprimeXXXPedido(SalvaNroPedido);       //uDM.PedidosNumero.AsInteger);
   //
 }
-  xImpressao := ObtemParametro('EtiquetaFinalPedido');
-  if xImpressao = 'Q' then
-    if MessageDlg('Impressão etiquetas do pedido' + #13 +
-                  'Pedido: ' + IntToStr(nrPedido) + '  [ ' + uDM.PedidosNumero.AsString + ' ]' + #13 +
-                  'Imprimir etiquetas ?',
-                  mtConfirmation,[mbYes,mbNo],0,mbNo,['Sim','Não']) = mrYes
-    then xImpressao := 'S';
+  if uDM.sysImprimeEtiquetaBalcao then
+    begin
+      xImpressao := ObtemParametro('EtiquetaFinalPedido');
+      if xImpressao = 'Q' then
+         if MessageDlg('Impressão etiquetas do pedido' + #13 +
+                       'Pedido: ' + IntToStr(nrPedido) + '  [ ' + uDM.PedidosNumero.AsString + ' ]' + #13 +
+                       'Imprimir etiquetas ?',
+                       mtConfirmation,[mbYes,mbNo],0,mbNo,['Sim','Não']) = mrYes then
+              xImpressao := 'S';
+    end;
+
   if uDM.sysVersao = 'NOVA' then
      lEtiqBebida := uDM.sysImprimeBebidaBalcao
   else
      lEtiqBebida := True;
 
-  if (xImpressao = 'S') and (uDM.sysLocal <> 'BALCAO') then
+  if (xImpressao = 'S') then                         // and (uDM.sysLocal <> 'BALCAO')
   begin
     EmiteEtiquetas(nrPedido, 0, True, lEtiqBebida);          //uDM.PedidosNumero.AsInteger, 0, True); // Todos os ítens do pedido ainda nao impressos
     uDM.PedItens.Filtered := False;
@@ -1225,7 +1244,7 @@ end;
 
 procedure TFuFinPedido.edCCredEnter(Sender: TObject);
 begin
-  tvLeft := PanInform.Left + PanDetPgto.Left + 20;
+  tvLeft := PanInform.Left + gbDetPgto.Left + 20;
   if (tvLeft + 300) >= FuFinPedido.Width
      then tvLeft := FuFinPedido.Width - 328;
   tvTop := PanInform.Top + PanPlaca.Height + edCCred.Top + edCCred.Height + 4;
@@ -1248,7 +1267,7 @@ end;
 
 procedure TFuFinPedido.edCDebEnter(Sender: TObject);
 begin
-  tvLeft := PanInform.Left + PanDetPgto.Left + 20;
+  tvLeft := PanInform.Left + gbDetPgto.Left + 20;
   if (tvLeft + 300) >= FuFinPedido.Width
      then tvLeft := FuFinPedido.Width - 328;
   tvTop := PanInform.Top + PanPlaca.Height + edCDeb.Top + edCDeb.Height + 4;
@@ -1271,7 +1290,7 @@ end;
 
 procedure TFuFinPedido.edOutrosEnter(Sender: TObject);
 begin
-  tvLeft := PanInform.Left + PanDetPgto.Left + 20;
+  tvLeft := PanInform.Left + gbDetPgto.Left + 20;
   if (tvLeft + 300) >= FuFinPedido.Width
      then tvLeft := FuFinPedido.Width - 328;
   tvTop := PanInform.Top + PanPlaca.Height + edOutros.Top + edOutros.Height + 4;
@@ -1294,7 +1313,7 @@ end;
 
 procedure TFuFinPedido.edPIXEnter(Sender: TObject);
 begin
-  tvLeft := PanInform.Left + PanDetPgto.Left + 20;
+  tvLeft := PanInform.Left + gbDetPgto.Left + 20;
   if (tvLeft + 300) >= FuFinPedido.Width
      then tvLeft := FuFinPedido.Width - 328;
   tvTop := PanInform.Top + PanPlaca.Height + edPIX.Top + edPIX.Height + 4;
@@ -1317,7 +1336,7 @@ end;
 
 procedure TFuFinPedido.edReaisEnter(Sender: TObject);
 begin
-  tvLeft := PanInform.Left + PanDetPgto.Left + 20;
+  tvLeft := PanInform.Left + gbDetPgto.Left + 20;
   if (tvLeft + 300) >= FuFinPedido.Width
      then tvLeft := FuFinPedido.Width - 328;
   tvTop := PanInform.Top + PanPlaca.Height + edReais.Top + edReais.Height + 4;
@@ -1341,7 +1360,7 @@ end;
 procedure TFuFinPedido.edRecebEnter(Sender: TObject);
 begin
   edReceb.Text := '';
-  tvLeft := PanInform.Left + PanDetPgto.Left + 20;
+  tvLeft := PanInform.Left + gbDetPgto.Left + 20;
   if (tvLeft + 300) >= FuFinPedido.Width
      then tvLeft := FuFinPedido.Width - 328;
   tvTop := PanInform.Top + PanPlaca.Height + edReceb.Top + edReceb.Height + 4;
@@ -1409,6 +1428,14 @@ begin
   Teclado.Visible := False;
   SBoxPedido.Align := alLeft;
   PanInform.Align := alClient;
+  imgTick.Visible := False;
+  imgTick.Top := 2;
+  imgTick.Left := 12;
+  imgNoTick.Visible := True;
+  imgNoTick.Top := imgTick.Top;
+  imgNoTick.Left := imgTick.Left;
+  LabParaLevar.Top := imgTick.Top - 2;
+  LabParaLevar.Left := imgTick.Left + imgTick.Width + 4;
 
 end;
 
@@ -1458,22 +1485,32 @@ begin
   FormResize(nil);
   dbPlaca.SetFocus;
   ExibeValorFaltante;
+  if uDM.PedidosParaLevar.AsInteger = 0 then
+  begin
+    imgNoTick.Visible := True;
+    imgTick.Visible := False;
+  end
+  else begin
+    imgNoTick.Visible := False;
+    imgTick.Visible := True;
+  end;
+
 
 end;
 
-procedure TFuFinPedido.LabLevarSimNaoClick(Sender: TObject);
+procedure TFuFinPedido.LabParaLevarClick(Sender: TObject);
 begin
   if uDM.PedidosParaLevar.AsInteger = 0 then
   begin
-    imgLevarExib.Picture.Assign(imgLevar.Picture);
-
-    uDM.PedidosParaLevar.AsInteger := 1;
+    uDM.PedidosParaLevar.AsInteger := 1;      // Levar
+    imgNoTick.Visible := False;
+    imgTick.Visible := True;
   end
   else begin
-    imgLevarExib.Picture.Assign(imgNaoLevar.Picture);
-    uDM.PedidosParaLevar.AsInteger := 0;
+    uDM.PedidosParaLevar.AsInteger := 0;      // Não levar
+    imgNoTick.Visible := True;
+    imgTick.Visible := False;
   end;
-}
 
 end;
 

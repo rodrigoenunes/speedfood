@@ -1173,6 +1173,22 @@ object FuImpressoes: TFuImpressoes
         Font.Style = []
         ParentFont = False
       end
+      object RLDBText7: TRLDBText
+        Left = 191
+        Top = 20
+        Width = 70
+        Height = 16
+        Alignment = taRightJustify
+        DataField = 'ParaLevar'
+        DataSource = SCDPed
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clBlack
+        Font.Height = -13
+        Font.Name = 'Arial'
+        Font.Style = [fsBold]
+        ParentFont = False
+        Text = ''
+      end
     end
     object RLPedFoot: TRLBand
       Left = 19
@@ -1880,6 +1896,9 @@ object FuImpressoes: TFuImpressoes
     end
     object CDPedTotal: TStringField
       FieldName = 'Total'
+    end
+    object CDPedParaLevar: TStringField
+      FieldName = 'ParaLevar'
     end
   end
   object CDDet: TClientDataSet

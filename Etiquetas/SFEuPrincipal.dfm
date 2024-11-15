@@ -1142,4 +1142,8 @@ object FuPrincipalEtq: TFuPrincipalEtq
     Left = 323
     Top = 209
   end
+  object FDQPedidos: TFDQuery
+    Left = 32
+    Top = 165
+  end
 end
