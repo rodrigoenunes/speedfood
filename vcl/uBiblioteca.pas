@@ -1014,8 +1014,8 @@ Begin
   Begin
     if Trim(slRetorno[I]).IsEmpty then
       Continue;
-    if uDM.sysVersao = 'NOVA' then
-       uDM.FDC.ExecSQL(
+    //if uDM.sysVersao = 'NOVA' then
+    uDM.FDC.ExecSQL(
        'UPDATE com_pedidodetpag ' +
                'set NSU = ' + slRetorno[I].Substring(0,200).Trim.QuotedString + ', ' +
                '    CodAutorizacao = ' + slRetorno[I].Substring(200,200).Trim.QuotedString + ', ' +
@@ -1027,19 +1027,17 @@ Begin
                '    AutEstabArqImpr = ' + slRetorno[I].Substring(900,240).Trim.Replace('\', '\\').QuotedString + ', ' +
                '    tpIntegra = 2 ' +
                'where numero = ' + pCom_Pedido_Numero.ToString +
-               '  and seq    = ' + slDetPags[I])
-    else  // Versao anterior........
-    uDM.FDC.ExecSQL(
-      'UPDATE com_pedidodetpag ' +
-      'set cAut      = ' + slRetorno[I].Substring(20, 20).Trim.QuotedString + ', ' +
-      '    nrCartao  = ' + slRetorno[I].Substring(60, 20).Trim.QuotedString + ', ' +
-      '    nrDocto   = ' + slRetorno[I].Substring(00, 20).Trim.QuotedString + ', ' +
-      '    codVenda  = ' + slRetorno[I].Substring(20, 20).Trim.QuotedString + ', ' +
-      '    tpIntegra = 2 ' +
-      'where numero = ' + pCom_Pedido_Numero.ToString +
-      '  and seq    = ' + slDetPags[I]);
-
-
+               '  and seq    = ' + slDetPags[I]);
+    //else  // Versao anterior........
+    //uDM.FDC.ExecSQL(
+    //  'UPDATE com_pedidodetpag ' +
+    //  'set cAut      = ' + slRetorno[I].Substring(20, 20).Trim.QuotedString + ', ' +
+    //  '    nrCartao  = ' + slRetorno[I].Substring(60, 20).Trim.QuotedString + ', ' +
+    //  '    nrDocto   = ' + slRetorno[I].Substring(00, 20).Trim.QuotedString + ', ' +
+    //  '    codVenda  = ' + slRetorno[I].Substring(20, 20).Trim.QuotedString + ', ' +
+    //  '    tpIntegra = 2 ' +
+    //  'where numero = ' + pCom_Pedido_Numero.ToString +
+    //  '  and seq    = ' + slDetPags[I]);
 
   End;
 

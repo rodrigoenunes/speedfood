@@ -160,11 +160,11 @@ var wVlrPago,wData,wTpCard: String;
     xAfiliacao: String;
 
 begin
-{ Forma da versão antiga
-                                    cAut                    NrDoc
-  ACNFe /tef /cancelar CIELO 316,30 273337 13/10/23 CREDITO 23208 arq-nfe.xml -as C:\saida\padrao.txt
-}
-{ Versão atual
+{ Forma da versão antiga            cAut                    NrDoc
+  ACNFe /tef /cancelar CIELO 316,30 273337 13/10/23 CREDITO 23208 arq-nfe.xml -as C:\saida\padrao.txt }
+
+{
+  Versão atual
   afiliacao:= udm.FDC.ExecSQLScalar('select ahjdahdjhs'.Replace(':opcao', '1') )
 
 ACNFe /tef /estornar terminal afiliacao valor codAutorizacao Data tPag nrodoc NSU
@@ -180,6 +180,7 @@ NSU	            Numero Sequencial Único (solicitado por algumas afiliações)
 }
   Result := False;
   wArqSai := ExtractFilePath(Application.ExeName) + 'wTEF.Txt';
+{ versao antiga
   wArqXML := uDM.PedidosIdArqXML.AsString;
   if (uDM.sysVersao <> 'NOVA')                 // Versão antiga
      and (not FileExists(wArqXML)) then        // Não existe o XML da NFCe
@@ -189,6 +190,7 @@ NSU	            Numero Sequencial Único (solicitado por algumas afiliações)
     Exit;
   end;
   //
+}
   wCmdo    := pExec;           // Executável
   uDM.PedDetpag.First;
   while not uDM.PedDetpag.Eof do
@@ -202,27 +204,28 @@ NSU	            Numero Sequencial Único (solicitado por algumas afiliações)
         (uDM.PedDetpagSit.AsInteger = 0) and                   // Situação : Não cancelado
         (uDM.PedDetpagtpIntegra.AsInteger = 1) then            // Integrado : SIM
     begin
-      if uDM.sysVersao = 'NOVA' then
-      begin             // Nova versão
-        case uDM.PedidosMeioPagto.AsInteger of
-          1:xAfiliacao := ObtemParametro('AFIL_DEBITO','BIN');
-          2:xAfiliacao := ObtemParametro('AFIL_CREDITO','PAGSEGURO');
-          3:xAfiliacao := ObtemParametro('AFIL_PIX','PIX');
-          6:xAfiliacao := ObtemParametro('AFIL_BANRICOMPRAS','PAGSEGURO');
-          else xAfiliacao := 'PAGSEGURO';
-        end;
-        wData    := Copy(uDM.PedidosData.AsString,1,10);
-        wData    := Copy(wData,1,6) + Copy(wData,9,2);
-        wParm := '/tef /estornar ' +
-                 uDM.sysCPUId + ' ' +                   // terminal
-                 xAfiliacao + ' ' +                     // afiliacao
-                 FloatToStrF(uDM.PedDetpagValor.AsCurrency,ffFixed,15,2) + ' ' +   // valor
-                 Trim(uDM.PedDetpagCodAutorizacao.AsString) + ' ' +                // CodAutorizacao
-                 wData + ' ' +                                              // data da autorização
-                 uDM.PedDetpagtPag.AsString + ' ' +                         // tipo de pagamento
-                 Trim(uDM.PedDetpagNroReferencia.AsString) + ' ' +          // Nro docto referenciado
-                 Trim(uDM.PedDetpagNSU.AsString);                           // NSU
-      end
+      //if uDM.sysVersao = 'NOVA' then
+      //begin             // Nova versão
+      case uDM.PedidosMeioPagto.AsInteger of
+        1:xAfiliacao := ObtemParametro('AFIL_DEBITO','BIN');
+        2:xAfiliacao := ObtemParametro('AFIL_CREDITO','PAGSEGURO');
+        3:xAfiliacao := ObtemParametro('AFIL_PIX','PIX');
+        6:xAfiliacao := ObtemParametro('AFIL_BANRICOMPRAS','PAGSEGURO');
+        else xAfiliacao := 'PAGSEGURO';
+      end;
+      wData    := Copy(uDM.PedidosData.AsString,1,10);
+      wData    := Copy(wData,1,6) + Copy(wData,9,2);
+      wParm := '/tef /estornar ' +
+               uDM.sysCPUId + ' ' +                                             // terminal
+               xAfiliacao + ' ' +                                               // afiliacao
+               FloatToStrF(uDM.PedDetpagValor.AsCurrency,ffFixed,15,2) + ' ' +  // valor
+               Trim(uDM.PedDetpagCodAutorizacao.AsString) + ' ' +               // CodAutorizacao
+               wData + ' ' +                                                    // data da autorização
+               uDM.PedDetpagtPag.AsString + ' ' +                               // tipo de pagamento
+               Trim(uDM.PedDetpagNroReferencia.AsString) + ' ' +                // Nro docto referenciado
+               Trim(uDM.PedDetpagNSU.AsString);                                 // NSU
+      //end
+      {
       else begin        // Versao antiga
         lEstorna := False;
         if uDM.PedDetpagtPag.AsString = '03' then
@@ -241,6 +244,7 @@ NSU	            Numero Sequencial Único (solicitado por algumas afiliações)
                     uDM.PedDetpagnrDocto.AsString + ' ' +               // Nro do documento (da transação do cartão)
                     wArqXML;                                            // Arquivo XML da NFCe
       end;
+      }
       wParm := wParm + ' -as ' + wArqSai;                               // Arquivo saída específico de cancelamento de cartão
       if MessageDlg('Cancelamento de transação com cartão crédito/débito ou PIX' + #13#13 +
                     'Valor: ' + FloatToStrF(uDM.PedDetpagValor.AsCurrency,ffNumber,15,2) + #13#13 +

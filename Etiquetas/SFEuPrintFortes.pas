@@ -189,10 +189,15 @@ begin
   //FSFEuPrintFortes.RLLabParaLevar.Caption := '';
   FSFEuPrintFortes.RLLabParaLevar.Visible := False;
   if uDM.PedidosParaLevar.AsInteger = 1 then
-  begin
     FSFEuPrintFortes.RLLabParaLevar.Caption := ObtemParametro('PedidoTxtParaLevarPrint','-- Para levar --');
-    FSFEuPrintFortes.RLLabParaLevar.Visible := True;
+  if uDM.PedidosOrigem.AsInteger = 1 then
+  begin
+    if FSFEuPrintFortes.RLLabParaLevar.Caption <> '' then
+       FSFEuPrintFortes.RLLabParaLevar.Caption := FSFEuPrintFortes.RLLabParaLevar.Caption + '    ';
+    FSFEuPrintFortes.RLLabParaLevar.Caption := FSFEuPrintFortes.RLLabParaLevar.Caption + 'WhatsApp'
   end;
+  if FSFEuPrintFortes.RLLabParaLevar.Caption <> '' then
+    FSFEuPrintFortes.RLLabParaLevar.Visible := True;
   //
   if pmtItem <> 0
   then begin

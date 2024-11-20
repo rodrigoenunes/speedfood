@@ -1152,7 +1152,7 @@ object FuImpressoes: TFuImpressoes
       end
       object RLDBText43: TRLDBText
         Left = 3
-        Top = 3
+        Top = 1
         Width = 111
         Height = 14
         DataField = 'MeioPagto'

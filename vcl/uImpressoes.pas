@@ -720,7 +720,10 @@ begin
     CDPedCliente.AsString := uDM.PedidosNomeCliente.AsString;
     CDPedDataHora.AsString := uDM.PedidosZC_DataHora.AsString;
     CDPedTotal.AsString := FloatToStrF(uDM.PedidosValor.AsCurrency,ffNumber,15,2);
-    CDPedMeioPagto.AsString := uDM.PedidosZC_MPExtenso.AsString;
+    if uDM.PedidosSitPagto.AsInteger = 0 then
+      CDPedMeioPagto.AsString := 'Pendente'
+    else
+      CDPedMeioPagto.AsString := uDM.PedidosZC_MPExtenso.AsString;
     if uDM.PedidosParaLevar.AsInteger = 0 then
       CDPedParaLevar.AsString := ''
     else

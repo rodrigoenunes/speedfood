@@ -386,7 +386,7 @@ type
     wTxtExtraTab: array[1..24] of String;
     wVlrExtraTab: array[1..24] of Currency;
     usaCorItem: Boolean;
-    sysIniFile,sysUser,sysCPUId,sysVersao{,sysLocal}: String;
+    sysIniFile,sysUser,sysCPUId{,sysVersao,sysLocal}: String;
     sysNumId,sysNrCaixa,sysCaixaSeq: Integer;
     sysPedidos,sysBalcao,sysWhats,sysManut,sysAdmin,sysBuffet: Boolean;
     sysUsuar,sysSefaz,sysHelp,sysHelpArgox,sysAltLctos: Boolean;
@@ -398,7 +398,7 @@ type
     sysAtivo: String;
     sysPedePlaca: Boolean;
     sysTefPosIni,sysTefPos: Integer;
-    sysImprimePedidoBalcao,sysImprimeBebidaBalcao,sysImprimeEtiquetaBalcao: Boolean;
+    sysImprimePedido,sysImprimeEtiquetaBebidas,sysImprimeEtiquetaLanches: Boolean;
     balLanches,balBebidas,balCrepes,balFrituras,balGelados,balBufDiv: Boolean;
     filGrupoItens: Integer;
     meioPgto: Integer;
@@ -903,10 +903,12 @@ begin
   sysHelpArgox := vIniFile.ReadBool('Estacao','HelpArgox',False);
   sysSefaz := vIniFile.ReadBool('Estacao','VerSefaz',False);
   sysAltLctos := vIniFile.ReadBool('Estacao','CaixaAltLctos',False);
-  sysImprimePedidoBalcao := vIniFile.ReadBool('Estacao','ImprimePedidoBalcao',False);
-  sysImprimeBebidaBalcao := vIniFile.ReadBool('Estacao','ImprimeBebidaBalcao',False);
-  sysImprimeEtiquetaBalcao := vIniFile.ReadBool('Estacao','ImprimeEtiquetaBalcao',False);
-  sysVersao := AnsiUpperCase(vIniFile.ReadString('Estacao','Versao','XXXX'));
+
+  sysImprimePedido := vIniFile.ReadBool('Estacao','ImprimePedido',False);
+  sysImprimeEtiquetaBebidas := vIniFile.ReadBool('Estacao','ImprimeEtiquetaBebidas',False);
+  sysImprimeEtiquetaLanches := vIniFile.ReadBool('Estacao','ImprimeEtiquetaLanches',False);
+
+  //sysVersao := AnsiUpperCase(vIniFile.ReadString('Estacao','Versao','XXXX'));
   //sysLocal := AnsiUpperCase(vIniFile.ReadString('Estacao','Local','Onibus'));  xx
   //
   if AnsiUpperCase(vIniFile.ReadString('Estacao','TEFPOS','TEF')) = 'TEF'
