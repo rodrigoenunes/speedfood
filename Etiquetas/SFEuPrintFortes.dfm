@@ -709,15 +709,15 @@ object FSFEuPrintFortes: TFSFEuPrintFortes
       end
       object RLDraw4: TRLDraw
         Left = 12
-        Top = 57
+        Top = 55
         Width = 342
-        Height = 130
+        Height = 114
       end
       object RLDBMemo2: TRLDBMemo
         Left = 16
-        Top = 65
+        Top = 57
         Width = 332
-        Height = 111
+        Height = 108
         Alignment = taCenter
         AutoSize = False
         Behavior = [beSiteExpander]
@@ -728,6 +728,19 @@ object FSFEuPrintFortes: TFSFEuPrintFortes
         Font.Height = -21
         Font.Name = 'Arial'
         Font.Style = []
+        ParentFont = False
+      end
+      object RLLabParaLevarCrepe: TRLLabel
+        Left = 16
+        Top = 173
+        Width = 150
+        Height = 16
+        Alignment = taCenter
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clBlack
+        Font.Height = -13
+        Font.Name = 'Arial'
+        Font.Style = [fsBold]
         ParentFont = False
       end
     end

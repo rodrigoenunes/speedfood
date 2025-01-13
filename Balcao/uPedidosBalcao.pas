@@ -110,6 +110,7 @@ type
     tBalanca: TTimer;
     cbTVBuffet: TCheckBox;
     cbBalConectada: TCheckBox;
+    LabBal: TLabel;
     procedure btAbrirPedidoClick(Sender: TObject);
     procedure btFinalizarClick(Sender: TObject);
     procedure GridLanchesDrawCell(Sender: TObject; ACol, ARow: Integer;
@@ -1475,7 +1476,7 @@ begin
   for I := 1 to Count do
   begin
     C := FApdComPort.GetChar;
-    S:= S + C;
+    S := S + C;
     If C in ['', 'q', ' '] Then
       S:= EmptyStr;
   end;
@@ -1511,7 +1512,18 @@ begin
 end;
 
 procedure TFuPedidosBalcao.btAbrirPedidoClick(Sender: TObject);
+var wPgIni: Integer;
 begin
+  if uDM.sysIniBalcao = 5 then
+    wPgIni := 0
+  else
+    wPgIni := 1;
+  Try
+    pgControleBalcao.ActivePageIndex := wPgIni;
+  Except
+    pgControleBalcao.ActivePageIndex := uDM.sysIniBalcao;
+  End;
+  Sleep(200);
   pgControleBalcao.ActivePageIndex := uDM.sysIniBalcao;
   uDM.sysAtivo := 'BALCAO';
   uDM.sysPedePlaca := False;
@@ -2497,7 +2509,8 @@ end;
 
 procedure TFuPedidosBalcao.tBalancaTimer(Sender: TObject);
 begin
-  if not cbBalConectada.checked then Exit;
+  if not cbBalConectada.checked then
+    Exit;
 
   if pgControleBalcao.ActivePage <> TSBufDiv Then
     Exit;
@@ -2531,6 +2544,10 @@ begin
 
   Inc(vTentativasLeituraBalanca);
 
+  if FApdComPort.Open then
+    LabBal.Caption := 'Balança Ok'
+  else
+    LabBal.Caption := 'Balança desconectada';
 
 end;
 

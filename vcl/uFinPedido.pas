@@ -948,8 +948,11 @@ begin
     SHowMessage('Aguarde - 8');
 
   xImpressao := 'N';
-  if uDM.sysImprimeEtiquetaLanches or uDM.sysImprimeEtiquetaBebidas then
-  begin
+  if uDM.sysImprimeEtiquetaLanches or
+     uDM.sysImprimeEtiquetaCrepes or
+     uDM.sysImprimeEtiquetaBebidas or
+     uDM.sysImprimeEtiquetaGelados
+  then begin
     xImpressao := ObtemParametro('EtiquetaFinalPedido');
     if xImpressao = 'Q' then
        if MessageDlg('Impressão etiquetas do pedido' + #13 +
@@ -958,9 +961,10 @@ begin
                      mtConfirmation,[mbYes,mbNo],0,mbNo,['Sim','Não']) = mrYes then
           xImpressao := 'S';
   end;
-  if ((uDM.PedidosLctLanches.AsInteger = 0) or                  // Não tem lanches no pedido, ou
-      (not uDM.sysImprimeEtiquetaLanches))                      // Não imprime lanches
-     and (not uDM.sysImprimeEtiquetaBebidas) then               // e não imprime bebidas
+  if ((uDM.PedidosLctLanches.AsInteger = 0) or  (not uDM.sysImprimeEtiquetaLanches))    // Não tem lanches ou não imprime
+     and ((uDM.PedidosLctCrepes.AsInteger = 0) or (not uDM.sysImprimeEtiquetaCrepes))   // Não tem Crepes ou não imprime
+     and ((uDM.PedidosLctGelados.AsInteger = 0) or (not uDM.sysImprimeEtiquetaGelados)) // Não tem Gelados ou não imprime
+     and (not uDM.sysImprimeEtiquetaBebidas) then                                       // e não imprime bebidas
      xImpressao := 'N';
   //
   if lDebug then

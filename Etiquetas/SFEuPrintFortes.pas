@@ -74,6 +74,7 @@ type
     RLDBText21: TRLDBText;
     RLDBText22: TRLDBText;
     RLLabParaLevar: TRLLabel;
+    RLLabParaLevarCrepe: TRLLabel;
     procedure RLEtiqBebidaBeforePrint(Sender: TObject; var PrintIt: Boolean);
     procedure RLDetLancheBeforePrint(Sender: TObject; var PrintIt: Boolean);
   private
@@ -186,10 +187,14 @@ begin
   end;
   FSFEuPrintFortes := TFSFEuPrintFortes.Create(nil);
   DefinePrinterEtiqueta;       // Define... define idPrinter, lPreview e lDialog das etiquetas
-  //FSFEuPrintFortes.RLLabParaLevar.Caption := '';
   FSFEuPrintFortes.RLLabParaLevar.Visible := False;
+  FSFEuPrintFortes.RLLabParaLevarCrepe.Visible := False;
+
   if uDM.PedidosParaLevar.AsInteger = 1 then
+  begin
     FSFEuPrintFortes.RLLabParaLevar.Caption := ObtemParametro('PedidoTxtParaLevarPrint','-- Para levar --');
+    FSFEuPrintFortes.RLLabParaLevarCrepe.Caption := FSFEuPrintFortes.RLLabParaLevar.Caption;
+  end;
   if uDM.PedidosOrigem.AsInteger = 1 then
   begin
     if FSFEuPrintFortes.RLLabParaLevar.Caption <> '' then
@@ -198,6 +203,9 @@ begin
   end;
   if FSFEuPrintFortes.RLLabParaLevar.Caption <> '' then
     FSFEuPrintFortes.RLLabParaLevar.Visible := True;
+  if FSFEuPrintFortes.RLLabParaLevarCrepe.Caption <> '' then
+    FSFEuPrintFortes.RLLabParaLevarCrepe.Visible := True;
+
   //
   if pmtItem <> 0
   then begin
@@ -346,7 +354,10 @@ begin
         xExtra := Trim(uDM.ItensDescricao.AsString);
         if AllExtras[i] = '0' then RLSem.Lines.Add(xExtra)
         else if AllExtras[i] = '-' then RLMenos.Lines.Add(xExtra)
-             else RLMais.Lines.Add(xExtra);
+             else begin
+               if AllExtras[i] <> '1' then xExtra := xExtra + ' (' + AllExtras[i] + ')';
+               RLMais.Lines.Add(xExtra);
+             end;
       end;
   RLPanMais.Width := wLargura;
   RLPanMais.Borders.DrawRight := True;

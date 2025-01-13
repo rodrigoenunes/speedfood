@@ -602,7 +602,7 @@ object FuTrataLanche: TFuTrataLanche
         object Label4: TLabel
           Left = 0
           Top = 0
-          Width = 40
+          Width = 110
           Height = 25
           Align = alTop
           Alignment = taCenter
@@ -613,6 +613,7 @@ object FuTrataLanche: TFuTrataLanche
           Font.Name = 'Tahoma'
           Font.Style = [fsBold, fsUnderline]
           ParentFont = False
+          ExplicitWidth = 40
         end
         object dbCortado: TDBCheckBox
           Left = 6

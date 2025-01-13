@@ -449,7 +449,7 @@ begin
   lctCods := [99,0,0,0];
   j := 1;
   for i := 1 to 24
-  do if (xExtras[i] = '1') or (xExtras[i] = '2')
+  do if (xExtras[i] = '1') or (xExtras[i] = '2') or (xExtras[i] = '3')
      then begin
        nExtVlr := nExtVlr + 1;         // Extras com valor
        if j < 4
@@ -475,6 +475,9 @@ begin
                        then xExtras[wKey] := '1'
                        else if xExtras[wKey] = '1'        // '1' -> '2'
                                then xExtras[wKey] := '2'
+                               else if xExtras[wKey] = '2'
+                                    then xExtras[wKey] := '3';
+
           end
           else xExtras[wKey] := '+';      // Extra sem valor
         end;
@@ -486,12 +489,14 @@ begin
            xExtras[wKey] := '0';
     end;
     3,8:begin              // Menos
-        if xExtras[wKey] = '2'
-           then xExtras[wKey] := '1'
-           else if xExtras[wKey] = '1'
-                   then xExtras[wKey] := '.'
-                   else if uDM.wVlrExtraTab[wKey] = 0
-                        then xExtras[wKey] := '-';        // Se '.' ou '+'  vira MENOS, somente se NÃO tiver valor
+        if xExtras[wKey] = '3'
+           then xExtras[wKey] := '2'
+           else if xExtras[wKey] = '2'
+                then xExtras[wKey] := '1'
+                else if xExtras[wKey] = '1'
+                     then xExtras[wKey] := '.'
+                     else if uDM.wVlrExtraTab[wKey] = 0
+                          then xExtras[wKey] := '-';        // Se '.' ou '+'  vira MENOS, somente se NÃO tiver valor
     end;
   end;
   //

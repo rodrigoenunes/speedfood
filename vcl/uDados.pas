@@ -398,7 +398,8 @@ type
     sysAtivo: String;
     sysPedePlaca: Boolean;
     sysTefPosIni,sysTefPos: Integer;
-    sysImprimePedido,sysImprimeEtiquetaBebidas,sysImprimeEtiquetaLanches: Boolean;
+    sysImprimePedido,sysImprimeEtiquetaBebidas,sysImprimeEtiquetaLanches,
+    sysImprimeEtiquetaCrepes,sysImprimeEtiquetaGelados: Boolean;
     balLanches,balBebidas,balCrepes,balFrituras,balGelados,balBufDiv: Boolean;
     filGrupoItens: Integer;
     meioPgto: Integer;
@@ -907,6 +908,8 @@ begin
   sysImprimePedido := vIniFile.ReadBool('Estacao','ImprimePedido',False);
   sysImprimeEtiquetaBebidas := vIniFile.ReadBool('Estacao','ImprimeEtiquetaBebidas',False);
   sysImprimeEtiquetaLanches := vIniFile.ReadBool('Estacao','ImprimeEtiquetaLanches',False);
+  sysImprimeEtiquetaCrepes := vIniFile.ReadBool('Estacao','ImprimeEtiquetaCrepes',False);
+  sysImprimeEtiquetaGelados := vIniFile.ReadBool('Estacao','ImprimeEtiquetaGelados',False);
 
   //sysVersao := AnsiUpperCase(vIniFile.ReadString('Estacao','Versao','XXXX'));
   //sysLocal := AnsiUpperCase(vIniFile.ReadString('Estacao','Local','Onibus'));  xx

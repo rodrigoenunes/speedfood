@@ -710,7 +710,7 @@ object FuPedidosBalcao: TFuPedidosBalcao
         Top = 1
         Width = 740
         Height = 516
-        ActivePage = TSBufDiv
+        ActivePage = TSFrituras
         Align = alClient
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clWindowText
@@ -1926,6 +1926,9 @@ object FuPedidosBalcao: TFuPedidosBalcao
         Height = 25
         Align = alBottom
         TabOrder = 1
+        DesignSize = (
+          740
+          25)
         object sbAbasMenor: TSpeedButton
           Left = 61
           Top = 1
@@ -1975,6 +1978,21 @@ object FuPedidosBalcao: TFuPedidosBalcao
           ParentFont = False
           OnClick = sbAbasMultiClick
           ExplicitLeft = 47
+        end
+        object LabBal: TLabel
+          Left = 688
+          Top = 6
+          Width = 37
+          Height = 13
+          Alignment = taRightJustify
+          Anchors = [akTop, akRight]
+          Caption = 'Balan'#231'a'
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -11
+          Font.Name = 'Tahoma'
+          Font.Style = []
+          ParentFont = False
         end
         object cbTVBuffet: TCheckBox
           Left = 164
