@@ -389,7 +389,7 @@ type
     sysIniFile,sysUser,sysCPUId{,sysVersao,sysLocal}: String;
     sysNumId,sysNrCaixa,sysCaixaSeq: Integer;
     sysPedidos,sysBalcao,sysWhats,sysManut,sysAdmin,sysBuffet: Boolean;
-    sysUsuar,sysSefaz,sysHelp,sysHelpArgox,sysAltLctos: Boolean;
+    sysUsuar,sysSefaz,sysHelp,sysHelpArgox,sysAltLctos,sysCaixaDisp: Boolean;
     sysIdPedidos,sysIdBalcao,sysIdBuffet: String;
     sysEtiquetasPrt,sysPedidosPrt,sysCaixaPrt,sysResumoPrt: String;
     sysIniBalcao,sysAbasFonte: Integer;
@@ -847,6 +847,7 @@ begin
     vIniFile.WriteBool('Estacao','VerSefaz',False);
     vIniFile.WriteBool('Estacao','Turnos',False);             // Tratativa de turnos
     vIniFile.WriteBool('Estacao','CaixaAltLctos',False);
+    vIniFile.WriteBool('Estacao','CaixaDisponivel',False);
     vIniFile.WriteBool('Estacao','ImprimePedidoBalcao',False);
 
     vIniFile.WriteString('Estacao','Versao','XXX');
@@ -904,6 +905,7 @@ begin
   sysHelpArgox := vIniFile.ReadBool('Estacao','HelpArgox',False);
   sysSefaz := vIniFile.ReadBool('Estacao','VerSefaz',False);
   sysAltLctos := vIniFile.ReadBool('Estacao','CaixaAltLctos',False);
+  sysCaixaDisp := vIniFile.ReadBool('Estacao','CaixaDisponivel',False);
 
   sysImprimePedido := vIniFile.ReadBool('Estacao','ImprimePedido',False);
   sysImprimeEtiquetaBebidas := vIniFile.ReadBool('Estacao','ImprimeEtiquetaBebidas',False);

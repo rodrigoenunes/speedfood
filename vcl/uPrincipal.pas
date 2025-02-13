@@ -146,7 +146,6 @@ end;
 
 procedure TFuPrincipal.btSairClick(Sender: TObject);
 var wExec,wParm: String;
-    nFimTurno: Integer;
 begin
   if FechaCaixa then
   begin
@@ -196,7 +195,7 @@ procedure TFuPrincipal.FormActivate(Sender: TObject);
 var arqImg,xValidade,xIdBalcao: String;
     AA,MM,DD: word;
     dtValid,dtHoje: TDateTime;
-    nDias,nBotoes,nTop,nAlt,wAcao: Integer;
+    nDias,nBotoes,nTop,nAlt: Integer;
 begin
   LabConexao.Visible := True;
   Application.ProcessMessages;
@@ -232,15 +231,6 @@ begin
     uDM.lDebug := False;
     if ObtemParametro('DEBUG') = 'S' then uDM.lDebug := True;
     //
-    FFRCtle.RLPreviewSetup1.ZoomFactor := StrToIntDef(ObtemParametro('FortesZoomFactor'),100);
-    FGen.lSalvaForm := True;
-    FGen.pathSalvaForm := ExtractFilePath(Application.ExeName);
-    Form_Define(FuPrincipal);
-    //
-    if ObtemParametro('SistemaUserPwd') = 'S'
-    then if not ObtemUsuario(uDM.sysUser)
-            then btSairClick(nil);
-    //
     dtHoje := DateOf(Date);
     xValidade := ObtemParametro('SistemaValidade');    // AAAAMMDD
     AA := StrToIntDef(Copy(xValidade,1,4),2023);
@@ -251,10 +241,21 @@ begin
     if dtHoje > dtValid then
     begin
       MessageDlg('Validade do sistema expirada (' + intToStr(nDias) + ') dias',mtError,[mbOk],0);
-      btSairClick(nil);
+      Halt(0);
     end;
     if nDias < 31 then
       MessageDlg('A validade do sistema termina em ' + IntToStr(nDias) + ' dias',mtInformation,[mbOk],0);
+    if ObtemParametro('SistemaUserPwd') = 'S' then
+      if not ObtemUsuario(uDM.sysUser) then
+        begin
+          MessageDlg('usuário indefinido/inválido',mtError,[mbOk],0);
+          Halt(0);
+        end;
+    //
+    FFRCtle.RLPreviewSetup1.ZoomFactor := StrToIntDef(ObtemParametro('FortesZoomFactor'),100);
+    FGen.lSalvaForm := True;
+    FGen.pathSalvaForm := ExtractFilePath(Application.ExeName);
+    Form_Define(FuPrincipal);
     //
     uDM.pathImagens := IncludeTrailingPathDelimiter(uDM.SisPessoaPathImagens.AsString);
     arqImg := uDM.pathImagens + 'ImgFundo.BMP';
@@ -284,6 +285,8 @@ begin
     btCaixa.Height := nAlt;
     btCaixa.Left := 12;
     nTop := nTop + nAlt + 2;
+    btCaixa.Enabled := uDM.sysCaixaDisp;
+
     if uDM.sysPedidos then
     begin
       btPedidos.Caption := uDM.sysIdPedidos;
@@ -385,7 +388,7 @@ begin
     LabInicio.Caption := 'Início: ' + uDM.RegCaixaDtHrInicio.AsString;
     LabEstacao.Caption := 'Estação: ' + uDM.sysCPUId + '   [ ' + IntToStr(uDM.sysNumId) + ' ]';
     LabTurno.Caption := 'Turno: '+ IntToStr(uDM.turnoCorrente);
-    PanIdCaixa.Visible := True;
+    PanIdCaixa.Visible := uDM.sysCaixaDisp;     //  True;
     //
 
   end;
@@ -393,7 +396,6 @@ begin
 end;
 
 procedure TFuPrincipal.FormClose(Sender: TObject; var Action: TCloseAction);
-var wExec,wParm: String;
 begin
   uDM.PedDetpag.Active := False;
   uDM.PedItens.Active  := False;

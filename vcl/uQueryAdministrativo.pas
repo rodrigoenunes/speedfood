@@ -233,7 +233,6 @@ end;
 
 procedure TFuQueryAdministrativo.btProcessarClick(Sender: TObject);
 var i,tAux: Integer;
-    impAnt,pgtAnt: Integer;
     nRegs: Integer;
     xCaixa,xSitPag: String;
 begin
@@ -318,7 +317,7 @@ begin
   DebugMensagem(uDM.lDebug,'Depois da leitura dos pedidos');
   //
   uDM.ResVendas.Append;
-  uDM.ResVendasTpProd.AsInteger := 9;
+  uDM.ResVendasTpProd.AsInteger := 99;
   uDM.ResVendasCodProd.AsInteger := 99;
   uDM.ResVendasDescricao.AsString := 'Total geral';
   uDM.ResVendasQuant.AsInteger := ttQtd;
