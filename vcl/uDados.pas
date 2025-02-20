@@ -212,14 +212,14 @@ type
     ItenspMVAST: TFMTBCDField;
     RegCaixaVlrPedidos: TBCDField;
     RegCaixaQtdPedidos: TIntegerField;
-    ResVendas: TClientDataSet;
-    SResVendas: TDataSource;
-    ResVendasTpProd: TSmallintField;
-    ResVendasCodProd: TIntegerField;
-    ResVendasQuant: TIntegerField;
-    ResVendasValor: TCurrencyField;
-    ResVendasDescricao: TStringField;
-    ResVendasZC_Cod: TStringField;
+    ResumoVendas: TClientDataSet;
+    SResumoVendas: TDataSource;
+    ResumoVendasTpProd: TSmallintField;
+    ResumoVendasCodProd: TIntegerField;
+    ResumoVendasQuant: TIntegerField;
+    ResumoVendasValor: TCurrencyField;
+    ResumoVendasDescricao: TStringField;
+    ResumoVendasZC_Cod: TStringField;
     ItensCorItem: TStringField;
     ItensZC_Cor: TStringField;
     PedidosPlaca: TStringField;
@@ -361,7 +361,7 @@ type
     procedure RegCaixaCalcFields(DataSet: TDataSet);
     procedure PedidosCalcFields(DataSet: TDataSet);
     procedure PedItensCalcFields(DataSet: TDataSet);
-    procedure ResVendasCalcFields(DataSet: TDataSet);
+    procedure ResumoVendasCalcFields(DataSet: TDataSet);
     procedure ItensFilterRecord(DataSet: TDataSet; var Accept: Boolean);
     procedure PedidosFilterRecord(DataSet: TDataSet; var Accept: Boolean);
     procedure DataModuleCreate(Sender: TObject);
@@ -656,24 +656,24 @@ begin
   Result  := True;
   with uDM
   do begin
-    ResVendas.Active := False;
-    ResVendas.FieldDefs.Clear;
-    ResVendas.FieldDefs.Add('TpProd',    ftSmallint);
-    ResVendas.FieldDefs.Add('CodProd',   ftInteger);
-    ResVendas.FieldDefs.Add('Quant',     ftInteger);
-    ResVendas.FieldDefs.Add('Valor',     ftCurrency);
-    ResVendas.FieldDefs.Add('Descricao', ftString, 80);
-    ResVendas.IndexDefs.Clear;
-    ResVendas.IndexDefs.Add('','TpProd;CodProd',[ixPrimary,ixUnique]);
-    ResVendas.CreateDataSet;
+    ResumoVendas.Active := False;
+    ResumoVendas.FieldDefs.Clear;
+    ResumoVendas.FieldDefs.Add('TpProd',    ftSmallint);
+    ResumoVendas.FieldDefs.Add('CodProd',   ftInteger);
+    ResumoVendas.FieldDefs.Add('Quant',     ftInteger);
+    ResumoVendas.FieldDefs.Add('Valor',     ftCurrency);
+    ResumoVendas.FieldDefs.Add('Descricao', ftString, 80);
+    ResumoVendas.IndexDefs.Clear;
+    ResumoVendas.IndexDefs.Add('','TpProd;CodProd',[ixPrimary,ixUnique]);
+    ResumoVendas.CreateDataSet;
     Try
-      ResVendas.Active := True;
-      ResVendas.Active := False;
+      ResumoVendas.Active := True;
+      ResumoVendas.Active := False;
     Except
       Result := False;
       Exit;
     End;
-    ResVendas.Active := True;
+    ResumoVendas.Active := True;
 
   end;
 
@@ -1304,9 +1304,9 @@ begin
 
 end;
 
-procedure TuDM.ResVendasCalcFields(DataSet: TDataSet);
+procedure TuDM.ResumoVendasCalcFields(DataSet: TDataSet);
 begin
-  ResVendasZC_Cod.AsString := ResVendasTpProd.AsString + '.' + ResVendasCodProd.AsString;
+  ResumoVendasZC_Cod.AsString := ResumoVendasTpProd.AsString + '.' + ResumoVendasCodProd.AsString;
 
 end;
 

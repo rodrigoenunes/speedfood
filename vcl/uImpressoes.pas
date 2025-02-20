@@ -12,7 +12,7 @@ uses
   Procedure ImprimeCaixa(pTurno,pCaixa,pCxSeq: Integer);
   Procedure ImprimeResumo(pIni,pFim:String;pVlr:array of Currency; pQtd:array of Integer;
                                            pVlrDoc:array of Currency; pqtdDoc:array of Integer;
-                                           pIdCaixa:String);
+                                           pIdCaixa, pSituacao, pMeiosPgto, pDoctos:Integer);
 
 type
   TFuImpressoes = class(TForm)
@@ -202,12 +202,13 @@ type
     RLLabResumo: TRLLabel;
     RLDbLinha: TRLDBText;
     RLDBText6: TRLDBText;
-    RLLabCaixas: TRLLabel;
     RLLabel19: TRLLabel;
     RLRes_Fill: TRLLabel;
     RLCx_Fill: TRLLabel;
     RLDBText7: TRLDBText;
     CDPedParaLevar: TStringField;
+    RLLabCxSit: TRLLabel;
+    RLLabMPDocs: TRLLabel;
     procedure RLCaixaBeforePrint(Sender: TObject; var PrintIt: Boolean);
     procedure RLPedDetalBeforePrint(Sender: TObject; var PrintIt: Boolean);
     procedure RLPedidoBeforePrint(Sender: TObject; var PrintIt: Boolean);
@@ -917,8 +918,9 @@ end;
 
 Procedure ImprimeResumo(pIni,pFim:String;pVlr:array of Currency; pQtd:array of Integer;
                                          pVlrDoc:array of Currency; pqtdDoc:array of Integer;
-                                         pIdCaixa:String);
+                                         pIdCaixa, pSituacao, pMeiosPgto, pDoctos:Integer);
 var i: Integer;
+    wLinha: String;
 begin
   FuImpressoes := TFuIMpressoes.Create(nil);
   idPrinter := uDM.sysResumoPrt;
@@ -939,7 +941,7 @@ begin
   if not DefineImpressora(True,idPrinter,portaPrt,driverPrt,indexPrt) then
     lPreview := True;
   //
-  uDM.Resvendas.First;
+  uDM.ResumoVendas.First;
   with FuImpressoes
   do begin
     if pIni = pFim then
@@ -951,7 +953,37 @@ begin
       RLLabTurnoIni.Caption := 'Turno inicial: ' + pIni;
       RLLabTurnoFim.Caption := 'Turno final: ' + pFim;
     end;
-    RLLabCaixas.Caption := pIdCaixa;
+    RLLabCxSit.Caption := 'Caixa: ';
+    case pIdCaixa of
+      0:RLLabCxSit.Caption := RLLabCxSit.Caption + 'Todos';
+      1:RLLabCxSit.Caption := RLLabCxSit.Caption + 'Onibus';
+      2:RLLabCxSit.Caption := RLLabCxSit.Caption + 'Balcão';
+      3:RLLabCxSit.Caption := RLLabCxSit.Caption + 'Buffet';
+      else RLLabCxSit.Caption := RLLabCxSit.Caption + 'Cx ' + IntToStr(pIdCaixa);
+    end;
+    RLLabCxSit.Caption := RLLabCxSit.Caption + '     Situação: ';
+    case pSituacao of
+      0:RLLabCxSit.Caption := RLLabCxSit.Caption + 'Todas';
+      1:RLLabCxSit.Caption := RLLabCxSit.Caption + 'Pendentes';
+      2:RLLabCxSit.Caption := RLLabCxSit.Caption + 'Pagos';
+    end;
+    RLLabMPDocs.Caption := 'Meio de pagamento: ';
+    case pMeiosPgto of
+      0:RLLabMPDocs.Caption := RLLabMPDocs.Caption + 'Todos';
+      1:RLLabMPDocs.Caption := RLLabMPDocs.Caption + 'Dinheiro';
+      2:RLLabMPDocs.Caption := RLLabMPDocs.Caption + 'C.Débito';
+      3:RLLabMPDocs.Caption := RLLabMPDocs.Caption + 'C.Crédito';
+      4:RLLabMPDocs.Caption := RLLabMPDocs.Caption + 'PIX';
+      5:RLLabMPDocs.Caption := RLLabMPDocs.Caption + 'Outros';
+      6:RLLabMPDocs.Caption := RLLabMPDocs.Caption + 'Misto';
+    end;
+    RLLabMPDocs.Caption := RLLabMPDocs.Caption + '     Doctos: ';
+    case pDoctos of
+      0:RLLabMPDocs.Caption := RLLabMPDocs.Caption + 'Todos';
+      1:RLLabMPDocs.Caption := RLLabMPDocs.Caption + 'NFCe';
+      2:RLLabMPDocs.Caption := RLLabMPDocs.Caption + 'Outros';
+    end;
+
     RLLabReais.Caption := FloatToStrF(pVlr[0],ffNumber,15,2);
     RLLabCDeb.Caption := FloatToStrF(pVlr[1],ffNumber,15,2);
     RLLabCCred.Caption := FloatToStrF(pVlr[2],ffNumber,15,2);
@@ -976,7 +1008,7 @@ begin
     RLLabTotQtdDocs.Caption := IntToStr(pQtdDoc[2]);
 
     nAltura := RLRes_Cabec.Height + RLRes_Cols.Height +
-               (uDM.ResVendas.RecordCount * RLRes_Detal.Height) +
+               (uDM.ResumoVendas.RecordCount * RLRes_Detal.Height) +
                RLRes_Sum.Height + RLRes_Footer.Height + 60;
     tmPagina := Trunc(nAltura / 3.7795) + 1;
     if tmPagina < 100 then tmPagina := 100;

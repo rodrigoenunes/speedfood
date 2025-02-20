@@ -3,23 +3,22 @@ object FuQueryAdministrativo: TFuQueryAdministrativo
   Top = 0
   Caption = 'Administrativo / Vendas'
   ClientHeight = 619
-  ClientWidth = 751
+  ClientWidth = 757
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
   Font.Height = -13
   Font.Name = 'Tahoma'
   Font.Style = []
-  OnClose = FormClose
   OnResize = FormResize
   TextHeight = 16
-  object gbTurnos: TGroupBox
+  object gbSelDados: TGroupBox
     Left = 0
     Top = 0
-    Width = 751
-    Height = 212
+    Width = 757
+    Height = 242
     Align = alTop
-    Caption = 'Per'#237'odo (Turnos) '#224' considerar'
+    Caption = 'Sele'#231#227'o de dados'
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
     Font.Height = -16
@@ -27,38 +26,36 @@ object FuQueryAdministrativo: TFuQueryAdministrativo
     Font.Style = []
     ParentFont = False
     TabOrder = 0
-    DesignSize = (
-      751
-      212)
+    ExplicitLeft = 2
     object Label1: TLabel
       Left = 8
-      Top = 30
-      Width = 109
-      Height = 23
+      Top = 28
+      Width = 94
+      Height = 19
       Caption = 'Turno inicial:'
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
-      Font.Height = -19
+      Font.Height = -16
       Font.Name = 'Tahoma'
       Font.Style = []
       ParentFont = False
     end
     object Label2: TLabel
       Left = 18
-      Top = 70
-      Width = 98
-      Height = 23
+      Top = 64
+      Width = 84
+      Height = 19
       Caption = 'Turno final:'
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
-      Font.Height = -19
+      Font.Height = -16
       Font.Name = 'Tahoma'
       Font.Style = []
       ParentFont = False
     end
     object LabProcess: TLabel
-      Left = 15
-      Top = 164
+      Left = 8
+      Top = 192
       Width = 64
       Height = 16
       Caption = 'LabProcess'
@@ -71,11 +68,10 @@ object FuQueryAdministrativo: TFuQueryAdministrativo
       Visible = False
     end
     object cbTurnoIni: TComboBox
-      Left = 122
-      Top = 30
-      Width = 496
+      Left = 104
+      Top = 22
+      Width = 500
       Height = 31
-      Anchors = [akLeft, akTop, akRight]
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -19
@@ -86,11 +82,10 @@ object FuQueryAdministrativo: TFuQueryAdministrativo
       Text = 'cbTurnoIni'
     end
     object cbTurnoFin: TComboBox
-      Left = 122
-      Top = 67
-      Width = 496
+      Left = 104
+      Top = 58
+      Width = 500
       Height = 31
-      Anchors = [akLeft, akTop, akRight]
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -19
@@ -101,66 +96,111 @@ object FuQueryAdministrativo: TFuQueryAdministrativo
       Text = 'cbTurnoFin'
     end
     object btProcessar: TBitBtn
-      Left = 624
-      Top = 30
-      Width = 112
-      Height = 62
-      Anchors = [akTop, akRight]
+      Left = 487
+      Top = 192
+      Width = 124
+      Height = 42
       Caption = 'Processar'
-      TabOrder = 3
+      TabOrder = 6
       OnClick = btProcessarClick
     end
     object btSair: TBitBtn
-      Left = 624
-      Top = 98
-      Width = 112
-      Height = 62
-      Anchors = [akTop, akRight]
+      Left = 617
+      Top = 192
+      Width = 124
+      Height = 42
       Caption = 'Sair/Cancelar'
-      TabOrder = 4
+      TabOrder = 7
       OnClick = btSairClick
     end
     object PBar1: TProgressBar
-      Left = 15
-      Top = 180
-      Width = 722
+      Left = 8
+      Top = 208
+      Width = 473
       Height = 25
-      Anchors = [akLeft, akTop, akRight]
-      TabOrder = 5
+      TabOrder = 8
       Visible = False
     end
     object rgCaixas: TRadioGroup
-      Left = 15
-      Top = 104
-      Width = 604
-      Height = 54
-      Caption = 'Caixa(s)'
+      Left = 8
+      Top = 94
+      Width = 361
+      Height = 45
+      Caption = 'Caixa'
       Columns = 4
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -16
+      Font.Name = 'Tahoma'
+      Font.Style = []
       Items.Strings = (
-        'Todos os caixas'
-        'Onibus (1)'
-        'Balc'#227'o (2)'
-        'Buffet (3) ')
+        'Todos '
+        'Onibus'
+        'Balc'#227'o'
+        'Buffet')
+      ParentFont = False
       TabOrder = 2
+    end
+    object rgMeiosPagto: TRadioGroup
+      Left = 8
+      Top = 142
+      Width = 596
+      Height = 45
+      Caption = 'Meios de pagamento'
+      Columns = 7
+      Items.Strings = (
+        'Todos'
+        'Dinheiro'
+        'C.D'#233'b'
+        'C.Cr'#233'd'
+        'PIX'
+        'Outros'
+        'Misto')
+      TabOrder = 4
+    end
+    object rgSituacao: TRadioGroup
+      Left = 375
+      Top = 95
+      Width = 229
+      Height = 45
+      Caption = 'Situa'#231#227'o pedidos'
+      Columns = 3
+      Items.Strings = (
+        'Todos'
+        'Pend'
+        'Pagos')
+      TabOrder = 3
+    end
+    object rgDocumentos: TRadioGroup
+      Left = 610
+      Top = 95
+      Width = 121
+      Height = 91
+      Caption = 'Docs emitidos'
+      Items.Strings = (
+        'Todos'
+        'NFCe'
+        'Outros')
+      TabOrder = 5
     end
   end
   object PanResultado: TPanel
     Left = 0
-    Top = 212
-    Width = 751
-    Height = 407
+    Top = 242
+    Width = 757
+    Height = 377
     Align = alClient
     TabOrder = 1
     Visible = False
     object Panel1: TPanel
       Left = 1
-      Top = 365
-      Width = 749
+      Top = 335
+      Width = 755
       Height = 41
       Align = alBottom
       TabOrder = 0
       DesignSize = (
-        749
+        755
         41)
       object btNova: TBitBtn
         Left = 6
@@ -181,7 +221,7 @@ object FuQueryAdministrativo: TFuQueryAdministrativo
         OnClick = btImprimirClick
       end
       object btSair2: TBitBtn
-        Left = 601
+        Left = 607
         Top = 5
         Width = 138
         Height = 25
@@ -195,7 +235,7 @@ object FuQueryAdministrativo: TFuQueryAdministrativo
       Left = 1
       Top = 1
       Width = 236
-      Height = 364
+      Height = 334
       Align = alLeft
       TabOrder = 1
       object Label3: TLabel
@@ -684,14 +724,14 @@ object FuQueryAdministrativo: TFuQueryAdministrativo
     object Panel3: TPanel
       Left = 237
       Top = 1
-      Width = 513
-      Height = 364
+      Width = 519
+      Height = 334
       Align = alClient
       TabOrder = 2
       object Panel4: TPanel
         Left = 1
         Top = 1
-        Width = 511
+        Width = 517
         Height = 24
         Align = alTop
         Color = clTeal
@@ -719,28 +759,28 @@ object FuQueryAdministrativo: TFuQueryAdministrativo
       end
       object Panel5: TPanel
         Left = 1
-        Top = 322
-        Width = 511
+        Top = 292
+        Width = 517
         Height = 41
         Align = alBottom
         TabOrder = 1
-        object NavItens: TDBNavigator
+        object NavResumo: TDBNavigator
           Left = 8
           Top = 6
           Width = 124
           Height = 30
-          DataSource = uDM.SResVendas
+          DataSource = uDM.SResumoVendas
           VisibleButtons = [nbFirst, nbPrior, nbNext, nbLast]
           TabOrder = 0
         end
       end
-      object GridItens: TDBGrid
+      object GridResumo: TDBGrid
         Left = 1
         Top = 25
-        Width = 511
-        Height = 297
+        Width = 517
+        Height = 267
         Align = alClient
-        DataSource = uDM.SResVendas
+        DataSource = uDM.SResumoVendas
         DrawingStyle = gdsClassic
         TabOrder = 2
         TitleFont.Charset = DEFAULT_CHARSET
@@ -791,8 +831,8 @@ object FuQueryAdministrativo: TFuQueryAdministrativo
     Connection = uDM.FDC
     SQL.Strings = (
       '')
-    Left = 360
-    Top = 248
+    Left = 352
+    Top = 376
     object FDQPedidosNumero: TLongWordField
       FieldName = 'Numero'
     end
@@ -832,8 +872,8 @@ object FuQueryAdministrativo: TFuQueryAdministrativo
   end
   object FDQItens: TFDQuery
     Connection = uDM.FDC
-    Left = 405
-    Top = 328
+    Left = 397
+    Top = 456
     object FDQItensTpProd: TIntegerField
       FieldName = 'TpProd'
     end
@@ -853,7 +893,7 @@ object FuQueryAdministrativo: TFuQueryAdministrativo
   end
   object DSPedidos: TDataSource
     DataSet = FDQPedidos
-    Left = 437
-    Top = 264
+    Left = 429
+    Top = 392
   end
 end

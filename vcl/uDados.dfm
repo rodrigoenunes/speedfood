@@ -1475,38 +1475,38 @@ object uDM: TuDM
       Size = 999
     end
   end
-  object ResVendas: TClientDataSet
+  object ResumoVendas: TClientDataSet
     Aggregates = <>
     Params = <>
-    OnCalcFields = ResVendasCalcFields
+    OnCalcFields = ResumoVendasCalcFields
     Left = 480
     Top = 144
-    object ResVendasTpProd: TSmallintField
+    object ResumoVendasTpProd: TSmallintField
       FieldName = 'TpProd'
     end
-    object ResVendasCodProd: TIntegerField
+    object ResumoVendasCodProd: TIntegerField
       FieldName = 'CodProd'
     end
-    object ResVendasQuant: TIntegerField
+    object ResumoVendasQuant: TIntegerField
       FieldName = 'Quant'
     end
-    object ResVendasValor: TCurrencyField
+    object ResumoVendasValor: TCurrencyField
       FieldName = 'Valor'
       DisplayFormat = ',0.00'
     end
-    object ResVendasDescricao: TStringField
+    object ResumoVendasDescricao: TStringField
       FieldName = 'Descricao'
       Size = 80
     end
-    object ResVendasZC_Cod: TStringField
+    object ResumoVendasZC_Cod: TStringField
       FieldKind = fkCalculated
       FieldName = 'ZC_Cod'
       Size = 5
       Calculated = True
     end
   end
-  object SResVendas: TDataSource
-    DataSet = ResVendas
+  object SResumoVendas: TDataSource
+    DataSet = ResumoVendas
     Left = 484
     Top = 196
   end

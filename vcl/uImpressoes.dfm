@@ -1253,7 +1253,7 @@ object FuImpressoes: TFuImpressoes
     Margins.TopMargin = 5.000000000000000000
     Margins.RightMargin = 5.000000000000000000
     Margins.BottomMargin = 5.000000000000000000
-    DataSource = uDM.SResVendas
+    DataSource = uDM.SResumoVendas
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clBlack
     Font.Height = -11
@@ -1267,7 +1267,7 @@ object FuImpressoes: TFuImpressoes
       Left = 19
       Top = 19
       Width = 264
-      Height = 62
+      Height = 67
       BandType = btHeader
       Borders.Sides = sdCustom
       Borders.DrawLeft = False
@@ -1319,9 +1319,11 @@ object FuImpressoes: TFuImpressoes
       end
       object RLLabTurnoIni: TRLLabel
         Left = 0
-        Top = 18
-        Width = 63
+        Top = 16
+        Width = 264
         Height = 12
+        Align = faTop
+        Alignment = taCenter
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clBlack
         Font.Height = -9
@@ -1331,9 +1333,11 @@ object FuImpressoes: TFuImpressoes
       end
       object RLLabTurnoFim: TRLLabel
         Left = 0
-        Top = 32
-        Width = 69
+        Top = 28
+        Width = 264
         Height = 12
+        Align = faTop
+        Alignment = taCenter
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clBlack
         Font.Height = -9
@@ -1341,24 +1345,38 @@ object FuImpressoes: TFuImpressoes
         Font.Style = []
         ParentFont = False
       end
-      object RLLabCaixas: TRLLabel
+      object RLLabCxSit: TRLLabel
         Left = 0
-        Top = 47
+        Top = 40
         Width = 264
-        Height = 14
-        Align = faBottom
+        Height = 12
+        Align = faTop
         Alignment = taCenter
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clBlack
-        Font.Height = -11
+        Font.Height = -9
         Font.Name = 'Arial'
-        Font.Style = [fsBold]
+        Font.Style = []
+        ParentFont = False
+      end
+      object RLLabMPDocs: TRLLabel
+        Left = 0
+        Top = 52
+        Width = 264
+        Height = 12
+        Align = faTop
+        Alignment = taCenter
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clBlack
+        Font.Height = -9
+        Font.Name = 'Arial'
+        Font.Style = []
         ParentFont = False
       end
     end
     object RLRes_Cols: TRLBand
       Left = 19
-      Top = 81
+      Top = 86
       Width = 264
       Height = 16
       BandType = btColumnHeader
@@ -1402,7 +1420,7 @@ object FuImpressoes: TFuImpressoes
     end
     object RLRes_Detal: TRLBand
       Left = 19
-      Top = 97
+      Top = 102
       Width = 264
       Height = 16
       object RLDBText47: TRLDBText
@@ -1412,7 +1430,7 @@ object FuImpressoes: TFuImpressoes
         Height = 14
         AutoSize = False
         DataField = 'ZC_Cod'
-        DataSource = uDM.SResVendas
+        DataSource = uDM.SResumoVendas
         Text = ''
       end
       object RLDbResDescr: TRLDBText
@@ -1422,7 +1440,7 @@ object FuImpressoes: TFuImpressoes
         Height = 14
         AutoSize = False
         DataField = 'Descricao'
-        DataSource = uDM.SResVendas
+        DataSource = uDM.SResumoVendas
         Text = ''
       end
       object RLDbResQtd: TRLDBText
@@ -1433,7 +1451,7 @@ object FuImpressoes: TFuImpressoes
         Alignment = taRightJustify
         AutoSize = False
         DataField = 'Quant'
-        DataSource = uDM.SResVendas
+        DataSource = uDM.SResumoVendas
         Text = ''
       end
       object RLDbResTotal: TRLDBText
@@ -1444,13 +1462,13 @@ object FuImpressoes: TFuImpressoes
         Alignment = taRightJustify
         AutoSize = False
         DataField = 'Valor'
-        DataSource = uDM.SResVendas
+        DataSource = uDM.SResumoVendas
         Text = ''
       end
     end
     object RLRes_Sum: TRLBand
       Left = 19
-      Top = 113
+      Top = 118
       Width = 264
       Height = 186
       BandType = btSummary
@@ -1776,7 +1794,7 @@ object FuImpressoes: TFuImpressoes
     end
     object RLRes_Footer: TRLBand
       Left = 19
-      Top = 299
+      Top = 304
       Width = 264
       Height = 30
       BandType = btFooter
