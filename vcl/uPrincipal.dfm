@@ -47,7 +47,7 @@ object FuPrincipal: TFuPrincipal
     Left = 8
     Top = 170
     Width = 257
-    Height = 52
+    Height = 48
     Caption = 'Lanches, Bebidas, Extras'
     Glyph.Data = {
       36080000424D3608000000000000360400002800000020000000200000000100
@@ -124,7 +124,7 @@ object FuPrincipal: TFuPrincipal
     Left = 8
     Top = 336
     Width = 257
-    Height = 52
+    Height = 48
     Caption = 'Finalizar/Sair'
     Glyph.Data = {
       76020000424D7602000000000000760000002800000020000000200000000100
@@ -154,7 +154,7 @@ object FuPrincipal: TFuPrincipal
     Left = 8
     Top = 8
     Width = 257
-    Height = 52
+    Height = 48
     Caption = 'Caixa'
     Glyph.Data = {
       36080000424D3608000000000000360400002800000020000000200000000100
@@ -230,7 +230,7 @@ object FuPrincipal: TFuPrincipal
     Left = 8
     Top = 66
     Width = 257
-    Height = 52
+    Height = 48
     Caption = 'Pedidos'
     Glyph.Data = {
       76020000424D7602000000000000760000002800000020000000200000000100
@@ -261,7 +261,7 @@ object FuPrincipal: TFuPrincipal
     Left = 8
     Top = 278
     Width = 257
-    Height = 52
+    Height = 48
     Caption = 'Usu'#225'rio do Sistema'
     Glyph.Data = {
       76060000424D7606000000000000360400002800000018000000180000000100
@@ -324,7 +324,7 @@ object FuPrincipal: TFuPrincipal
     Left = 8
     Top = 224
     Width = 257
-    Height = 52
+    Height = 48
     Caption = 'Administrativo'
     Glyph.Data = {
       F6060000424DF606000000000000360000002800000018000000180000000100
@@ -441,7 +441,7 @@ object FuPrincipal: TFuPrincipal
       Caption = 'LabSeqCaixa'
     end
     object LabTurno: TLabel
-      Left = 176
+      Left = 180
       Top = 124
       Width = 68
       Height = 19
@@ -453,7 +453,7 @@ object FuPrincipal: TFuPrincipal
     Left = 8
     Top = 118
     Width = 257
-    Height = 52
+    Height = 48
     Caption = 'Consultar pedidos'
     Glyph.Data = {
       D6090000424DD6090000000000003604000028000000300000001E0000000100
@@ -593,7 +593,7 @@ object FuPrincipal: TFuPrincipal
     Left = 8
     Top = 394
     Width = 257
-    Height = 52
+    Height = 48
     Caption = 'Verifica disponibilidade SeFaz'
     TabOrder = 9
     Visible = False
@@ -602,7 +602,7 @@ object FuPrincipal: TFuPrincipal
     Left = 271
     Top = 166
     Width = 257
-    Height = 52
+    Height = 48
     Caption = 'Balc'#227'o'
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
@@ -683,9 +683,9 @@ object FuPrincipal: TFuPrincipal
   end
   object btBuffet: TBitBtn
     Left = 271
-    Top = 310
+    Top = 346
     Width = 257
-    Height = 52
+    Height = 48
     Caption = 'Buffet'
     Glyph.Data = {
       36080000424D3608000000000000360400002800000020000000200000000100
@@ -760,9 +760,9 @@ object FuPrincipal: TFuPrincipal
   end
   object btCtleCaixas: TBitBtn
     Left = 480
-    Top = 208
+    Top = 223
     Width = 180
-    Height = 49
+    Height = 48
     Anchors = [akRight, akBottom]
     Caption = 'Todos caixas'
     TabOrder = 13
@@ -770,9 +770,9 @@ object FuPrincipal: TFuPrincipal
   end
   object btCtleTurnos: TBitBtn
     Left = 480
-    Top = 263
+    Top = 278
     Width = 180
-    Height = 49
+    Height = 48
     Anchors = [akRight, akBottom]
     Caption = 'Turnos'
     TabOrder = 14

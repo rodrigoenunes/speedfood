@@ -92,8 +92,10 @@ end;
 
 procedure TFuPrincipal.btBalcaoClick(Sender: TObject);
 begin
-  if ObtemParametro('UsaCorItem','N') = 'S' then uDM.usaCorItem := True
-     else uDM.usaCorItem := False;
+  if ObtemParametro('UsaCorItem','N') = 'S' then
+     uDM.usaCorItem := True
+  else
+     uDM.usaCorItem := False;
   uDM.sysTefPos := uDM.sysTefPosIni;      // SisPessoaTefPos.AsInteger;
   PedidosBalcao(btBalcao.Caption);
 

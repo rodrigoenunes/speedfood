@@ -769,7 +769,7 @@ begin
           wDescr := 'Montar lanche - ';
           wValor := 0;
           wAltPr := False;
-          wExtra := '';
+          wExtra := stringFiller('.',24);
           wObserv := '';
           wTotal := wValor;
           wQuant := 1;
@@ -1687,10 +1687,10 @@ begin
 
 end;
 
-procedure TFuPedidosBalcao.edPesoKeyDown(Sender: TObject; var Key: Word;
-  Shift: TShiftState);
+procedure TFuPedidosBalcao.edPesoKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
 begin
-  if Key = vk_Return then SelectNext((Sender as TwinControl), True, True);
+  if Key = vk_Return then
+    SelectNext((Sender as TwinControl), True, True);
 
 end;
 
@@ -1751,7 +1751,7 @@ begin
   btSair.Height         := btAbrirPedido.Height;
   //
   cbTVBuffet.Checked := False;
-  cbBalConectada.Checked := True;
+  cbBalConectada.Checked := False;
   //
   edItens.Text := '0';
   edTotal.Text := '0,00';
@@ -1789,6 +1789,10 @@ begin
   if nPos > 0 then
     btAbrirPedido.Caption := Copy(btAbrirPedido.Caption,1,nPos-1) + #13 +
                              Copy(btAbrirPedido.Caption,nPos+1,Length(btAbrirPedido.Caption)-nPos);
+  if ObtemParametro('BalancaConectada_'+IntToStr(uDM.sysNumId),'N') = 'S' then
+    cbBalConectada.Checked := True
+  else
+    cbBalConectada.Checked := False;
   //
   //ShowMessage('FormShow');
   MontaTelaPedidosBalcao;

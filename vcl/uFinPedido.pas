@@ -484,7 +484,7 @@ begin
   if MsgInformacao('Confirmação',
                    'Cancelamento de pedido',
                    'Realmente cancelar o pedido ?',
-                   ['Sim','Não',''],3,2,10) <> 1 then Exit;
+                   ['Sim','Não',''],1) <> 0 then Exit;
   uDM.Pedidos.Cancel;
   nRetorno := 2;
   FuFinPedido.Close;
@@ -500,21 +500,18 @@ var somaVlr,wSaldo: Currency;
     xEmitirNFCe,xImpressao,wMsg: String;
     wStatus,wAtivarMsg: Boolean;
     wAnswer: Integer;
-    lDebug: Boolean;
+    lDebugFimPed: Boolean;
 begin
   if  (ObtemParametro('PedidoPlaca') = 'S') and uDM.sysPedePlaca then
      if StrToIntDef(uDM.PedidosPlaca.AsString,0) = 0 then
      begin
        //MessageDlg('Nro de placa não informado, dado obrigatorio',mtError,[mbOk],0);
        MsgInformacao('Aviso',
-                     'Placa/Senha',
-                     'Nro da placa/senha não informado' + #13 +
+                     'Placa / Senha',
+                     'Número da placa/senha não informado' + #13 +
                      'Dado obrigatório' + #13 +
                      'Informe',
-                     ['Ok','',''],
-                     1,
-                     1,
-                     10);     // pEsq:Integer=0; pTop:Integer=0): Integer;
+                     ['Ok','',''],0);
        dbPlaca.SetFocus;
        Exit;
      end;
@@ -550,10 +547,10 @@ begin
          Exit;
        end;
   //
-  if ObtemParametro('DebugFimPedidos','N') = 'S' then
-    lDebug := True
+  if ObtemParametro('DebugFimPedidos_'+IntToStr(uDM.sysNumId),'N') = 'S' then
+    lDebugFimPed := True
   else
-    lDebug := False;
+    lDebugFimPed := False;
   cbImprimeNFCe.Enabled := False;
   btGravar.Enabled := False;
   btCancelar.Enabled := False;
@@ -579,12 +576,10 @@ begin
     End;
   end;
   }
-  if lDebug then
-    SHowMessage('Aguarde - 1');
-
   PanAguarde.Color := clHighlight;
   PanAguarde.Visible := True;
   Application.ProcessMessages;
+  DebugMensagem(lDebugFimPed,'1- Definir registro pedido');
   //
   // Obtendo quantidades de lançamentos
   lanSeq := 0;     // lanches no pedido
@@ -623,8 +618,7 @@ begin
   uDM.PedidosLctOutros.AsInteger := outSeq;
 
   uDM.Pedidos.Post;
-  if lDebug then
-    ShowMessage('Aguarde - 2');
+  DebugMensagem(lDebugFimPed,'2- Pedido definido');
   //
   if uDM.wNroPedido > 0 then
   begin
@@ -706,8 +700,7 @@ begin
     uDM.PedItens.Post;
     uDM.PedWrk.Next;
   end;
-  if lDebug then
-    SHowMessage('Aguarde - 3');
+  DebugMensagem(lDebugFimPed,'3- Lanctos definidos');
 
   // Pagtos  (detpagWRK)
   if uDM.DetpagWrk.RecordCount > 0 then
@@ -778,8 +771,7 @@ begin
     uDM.PedDetpagtpPagTela.AsInteger:= uDM.PedidosMeioPagto.AsInteger;
     uDM.PedDetpag.Post;
   end;
-   if lDebug then
-    SHowMessage('Aguarde - 4');
+  DebugMensagem(lDebugFimPed,'4- Pagtos definidos');
 
   Try
     uDM.Pedidos.Edit;
@@ -819,8 +811,7 @@ begin
     end;
   end;
   //
-  if lDebug then
-    SHowMessage('Aguarde - 5');
+  DebugMensagem(lDebugFimPed,'5- Após tratativa NFCe');
   if wStatus then
   begin
      if (uDM.PedidosMeioPagto.AsInteger = 1) or        // Cartão dédito
@@ -874,20 +865,17 @@ begin
       dbMeioPagto.SetFocus;
       Exit;
     end;
-    if lDebug then
-    SHowMessage('Aguarde - 6');
+    DebugMensagem(lDebugFimPed,'5.1- Falha DFe');
 
     // Excluir pedido
     if wAnswer = mrNo
        then ExcluePedido(uDM.PedidosNumero.AsInteger);
-    // wAnswer = mrRetry   (Deixa o pedido salvo)
     FuFinPedido.Close;
     Exit;
   end;
   //
   // Atualiza caixa
-  if lDebug then
-    SHowMessage('Aguarde - 7');
+  DebugMensagem(lDebugFimPed,'6- Atualizar Caixa');
   uDM.LctCaixa.Last;
   wSaldo := uDM.LctCaixaSaldo.AsCurrency;
   newSeq := uDM.LctCaixaLctoSeq.AsInteger + 1;
@@ -930,7 +918,7 @@ begin
   vlrSaidas   := uDM.RegCaixaS_Saidas.AsCurrency + uDM.RegCaixaS_Sangria.AsCurrency;
   uDM.RegCaixaSaldoFinal.AsCurrency := (uDM.RegCaixaSaldoInicial.AsCurrency + vlrEntradas) - vlrSaidas;
   uDM.RegCaixa.Post;
-  //
+  DebugMensagem(lDebugFimPed,'6.1-Caixa atualizado');
 {
   xImpressao := ObtemParametro('PedidoImprimir');
   if Pos(xImpressao,'SNQ') = 0 then xImpressao := 'Q';       // Sim  Não  Questiona
@@ -939,19 +927,17 @@ begin
       xImpressao := 'S'
     else
       xImpressao := 'N';
-  DebugMensagem(uDM.lDebug,'NroPedido:'+ IntToSTr(SalvaNroPedido));
+  DebugMensagem(uDM.lDebugFimPed,'NroPedido:'+ IntToSTr(SalvaNroPedido));
   if xImpressao = 'S' then
     ImprimeXXXPedido(SalvaNroPedido);       //uDM.PedidosNumero.AsInteger);
   //
 }
-  if lDebug then
-    SHowMessage('Aguarde - 8');
-
   xImpressao := 'N';
   if uDM.sysImprimeEtiquetaLanches or
      uDM.sysImprimeEtiquetaCrepes or
      uDM.sysImprimeEtiquetaBebidas or
-     uDM.sysImprimeEtiquetaGelados
+     uDM.sysImprimeEtiquetaGelados or
+     uDM.sysImprimeEtiquetaFrituras
   then begin
     xImpressao := ObtemParametro('EtiquetaFinalPedido');
     if xImpressao = 'Q' then
@@ -961,18 +947,28 @@ begin
                      mtConfirmation,[mbYes,mbNo],0,mbNo,['Sim','Não']) = mrYes then
           xImpressao := 'S';
   end;
-  if ((uDM.PedidosLctLanches.AsInteger = 0) or  (not uDM.sysImprimeEtiquetaLanches))    // Não tem lanches ou não imprime
-     and ((uDM.PedidosLctCrepes.AsInteger = 0) or (not uDM.sysImprimeEtiquetaCrepes))   // Não tem Crepes ou não imprime
-     and ((uDM.PedidosLctGelados.AsInteger = 0) or (not uDM.sysImprimeEtiquetaGelados)) // Não tem Gelados ou não imprime
-     and (not uDM.sysImprimeEtiquetaBebidas) then                                       // e não imprime bebidas
+  //ShowMessage('1)xImpressao=' + xImpressao);
+  if ((uDM.PedidosLctLanches.AsInteger = 0) or  (not uDM.sysImprimeEtiquetaLanches))        // Não tem lanches ou não imprime
+     and ((uDM.PedidosLctCrepes.AsInteger = 0) or (not uDM.sysImprimeEtiquetaCrepes))       // Não tem Crepes ou não imprime
+     and ((uDM.PedidosLctFrituras.AsInteger = 0) or (not uDM.sysImprimeEtiquetaFrituras))   // Não tem Crepes ou não imprime
+     and ((uDM.PedidosLctGelados.AsInteger = 0) or (not uDM.sysImprimeEtiquetaGelados))     // Não tem Gelados ou não imprime
+     and (not uDM.sysImprimeEtiquetaBebidas) then                                           // e não imprime bebidas
      xImpressao := 'N';
+  DebugMensagem(lDebugFimPed,'8-Imprimir etiquetas' + #13 +
+                'sysImprimeEtiquetaLanches=' + Boolean_SN(uDM.sysImprimeEtiquetaLanches) +
+                '   ' + uDM.PedidosLctLanches.AsString + #13 +
+                'sysImprimeEtiquetaCrepes='+ Boolean_SN(uDM.sysImprimeEtiquetaCrepes) +
+                '   ' + uDM.PedidosLctCrepes.AsString +  #13 +
+                'sysImprimeEtiquetaBebidas=' + Boolean_SN(uDM.sysImprimeEtiquetaBebidas) + #13 +
+                'sysImprimeEtiquetaGelados='+ Boolean_SN(uDM.sysImprimeEtiquetaGelados) +
+                '   ' + uDM.PedidosLctGelados.AsString + #13 +
+                'sysImprimeEtiquetaFrituras=' + Boolean_SN(uDM.sysImprimeEtiquetaFrituras) +
+                '   ' + uDM.PedidosLctFrituras.AsString +  #13 +
+                'xImpressao=' + xImpressao);
   //
-  if lDebug then
-    SHowMessage('Aguarde - 9' + #13 + 'Impressao=' + xImpressao);
-
-  if (xImpressao = 'S') then                         // and (uDM.sysLocal <> 'BALCAO')
+  if (xImpressao = 'S') then
   begin
-    EmiteEtiquetas(nrPedido,0,True,uDM.sysImprimeEtiquetaBebidas);
+    EmiteEtiquetas(nrPedido,0,True,uDM.sysImprimeEtiquetaBebidas,lDebugFimPed);
     uDM.PedItens.Filtered := False;
     uDM.PedItens.Refresh;
     uDM.PedItens.First;
@@ -987,10 +983,7 @@ begin
     uDM.PedidosEtqImpressas.AsInteger := 1;
     uDM.Pedidos.Post;
   end;
-
-  //
-  if lDebug then
-    SHowMessage('Aguarde - 10');
+  DebugMensagem(lDebugFimPed,'9- Etiquetas impressas');
 
   FuFinPedido.Close;
 
@@ -999,6 +992,7 @@ end;
 procedure TFuFinPedido.btRemotoClick(Sender: TObject);
 var lanSeq,bebSeq,newSeq,wrkSeq: Integer;
     xTipoImpressao: String;
+    lDebugRemoto: Boolean;
 begin
   //ShowMessage('Grava pedido, imprime pedido, imprime etiquetas, não encerra o pedido nem emite NFCe');
   if ObtemParametro('PedidoPlaca') = 'S' then
@@ -1086,6 +1080,10 @@ begin
   Except
   End;
   //
+  if ObtemParametro('DebugFimPedidos_'+IntToStr(uDM.sysNumId),'N') = 'S' then
+    lDebugRemoto := True
+  else
+    lDebugRemoto := False;
   xTipoImpressao := ObtemParametro('PedidoRemotoTpImpressao','Txt');
   if xTipoImpressao = 'Txt' then
      ImprimePedidoLst(uDM.PedidosNumero.AsInteger)
@@ -1094,7 +1092,7 @@ begin
   //
   if ObtemParametro('PedidoRemotoEtiquetas','S') = 'S'
   then begin
-    EmiteEtiquetas(nrPedido, 0, True);        // Todos os ítens do pedido ainda nao impressos
+    EmiteEtiquetas(nrPedido, 0, True, uDM.sysImprimeEtiquetaBebidas, lDebugRemoto);     // Todos os ítens do pedido ainda nao impressos
     uDM.PedItens.Filtered := False;
     uDM.PedItens.Refresh;
     uDM.PedItens.First;

@@ -540,7 +540,7 @@ begin
                 'Pedido: ' + FDQPedidosNumero.AsString + #13 +
                 'Confirme a emissão das etiquetas do pedido',
                 mtConfirmation,[mbYes,mbNo],0,mbNo,['Sim','Não']) = mrYes then
-    EmiteEtiquetas(FDQPedidosNumero.AsInteger, 0, False);   // Imprime TODAS as etiquetas do pedido
+    EmiteEtiquetas(FDQPedidosNumero.AsInteger, 0, False, False, False);   // Imprime TODAS as etiquetas do pedido
 
 end;
 

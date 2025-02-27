@@ -10,7 +10,7 @@ uses
   //procedure SetRecordRangeFritura(pModo:Integer);
   procedure SetRecordRange_CFS(pModo:Integer);     // Crepe Fritura Shake
   procedure DefinePrinterEtiqueta;
-  procedure EmiteEtiquetas(pmtPedido:Integer; pmtItem:Integer; pmtNaoImpressa:Boolean; pmtEtiqBebidas:Boolean=True);
+  procedure EmiteEtiquetas(pmtPedido:Integer; pmtItem:Integer; pmtNaoImpressa:Boolean; pmtEtiqBebidas:Boolean; pmtDebug:Boolean);
 
 type
   TFSFEuPrintFortes = class(TForm)
@@ -90,12 +90,13 @@ var
   indexPrt: Integer;
   lPreview,lDialog: Boolean;
   etqAlt,etqLrg,etqTop,etqEsq,etqDir,etqBot: Integer;
+  idPrtEtqLanche,idPrtEtqBebidas,idPrtEtqCFS: String;          // IMPRESSORAS específicas
 
 implementation
 
 {$R *.dfm}
 
-uses uDados, uSysPrinters, FortesReportCtle;
+uses uDados, uSysPrinters, FortesReportCtle, uGenericas;
 
 procedure SetRecordRangeLanche(pModo:Integer);
 begin
@@ -122,7 +123,7 @@ begin
   do begin
     idPrinter := uDM.sysEtiquetasPrt;
     if idPrinter = '' then
-       idPrinter := ObtemParametro('EtiquetaPrinter');
+       idPrinter := ObtemParametro('EtiquetaPrinter');      // Impressora etiquetas, geral
     //
     if ObtemParametro('EtiquetaPreview') = 'S' then
       lPreview := True
@@ -138,6 +139,7 @@ begin
     etqEsq := StrToIntDef(ObtemParametro('EtiquetaMargEsquerda'),6);
     etqDir := StrToIntDef(ObtemParametro('EtiquetaMargDireita'),2);
     etqBot := StrToIntDef(ObtemParametro('EtiquetaMargRodape'),3);
+    //
     if not DefineImpressora(True,idPrinter,portaPrt,driverPrt,indexPrt) then
     begin
       lPreview := True;
@@ -145,9 +147,10 @@ begin
     end;
     //
     FFRCtle.RLPreviewSetup1.CustomActionText := '';
-    RLPrinters.RLPrinter.PrinterName := idPrinter;
+    RLPrinters.RLPrinter.PrinterName := idPrinter;    // Definir a impressora para cada impressão
     RLPrinters.RLPrinter.Copies := 1;
     //
+    idPrtEtqLanche := ObtemParametro('EtiquetaPrinterLanche_'+IntToStr(uDM.sysNumId),idPrinter);
     RLEtiqLanche.PrintDialog := lDialog;
     RLEtiqLanche.PageSetup.PaperHeight := etqAlt;
     RLEtiqLanche.Margins.LeftMargin := etqEsq;
@@ -155,6 +158,7 @@ begin
     RLEtiqLanche.Margins.TopMargin := etqTop;
     RLEtiqLanche.Margins.BottomMargin := etqBot;
     //
+    idPrtEtqBebidas := ObtemParametro('EtiquetaPrinterBebidas_'+IntToStr(uDM.sysNumId),idPrinter);
     RLEtiqBebida.PrintDialog := lDialog;
     RLEtiqBebida.PageSetup.PaperHeight := etqAlt;
     RLEtiqBebida.Margins.LeftMargin := etqEsq;
@@ -162,6 +166,7 @@ begin
     RLEtiqBebida.Margins.TopMargin := etqTop;
     RLEtiqBebida.Margins.BottomMargin := etqBot;
     //
+    idPrtEtqCFS := ObtemParametro('EtiquetaPrinterCFS_'+IntToStr(uDM.sysNumId),idPrinter);
     RLEtiq_CFS.PrintDialog := lDialog;
     RLEtiq_CFS.PageSetup.PaperHeight := etqAlt;
     RLEtiq_CFS.Margins.LeftMargin := etqEsq;
@@ -173,7 +178,7 @@ begin
 end;
 
 
-Procedure EmiteEtiquetas(pmtPedido:Integer; pmtItem:Integer; pmtNaoImpressa:Boolean; pmtEtiqBebidas:Boolean=True);
+Procedure EmiteEtiquetas(pmtPedido:Integer; pmtItem:Integer; pmtNaoImpressa:Boolean; pmtEtiqBebidas:Boolean; pmtDebug:Boolean);
 var filAnt: Boolean;
     filTxtAnt: String;
     i: Integer;
@@ -187,6 +192,10 @@ begin
   end;
   FSFEuPrintFortes := TFSFEuPrintFortes.Create(nil);
   DefinePrinterEtiqueta;       // Define... define idPrinter, lPreview e lDialog das etiquetas
+  DebugMensagem(pmtDebug,'Impressoras definidas' + #13 +
+                         'Lanches='+ idPrtEtqLanche + #13 +
+                         'Bebidas=' + idPrtEtqBebidas + #13 +
+                         'CFS=' + idPrtEtqCFS);
   FSFEuPrintFortes.RLLabParaLevar.Visible := False;
   FSFEuPrintFortes.RLLabParaLevarCrepe.Visible := False;
 
@@ -214,37 +223,52 @@ begin
       SetRecordRangeLanche(0);      // rrCurrentOnly;
       SetRecordRange_CFS(0);
       case uDM.PedItensTpProd.AsInteger of
-          1,4:if lPreview then
-                 FSFEuPrintFortes.RLEtiqLanche.Preview
-              else
-                 FSFEuPrintFortes.RLEtiqLanche.Print;
-           3:begin                // Todas as bebidas em uma unica etiqueta
-              filAnt := uDM.PedItens.Filtered;
-              filTxtAnt := uDM.PedItens.Filter;
-              uDM.PedItens.Filtered := True;
-              uDM.PedItens.Filter := 'TpProd=3';
-              uDM.PedItens.Refresh;
-              if lPreview then
-                 FSFEuPrintFortes.RLEtiqBebida.Preview
-              else
-                 FSFEuPrintFortes.RLEtiqBebida.Print;
-              uDM.PedItens.First;
-              while not uDM.PedItens.Eof do
+          1,4:if idPrtEtqLanche <> '' then
               begin
-                uDM.PedItens.Edit;
-                uDM.PedItensEtqImpressa.AsInteger := 1;
-                uDM.PedItens.Post;
-                uDM.PedItens.Next;
+                DebugMensagem(pmtDebug,'IT Lanche 1-PrinterName=' + RLPrinters.RLPrinter.PrinterName);
+                RLPrinters.RLPrinter.PrinterName := idPrtEtqLanche;
+                DebugMensagem(pmtDebug,'IT Lanche 2-PrinterName=' + RLPrinters.RLPrinter.PrinterName + '  id=' + idPrtEtqLanche);
+                if lPreview then
+                   FSFEuPrintFortes.RLEtiqLanche.Preview
+                else
+                   FSFEuPrintFortes.RLEtiqLanche.Print;
               end;
-              uDM.PedItens.Filtered := filAnt;
-              uDM.PedItens.Filter := filTxtAnt;
-              uDM.PedItens.Refresh;
-            end;
-          11,21,31:if lPreview then
-                     FSFEuPrintFortes.RLEtiq_CFS.Preview
-                   else
-                     FSFEuPrintFortes.RLEtiq_CFS.Print;
-
+          3:if idPrtEtqBebidas <> '' then           // Todas as bebidas em uma unica etiqueta
+              begin
+                DebugMensagem(pmtDebug,'IT Bebidas 1-PrinterName=' + RLPrinters.RLPrinter.PrinterName);
+                RLPrinters.RLPrinter.PrinterName := idPrtEtqBebidas;
+                DebugMensagem(pmtDebug,'IT Bebidas 2-PrinterName='+ RLPrinters.RLPrinter.PrinterName + '  id=' + idPrtEtqBebidas);
+                filAnt := uDM.PedItens.Filtered;
+                filTxtAnt := uDM.PedItens.Filter;
+                uDM.PedItens.Filtered := True;
+                uDM.PedItens.Filter := 'TpProd=3';
+                uDM.PedItens.Refresh;
+                if lPreview then
+                   FSFEuPrintFortes.RLEtiqBebida.Preview
+                else
+                   FSFEuPrintFortes.RLEtiqBebida.Print;
+                uDM.PedItens.First;
+                while not uDM.PedItens.Eof do
+                begin
+                  uDM.PedItens.Edit;
+                  uDM.PedItensEtqImpressa.AsInteger := 1;
+                  uDM.PedItens.Post;
+                  uDM.PedItens.Next;
+                end;
+                uDM.PedItens.Filtered := filAnt;
+                uDM.PedItens.Filter := filTxtAnt;
+                uDM.PedItens.Refresh;
+              end;
+          11,21,31:if idPrtEtqCFS <> '' then
+              begin
+                DebugMensagem(pmtDebug,'IT CFS 1-PrinterName=' + RLPrinters.RLPrinter.PrinterName);
+                RLPrinters.RLPrinter.PrinterName := idPrtEtqCFS;
+                DebugMensagem(pmtDebug,'IT CFS 2-PrinterName='+ RLPrinters.RLPrinter.PrinterName + '  id=' + idPrtEtqCFS);
+                if lPreview then
+                   FSFEuPrintFortes.RLEtiq_CFS.Preview
+                else
+                   FSFEuPrintFortes.RLEtiq_CFS.Print;
+              end;
       end;
     end
     else MessageDlg('Item não encontrado' + #13 +
@@ -254,29 +278,38 @@ begin
   else begin     // Todas as etiquetas
     filAnt := uDM.PedItens.Filtered;
     filTxtAnt := uDM.PedItens.Filter;
-    uDM.PedItens.Filtered := True;
     // Lanches
+    uDM.PedItens.Filtered := False;
     uDM.PedItens.Filter := 'TpProd=1 or TpProd=4';
     if pmtNaoImpressa then
        uDM.PedItens.Filter := '(TpProd=1 or TpProd=4) and EtqImpressa=0';
+    uDM.PedItens.Filtered := True;
     uDM.PedItens.Refresh;
-    if uDM.PedItens.RecordCount > 0 then
+    if (uDM.PedItens.RecordCount > 0) and (idPrtEtqLanche <> '') then
     begin
       uDM.PedItens.First;
       SetRecordRangeLanche(1);      // rrAllRecords;
+      DebugMensagem(pmtDebug,'Todos Lanche 1-PrinterName=' + RLPrinters.RLPrinter.PrinterName);
+      RLPrinters.RLPrinter.PrinterName := idPrtEtqLanche;
+      DebugMensagem(pmtDebug,'Todos Lanche 2-PrinterName=' + RLPrinters.RLPrinter.PrinterName + '  id=' + idPrtEtqLanche);
       if lPreview then
         FSFEuPrintFortes.RLEtiqLanche.Preview
       else
         FSFEuPrintFortes.RLEtiqLanche.Print;
     end;
     //   Bebidas
-    if pmtEtiqBebidas
+    if pmtEtiqBebidas and (idPrtEtqBebidas <> '')
     then begin
+      uDM.PedItens.Filtered := False;
       SetRecordRangeLanche(0);      // rrCurrentOnly;
       uDM.PedItens.Filter := 'TpProd=3';
       if pmtNaoImpressa then
          uDM.PedItens.Filter := uDM.PedItens.Filter + ' and EtqImpressa=0';
+      uDM.PedItens.Filtered := True;
       uDM.PedItens.Refresh;
+      DebugMensagem(pmtDebug,'Todos Bebidas 1-PrinterName=' + RLPrinters.RLPrinter.PrinterName);
+      RLPrinters.RLPrinter.PrinterName := idPrtEtqBebidas;
+      DebugMensagem(pmtDebug,'Todos Bebidas 2-PrinterName='+ RLPrinters.RLPrinter.PrinterName + '  id=' + idPrtEtqBebidas);
       if uDM.PedItens.RecordCount > 0 then
       begin      // Imprime TODAS as bebidas em uma etiqueta
         uDM.PedItens.First;
@@ -287,23 +320,33 @@ begin
       end;
     end;
     // Crepes(11), Frituras(21), Gelados(31)
-    for i := 1 to 4 do     // Array "tpProds"  (11,21,31,32)
+    //ShowMessage('Impressora CFS=[' + idPrtEtqCFS + ']');
+    if idPrtEtqCFS <> '' then
     begin
-      uDM.PedItens.Filter := 'TpProd=' + tpProds[i];
-      if pmtNaoImpressa then
-         uDM.PedItens.Filter := 'TpProd=' + tpProds[i] + ' and EtqImpressa=0';
-      uDM.PedItens.Refresh;
-      if uDM.PedItens.RecordCount > 0 then
+      DebugMensagem(pmtDebug,'Todos CFS 1-PrinterName=' + RLPrinters.RLPrinter.PrinterName);
+      RLPrinters.RLPrinter.PrinterName := idPrtEtqCFS;
+      DebugMensagem(pmtDebug,'Todos CFS 2-PrinterName='+ RLPrinters.RLPrinter.PrinterName + '  id=' + idPrtEtqCFS);
+      for i := 1 to 4 do     // Array "tpProds"  (11,21,31,32)
       begin
-        uDM.PedItens.First;
-        SetRecordRange_CFS(1);      // rrAllRecords;
-        if lPreview then
-          FSFEuPrintFortes.RLEtiq_CFS.Preview
-        else
-          FSFEuPrintFortes.RLEtiq_CFS.Print;
+        uDM.PedItens.Filtered := False;
+        uDM.PedItens.Filter := 'TpProd=' + tpProds[i];
+        if pmtNaoImpressa then
+           uDM.PedItens.Filter := 'TpProd=' + tpProds[i] + ' and EtqImpressa=0';
+        uDM.PedItens.Filtered := True;
+        uDM.PedItens.Refresh;
+        if uDM.PedItens.RecordCount > 0 then
+        begin
+          uDM.PedItens.First;
+          DebugMensagem(pmtDebug,'CFS 3-PrinterName='+ RLPrinters.RLPrinter.PrinterName + '  id=' + idPrtEtqCFS +
+                                 '  TpProd=' + tpProds[i]);
+          SetRecordRange_CFS(1);      // rrAllRecords;
+          if lPreview then
+            FSFEuPrintFortes.RLEtiq_CFS.Preview
+          else
+            FSFEuPrintFortes.RLEtiq_CFS.Print;
+        end;
       end;
     end;
-
     // Restaura filtros
     uDM.PedItens.Filtered := filAnt;
     uDM.PedItens.Filter := filTxtAnt;

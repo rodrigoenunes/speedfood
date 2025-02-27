@@ -26,7 +26,7 @@ uses
   uPedidosBalcao in '..\Balcao\uPedidosBalcao.pas' {FuPedidosBalcao},
   uCaixa in 'uCaixa.pas' {FuCaixa},
   uTurno in 'uTurno.pas' {FuTurno},
-  uMsgInfo in '..\UsoGeral\uMsgInfo.pas' {FuMsgInfo};
+  uMsgInfo in '..\..\UsoGeral\uMsgInfo.pas' {FuMsgInfo};
 
 {$R *.res}
 

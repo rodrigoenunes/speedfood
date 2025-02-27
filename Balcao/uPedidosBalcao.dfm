@@ -710,7 +710,7 @@ object FuPedidosBalcao: TFuPedidosBalcao
         Top = 1
         Width = 740
         Height = 516
-        ActivePage = TSFrituras
+        ActivePage = TSBufDiv
         Align = alClient
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clWindowText
