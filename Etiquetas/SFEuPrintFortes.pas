@@ -8,7 +8,7 @@ uses
   procedure SetRecordRangeLanche(pModo:Integer);
   //procedure SetRecordRangeCrepe(pModo:Integer);
   //procedure SetRecordRangeFritura(pModo:Integer);
-  procedure SetRecordRange_CFS(pModo:Integer);     // Crepe Fritura Shake
+  procedure SetRecordRange_CFS(pTipo:Integer; pModo:Integer);     // 11-Crepe 21-Fritura 31-Shake
   procedure DefinePrinterEtiqueta;
   procedure EmiteEtiquetas(pmtPedido:Integer; pmtItem:Integer; pmtNaoImpressa:Boolean; pmtEtiqBebidas:Boolean; pmtDebug:Boolean);
 
@@ -58,7 +58,7 @@ type
     RLSem: TRLMemo;
     RLMenos: TRLMemo;
     RLMais: TRLMemo;
-    RLEtiq_CFS: TRLReport;
+    RLEtiq_Crepe: TRLReport;
     RLBand2: TRLBand;
     RLDraw3: TRLDraw;
     RLDBText4: TRLDBText;
@@ -75,6 +75,38 @@ type
     RLDBText22: TRLDBText;
     RLLabParaLevar: TRLLabel;
     RLLabParaLevarCrepe: TRLLabel;
+    RLEtiq_Fritura: TRLReport;
+    RLBand5: TRLBand;
+    RLDraw1: TRLDraw;
+    RLDBText14: TRLDBText;
+    RLDraw2: TRLDraw;
+    RLDBMemo1: TRLDBMemo;
+    RLLabel7: TRLLabel;
+    RLBand6: TRLBand;
+    RLDBText15: TRLDBText;
+    RLDBText16: TRLDBText;
+    RLLabel9: TRLLabel;
+    RLDBText17: TRLDBText;
+    RLDBText18: TRLDBText;
+    RLBand7: TRLBand;
+    RLDBText23: TRLDBText;
+    RLDBText24: TRLDBText;
+    RLEtiq_Shake: TRLReport;
+    RLBand8: TRLBand;
+    RLDraw5: TRLDraw;
+    RLDBText25: TRLDBText;
+    RLDraw6: TRLDraw;
+    RLDBMemo3: TRLDBMemo;
+    RLLabel10: TRLLabel;
+    RLBand9: TRLBand;
+    RLDBText26: TRLDBText;
+    RLDBText27: TRLDBText;
+    RLLabel11: TRLLabel;
+    RLDBText28: TRLDBText;
+    RLDBText29: TRLDBText;
+    RLBand10: TRLBand;
+    RLDBText30: TRLDBText;
+    RLDBText31: TRLDBText;
     procedure RLEtiqBebidaBeforePrint(Sender: TObject; var PrintIt: Boolean);
     procedure RLDetLancheBeforePrint(Sender: TObject; var PrintIt: Boolean);
   private
@@ -108,12 +140,23 @@ begin
 end;
 
 
-procedure SetRecordRange_CFS(pModo:Integer);     // Crepe Fritura Shake/Gelados
+procedure SetRecordRange_CFS(pTipo:Integer; pModo:Integer);     // Crepe Fritura Shake/Gelados
 begin
-  if pModo = 1 then
-    FSFEuPrintFortes.RLEtiq_CFS.RecordRange := rrAllRecords
-  else
-    FSFEuPrintFortes.RLEtiq_CFS.RecordRange := rrCurrentOnly;
+  case pTipo of
+    11:if pModo = 1 then
+          FSFEuPrintFortes.RLEtiq_Crepe.RecordRange := rrAllRecords
+       else
+          FSFEuPrintFortes.RLEtiq_Crepe.RecordRange := rrCurrentOnly;
+    21:if pModo = 1 then
+          FSFEuPrintFortes.RLEtiq_Fritura.RecordRange := rrAllRecords
+       else
+          FSFEuPrintFortes.RLEtiq_Fritura.RecordRange := rrCurrentOnly;
+    else if pModo = 1 then
+            FSFEuPrintFortes.RLEtiq_Shake.RecordRange := rrAllRecords
+         else
+            FSFEuPrintFortes.RLEtiq_Shake.RecordRange := rrCurrentOnly;
+  end;
+
 
 end;
 
@@ -158,7 +201,7 @@ begin
     RLEtiqLanche.Margins.TopMargin := etqTop;
     RLEtiqLanche.Margins.BottomMargin := etqBot;
     //
-    idPrtEtqBebidas := ObtemParametro('EtiquetaPrinterBebidas_'+IntToStr(uDM.sysNumId),idPrinter);
+    idPrtEtqBebidas := ObtemParametro('EtiquetaPrinterBebidas_'+IntToStr(uDM.sysNumId),'');
     RLEtiqBebida.PrintDialog := lDialog;
     RLEtiqBebida.PageSetup.PaperHeight := etqAlt;
     RLEtiqBebida.Margins.LeftMargin := etqEsq;
@@ -167,12 +210,26 @@ begin
     RLEtiqBebida.Margins.BottomMargin := etqBot;
     //
     idPrtEtqCFS := ObtemParametro('EtiquetaPrinterCFS_'+IntToStr(uDM.sysNumId),idPrinter);
-    RLEtiq_CFS.PrintDialog := lDialog;
-    RLEtiq_CFS.PageSetup.PaperHeight := etqAlt;
-    RLEtiq_CFS.Margins.LeftMargin := etqEsq;
-    RLEtiq_CFS.Margins.RightMargin := etqDir;
-    RLEtiq_CFS.Margins.TopMargin := etqTop;
-    RLEtiq_CFS.Margins.BottomMargin := etqBot;
+    RLEtiq_Crepe.PrintDialog := lDialog;
+    RLEtiq_Crepe.PageSetup.PaperHeight := etqAlt;
+    RLEtiq_Crepe.Margins.LeftMargin := etqEsq;
+    RLEtiq_Crepe.Margins.RightMargin := etqDir;
+    RLEtiq_Crepe.Margins.TopMargin := etqTop;
+    RLEtiq_Crepe.Margins.BottomMargin := etqBot;
+
+    RLEtiq_Fritura.PrintDialog := lDialog;
+    RLEtiq_Fritura.PageSetup.PaperHeight := etqAlt;
+    RLEtiq_Fritura.Margins.LeftMargin := etqEsq;
+    RLEtiq_Fritura.Margins.RightMargin := etqDir;
+    RLEtiq_Fritura.Margins.TopMargin := etqTop;
+    RLEtiq_Fritura.Margins.BottomMargin := etqBot;
+
+    RLEtiq_Shake.PrintDialog := lDialog;
+    RLEtiq_Shake.PageSetup.PaperHeight := etqAlt;
+    RLEtiq_Shake.Margins.LeftMargin := etqEsq;
+    RLEtiq_Shake.Margins.RightMargin := etqDir;
+    RLEtiq_Shake.Margins.TopMargin := etqTop;
+    RLEtiq_Shake.Margins.BottomMargin := etqBot;
 
   end;
 end;
@@ -183,7 +240,7 @@ var filAnt: Boolean;
     filTxtAnt: String;
     i: Integer;
 const
-    tpProds: array[1..4] of String = ('11','21','31','32');
+    tpProds: array[1..3] of String = ('11','21','31');
 begin
   if not uDM.Pedidos.FindKey([pmtPedido]) then
   begin
@@ -221,10 +278,14 @@ begin
     if uDM.PedItens.FindKey([pmtPedido,pmtItem])
     then begin
       SetRecordRangeLanche(0);      // rrCurrentOnly;
-      SetRecordRange_CFS(0);
       case uDM.PedItensTpProd.AsInteger of
           1,4:if idPrtEtqLanche <> '' then
               begin
+                if not DefineImpressora(True,idPrtEtqLanche,portaPrt,driverPrt,indexPrt) then
+                begin
+                  lPreview := True;
+                  lDialog := True;
+                end;
                 DebugMensagem(pmtDebug,'IT Lanche 1-PrinterName=' + RLPrinters.RLPrinter.PrinterName);
                 RLPrinters.RLPrinter.PrinterName := idPrtEtqLanche;
                 DebugMensagem(pmtDebug,'IT Lanche 2-PrinterName=' + RLPrinters.RLPrinter.PrinterName + '  id=' + idPrtEtqLanche);
@@ -235,6 +296,11 @@ begin
               end;
           3:if idPrtEtqBebidas <> '' then           // Todas as bebidas em uma unica etiqueta
               begin
+                if not DefineImpressora(True,idPrtEtqBebidas,portaPrt,driverPrt,indexPrt) then
+                begin
+                  lPreview := True;
+                  lDialog := True;
+                end;
                 DebugMensagem(pmtDebug,'IT Bebidas 1-PrinterName=' + RLPrinters.RLPrinter.PrinterName);
                 RLPrinters.RLPrinter.PrinterName := idPrtEtqBebidas;
                 DebugMensagem(pmtDebug,'IT Bebidas 2-PrinterName='+ RLPrinters.RLPrinter.PrinterName + '  id=' + idPrtEtqBebidas);
@@ -259,17 +325,55 @@ begin
                 uDM.PedItens.Filter := filTxtAnt;
                 uDM.PedItens.Refresh;
               end;
-          11,21,31:if idPrtEtqCFS <> '' then
+          11:if idPrtEtqCFS <> '' then
               begin
+                if not DefineImpressora(True,idPrtEtqCFS,portaPrt,driverPrt,indexPrt) then
+                begin
+                  lPreview := True;
+                  lDialog := True;
+                end;
+                SetRecordRange_CFS(11,0);
                 DebugMensagem(pmtDebug,'IT CFS 1-PrinterName=' + RLPrinters.RLPrinter.PrinterName);
                 RLPrinters.RLPrinter.PrinterName := idPrtEtqCFS;
                 DebugMensagem(pmtDebug,'IT CFS 2-PrinterName='+ RLPrinters.RLPrinter.PrinterName + '  id=' + idPrtEtqCFS);
                 if lPreview then
-                   FSFEuPrintFortes.RLEtiq_CFS.Preview
+                   FSFEuPrintFortes.RLEtiq_Crepe.Preview
                 else
-                   FSFEuPrintFortes.RLEtiq_CFS.Print;
+                   FSFEuPrintFortes.RLEtiq_Crepe.Print;
               end;
-      end;
+          21:if idPrtEtqCFS <> '' then
+              begin
+                if not DefineImpressora(True,idPrtEtqCFS,portaPrt,driverPrt,indexPrt) then
+                begin
+                  lPreview := True;
+                  lDialog := True;
+                end;
+                SetRecordRange_CFS(21,0);
+                DebugMensagem(pmtDebug,'IT CFS 1-PrinterName=' + RLPrinters.RLPrinter.PrinterName);
+                RLPrinters.RLPrinter.PrinterName := idPrtEtqCFS;
+                DebugMensagem(pmtDebug,'IT CFS 2-PrinterName='+ RLPrinters.RLPrinter.PrinterName + '  id=' + idPrtEtqCFS);
+                if lPreview then
+                   FSFEuPrintFortes.RLEtiq_Fritura.Preview
+                else
+                   FSFEuPrintFortes.RLEtiq_Fritura.Print;
+              end;
+          31:if idPrtEtqCFS <> '' then
+              begin
+                if not DefineImpressora(True,idPrtEtqCFS,portaPrt,driverPrt,indexPrt) then
+                begin
+                  lPreview := True;
+                  lDialog := True;
+                end;
+                SetRecordRange_CFS(31,0);
+                DebugMensagem(pmtDebug,'IT CFS 1-PrinterName=' + RLPrinters.RLPrinter.PrinterName);
+                RLPrinters.RLPrinter.PrinterName := idPrtEtqCFS;
+                DebugMensagem(pmtDebug,'IT CFS 2-PrinterName='+ RLPrinters.RLPrinter.PrinterName + '  id=' + idPrtEtqCFS);
+                if lPreview then
+                   FSFEuPrintFortes.RLEtiq_Shake.Preview
+                else
+                   FSFEuPrintFortes.RLEtiq_Shake.Print;
+              end;
+     end;
     end
     else MessageDlg('Item não encontrado' + #13 +
                     'Pedido: ' + IntToStr(pmtPedido) + ' item: ' + IntToStr(pmtItem) + #13 +
@@ -290,6 +394,11 @@ begin
       uDM.PedItens.First;
       SetRecordRangeLanche(1);      // rrAllRecords;
       DebugMensagem(pmtDebug,'Todos Lanche 1-PrinterName=' + RLPrinters.RLPrinter.PrinterName);
+      if not DefineImpressora(True,idPrtEtqLanche,portaPrt,driverPrt,indexPrt) then
+      begin
+        lPreview := True;
+        lDialog := True;
+      end;
       RLPrinters.RLPrinter.PrinterName := idPrtEtqLanche;
       DebugMensagem(pmtDebug,'Todos Lanche 2-PrinterName=' + RLPrinters.RLPrinter.PrinterName + '  id=' + idPrtEtqLanche);
       if lPreview then
@@ -308,6 +417,11 @@ begin
       uDM.PedItens.Filtered := True;
       uDM.PedItens.Refresh;
       DebugMensagem(pmtDebug,'Todos Bebidas 1-PrinterName=' + RLPrinters.RLPrinter.PrinterName);
+      if not DefineImpressora(True,idPrtEtqBebidas,portaPrt,driverPrt,indexPrt) then
+      begin
+        lPreview := True;
+        lDialog := True;
+      end;
       RLPrinters.RLPrinter.PrinterName := idPrtEtqBebidas;
       DebugMensagem(pmtDebug,'Todos Bebidas 2-PrinterName='+ RLPrinters.RLPrinter.PrinterName + '  id=' + idPrtEtqBebidas);
       if uDM.PedItens.RecordCount > 0 then
@@ -324,9 +438,14 @@ begin
     if idPrtEtqCFS <> '' then
     begin
       DebugMensagem(pmtDebug,'Todos CFS 1-PrinterName=' + RLPrinters.RLPrinter.PrinterName);
+      if not DefineImpressora(True,idPrtEtqCFS,portaPrt,driverPrt,indexPrt) then
+      begin
+        lPreview := True;
+        lDialog := True;
+      end;
       RLPrinters.RLPrinter.PrinterName := idPrtEtqCFS;
       DebugMensagem(pmtDebug,'Todos CFS 2-PrinterName='+ RLPrinters.RLPrinter.PrinterName + '  id=' + idPrtEtqCFS);
-      for i := 1 to 4 do     // Array "tpProds"  (11,21,31,32)
+      for i := 1 to 3 do     // Array "tpProds"  (11,21,31)
       begin
         uDM.PedItens.Filtered := False;
         uDM.PedItens.Filter := 'TpProd=' + tpProds[i];
@@ -334,16 +453,36 @@ begin
            uDM.PedItens.Filter := 'TpProd=' + tpProds[i] + ' and EtqImpressa=0';
         uDM.PedItens.Filtered := True;
         uDM.PedItens.Refresh;
+        uDM.PedItens.First;
         if uDM.PedItens.RecordCount > 0 then
         begin
           uDM.PedItens.First;
           DebugMensagem(pmtDebug,'CFS 3-PrinterName='+ RLPrinters.RLPrinter.PrinterName + '  id=' + idPrtEtqCFS +
                                  '  TpProd=' + tpProds[i]);
-          SetRecordRange_CFS(1);      // rrAllRecords;
-          if lPreview then
-            FSFEuPrintFortes.RLEtiq_CFS.Preview
-          else
-            FSFEuPrintFortes.RLEtiq_CFS.Print;
+          if tpProds[i] = '11' then
+          begin
+            SetRecordRange_CFS(11,1);      // rrAllRecords;
+            if lPreview then
+              FSFEuPrintFortes.RLEtiq_Crepe.Preview
+            else
+              FSFEuPrintFortes.RLEtiq_Crepe.Print;
+          end;
+          if tpProds[i] = '21' then
+          begin
+            SetRecordRange_CFS(21,1);      // rrAllRecords;
+            if lPreview then
+              FSFEuPrintFortes.RLEtiq_Fritura.Preview
+            else
+              FSFEuPrintFortes.RLEtiq_Fritura.Print;
+          end;
+          if tpProds[i] = '31' then
+          begin
+            SetRecordRange_CFS(31,1);      // rrAllRecords;
+            if lPreview then
+              FSFEuPrintFortes.RLEtiq_Shake.Preview
+            else
+              FSFEuPrintFortes.RLEtiq_Shake.Print;
+          end;
         end;
       end;
     end;

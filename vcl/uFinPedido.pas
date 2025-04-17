@@ -1528,7 +1528,6 @@ begin
     imgTick.Visible := True;
   end;
 
-
 end;
 
 procedure TFuFinPedido.LabParaLevarClick(Sender: TObject);
