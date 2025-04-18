@@ -889,8 +889,8 @@ object FSFEuPrintFortes: TFSFEuPrintFortes
     end
   end
   object RLEtiq_Fritura: TRLReport
-    Left = 415
-    Top = 286
+    Left = 452
+    Top = 191
     Width = 397
     Height = 272
     Margins.LeftMargin = 6.000000000000000000
@@ -965,10 +965,10 @@ object FSFEuPrintFortes: TFSFEuPrintFortes
         Font.Style = []
         ParentFont = False
       end
-      object RLLabel7: TRLLabel
-        Left = 16
+      object RLLabParaLevarFritura: TRLLabel
+        Left = 14
         Top = 173
-        Width = 150
+        Width = 154
         Height = 16
         Alignment = taCenter
         Font.Charset = DEFAULT_CHARSET
@@ -1123,15 +1123,20 @@ object FSFEuPrintFortes: TFSFEuPrintFortes
       end
     end
   end
-  object RLEtiq_Shake: TRLReport
-    Left = 416
-    Top = 564
+  object RLEtiq_Hamburguer: TRLReport
+    Left = 426
+    Top = 469
     Width = 397
     Height = 272
     Margins.LeftMargin = 6.000000000000000000
     Margins.TopMargin = 4.000000000000000000
     Margins.RightMargin = 2.000000000000000000
     Margins.BottomMargin = 3.000000000000000000
+    Borders.Sides = sdCustom
+    Borders.DrawLeft = False
+    Borders.DrawTop = False
+    Borders.DrawRight = True
+    Borders.DrawBottom = False
     DataSource = uDM.DSPedItens
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clBlack
@@ -1146,7 +1151,7 @@ object FSFEuPrintFortes: TFSFEuPrintFortes
     object RLBand8: TRLBand
       Left = 23
       Top = 47
-      Width = 366
+      Width = 365
       Height = 195
       AutoExpand = False
       Borders.Sides = sdCustom
@@ -1171,7 +1176,7 @@ object FSFEuPrintFortes: TFSFEuPrintFortes
         DataSource = uDM.DSPedItens
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clBlack
-        Font.Height = -27
+        Font.Height = -21
         Font.Name = 'Arial'
         Font.Style = [fsBold]
         ParentFont = False
@@ -1184,13 +1189,17 @@ object FSFEuPrintFortes: TFSFEuPrintFortes
         Height = 114
       end
       object RLDBMemo3: TRLDBMemo
-        Left = 16
+        Left = 100
         Top = 57
-        Width = 332
+        Width = 249
         Height = 108
-        Alignment = taCenter
         AutoSize = False
         Behavior = [beSiteExpander]
+        Borders.Sides = sdCustom
+        Borders.DrawLeft = False
+        Borders.DrawTop = False
+        Borders.DrawRight = False
+        Borders.DrawBottom = False
         DataField = 'Observacao'
         DataSource = uDM.DSPedItens
         Font.Charset = DEFAULT_CHARSET
@@ -1200,10 +1209,10 @@ object FSFEuPrintFortes: TFSFEuPrintFortes
         Font.Style = []
         ParentFont = False
       end
-      object RLLabel10: TRLLabel
-        Left = 16
+      object RLLabParaLevarHamburguer: TRLLabel
+        Left = -4
         Top = 173
-        Width = 150
+        Width = 190
         Height = 16
         Alignment = taCenter
         Font.Charset = DEFAULT_CHARSET
@@ -1213,11 +1222,49 @@ object FSFEuPrintFortes: TFSFEuPrintFortes
         Font.Style = [fsBold]
         ParentFont = False
       end
+      object RLLabTirar: TRLAngleLabel
+        Left = 20
+        Top = 98
+        Width = 63
+        Height = 32
+        Caption = 'Sem'
+      end
+      object RLImage1: TRLImage
+        Left = 80
+        Top = 58
+        Width = 15
+        Height = 106
+        Picture.Data = {
+          07544269746D6170B6020000424DB60200000000000036000000280000000500
+          0000280000000100180000000000800200000000000000000000000000000000
+          0000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFF00FFFFFF000000000000000000FFFF
+          FF00FFFFFF000000FFFFFFFFFFFFFFFFFF00FFFFFF000000FFFFFFFFFFFFFFFF
+          FF00FFFFFF000000FFFFFFFFFFFFFFFFFF00FFFFFF000000FFFFFFFFFFFFFFFF
+          FF00FFFFFF000000FFFFFFFFFFFFFFFFFF00FFFFFF000000FFFFFFFFFFFFFFFF
+          FF00FFFFFF000000FFFFFFFFFFFFFFFFFF00FFFFFF000000FFFFFFFFFFFFFFFF
+          FF00FFFFFF000000FFFFFFFFFFFFFFFFFF00FFFFFF000000FFFFFFFFFFFFFFFF
+          FF00FFFFFF000000FFFFFFFFFFFFFFFFFF00FFFFFF000000FFFFFFFFFFFFFFFF
+          FF00FFFFFF000000FFFFFFFFFFFFFFFFFF00FFFFFF000000FFFFFFFFFFFFFFFF
+          FF00FFFFFF000000FFFFFFFFFFFFFFFFFF00FFFFFF000000FFFFFFFFFFFFFFFF
+          FF00000000000000FFFFFFFFFFFFFFFFFF00FFFFFF000000FFFFFFFFFFFFFFFF
+          FF00FFFFFF000000FFFFFFFFFFFFFFFFFF00FFFFFF000000FFFFFFFFFFFFFFFF
+          FF00FFFFFF000000FFFFFFFFFFFFFFFFFF00FFFFFF000000FFFFFFFFFFFFFFFF
+          FF00FFFFFF000000FFFFFFFFFFFFFFFFFF00FFFFFF000000FFFFFFFFFFFFFFFF
+          FF00FFFFFF000000FFFFFFFFFFFFFFFFFF00FFFFFF000000FFFFFFFFFFFFFFFF
+          FF00FFFFFF000000FFFFFFFFFFFFFFFFFF00FFFFFF000000FFFFFFFFFFFFFFFF
+          FF00FFFFFF000000FFFFFFFFFFFFFFFFFF00FFFFFF000000FFFFFFFFFFFFFFFF
+          FF00FFFFFF000000FFFFFFFFFFFFFFFFFF00FFFFFF000000FFFFFFFFFFFFFFFF
+          FF00FFFFFF000000FFFFFFFFFFFFFFFFFF00FFFFFF000000FFFFFFFFFFFFFFFF
+          FF00FFFFFF000000FFFFFFFFFFFFFFFFFF00FFFFFF000000000000000000FFFF
+          FF00FFFFFFFFFFFFFFFFFFFFFFFFFFFFFF00FFFFFFFFFFFFFFFFFFFFFFFFFFFF
+          FF00}
+        Stretch = True
+      end
     end
     object RLBand9: TRLBand
       Left = 23
       Top = 15
-      Width = 366
+      Width = 365
       Height = 32
       BandType = btHeader
       Borders.Sides = sdCustom
@@ -1232,7 +1279,7 @@ object FSFEuPrintFortes: TFSFEuPrintFortes
       Font.Style = []
       ParentFont = False
       object RLDBText26: TRLDBText
-        Left = 298
+        Left = 297
         Top = 17
         Width = 68
         Height = 14
@@ -1249,7 +1296,7 @@ object FSFEuPrintFortes: TFSFEuPrintFortes
         Text = ''
       end
       object RLDBText27: TRLDBText
-        Left = 326
+        Left = 325
         Top = 0
         Width = 40
         Height = 16
@@ -1296,17 +1343,17 @@ object FSFEuPrintFortes: TFSFEuPrintFortes
         Text = ''
       end
       object RLDBText29: TRLDBText
-        Left = 92
-        Top = 12
-        Width = 200
-        Height = 18
+        Left = 104
+        Top = 15
+        Width = 169
+        Height = 16
         Alignment = taCenter
         AutoSize = False
         DataField = 'ZC_TpEtiq'
         DataSource = uDM.DSPedItens
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clBlack
-        Font.Height = -16
+        Font.Height = -13
         Font.Name = 'Arial'
         Font.Style = [fsBold]
         ParentFont = False
@@ -1316,7 +1363,7 @@ object FSFEuPrintFortes: TFSFEuPrintFortes
     object RLBand10: TRLBand
       Left = 23
       Top = 242
-      Width = 366
+      Width = 365
       Height = 18
       BandType = btFooter
       Borders.Sides = sdCustom

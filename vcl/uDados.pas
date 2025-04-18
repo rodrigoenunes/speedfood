@@ -352,9 +352,9 @@ type
     PedDetpagCancClieArqImpr: TStringField;
     PedDetpagCancEstabArqImpr: TStringField;
     PedidosLctFrituras: TIntegerField;
-    PedidosLctGelados: TIntegerField;
     PedDetpagtpPagTela: TIntegerField;
     PedidosParaLevar: TShortintField;
+    PedidosLctHamburgueres: TIntegerField;
     procedure ItensCalcFields(DataSet: TDataSet);
     procedure LctCaixaCalcFields(DataSet: TDataSet);
     procedure PedWrkCalcFields(DataSet: TDataSet);
@@ -399,8 +399,8 @@ type
     sysPedePlaca: Boolean;
     sysTefPosIni,sysTefPos: Integer;
     sysImprimePedido,sysImprimeEtiquetaBebidas,sysImprimeEtiquetaLanches,
-    sysImprimeEtiquetaCrepes,sysImprimeEtiquetaGelados,sysImprimeEtiquetaFrituras: Boolean;
-    balLanches,balBebidas,balCrepes,balFrituras,balGelados,balBufDiv: Boolean;
+    sysImprimeEtiquetaCrepes,sysImprimeEtiquetaHamburgueres,sysImprimeEtiquetaFrituras: Boolean;
+    balLanches,balBebidas,balCrepes,balFrituras,balHamburgueres,balBufDiv: Boolean;
     filGrupoItens: Integer;
     meioPgto: Integer;
     nomeClie,CPFCNPJ,nroPlaca: String;
@@ -467,7 +467,7 @@ begin
     uDM.xGrupos[21] := 'N';
     uDM.xGrupos[22] := 'N';
   end;
-  xParm := ObtemParametro('LanctoGeladosShakes');
+  xParm := ObtemParametro('LanctoHamburgueres');
   if (xParm = '') or (xParm = 'N') then
   begin
     uDM.xGrupos[31] := 'N';
@@ -862,7 +862,7 @@ begin
     vIniFile.WriteBool('AbasDisponiveis','Bebidas',True);
     vIniFile.WriteBool('AbasDisponiveis','Crepes',False);
     vIniFile.WriteBool('AbasDisponiveis','Frituras',False);
-    vIniFile.WriteBool('AbasDisponiveis','Gelados',False);
+    vIniFile.WriteBool('AbasDisponiveis','Hamburgueres',False);
     vIniFile.WriteBool('AbasDisponiveis','Buffet',False);
     vIniFile.WriteBool('AbasDisponiveis','Diversos',True);
     vIniFile.WriteBool('AbasDisponiveis','Shake',False);
@@ -911,7 +911,7 @@ begin
   sysImprimeEtiquetaBebidas := vIniFile.ReadBool('Estacao','ImprimeEtiquetaBebidas',False);
   sysImprimeEtiquetaLanches := vIniFile.ReadBool('Estacao','ImprimeEtiquetaLanches',False);
   sysImprimeEtiquetaCrepes := vIniFile.ReadBool('Estacao','ImprimeEtiquetaCrepes',False);
-  sysImprimeEtiquetaGelados := vIniFile.ReadBool('Estacao','ImprimeEtiquetaGelados',False);
+  sysImprimeEtiquetaHamburgueres := vIniFile.ReadBool('Estacao','ImprimeEtiquetaHamburgueres',False);
   sysImprimeEtiquetaFrituras := vIniFile.ReadBool('Estacao','ImprimeEtiquetaFrituras',False);
   //
   //sysVersao := AnsiUpperCase(vIniFile.ReadString('Estacao','Versao','XXXX'));
@@ -925,7 +925,7 @@ begin
   balBebidas := vIniFile.ReadBool('AbasDisponiveis','Bebidas',True);
   balCrepes := vIniFile.ReadBool('AbasDisponiveis','Crepes',False);
   balFrituras := vIniFile.ReadBool('AbasDisponiveis','Frituras',False);
-  balGelados := vIniFile.ReadBool('AbasDisponiveis','Gelados',False);
+  balHamburgueres := vIniFile.ReadBool('AbasDisponiveis','Hamburgueres',False);
   balBufDiv := vIniFile.ReadBool('AbasDisponiveis','BuffetDiversos',False);
   //
   if (not sysPedidos) and (not sysBalcao) and (not sysBuffet) then
@@ -1203,9 +1203,9 @@ begin
        PedItensZC_TpEtiq.AsString := 'FRITURA';
     end;
     31:begin
-       PedItensZC_Tipo.AsString := 'Sha';
-       PedItensZC_Tp.AsString := 'S';
-       PedItensZC_TpEtiq.AsString := 'Shake';
+       PedItensZC_Tipo.AsString := 'Ham';
+       PedItensZC_Tp.AsString := 'H';
+       PedItensZC_TpEtiq.AsString := 'HAMBURGUER';
     end
     else begin
       PedItensZC_Tipo.AsString := '';

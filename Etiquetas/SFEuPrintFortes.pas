@@ -81,7 +81,7 @@ type
     RLDBText14: TRLDBText;
     RLDraw2: TRLDraw;
     RLDBMemo1: TRLDBMemo;
-    RLLabel7: TRLLabel;
+    RLLabParaLevarFritura: TRLLabel;
     RLBand6: TRLBand;
     RLDBText15: TRLDBText;
     RLDBText16: TRLDBText;
@@ -91,13 +91,13 @@ type
     RLBand7: TRLBand;
     RLDBText23: TRLDBText;
     RLDBText24: TRLDBText;
-    RLEtiq_Shake: TRLReport;
+    RLEtiq_Hamburguer: TRLReport;
     RLBand8: TRLBand;
     RLDraw5: TRLDraw;
     RLDBText25: TRLDBText;
     RLDraw6: TRLDraw;
     RLDBMemo3: TRLDBMemo;
-    RLLabel10: TRLLabel;
+    RLLabParaLevarHamburguer: TRLLabel;
     RLBand9: TRLBand;
     RLDBText26: TRLDBText;
     RLDBText27: TRLDBText;
@@ -107,6 +107,8 @@ type
     RLBand10: TRLBand;
     RLDBText30: TRLDBText;
     RLDBText31: TRLDBText;
+    RLLabTirar: TRLAngleLabel;
+    RLImage1: TRLImage;
     procedure RLEtiqBebidaBeforePrint(Sender: TObject; var PrintIt: Boolean);
     procedure RLDetLancheBeforePrint(Sender: TObject; var PrintIt: Boolean);
   private
@@ -140,7 +142,7 @@ begin
 end;
 
 
-procedure SetRecordRange_CFS(pTipo:Integer; pModo:Integer);     // Crepe Fritura Shake/Gelados
+procedure SetRecordRange_CFS(pTipo:Integer; pModo:Integer);     // Crepe Fritura Hamburgueres
 begin
   case pTipo of
     11:if pModo = 1 then
@@ -152,9 +154,9 @@ begin
        else
           FSFEuPrintFortes.RLEtiq_Fritura.RecordRange := rrCurrentOnly;
     else if pModo = 1 then
-            FSFEuPrintFortes.RLEtiq_Shake.RecordRange := rrAllRecords
+            FSFEuPrintFortes.RLEtiq_Hamburguer.RecordRange := rrAllRecords
          else
-            FSFEuPrintFortes.RLEtiq_Shake.RecordRange := rrCurrentOnly;
+            FSFEuPrintFortes.RLEtiq_Hamburguer.RecordRange := rrCurrentOnly;
   end;
 
 
@@ -224,12 +226,12 @@ begin
     RLEtiq_Fritura.Margins.TopMargin := etqTop;
     RLEtiq_Fritura.Margins.BottomMargin := etqBot;
 
-    RLEtiq_Shake.PrintDialog := lDialog;
-    RLEtiq_Shake.PageSetup.PaperHeight := etqAlt;
-    RLEtiq_Shake.Margins.LeftMargin := etqEsq;
-    RLEtiq_Shake.Margins.RightMargin := etqDir;
-    RLEtiq_Shake.Margins.TopMargin := etqTop;
-    RLEtiq_Shake.Margins.BottomMargin := etqBot;
+    RLEtiq_Hamburguer.PrintDialog := lDialog;
+    RLEtiq_Hamburguer.PageSetup.PaperHeight := etqAlt;
+    RLEtiq_Hamburguer.Margins.LeftMargin := etqEsq;
+    RLEtiq_Hamburguer.Margins.RightMargin := etqDir;
+    RLEtiq_Hamburguer.Margins.TopMargin := etqTop;
+    RLEtiq_Hamburguer.Margins.BottomMargin := etqBot;
 
   end;
 end;
@@ -255,11 +257,15 @@ begin
                          'CFS=' + idPrtEtqCFS);
   FSFEuPrintFortes.RLLabParaLevar.Visible := False;
   FSFEuPrintFortes.RLLabParaLevarCrepe.Visible := False;
+  FSFEuPrintFortes.RLLabParaLevarFritura.Visible := False;
+  FSFEuPrintFortes.RLLabParaLevarHamburguer.Visible := False;
 
   if uDM.PedidosParaLevar.AsInteger = 1 then
   begin
     FSFEuPrintFortes.RLLabParaLevar.Caption := ObtemParametro('PedidoTxtParaLevarPrint','-- Para levar --');
     FSFEuPrintFortes.RLLabParaLevarCrepe.Caption := FSFEuPrintFortes.RLLabParaLevar.Caption;
+    FSFEuPrintFortes.RLLabParaLevarFritura.Caption := FSFEuPrintFortes.RLLabParaLevar.Caption;
+    FSFEuPrintFortes.RLLabParaLevarHamburguer.Caption := FSFEuPrintFortes.RLLabParaLevar.Caption;
   end;
   if uDM.PedidosOrigem.AsInteger = 1 then
   begin
@@ -271,6 +277,10 @@ begin
     FSFEuPrintFortes.RLLabParaLevar.Visible := True;
   if FSFEuPrintFortes.RLLabParaLevarCrepe.Caption <> '' then
     FSFEuPrintFortes.RLLabParaLevarCrepe.Visible := True;
+  if FSFEuPrintFortes.RLLabParaLevarFritura.Caption <> '' then
+    FSFEuPrintFortes.RLLabParaLevarFritura.Visible := True;
+  if FSFEuPrintFortes.RLLabParaLevarHamburguer.Caption <> '' then
+    FSFEuPrintFortes.RLLabParaLevarHamburguer.Visible := True;
 
   //
   if pmtItem <> 0
@@ -369,9 +379,9 @@ begin
                 RLPrinters.RLPrinter.PrinterName := idPrtEtqCFS;
                 DebugMensagem(pmtDebug,'IT CFS 2-PrinterName='+ RLPrinters.RLPrinter.PrinterName + '  id=' + idPrtEtqCFS);
                 if lPreview then
-                   FSFEuPrintFortes.RLEtiq_Shake.Preview
+                   FSFEuPrintFortes.RLEtiq_Hamburguer.Preview
                 else
-                   FSFEuPrintFortes.RLEtiq_Shake.Print;
+                   FSFEuPrintFortes.RLEtiq_Hamburguer.Print;
               end;
      end;
     end
@@ -433,7 +443,7 @@ begin
           FSFEuPrintFortes.RLEtiqBebida.Print;
       end;
     end;
-    // Crepes(11), Frituras(21), Gelados(31)
+    // Crepes(11), Frituras(21), Hamburgueres(31)
     //ShowMessage('Impressora CFS=[' + idPrtEtqCFS + ']');
     if idPrtEtqCFS <> '' then
     begin
@@ -479,9 +489,9 @@ begin
           begin
             SetRecordRange_CFS(31,1);      // rrAllRecords;
             if lPreview then
-              FSFEuPrintFortes.RLEtiq_Shake.Preview
+              FSFEuPrintFortes.RLEtiq_Hamburguer.Preview
             else
-              FSFEuPrintFortes.RLEtiq_Shake.Print;
+              FSFEuPrintFortes.RLEtiq_Hamburguer.Print;
           end;
         end;
       end;

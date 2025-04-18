@@ -679,10 +679,10 @@ object uDM: TuDM
       FieldName = 'LctFrituras'
       Origin = 'LctFrituras'
     end
-    object PedidosLctGelados: TIntegerField
+    object PedidosLctHamburgueres: TIntegerField
       AutoGenerateValue = arDefault
-      FieldName = 'LctGelados'
-      Origin = 'LctGelados'
+      FieldName = 'LctHamburgueres'
+      Origin = 'LctHamburgueres'
     end
     object PedidosParaLevar: TShortintField
       AutoGenerateValue = arDefault

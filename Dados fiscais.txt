@@ -1,0 +1,29 @@
+CFOPs possíveis
+===============
+5101
+5102
+5405
+
+CSOSN possíveis
+===============
+102 - Trib. Simples Nacional, SEM permissão de crédito
+202 - Trib. SImples Nacional, SEM permissão de crédito, COM cobrança ICMS ST
+300 - Imune
+400 - Não tributado 
+500 - ICMS cobrado anteriormente....
+
+IPI -> 53 Não tributado
+PIS -> 49 Outras saídas
+COFINS -> 49 Outras saídas
+
+
+Senha do certificado:  1234
+
+Comércio de Cachorro Quente do Carlão Sobre Rodas
+CNPJ: 19.218.236/0001-27     IE:029/0679087
+AV. Perimetral Bruno Segalla,  11324  
+São Leopoldo   Caxias do Sul   RS
+95097-272              IBGE: 43 05108
+Fone: (54)98110-3412
+
+

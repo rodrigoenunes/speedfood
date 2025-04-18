@@ -1,0 +1,37 @@
+ALTER TABLE `speedfood`.`com_pedidodetpag` 
+ADD COLUMN `NSU` VARCHAR(200) NULL AFTER `Sit`,
+ADD COLUMN `CodAutorizacao` VARCHAR(200) NULL AFTER `NSU`,
+ADD COLUMN `NroReferencia` VARCHAR(200) NULL AFTER `CodAutorizacao`,
+ADD COLUMN `DigCartao` VARCHAR(20) NULL AFTER `NroReferencia`,
+ADD COLUMN `CodBandeira` VARCHAR(20) NULL AFTER `DigCartao`,
+ADD COLUMN `AutDataHora` VARCHAR(20) NULL AFTER `CodBandeira`,
+ADD COLUMN `AutClieArqImpr` VARCHAR(240) NULL AFTER `AutDataHora`,
+ADD COLUMN `AutEstabArqImpr` VARCHAR(240) NULL AFTER `AutClieArqImpr`,
+ADD COLUMN `CancDataHora` VARCHAR(20) NULL AFTER `AutEstabArqImpr`,
+ADD COLUMN `CancClieArqImpr` VARCHAR(240) NULL AFTER `CancDataHora`,
+ADD COLUMN `CancEstabArqImpr` VARCHAR(240) NULL AFTER `CancClieArqImpr`;
+
+
+
+ALTER TABLE `speedfood`.`com_pedido` 
+ADD COLUMN `LctFrituras` INT(11) NULL AFTER `LctDiversos`,
+ADD COLUMN `LctGelados` INT(11) NULL AFTER `LctFrituras`;
+
+
+
+ALTER TABLE `speedfood`.`com_pedidodetpag` 
+CHANGE COLUMN `AutClieArqImpr` `AutClieArqImpr` VARCHAR(240) NULL DEFAULT NULL ,
+CHANGE COLUMN `AutEstabArqImpr` `AutEstabArqImpr` VARCHAR(240) NULL DEFAULT NULL ,
+CHANGE COLUMN `CancClieArqImpr` `CancClieArqImpr` VARCHAR(240) NULL DEFAULT NULL ,
+CHANGE COLUMN `CancEstabArqImpr` `CancEstabArqImpr` VARCHAR(240) NULL DEFAULT NULL ;
+
+
+
+
+Var
+  afiliacao: String;
+begin
+  afiliacao:= udm.FDC.ExecSQLScalar('select ahjdahdjhs'.Replace(':opcao', '1') );
+
+end;
+

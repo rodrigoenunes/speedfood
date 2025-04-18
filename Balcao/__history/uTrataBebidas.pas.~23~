@@ -1,0 +1,250 @@
+unit uTrataBebidas;
+
+interface
+
+uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ExtCtrls, Vcl.StdCtrls, Vcl.Mask,
+  Vcl.DBCtrls, Vcl.Buttons, Vcl.Grids;
+  Procedure TrataBebidas(pPosLeft:Integer;pLargura:Integer;pAltura:Integer);
+
+
+type
+  TFuTrataBebidas = class(TForm)
+    PanBebidas: TPanel;
+    PanRodape: TPanel;
+    GridBebidas: TDrawGrid;
+    btOkLanche: TBitBtn;
+    btCanLanche: TBitBtn;
+    LabAux1: TLabel;
+    procedure GridBebidasDrawCell(Sender: TObject; ACol, ARow: Integer;
+      Rect: TRect; State: TGridDrawState);
+    procedure GridBebidasMouseDown(Sender: TObject; Button: TMouseButton;
+      Shift: TShiftState; X, Y: Integer);
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+    nRowBeb: Integer;
+    wCodBeb: array[0..3,0..19] of Integer;
+    wSelBeb: array[0..3,0..19] of String;
+    wDescrBeb: array[0..19] of String;
+
+  end;
+
+var
+  FuTrataBebidas: TFuTrataBebidas;
+  wColor: TColor;
+  vlrBase,vlrComp: Currency;
+  lInclus: Boolean;
+
+implementation
+
+{$R *.dfm}
+
+uses uGenericas, uDados, uPedidos;
+
+Procedure TrataBebidas(pPosLeft:Integer;pLargura:Integer;pAltura:Integer);
+var posBarra: String;
+    altBarra,lrgBarra,altMaxima,lrgMaxima: Integer;
+    i,nAlt: Integer;
+begin
+  FuTrataBebidas.Left := pPosLeft;
+  FuFrataBebidas.Width := pLargura;
+  FuTrataBebidas.Height := pAltura;
+
+  do begin
+
+    Width := pLargura;
+    Left :=
+
+
+  end;
+
+
+
+{
+  with FuTrataBebidas
+  do begin
+    lInclus := pInclus;
+    posBarra := ObtemConfiguracaoTela(altBarra,lrgBarra,altMaxima,lrgMaxima);
+    Width  := Trunc(lrgMaxima * 0.80);
+    Height := altMaxima;
+    Top    := 0;
+    if posBarra = 'T' then Top := altBarra + 1;
+    Left   := (Screen.Width - Width) div 2;
+    //
+//    LabBase.Left := 8;
+//    LabBase.Top := PanIdLanche.Top + PanIdLanche.Height;
+//    GridBase.Left := LabBase.Left;
+//    GridBase.Top := LabBase.Top + LabBase.Height;
+    GridBase.Height := PanMontagem.Height - PanRodape.Height - GridBase.Top - 4;
+    GridBase.ColCount := 4;
+    GridBase.RowCount := nRowBas;
+    GridBase.Width := Round((PanMontagem.Width-32) * 0.6);
+    GridBase.ColWidths[0] := Round(GridBase.Width * 0.10);
+    GridBase.ColWidths[2] := Round(GridBase.Width * 0.20);
+    GridBase.ColWidths[3] := Round(GridBase.Width * 0.10);
+    GridBase.ColWidths[1] := GridBase.Width -
+                            (GridBase.ColWidths[0] + GridBase.ColWidths[2] + GridBase.ColWidths[3] + 8);
+    nAlt := (GridBase.Height div nRowBas) - 2;
+    for i := 0 to nRowBas-1
+      do GridBase.RowHeights[i] := nAlt;
+    //
+    LabComp.Left := GridBase.Left + GridBase.Width + 16;
+    LabComp.Top := LabBase.Top;
+    GridComp.Left := LabComp.Left;
+    GridComp.Top := GridBase.Top;
+    GridComp.Height := PanMontagem.Height - PanRodape.Height - GridComp.Top - 4;
+    GridComp.ColCount := 4;
+    GridComp.RowCount := nRowExt;
+    GridComp.Width := Round((PanMontagem.Width-32) * 0.4);
+    GridComp.ColWidths[0] := Round(GridComp.Width * 0.10);
+    GridComp.ColWidths[2] := Round(GridComp.Width * 0.20);
+    GridComp.ColWidths[3] := Round(GridComp.Width * 0.10);
+    GridComp.ColWidths[1] := GridComp.Width -
+                             (GridComp.ColWidths[0] + GridComp.ColWidths[2] + GridComp.ColWidths[3] + 8);
+
+    nAlt := (GridComp.Height div nRowExt) - 2;
+    for i := 0 to nRowExt-1
+      do GridComp.RowHeights[i] := nAlt;
+    //
+    for i := 0 to 19 do
+    begin
+      wSelBas[i] := '';
+      wSelExt[i] := '';
+    end;
+    vlrBase := 0;
+    vlrComp := 0;
+    ShowModal;
+
+  end;
+ }
+end;
+
+
+procedure TFuTrataBebidas.GridBebidasDrawCell(Sender: TObject; ACol, ARow: Integer;
+  Rect: TRect; State: TGridDrawState);
+var wKey,nTop,nLeft: Integer;
+begin
+  // Identifica o 'basico' na linha
+{
+  wKey := wCodBas[ARow];
+  if wKey = 0 then Exit;   // Não há 'basico' na linha
+  if not uDM.Itens.FindKey([4,wKey]) then Exit;   // 'Basico' não encontrado
+  GridBase.Canvas.Brush.Style := bsClear;
+  GridBase.Canvas.FillRect(Rect);
+  GridBase.Color := clWhite;
+  //
+  LabAux1.Font.Name := 'Tahoma';
+  if ACol <> 3 then LabAux1.Font.Size := 18
+               else LabAux1.Font.Size := 28;
+  LabAux1.Font.Style := [fsBold];
+  LabAux1.Font.Color := clBlack;
+  LabAux1.Caption := '00';
+  nTop := (GridBase.RowHeights[ARow] - LabAux1.Height) div 2;
+  if uDM.ItensCorItem.AsString <> '' then
+    wColor := StringToColor(uDM.ItensCorItem.AsString)
+  else wColor := clWhite;
+  GridBase.Canvas.Brush.Color := wColor;
+  GridBase.Canvas.FillRect(Rect);
+  //
+  case ACol of
+    0:LabAux1.Caption := uDM.ItensCodigo.AsString;
+    1:LabAux1.Caption := uDM.ItensDescricao.AsString;
+    2:LabAux1.Caption := FloatToStrF(uDM.ItensPreco.AsCurrency,ffNumber,15,2);
+    3:LabAux1.Caption := wSelBas[ARow];
+  end;
+  nLeft := (GridBase.ColWidths[ACol] - LabAux1.Width) div 2;
+  GridBase.Canvas.Font.Name := LabAux1.Font.Name;
+  GridBase.Canvas.Font.Size := LabAux1.Font.Size;
+  GridBase.Canvas.Font.Style := LabAux1.Font.Style;
+  GridBase.Canvas.Font.Color := LabAux1.Font.Color;
+  GridBase.Canvas.TextOut(Rect.Left+nLeft, Rect.Top+nTop, LabAux1.Caption);
+  //
+  GridBase.Canvas.Pen.Color := clBlack;
+  GridBase.Canvas.Pen.Width := 1;
+  GridBase.Canvas.MoveTo(Rect.Left, Rect.Top);
+  GridBase.Canvas.LineTo(Rect.Left+GridBase.ColWidths[ACol], Rect.Top);
+  GridBase.Canvas.LineTo(Rect.Left+GridBase.ColWidths[ACol], Rect.Top+GridBase.RowHeights[ARow]);
+  GridBase.Canvas.LineTo(Rect.Left, Rect.Top+GridBase.RowHeights[ARow]);
+  GridBase.Canvas.LineTo(Rect.Left, Rect.Top);
+}
+
+end;
+
+procedure TFuTrataBebidas.GridBebidasMouseDown(Sender: TObject;
+  Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
+var nCol,nLin,i: Integer;
+    wKey: Integer;
+    wDescricao: String;
+    wPreco: Currency;
+begin
+
+
+
+
+{
+  GridBase.MouseToCell(X,Y,nCol,nLin);
+  wKey := wCodBas[nLin];
+  for i := 0 to 19
+  do if wCodBas[i] <> wKey
+     then wSelBas[i] := ''
+     else wSelBas[i] := 'X';
+  GridBase.Refresh;
+  if not uDM.Itens.FindKey([4,wKey])
+  then begin
+    MessageDlg('Item [4,' + IntToStr(wKey) + '] não encontrado, reinforme',mtInformation,[mbOk],0);
+    Exit;
+  end;
+  wDescricao := Trim(uDM.ItensDescricao.AsString) + '(Montar lanche)';
+  wPreco := uDM.ItensPreco.AsCurrency;
+  //
+  vlrBase := wPreco;       //uDM.ItensPreco.AsCurrency;
+  vlrComp := ValorComplementos;
+  uDM.PedWrkCodProd.AsInteger := wKey;
+  uDM.PedWrkDescricao.AsString := wDescricao;
+  uDM.PedWrkVlrUnit.AsCurrency := vlrBase + vlrComp;
+  uDM.PedWrkVlrTotal.AsCurrency := vlrBase + vlrComp;
+  showMessage('ItensDescricao='+uDM.ItensDescricao.AsString + #13 + 'PedWrkDescricao=' + uDM.PedWrkDescricao.AsString);
+  //GridBaseDrawCell(nil,nCol,nLin);
+}
+
+{
+
+    // Define largura das células, para Bebidas, de 2 a 5 COLUNAS ..............
+    TSBebidas.Caption := ObtemParametro('LanctoBebidas');
+    if TSBebidas.Caption = '' then TSBebidas.Caption := 'Bebidas';
+    if TSBebidas.Width > 1000
+    then nCol := 5
+    else if TSBebidas.Width > 800
+         then nCol := 4
+         else if TSBebidas.Width > 600
+              then nCol := 3
+              else nCol := 2;
+    nLargura := (TSBebidas.Width div nCol) - 2;          // Largura da célula
+    nRow := nBebidas div nCol;                           // Qtd necessária de linhas
+    if nRow < 1
+    then nRow := 1
+    else if (nBebidas mod nCol) > 0
+         then nRow := nRow + 1;
+    nAltura := (TSBebidas.Height-8) div nRow;      // Altura da célula
+    if nAltura > 220
+    then nAltura := 220
+    else if nAltura < 80
+         then nAltura := 80;
+    GridBebidas.ColCount := nCol;
+    GridBebidas.RowCount := nRow;
+    for i := 0 to nCol-1 do GridBebidas.ColWidths[i]  := nLargura;
+    for i := 0 to nRow-1 do GridBebidas.RowHeights[i] := nAltura;
+    GridBebidas.Align := alClient;
+    lrgBebida := nLargura - 12;
+    altBebida := nAltura - 6;
+    //
+
+}
+
+end;
+
+
+end.

@@ -1,0 +1,56 @@
+object FuBalcao: TFuBalcao
+  Left = 0
+  Top = 0
+  BorderStyle = bsToolWindow
+  Caption = 'Balc'#227'o'
+  ClientHeight = 231
+  ClientWidth = 362
+  Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -64
+  Font.Name = 'Lucida Console'
+  Font.Style = []
+  Position = poScreenCenter
+  TextHeight = 65
+  object btIniciar: TBitBtn
+    Left = 8
+    Top = 152
+    Width = 346
+    Height = 101
+    Caption = '&Iniciar'
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -43
+    Font.Name = 'Segoe UI'
+    Font.Style = []
+    ParentFont = False
+    TabOrder = 0
+  end
+  object btVoltar: TBitBtn
+    Left = 8
+    Top = 115
+    Width = 346
+    Height = 101
+    Caption = '&Voltar'
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -43
+    Font.Name = 'Segoe UI'
+    Font.Style = []
+    ParentFont = False
+    TabOrder = 1
+    OnClick = btVoltarClick
+  end
+  object PanIniciar: TPanel
+    Left = 8
+    Top = 8
+    Width = 346
+    Height = 101
+    Caption = 'Iniciar'
+    Color = clYellow
+    ParentBackground = False
+    TabOrder = 2
+    OnClick = PanIniciarClick
+  end
+end

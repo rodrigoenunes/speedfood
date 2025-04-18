@@ -493,7 +493,7 @@ end;
 
 procedure TFuFinPedido.btGravarClick(Sender: TObject);
 var somaVlr,wSaldo: Currency;
-    newSeq,lanSeq,bebSeq,crpSeq,friSeq,gelSeq,divSeq,outSeq,bufSeq: Integer;
+    newSeq,lanSeq,bebSeq,crpSeq,friSeq,hamSeq,divSeq,outSeq,bufSeq: Integer;
     newSitPagto,wrkSeq,nConf: Integer;
     pedSeq: Integer;
     vlrEntradas,vlrSaidas: Currency;
@@ -586,7 +586,7 @@ begin
   bebSeq := 0;     // Bebidas e outros no pedido
   crpSeq := 0;     // Crepes no pedido
   friSeq := 0;     // Frituras
-  gelSeq := 0;     // Gelados&Shakes
+  hamSeq := 0;     // Hamburgueres
   bufSeq := 0;     // buffet
   divSeq := 0;     // diversos
   outSeq := 0;     // outros
@@ -600,7 +600,7 @@ begin
        11:crpSeq := crpSeq + 1;              // Qtd crepes      Ok
        15:bufSeq := bufSeq + 1;              // Qtd buffets     Ok
        21:friSeq := friSeq + 1;              // Qtd frituras    Ok
-       31:gelSeq := gelSeq + 1;              // Qtd gelados&shakes  Ok
+       31:hamSeq := hamSeq + 1;              // Qtd hamburgueresOk
        else outSeq := outSeq + 1;            // Qtd outros      Ok
     end;
     uDM.PedWrk.Next;
@@ -614,7 +614,7 @@ begin
   uDM.PedidosLctBuffet.AsInteger := bufSeq;
   uDM.PedidosLctDiversos.AsInteger := divSeq;
   uDM.PedidosLctFrituras.AsInteger := friSeq;
-  uDM.PedidosLctGelados.AsInteger := gelSeq;
+  uDM.PedidosLctHamburgueres.AsInteger := hamSeq;
   uDM.PedidosLctOutros.AsInteger := outSeq;
 
   uDM.Pedidos.Post;
@@ -632,7 +632,7 @@ begin
   bebSeq := 100;
   crpSeq := 200;
   friSeq := 300;
-  gelSeq := 400;
+  hamSeq := 400;
   newSeq := 900;
   pedSeq := 0;                   // Sequencia geral no pedido
   while not uDM.PedWrk.Eof do
@@ -654,9 +654,9 @@ begin
             friSeq := friSeq + 1;
             wrkSeq := friSeq;
           end;
-       31:begin   // Gelados
-            gelSeq := gelSeq + 1;
-            wrkSeq := gelSeq;
+       31:begin   // Hamburgueres
+            hamSeq := hamSeq + 1;
+            wrkSeq := hamSeq;
           end;
         else begin  // Diveros(6) e Buffet(15)
             newSeq := newSeq + 1;
@@ -936,7 +936,7 @@ begin
   if uDM.sysImprimeEtiquetaLanches or
      uDM.sysImprimeEtiquetaCrepes or
      uDM.sysImprimeEtiquetaBebidas or
-     uDM.sysImprimeEtiquetaGelados or
+     uDM.sysImprimeEtiquetaHamburgueres or
      uDM.sysImprimeEtiquetaFrituras
   then begin
     xImpressao := ObtemParametro('EtiquetaFinalPedido');
@@ -951,7 +951,7 @@ begin
   if ((uDM.PedidosLctLanches.AsInteger = 0) or  (not uDM.sysImprimeEtiquetaLanches))        // Não tem lanches ou não imprime
      and ((uDM.PedidosLctCrepes.AsInteger = 0) or (not uDM.sysImprimeEtiquetaCrepes))       // Não tem Crepes ou não imprime
      and ((uDM.PedidosLctFrituras.AsInteger = 0) or (not uDM.sysImprimeEtiquetaFrituras))   // Não tem Crepes ou não imprime
-     and ((uDM.PedidosLctGelados.AsInteger = 0) or (not uDM.sysImprimeEtiquetaGelados))     // Não tem Gelados ou não imprime
+     and ((uDM.PedidosLctHamburgueres.AsInteger = 0) or (not uDM.sysImprimeEtiquetaHamburgueres))     // Não tem Hamburgueres ou não imprime
      and (not uDM.sysImprimeEtiquetaBebidas) then                                           // e não imprime bebidas
      xImpressao := 'N';
   DebugMensagem(lDebugFimPed,'8-Imprimir etiquetas' + #13 +
@@ -960,8 +960,8 @@ begin
                 'sysImprimeEtiquetaCrepes='+ Boolean_SN(uDM.sysImprimeEtiquetaCrepes) +
                 '   ' + uDM.PedidosLctCrepes.AsString +  #13 +
                 'sysImprimeEtiquetaBebidas=' + Boolean_SN(uDM.sysImprimeEtiquetaBebidas) + #13 +
-                'sysImprimeEtiquetaGelados='+ Boolean_SN(uDM.sysImprimeEtiquetaGelados) +
-                '   ' + uDM.PedidosLctGelados.AsString + #13 +
+                'sysImprimeEtiquetaHamburgueres='+ Boolean_SN(uDM.sysImprimeEtiquetaHamburgueres) +
+                '   ' + uDM.PedidosLctHamburgueres.AsString + #13 +
                 'sysImprimeEtiquetaFrituras=' + Boolean_SN(uDM.sysImprimeEtiquetaFrituras) +
                 '   ' + uDM.PedidosLctFrituras.AsString +  #13 +
                 'xImpressao=' + xImpressao);

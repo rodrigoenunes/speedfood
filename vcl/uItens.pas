@@ -518,8 +518,8 @@ begin
     15-Buffet sorvetes  sim       -     sim       -
     21-Frituras         sim      sim    sim      sim
     22-Extras frituras   -        -      -        -
-    31-Gelados          sim      sim    sim      sim
-    32-Extra gelados     -        -      -        -
+    31-Hamburgueres     sim      sim    sim      sim
+    32-Extra Hamburg     -        -      -        -
     41-Milkshake        sim      sim    sim      sim
     42-Extra milkshake   -        -      -        -
   }
@@ -597,7 +597,7 @@ begin
      or (uDM.ItensGrupo.AsInteger = 11)     // Crepes
      or (uDM.ItensGrupo.AsInteger = 15)     // Buffet
      or (uDM.ItensGrupo.AsInteger = 21)     // Frituras
-     or (uDM.ItensGrupo.AsInteger = 31)     // Gelados
+     or (uDM.ItensGrupo.AsInteger = 31)     // Hamburgueres
      or (uDM.ItensGrupo.AsInteger = 41)     // Shakes
      then gbFiscais.Visible := True;
 
@@ -615,7 +615,7 @@ begin
      or (uDM.ItensGrupo.AsInteger = 4)      // Montar lanches
      or (uDM.ItensGrupo.AsInteger = 11)     // Crepes
      or (uDM.ItensGrupo.AsInteger = 21)     // Frituras
-     or (uDM.ItensGrupo.AsInteger = 31)     // Gelados
+     or (uDM.ItensGrupo.AsInteger = 31)     // Hamburgueres
      or (uDM.ItensGrupo.AsInteger = 41)     // Shakes
      then cbEtiqueta.Visible := True;
 

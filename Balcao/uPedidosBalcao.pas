@@ -56,7 +56,7 @@ type
     TSCrepes: TTabSheet;
     TSFrituras: TTabSheet;
     TSBufDiv: TTabSheet;
-    TSGelados: TTabSheet;
+    TSHamburgueres: TTabSheet;
     PanRodape: TPanel;
     sbAbasMenor: TSpeedButton;
     sbAbasMaior: TSpeedButton;
@@ -69,16 +69,16 @@ type
     PanFriturasRodape: TPanel;
     btConfirmaFritura: TBitBtn;
     btCancelaFritura: TBitBtn;
-    GridGelados: TDrawGrid;
-    GridGeladosCompl: TDrawGrid;
-    PanGeladosRodape: TPanel;
-    btConfirmaGelado: TBitBtn;
-    btCancelaGelado: TBitBtn;
+    GridHamburgueres: TDrawGrid;
+    GridHamburgueresCompl: TDrawGrid;
+    PanHamburgueresRodape: TPanel;
+    btConfirmaHamburguer: TBitBtn;
+    btCancelaHamburguer: TBitBtn;
     GridCrepesSabores: TDrawGrid;
     GridCrepes: TDrawGrid;
     PanCrepesTopo: TPanel;
     PanFriturasTopo: TPanel;
-    PanGeladosTopo: TPanel;
+    PanHamburgueresTopo: TPanel;
     PanDiversos: TPanel;
     PanBuffet: TPanel;
     Panel5: TPanel;
@@ -159,16 +159,16 @@ type
       Shift: TShiftState; X, Y: Integer);
     procedure btConfirmaFrituraClick(Sender: TObject);
     procedure btCancelaFrituraClick(Sender: TObject);
-    procedure GridGeladosDrawCell(Sender: TObject; ACol, ARow: Integer;
+    procedure GridHamburgueresDrawCell(Sender: TObject; ACol, ARow: Integer;
       Rect: TRect; State: TGridDrawState);
-    procedure GridGeladosMouseDown(Sender: TObject; Button: TMouseButton;
+    procedure GridHamburgueresMouseDown(Sender: TObject; Button: TMouseButton;
       Shift: TShiftState; X, Y: Integer);
-    procedure GridGeladosComplDrawCell(Sender: TObject; ACol, ARow: Integer;
+    procedure GridHamburgueresComplDrawCell(Sender: TObject; ACol, ARow: Integer;
       Rect: TRect; State: TGridDrawState);
-    procedure GridGeladosComplMouseDown(Sender: TObject; Button: TMouseButton;
+    procedure GridHamburgueresComplMouseDown(Sender: TObject; Button: TMouseButton;
       Shift: TShiftState; X, Y: Integer);
-    procedure btConfirmaGeladoClick(Sender: TObject);
-    procedure btCancelaGeladoClick(Sender: TObject);
+    procedure btConfirmaHamburguerClick(Sender: TObject);
+    procedure btCancelaHamburguerClick(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure pgControleBalcaoChanging(Sender: TObject;
@@ -297,7 +297,7 @@ var i,j: Integer;
     nRowGelado,nRowGeladoCompl: Integer;
     nAltura,nLargura: Integer;
     nLanches,nExtras,nBebidas,nBasicos,nBasExtra,nDiversos,nCrepes,nCrepesSabores:Integer;
-    nFrituras,nFriturasCompl,nGelados,nGeladosCompl,nBuffet: Integer;
+    nFrituras,nFriturasCompl,nHamburgueres,nHamburgueresCompl,nBuffet: Integer;
     wAlturaUtil: Integer;
 begin
   with FuPedidosBalcao
@@ -357,8 +357,8 @@ begin
     nCrepesSabores  := 0;
     nFrituras := 0;
     nFriturasCompl := 0;
-    nGelados  := 0;
-    nGeladosCompl := 0;
+    nHamburgueres  := 0;
+    nHamburgueresCompl := 0;
     nBuffet := 0;
     uDM.Itens.First;
     while not uDM.Itens.Eof do
@@ -374,8 +374,8 @@ begin
         12:nCrepesSabores := nCrepesSabores + 1;
         21:nFrituras := nFrituras + 1;
         22:nFriturasCompl := nFriturasCompl + 1;
-        31:nGelados := nGelados + 1;
-        32:nGeladosCompl := nGeladosCompl + 1;
+        31:nHamburgueres := nHamburgueres + 1;
+        32:nHamburgueresCompl := nHamburgueresCompl + 1;
       end;
       uDM.Itens.Next;
     end;
@@ -517,35 +517,35 @@ begin
         GridFriturasCompl.RowHeights[i] := GridFriturasCompl.RowHeights[0];
     end;
     //
-    TSGelados.TabVisible := uDM.balGelados;
-    if TSGelados.TabVisible and (nGelados > 0) then                  // Aba Gelados & Shakes
+    TSHamburgueres.TabVisible := uDM.balHamburgueres;
+    if TSHamburgueres.TabVisible and (nHamburgueres > 0) then                  // Aba Gelados & Shakes
     begin
-      TSGelados.Caption := ObtemParametro('LanctoGeladosShakes');
-      if TSGelados.Caption = '' then TSGelados.Caption := '< Gelados && Shakes >';
-      wAlturaUtil := TSGelados.Height - (PanGeladosTopo.Height + PanGeladosRodape.Height + 12);
-      GridGelados.ColCount := 4;
-      GridGelados.RowCount := nGelados;
-      GridGelados.Width := Trunc(TSGelados.Width * 0.45);
-      GridGelados.ColWidths[0] := Trunc(GridGelados.Width * 0.07);     // Codigo
-      GridGelados.ColWidths[1] := Trunc(GridGelados.Width * 0.59);     // Descricao
-      GridGelados.ColWidths[2] := Trunc(GridGelados.Width * 0.21);     // Preco
-      GridGelados.ColWidths[3] := Trunc(GridGelados.Width * 0.11);     // X ou branco           .
-      GridGelados.RowCount := nGelados;
-      GridGelados.RowHeights[0] := wAlturaUtil div nGelados;
-      for i := 1 to GridGelados.RowCount-1 do
-        GridGelados.RowHeights[i] := GridGelados.RowHeights[0];
-      GridGeladosCompl.Left := GridGelados.Left + GridGelados.Width + 1;
-      GridGeladosCompl.Width := TSGelados.Width - (GridGelados.Width + 2);
-      GridGeladosCompl.Top := GridGelados.Top;
-      GridGeladosCompl.Height := GridGelados.Height;
-      GridGeladosCompl.ColCount := 3;
-      GridGeladosCompl.ColWidths[0] := Trunc(GridGeladosCompl.Width * 0.67);   // Descricao
-      GridGeladosCompl.ColWidths[1] := Trunc(GridGeladosCompl.Width * 0.21);   // Valor, se houver
-      GridGeladosCompl.ColWidths[2] := Trunc(GridGeladosCompl.Width * 0.10);   // X ou branco
-      GridGeladosCompl.RowCount := nGeladosCompl;
-      GridGeladosCompl.RowHeights[0] := wAlturaUtil div nGeladosCompl;
-      for i := 0 to GridGeladosCompl.RowCount-1 do
-        GridGeladosCompl.RowHeights[i] := GridGeladosCompl.RowHeights[0];
+      TSHamburgueres.Caption := ObtemParametro('LanctoHamburgueres');
+      if TSHamburgueres.Caption = '' then TSHamburgueres.Caption := '< Hamburgueres >';
+      wAlturaUtil := TSHamburgueres.Height - (PanHamburgueresTopo.Height + PanHamburgueresRodape.Height + 12);
+      GridHamburgueres.ColCount := 4;
+      GridHamburgueres.RowCount := nHamburgueres;
+      GridHamburgueres.Width := Trunc(TSHamburgueres.Width * 0.45);
+      GridHamburgueres.ColWidths[0] := Trunc(GridHamburgueres.Width * 0.07);     // Codigo
+      GridHamburgueres.ColWidths[1] := Trunc(GridHamburgueres.Width * 0.59);     // Descricao
+      GridHamburgueres.ColWidths[2] := Trunc(GridHamburgueres.Width * 0.21);     // Preco
+      GridHamburgueres.ColWidths[3] := Trunc(GridHamburgueres.Width * 0.11);     // X ou branco           .
+      GridHamburgueres.RowCount := nHamburgueres;
+      GridHamburgueres.RowHeights[0] := wAlturaUtil div nHamburgueres;
+      for i := 1 to GridHamburgueres.RowCount-1 do
+        GridHamburgueres.RowHeights[i] := GridHamburgueres.RowHeights[0];
+      GridHamburgueresCompl.Left := GridHamburgueres.Left + GridHamburgueres.Width + 1;
+      GridHamburgueresCompl.Width := TSHamburgueres.Width - (GridHamburgueres.Width + 2);
+      GridHamburgueresCompl.Top := GridHamburgueres.Top;
+      GridHamburgueresCompl.Height := GridHamburgueres.Height;
+      GridHamburgueresCompl.ColCount := 3;
+      GridHamburgueresCompl.ColWidths[0] := Trunc(GridHamburgueresCompl.Width * 0.67);   // Descricao
+      GridHamburgueresCompl.ColWidths[1] := Trunc(GridHamburgueresCompl.Width * 0.21);   // Valor, se houver
+      GridHamburgueresCompl.ColWidths[2] := Trunc(GridHamburgueresCompl.Width * 0.10);   // X ou branco
+      GridHamburgueresCompl.RowCount := nHamburgueresCompl;
+      GridHamburgueresCompl.RowHeights[0] := wAlturaUtil div nHamburgueresCompl;
+      for i := 0 to GridHamburgueresCompl.RowCount-1 do
+        GridHamburgueresCompl.RowHeights[i] := GridHamburgueresCompl.RowHeights[0];
     end;
     //
     TSBufDiv.TabVisible := uDM.balBufDiv;
@@ -1410,7 +1410,7 @@ begin
 
 end;
 
-procedure TFuPedidosBalcao.btCancelaGeladoClick(Sender: TObject);
+procedure TFuPedidosBalcao.btCancelaHamburguerClick(Sender: TObject);
 var i: Integer;
 begin
   for i := 0 to 23 do
@@ -1418,19 +1418,19 @@ begin
     wSelGelado[i] := '';
     wSelGeladoCompl[i] := '';
   end;
-  GridGelados.Refresh;
-  GridGeladosCompl.Refresh;
+  GridHamburgueres.Refresh;
+  GridHamburgueresCompl.Refresh;
 
 end;
 
-procedure TFuPedidosBalcao.btConfirmaGeladoClick(Sender: TObject);
+procedure TFuPedidosBalcao.btConfirmaHamburguerClick(Sender: TObject);
 var i,wKey,wKCompl: Integer;
     wValor: Real;
     lstComplementos: String;
 begin
   wValor := 0;
   lstComplementos := '';
-  for i := 0 to GridGelados.RowCount-1 do
+  for i := 0 to GridHamburgueres.RowCount-1 do
   begin
     if wSelGelado[i] <> ''
     then begin
@@ -1440,7 +1440,7 @@ begin
       Break;
     end;
   end;
-  for i := 0 to GridGeladosCompl.RowCount-1 do
+  for i := 0 to GridHamburgueresCompl.RowCount-1 do
   begin
     if wSelGeladoCompl[i] <> '' then
     begin
@@ -1455,7 +1455,7 @@ begin
   InclueLancheBalcao(31,wKey,'',lstComplementos,wValor);
   TotalizaPedidoBalcao;
   FuPedidosBalcao.FormResize(nil);
-  btCancelaGeladoClick(nil);       // Limpa as informações do Gelado
+  btCancelaHamburguerClick(nil);       // Limpa as informações do Gelado
 
 end;
 
@@ -2206,7 +2206,7 @@ begin
 end;
 
 
-procedure TFuPedidosBalcao.GridGeladosComplDrawCell(Sender: TObject; ACol,
+procedure TFuPedidosBalcao.GridHamburgueresComplDrawCell(Sender: TObject; ACol,
   ARow: Integer; Rect: TRect; State: TGridDrawState);
 var wKey,nTop,nLeft: Integer;
 begin
@@ -2214,21 +2214,21 @@ begin
   wKey := wCodGeladoCompl[ARow];
   if wKey = 0 then Exit;     // Não há complemento na linha
   if not uDM.Itens.FindKey([32,wKey]) then Exit;   // Complemento não encontrado
-  GridGeladosCompl.Canvas.Brush.Style := bsClear;
-  GridGeladosCompl.Canvas.FillRect(Rect);
-  GridGeladosCompl.Color := clWhite;
+  GridHamburgueresCompl.Canvas.Brush.Style := bsClear;
+  GridHamburgueresCompl.Canvas.FillRect(Rect);
+  GridHamburgueresCompl.Color := clWhite;
   //
   LabAux1.Font.Name := 'Tahoma';
   LabAux1.Font.Size := 16;
   LabAux1.Font.Style := [fsBold];
   LabAux1.Font.Color := clBlack;
   LabAux1.Caption := '00';
-  nTop := (GridGeladosCompl.RowHeights[ARow] - LabAux1.Height) div 2;
+  nTop := (GridHamburgueresCompl.RowHeights[ARow] - LabAux1.Height) div 2;
   if uDM.ItensCorItem.AsString <> '' then
     wColor := StringToColor(uDM.ItensCorItem.AsString)
   else wColor := clWhite;
-  GridGeladosCompl.Canvas.Brush.Color := wColor;
-  GridGeladosCompl.Canvas.FillRect(Rect);
+  GridHamburgueresCompl.Canvas.Brush.Color := wColor;
+  GridHamburgueresCompl.Canvas.FillRect(Rect);
   //
   case ACol of
     0:LabAux1.Caption := uDM.ItensDescricao.AsString;
@@ -2237,36 +2237,36 @@ begin
   end;
   case ACol of
     0:nLeft := 5;
-    1:nLeft := GridGeladosCompl.ColWidths[ACol] - (LabAux1.Width + 3);
-    else nLeft := (GridGeladosCompl.ColWidths[ACol] - LabAux1.Width) div 2;
+    1:nLeft := GridHamburgueresCompl.ColWidths[ACol] - (LabAux1.Width + 3);
+    else nLeft := (GridHamburgueresCompl.ColWidths[ACol] - LabAux1.Width) div 2;
   end;
-  GridGeladosCompl.Canvas.Font.Name := LabAux1.Font.Name;
-  GridGeladosCompl.Canvas.Font.Size := LabAux1.Font.Size;
-  GridGeladosCompl.Canvas.Font.Style := LabAux1.Font.Style;
-  GridGeladosCompl.Canvas.Font.Color := LabAux1.Font.Color;
-  GridGeladosCompl.Canvas.TextOut(Rect.Left+nLeft, Rect.Top+nTop, LabAux1.Caption);
+  GridHamburgueresCompl.Canvas.Font.Name := LabAux1.Font.Name;
+  GridHamburgueresCompl.Canvas.Font.Size := LabAux1.Font.Size;
+  GridHamburgueresCompl.Canvas.Font.Style := LabAux1.Font.Style;
+  GridHamburgueresCompl.Canvas.Font.Color := LabAux1.Font.Color;
+  GridHamburgueresCompl.Canvas.TextOut(Rect.Left+nLeft, Rect.Top+nTop, LabAux1.Caption);
   //
-  GridGeladosCompl.Canvas.Pen.Color := clBlack;
-  GridGeladosCompl.Canvas.Pen.Width := 1;
-  GridGeladosCompl.Canvas.MoveTo(Rect.Left, Rect.Top);
-  GridGeladosCompl.Canvas.LineTo(Rect.Left+GridGeladosCompl.ColWidths[ACol], Rect.Top);
-  GridGeladosCompl.Canvas.LineTo(Rect.Left+GridGeladosCompl.ColWidths[ACol], Rect.Top+GridGeladosCompl.RowHeights[ARow]);
-  GridGeladosCompl.Canvas.LineTo(Rect.Left, Rect.Top+GridGeladosCompl.RowHeights[ARow]);
-  GridGeladosCompl.Canvas.LineTo(Rect.Left, Rect.Top);
+  GridHamburgueresCompl.Canvas.Pen.Color := clBlack;
+  GridHamburgueresCompl.Canvas.Pen.Width := 1;
+  GridHamburgueresCompl.Canvas.MoveTo(Rect.Left, Rect.Top);
+  GridHamburgueresCompl.Canvas.LineTo(Rect.Left+GridHamburgueresCompl.ColWidths[ACol], Rect.Top);
+  GridHamburgueresCompl.Canvas.LineTo(Rect.Left+GridHamburgueresCompl.ColWidths[ACol], Rect.Top+GridHamburgueresCompl.RowHeights[ARow]);
+  GridHamburgueresCompl.Canvas.LineTo(Rect.Left, Rect.Top+GridHamburgueresCompl.RowHeights[ARow]);
+  GridHamburgueresCompl.Canvas.LineTo(Rect.Left, Rect.Top);
 
 end;
 
-procedure TFuPedidosBalcao.GridGeladosComplMouseDown(Sender: TObject;
+procedure TFuPedidosBalcao.GridHamburgueresComplMouseDown(Sender: TObject;
   Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
 var nCol,nLin,nUltimo,i,qtdCompl: Integer;
 begin
-  GridGeladosCompl.MouseToCell(X,Y,nCol,nLin);
+  GridHamburgueresCompl.MouseToCell(X,Y,nCol,nLin);
   nUltimo := nLin;
   if wSelGeladoCompl[nLin] = '' then
     wSelGeladoCompl[nLin] := 'X'
   else
     wSelGeladoCompl[nLin] := '';
-  GridGeladosCompl.Refresh;
+  GridHamburgueresCompl.Refresh;
   qtdCompl := 0;
   for i := 0 to 23 do
     if wSelGeladoCompl[i] <> '' then
@@ -2277,12 +2277,12 @@ begin
                'Máximo permitido=' + IntToStr(nMaxExtras) + #13 +
                'Última indicação será desconsiderada',mtWarning,[mbOk],0);
     wSelGeladoCompl[nUltimo] := '';
-    GridGeladosCompl.Refresh;
+    GridHamburgueresCompl.Refresh;
   end;
 
 end;
 
-procedure TFuPedidosBalcao.GridGeladosDrawCell(Sender: TObject; ACol,
+procedure TFuPedidosBalcao.GridHamburgueresDrawCell(Sender: TObject; ACol,
   ARow: Integer; Rect: TRect; State: TGridDrawState);
 var wKey,nTop,nLeft: Integer;
 begin
@@ -2290,9 +2290,9 @@ begin
   wKey := wCodGelado[ARow];
   if wKey = 0 then Exit;     // Não há Gelado na linha
   if not uDM.Itens.FindKey([31,wKey]) then Exit;   // Gelado não encontrado
-  GridGelados.Canvas.Brush.Style := bsClear;
-  GridGelados.Canvas.FillRect(Rect);
-  GridGelados.Color := clWhite;
+  GridHamburgueres.Canvas.Brush.Style := bsClear;
+  GridHamburgueres.Canvas.FillRect(Rect);
+  GridHamburgueres.Color := clWhite;
   //
   LabAux1.Font.Name := 'Tahoma';
   LabAux1.Font.Size := 16;
@@ -2301,12 +2301,12 @@ begin
   LabAux1.Font.Style := [fsBold];
   LabAux1.Font.Color := clBlack;
   LabAux1.Caption := '00';
-  nTop := (GridGelados.RowHeights[ARow] - LabAux1.Height) div 2;
+  nTop := (GridHamburgueres.RowHeights[ARow] - LabAux1.Height) div 2;
   if uDM.ItensCorItem.AsString <> '' then
     wColor := StringToColor(uDM.ItensCorItem.AsString)
   else wColor := clWhite;
-  GridGelados.Canvas.Brush.Color := wColor;
-  GridGelados.Canvas.FillRect(Rect);
+  GridHamburgueres.Canvas.Brush.Color := wColor;
+  GridHamburgueres.Canvas.FillRect(Rect);
   //
   case ACol of
     0:LabAux1.Caption := uDM.ItensCodigo.AsString;
@@ -2315,41 +2315,41 @@ begin
     3:LabAux1.Caption := wSelGelado[ARow];
   end;
   case ACol of
-    0,3:nLeft := (GridGelados.ColWidths[ACol] - LabAux1.Width) div 2;
-    2:nLeft := GridGelados.ColWidths[ACol] - (LabAux1.Width + 3);
+    0,3:nLeft := (GridHamburgueres.ColWidths[ACol] - LabAux1.Width) div 2;
+    2:nLeft := GridHamburgueres.ColWidths[ACol] - (LabAux1.Width + 3);
     else nLeft := 5;
   end;
-  GridGelados.Canvas.Font.Name := LabAux1.Font.Name;
-  GridGelados.Canvas.Font.Size := LabAux1.Font.Size;
-  GridGelados.Canvas.Font.Style := LabAux1.Font.Style;
-  GridGelados.Canvas.Font.Color := LabAux1.Font.Color;
-  GridGelados.Canvas.TextOut(Rect.Left+nLeft, Rect.Top+nTop, LabAux1.Caption);
+  GridHamburgueres.Canvas.Font.Name := LabAux1.Font.Name;
+  GridHamburgueres.Canvas.Font.Size := LabAux1.Font.Size;
+  GridHamburgueres.Canvas.Font.Style := LabAux1.Font.Style;
+  GridHamburgueres.Canvas.Font.Color := LabAux1.Font.Color;
+  GridHamburgueres.Canvas.TextOut(Rect.Left+nLeft, Rect.Top+nTop, LabAux1.Caption);
   //
-  GridGelados.Canvas.Pen.Color := clBlack;
-  GridGelados.Canvas.Pen.Width := 1;
-  GridGelados.Canvas.MoveTo(Rect.Left, Rect.Top);
-  GridGelados.Canvas.LineTo(Rect.Left+GridGelados.ColWidths[ACol], Rect.Top);
-  GridGelados.Canvas.LineTo(Rect.Left+GridGelados.ColWidths[ACol], Rect.Top+GridGelados.RowHeights[ARow]);
-  GridGelados.Canvas.LineTo(Rect.Left, Rect.Top+GridGelados.RowHeights[ARow]);
-  GridGelados.Canvas.LineTo(Rect.Left, Rect.Top);
+  GridHamburgueres.Canvas.Pen.Color := clBlack;
+  GridHamburgueres.Canvas.Pen.Width := 1;
+  GridHamburgueres.Canvas.MoveTo(Rect.Left, Rect.Top);
+  GridHamburgueres.Canvas.LineTo(Rect.Left+GridHamburgueres.ColWidths[ACol], Rect.Top);
+  GridHamburgueres.Canvas.LineTo(Rect.Left+GridHamburgueres.ColWidths[ACol], Rect.Top+GridHamburgueres.RowHeights[ARow]);
+  GridHamburgueres.Canvas.LineTo(Rect.Left, Rect.Top+GridHamburgueres.RowHeights[ARow]);
+  GridHamburgueres.Canvas.LineTo(Rect.Left, Rect.Top);
 
 end;
 
-procedure TFuPedidosBalcao.GridGeladosMouseDown(Sender: TObject;
+procedure TFuPedidosBalcao.GridHamburgueresMouseDown(Sender: TObject;
   Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
 var nCol,nLin,i: Integer;
 begin
-  GridGelados.MouseToCell(X,Y,nCol,nLin);
+  GridHamburgueres.MouseToCell(X,Y,nCol,nLin);
   wKeyGelado := wCodGelado[nLin];
   if wKeyGelado = 0 then Exit;
   for i := 0 to 23
   do if wCodGelado[i] <> wKeyGelado
      then wSelGelado[i] := ''
      else wSelGelado[i] := 'X';
-  GridGelados.Refresh;
+  GridHamburgueres.Refresh;
   for i := 0 to 23 do
     wSelGeladoCompl[i] := '';
-  GridGeladosCompl.Refresh;
+  GridHamburgueresCompl.Refresh;
 
 end;
 
@@ -2482,7 +2482,7 @@ begin
   case pgControleBalcao.ActivePage.PageIndex of
     2:btCancelaCrepeClick( nil);
     3:btCancelaFrituraClick(nil);
-    4:BtCancelaGeladoClick(nil);
+    4:BtCancelaHamburguerClick(nil);
   end;
 
 end;

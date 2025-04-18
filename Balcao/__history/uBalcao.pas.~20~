@@ -1,0 +1,105 @@
+unit uBalcao;
+
+interface
+
+uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Buttons, Vcl.ExtCtrls;
+  Procedure Balcao(pmtTitulo:String);
+
+type
+  TFuBalcao = class(TForm)
+    btIniciar: TBitBtn;
+    btVoltar: TBitBtn;
+    procedure btVoltarClick(Sender: TObject);
+    procedure btIniciarClick(Sender: TObject);
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+  end;
+
+var
+  FuBalcao: TFuBalcao;
+
+implementation
+
+{$R *.dfm}
+
+uses uBalcaoLctos, uMontarLanche, uDados, uTrataBebidas;
+
+procedure Balcao(pmtTitulo:String);
+begin
+  FuBalcao.Caption := pmtTitulo;
+  FuBalcao.ShowModal;
+
+end;
+
+procedure TFuBalcao.btIniciarClick(Sender: TObject);
+var i,nCol,nRow: Integer;
+begin
+  // Prepara tabelas para lançamentos
+  FuMontarLanche.nRowBas := 0;
+  FuMontarLanche.nRowExt := 0;
+  for i := 0 to 19
+  do begin
+     FuMontarLanche.wCodBas[i] := 0;
+     FuMontarLanche.wSelBas[i] := '';
+     FuMontarLanche.wCodExt[i] := 0;
+     FuMontarLanche.wSelExt[i] := '';
+  end;
+  FuTrataBebidas.nRowBeb := 0;
+  for nCol := 0 to 3 do
+    for nRow := 0 to 19 do
+    begin
+      FuTrataBebidas.wCodBeb[nCol,nRow] := 0;
+      FuTrataBebidas.wSelBeb[nCol,nRow] := '';
+    end;
+
+  uDM.Itens.First;
+  while not uDM.Itens.Eof do
+  begin
+    case uDM.ItensGrupo.AsInteger of
+       {
+       1:begin    // Lanches
+                 wCodLanche[nCol,nRow] := uDM.ItensCodigo.AsInteger;
+                 nCol := nCol + 1;
+                 if nCol = GridLanches.ColCount
+                 then begin
+                   nRow := nRow + 1;
+                   nCol := 0;
+                 end;
+               end;
+       }
+       3:begin    // Bebidas
+           FuTrataBebidas.wCodBeb[nCol,nRow] := uDM.ItensCodigo.AsInteger;
+           nCol := nCol + 1;
+           if nCol > 3 then
+           begin
+             nRow := nRow + 1;
+             nCol := 0;
+           end;
+         end;
+
+       4:begin    // Basicos
+           FuMontarLanche.wCodBas[FuMontarLanche.nRowBas] := uDM.ItensCodigo.AsInteger;
+           FuMontarLanche.nRowBas := FuMontarLanche.nRowBas + 1;
+         end;
+       5:begin    // Complementos (montar lanche)
+           FuMontarLanche.wCodExt[FuMontarLanche.nRowExt] := uDM.ItensCodigo.AsInteger;
+           FuMontarLanche.nRowExt := FuMontarLanche.nRowExt + 1;
+       end;
+    end;
+    uDM.Itens.Next;
+  end;
+  FuBalcaoLctos.ShowModal;
+
+end;
+
+procedure TFuBalcao.btVoltarClick(Sender: TObject);
+begin
+  Close;
+
+end;
+
+end.

@@ -635,8 +635,8 @@ object FuPedidosBalcao: TFuPedidosBalcao
           248
           96)
         object Label2: TLabel
-          Left = 4
-          Top = 36
+          Left = 0
+          Top = 88
           Width = 28
           Height = 16
           Caption = 'Itens'
@@ -710,7 +710,7 @@ object FuPedidosBalcao: TFuPedidosBalcao
         Top = 1
         Width = 740
         Height = 516
-        ActivePage = TSBufDiv
+        ActivePage = TSHamburgueres
         Align = alClient
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clWindowText
@@ -1118,10 +1118,10 @@ object FuPedidosBalcao: TFuPedidosBalcao
             TabOrder = 3
           end
         end
-        object TSGelados: TTabSheet
-          Caption = 'TSGelados'
+        object TSHamburgueres: TTabSheet
+          Caption = 'TSHamburgueres'
           ImageIndex = 6
-          object GridGelados: TDrawGrid
+          object GridHamburgueres: TDrawGrid
             Left = 0
             Top = 31
             Width = 328
@@ -1133,10 +1133,10 @@ object FuPedidosBalcao: TFuPedidosBalcao
             Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goFixedRowDefAlign]
             ScrollBars = ssNone
             TabOrder = 0
-            OnDrawCell = GridGeladosDrawCell
-            OnMouseDown = GridGeladosMouseDown
+            OnDrawCell = GridHamburgueresDrawCell
+            OnMouseDown = GridHamburgueresMouseDown
           end
-          object GridGeladosCompl: TDrawGrid
+          object GridHamburgueresCompl: TDrawGrid
             Left = 328
             Top = 31
             Width = 404
@@ -1145,8 +1145,8 @@ object FuPedidosBalcao: TFuPedidosBalcao
             ColCount = 3
             ScrollBars = ssNone
             TabOrder = 1
-            OnDrawCell = GridGeladosComplDrawCell
-            OnMouseDown = GridGeladosComplMouseDown
+            OnDrawCell = GridHamburgueresComplDrawCell
+            OnMouseDown = GridHamburgueresComplMouseDown
             RowHeights = (
               24
               22
@@ -1154,7 +1154,7 @@ object FuPedidosBalcao: TFuPedidosBalcao
               24
               24)
           end
-          object PanGeladosRodape: TPanel
+          object PanHamburgueresRodape: TPanel
             Left = 0
             Top = 411
             Width = 732
@@ -1167,13 +1167,13 @@ object FuPedidosBalcao: TFuPedidosBalcao
             DesignSize = (
               732
               65)
-            object btConfirmaGelado: TBitBtn
-              Left = 294
+            object btConfirmaHamburguer: TBitBtn
+              Left = 217
               Top = 3
-              Width = 205
+              Width = 245
               Height = 60
               Anchors = [akTop, akRight]
-              Caption = 'Confirma gelado'
+              Caption = 'Confirma hamburguer'
               Font.Charset = DEFAULT_CHARSET
               Font.Color = clWindowText
               Font.Height = -21
@@ -1219,15 +1219,15 @@ object FuPedidosBalcao: TFuPedidosBalcao
               NumGlyphs = 2
               ParentFont = False
               TabOrder = 0
-              OnClick = btConfirmaGeladoClick
+              OnClick = btConfirmaHamburguerClick
             end
-            object btCancelaGelado: TBitBtn
-              Left = 526
+            object btCancelaHamburguer: TBitBtn
+              Left = 475
               Top = 3
-              Width = 205
+              Width = 245
               Height = 60
               Anchors = [akTop, akRight]
-              Caption = 'Cancela gelado'
+              Caption = 'Cancela hamburguer'
               Font.Charset = DEFAULT_CHARSET
               Font.Color = clWindowText
               Font.Height = -21
@@ -1273,16 +1273,16 @@ object FuPedidosBalcao: TFuPedidosBalcao
               NumGlyphs = 2
               ParentFont = False
               TabOrder = 1
-              OnClick = btCancelaGeladoClick
+              OnClick = btCancelaHamburguerClick
             end
           end
-          object PanGeladosTopo: TPanel
+          object PanHamburgueresTopo: TPanel
             Left = 0
             Top = 0
             Width = 732
             Height = 31
             Align = alTop
-            Caption = 'Gelados, Shakes && Complementos'
+            Caption = 'Hamburgueres && Complementos'
             Color = clSkyBlue
             Font.Charset = DEFAULT_CHARSET
             Font.Color = clWindowText
@@ -2028,8 +2028,8 @@ object FuPedidosBalcao: TFuPedidosBalcao
     end
   end
   object PanAlteraBebida: TPanel
-    Left = 399
-    Top = 407
+    Left = 407
+    Top = 331
     Width = 277
     Height = 129
     Color = clAqua
@@ -2233,7 +2233,7 @@ object FuPedidosBalcao: TFuPedidosBalcao
   end
   object PanBuscaPedido: TPanel
     Left = 8
-    Top = 407
+    Top = 342
     Width = 385
     Height = 149
     Color = clAqua
@@ -2369,8 +2369,8 @@ object FuPedidosBalcao: TFuPedidosBalcao
     end
   end
   object Teclado: TTouchKeyboard
-    Left = 598
-    Top = 356
+    Left = 542
+    Top = 146
     Width = 180
     Height = 180
     GradientEnd = clSilver

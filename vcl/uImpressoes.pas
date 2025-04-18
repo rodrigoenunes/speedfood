@@ -331,7 +331,7 @@ begin
      and (FuImpressoes.CDDetTipo.AsString <> 'M')              // Lanche montado
      and (FuImpressoes.CDDetTipo.AsString <> 'C')              // Crepe
      and (FuImpressoes.CDDetTipo.AsString <> 'F')              // Fritura
-     and (FuImpressoes.CDDetTipo.AsString <> 'S')              // Shake / Gelados
+     and (FuImpressoes.CDDetTipo.AsString <> 'H')              // Hamburgueres
      and (FuImpressoes.CDDetTipo.AsString <> 'B')              // Buffet
   then Exit;
   //

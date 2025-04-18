@@ -1,0 +1,76 @@
+Setembro/24
+Alteração para sala
+-------------------------
+"Grupos"
+  01: Lanches 
+  02: Extras lanches 
+  03: Bebidas 
+  04: Básicos 
+  05: Extras básicos 
+  06: Diversos 
+  11: Crepes 
+  12: Sabores crepes 
+  15: Buffet 
+  21: Quentes
+  22: Extras quentes 
+  31: Gelados 
+  32: Extras gelados 
+  41: Milkshake 
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Tabelas necessárias
+===================
+- Empresa usuária
+  Codigo 
+  Rz Social 
+  Nome fantasia 
+  Endereço completo
+  CNPJ
+  IE
+  Série NFe
+  Última NFe
+  Série NFCe
+  Última NFCe 
+  CSC Homologação
+  CSC Produção
+
+- Tipos de produtos
+  Código
+  Descrição
+  NCM (Padrão para os produtos)
+  CFOP (Padrão para os produtos)
+
+- Produtos
+  Tipo (1-Lanches, 2-Bebidas,...., 8-Extras, 9-Excessões)
+  Código 
+  Descrição
+  Unidade
+  Tamanho
+  Preço 1
+  NCM
+  CFOP
+
+- Caixa
+  Tipo lançamento (0-Saldo inicial  1-Crédito autom 
+
+
+=======================
+
+

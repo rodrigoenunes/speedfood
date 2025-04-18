@@ -1,0 +1,202 @@
+unit uTrataBebidas;
+
+interface
+
+uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ExtCtrls, Vcl.StdCtrls, Vcl.Mask,
+  Vcl.DBCtrls, Vcl.Buttons, Vcl.Grids;
+  Procedure TrataBebidas(pEsquerda:Integer;pLargura:Integer;pAltura:Integer);
+
+
+type
+  TFuTrataBebidas = class(TForm)
+    PanBebidas: TPanel;
+    PanRodape: TPanel;
+    GridBebidas: TDrawGrid;
+    btOkLanche: TBitBtn;
+    btCanLanche: TBitBtn;
+    LabAux1: TLabel;
+    LabAux2: TLabel;
+    procedure GridBebidasDrawCell(Sender: TObject; ACol, ARow: Integer;
+      Rect: TRect; State: TGridDrawState);
+    procedure GridBebidasMouseDown(Sender: TObject; Button: TMouseButton;
+      Shift: TShiftState; X, Y: Integer);
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+    wCodBeb: array[0..3,0..19] of Integer;
+    wSelBeb: array[0..3,0..19] of String;
+    wDescrBeb: array[0..19] of String;
+
+  end;
+
+var
+  FuTrataBebidas: TFuTrataBebidas;
+  wColor: TColor;
+  vlrBase,vlrComp: Currency;
+  lInclus: Boolean;
+
+implementation
+
+{$R *.dfm}
+
+uses uGenericas, uDados, uPedidos;
+
+Procedure TrataBebidas(pEsquerda:Integer;pLargura:Integer;pAltura:Integer);
+var nCol,nLargura,nRow,nBebidas,nAltura,i,j: Integer;
+    filAnter: Boolean;
+    filGrupo: Integer;
+begin
+  with FuTrataBebidas
+  do begin
+    Left := pEsquerda;
+    Width := pLargura;
+    Height := pAltura;
+
+    filAnter := uDM.Itens.Filtered;
+    filGrupo := uDM.filGrupoItens;
+    uDM.filGrupoItens := 3;       // Bebidas
+    uDM.Itens.Filtered := True;
+    nBebidas := uDM.Itens.RecordCount;
+    uDM.filGrupoItens := filGrupo;
+    uDM.Itens.Filtered := filAnter;
+
+    // Define largura das células, para Bebidas, 4 COLUNAS ..............
+    nCol := 4;
+    nLargura := (PanBebidas.Width div nCol) - 2;          // Largura da célula
+    nRow := nBebidas div nCol;                            // Qtd necessária de linhas
+    if nRow < 1
+    then nRow := 1
+    else if (nBebidas mod nCol) > 0
+         then nRow := nRow + 1;
+    nAltura := (PanBebidas.Height-(PanRodape.Height+8)) div nRow;      // Altura da célula
+    if nAltura > 220
+    then nAltura := 220
+    else if nAltura < 80
+         then nAltura := 80;
+    GridBebidas.ColCount := nCol;
+    GridBebidas.RowCount := nRow;
+    for i := 0 to nCol-1 do GridBebidas.ColWidths[i]  := nLargura;
+    for i := 0 to nRow-1 do GridBebidas.RowHeights[i] := nAltura;
+    GridBebidas.Align := alClient;
+    lrgBebida := nLargura - 12;
+    altBebida := nAltura - 6;
+    //
+    ShowModal;
+    //
+  end;
+
+end;
+
+
+procedure AjustaFonteGrid;
+begin
+  with FuPedidos
+  do begin
+    GridBebidas.Canvas.Font.Name := LabAux1.Font.Name;
+    GridBebidas.Canvas.Font.Size := LabAux1.Font.Size;
+    GridBebidas.Canvas.Font.Style := LabAux1.Font.Style;
+    GridBebidas.Canvas.Font.Color := LabAux1.Font.Color;
+
+  end;
+
+end;
+
+
+procedure TFuTrataBebidas.GridBebidasDrawCell(Sender: TObject; ACol, ARow: Integer; Rect: TRect; State: TGridDrawState);
+var wTxt: String;
+    wKey,nTop,nPos: Integer;
+    wImagem: TImage;
+begin
+  // Identifica a bebida na célula
+  wKey := wCodBebida[ACol,ARow];
+  if wKey = 0 then Exit;   // Não há bebida na célula
+  if not uDM.Itens.FindKey([3,wKey]) then Exit;   // Bebida não encontrada
+  GridBebidas.Canvas.Brush.Style := bsClear;
+  GridBebidas.Canvas.FillRect(Rect);
+  GridBebidas.Color := clWhite;
+  //
+  GridBebidas.Canvas.Brush.Style := bsClear;
+  GridBebidas.Canvas.FillRect(Rect);
+  GridBebidas.Color := clWhite;
+  //
+  if FileExists(uDM.ItensImagem.AsString) and (not uDM.usaCorItem) then
+  begin
+    wImagem := TImage.Create(nil);
+    wImagem.Picture.LoadFromFile(uDM.ItensImagem.AsString);
+    GridBebidas.Canvas.StretchDraw(Rect,wImagem.Picture.Graphic);
+    wImagem.Free;
+  end
+  else begin
+    LabAux1.Font.Name := 'Tahoma';
+    LabAux1.Font.Size := 28;
+    LabAux1.Font.Style := [fsBold];
+    LabAux1.Caption := '00';
+    nTop := LabAux1.Height+16; // Obtem 'top' para descrição
+    if uDM.ItensCorItem.AsString <> '' then
+      wColor := StringToColor(uDM.ItensCorItem.AsString)
+    else wColor := clAqua;
+    GridBebidas.Canvas.Brush.Color := wColor;
+    GridBebidas.Canvas.FillRect(Rect);
+    //
+    wTxt := uDM.ItensDescricao.AsString;
+    LabAux1.Caption := '';
+    LabAux2.Caption := '';
+    nPos := Pos('#',wTxt);
+    if nPos = 0 then
+    begin
+      LabAux1.Caption := wTxt;
+      nTop := Trunc(nTop * 1.4);
+    end
+    else begin
+      LabAux1.Caption := Copy(wTxt,1,nPos-1);
+      LabAux2.Caption := Copy(wTxt,nPos+1,Length(wTxt)-nPos);
+    end;
+    LabAux1.Font.Name := 'Tahoma';
+    LabAux1.Font.Size := 18;
+    LabAux1.Font.Style := [fsBold];
+    LabAux1.Font.Color := clBlack;
+    LabAux2.Font := LabAux1.Font;
+    AjustaFonteGrid;
+    GridBebidas.Canvas.TextOut(Rect.Left+16,Rect.Top+nTop, LabAux1.Caption);
+    if LabAux2.Caption <> '' then
+    begin
+      nTop := nTop + LabAux1.Height + 6;
+      GridBebidas.Canvas.TextOut(Rect.Left+16,Rect.Top+nTop, LabAux2.Caption);
+    end;
+  end;
+  LabAux1.Font.Name := 'Tahoma';
+  LabAux1.Font.Size := 28;
+  LabAux1.Font.Style := [fsBold];
+  LabAux1.Font.Color := clBlack;
+  wTxt := IntToStr(wKey);
+  if wKey < 10 then wTxt := '0' + wTxt;
+  LabAux1.Caption := wTxt;
+  AjustaFonteGrid;
+  GridBebidas.Canvas.TextOut(Rect.Left+6, Rect.Top+4, wTxt);
+  //
+  GridBebidas.Canvas.Pen.Color := clBlack;
+  GridBebidas.canvas.Pen.Width := 2;
+  GridBebidas.Canvas.MoveTo(Rect.Left+3, Rect.Top+3);
+  GridBebidas.Canvas.LineTo(Rect.Left+LabAux1.Width+10, Rect.Top+3);
+  GridBebidas.Canvas.LineTo(Rect.Left+LabAux1.Width+10, Rect.Top+LabAux1.Height+6);
+  GridBebidas.Canvas.LineTo(Rect.Left+3, Rect.Top+LabAux1.Height+6);
+  GridBebidas.Canvas.LineTo(Rect.Left+3, Rect.Top+2);
+
+end;
+
+procedure TFuTrataBebidas.GridBebidasMouseDown(Sender: TObject;
+  Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
+var nCol,nLin,i: Integer;
+    wKey: Integer;
+    wDescricao: String;
+    wPreco: Currency;
+begin
+
+
+end;
+
+
+end.
