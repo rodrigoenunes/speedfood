@@ -1,0 +1,1163 @@
+06/11/23 10:38:00:140 - Inicializar
+06/11/23 10:38:00:141 - TACBrTEFPGWebAPI.SetDiretorioTrabalho( C:\Projetos\speedfood\ACNFe\tef\PGWeb )
+06/11/23 10:38:00:142 - TACBrTEFPGWebAPI.Inicializar
+06/11/23 10:38:00:146 - TACBrTEFPGWebAPI.LoadDLLFunctions
+06/11/23 10:38:00:156 -    PW_iInit
+06/11/23 10:38:00:173 -    PW_iGetResult
+06/11/23 10:38:00:173 -    PW_iNewTransac
+06/11/23 10:38:00:175 -    PW_iAddParam
+06/11/23 10:38:00:177 -    PW_iExecTransac
+06/11/23 10:38:00:178 -    PW_iConfirmation
+06/11/23 10:38:00:179 -    PW_iIdleProc
+06/11/23 10:38:00:183 -    PW_iGetOperations
+06/11/23 10:38:00:184 -    PW_iPPEventLoop
+06/11/23 10:38:00:186 -    PW_iPPAbort
+06/11/23 10:38:00:187 -    PW_iPPGetCard
+06/11/23 10:38:00:188 -    PW_iPPGetPIN
+06/11/23 10:38:00:190 -    PW_iPPGetData
+06/11/23 10:38:00:193 -    PW_iPPGoOnChip
+06/11/23 10:38:00:196 -    PW_iPPFinishChip
+06/11/23 10:38:00:198 -    PW_iPPConfirmData
+06/11/23 10:38:00:200 -    PW_iPPGenericCMD
+06/11/23 10:38:00:203 -    PW_iPPDisplay
+06/11/23 10:38:00:205 -    PW_iPPGetUserData
+06/11/23 10:38:00:207 -    PW_iPPWaitEvent
+06/11/23 10:38:00:209 -    PW_iPPRemoveCard
+06/11/23 10:38:00:212 -    PW_iPPGetPINBlock
+06/11/23 10:38:00:214 -    PW_iTransactionInquiry
+06/11/23 10:38:00:216 -    PW_iPPDataConfirmation
+06/11/23 10:38:00:218 -      Função não requerida: PW_iPPDataConfirmation não encontrada em: PGWebLib.dll
+06/11/23 10:38:00:219 -    PW_iPPTestKey
+06/11/23 10:38:00:221 -    PW_iWaitConfirmation
+06/11/23 10:38:00:222 -    PW_iGetOperationsEx
+06/11/23 10:38:00:224 - PW_iInit( C:\Projetos\speedfood\ACNFe\tef\PGWeb )
+06/11/23 10:38:00:926 -   PWRET_OK
+06/11/23 10:38:00:927 - PW_iNewTransac( PWOPER_VERSION )
+06/11/23 10:38:01:026 -   PWRET_OK
+06/11/23 10:38:01:035 - TACBrTEFPGWebAPI.AdicionarDadosObrigatorios
+06/11/23 10:38:01:036 - PW_iAddParam( PWINFO_AUTNAME, ACTEF )
+06/11/23 10:38:01:037 -   PWRET_OK
+06/11/23 10:38:01:038 - PW_iAddParam( PWINFO_AUTVER, 1.0 )
+06/11/23 10:38:01:040 -   PWRET_OK
+06/11/23 10:38:01:041 - PW_iAddParam( PWINFO_AUTDEV, VALORARE GESTAO E TI LTDA )
+06/11/23 10:38:01:043 -   PWRET_OK
+06/11/23 10:38:01:044 - PW_iAddParam( PWINFO_AUTCAP, 396 )
+06/11/23 10:38:01:045 -   PWRET_OK
+06/11/23 10:38:01:047 - PW_iAddParam( PWINFO_MERCHADDDATA4, ACBrTEFPGWebAPI 1.0.1 )
+06/11/23 10:38:01:050 -   PWRET_OK
+06/11/23 10:38:01:051 - PW_iAddParam( PWINFO_DSPQRPREF, 1 )
+06/11/23 10:38:01:052 -   PWRET_OK
+06/11/23 10:38:01:054 - TACBrTEFPGWebAPI.ExecutarTransacao
+06/11/23 10:38:01:055 - PW_iGetResult( PWINFO_PROCESSMSG )
+06/11/23 10:38:01:058 -   [CR]   PROCESSANDO...
+06/11/23 10:38:01:059 -   OnExibeMensagem( PROCESSANDO..., tmCliente, -1 )
+06/11/23 10:38:01:060 - PW_iExecTransac()
+06/11/23 10:38:01:063 -   PWRET_OK, NumParams: 10
+06/11/23 10:38:01:065 - TACBrTEFPGWebAPI.ObterDadosDaTransacao
+06/11/23 10:38:01:066 -   PWINFO_OPERATION=252
+06/11/23 10:38:01:067 -   PWINFO_RESULTMSG=0004.0001.0015.0001
+06/11/23 10:38:01:068 -   PWINFO_CNFREQ=0
+06/11/23 10:38:01:069 -   PWINFO_LANGUAGE=0
+06/11/23 10:38:01:070 -   PWINFO_PROCESSMSG=\x0D   PROCESSANDO...
+06/11/23 10:38:01:072 -   PWINFO_CNCDSPMSG=\x0D      OPERACAO\x0D      CANCELADA
+06/11/23 10:38:01:073 -   PWINFO_CNCPPMSG=    OPERACAO        CANCELADA   
+06/11/23 10:38:01:091 -   PWINFO_LIBVERSION=0004.0001.0015.0001
+06/11/23 10:38:01:092 -   PWINFO_OSVERSION=SO:Win 10 , 64bits
+06/11/23 10:38:01:104 - PW_iGetResult( PWINFO_IDLEPROCTIME )
+06/11/23 10:38:01:105 -   PWRET_NODATA
+06/11/23 10:38:01:107 -   OnExibeMensagem( , tmTodas, -1 )
+06/11/23 10:38:01:110 - VerificarTransacoesPendentes
+06/11/23 10:38:01:112 - EfetuarAdministrativa( tefopAdministrativo,  )
+06/11/23 10:38:01:114 - ConfirmarTransacoesPendentes
+06/11/23 10:38:01:116 - FinalizarTransacoes( tefstsSucessoAutomatico )
+06/11/23 10:38:01:118 - PW_iNewTransac( PWOPER_ADMIN )
+06/11/23 10:38:01:141 -   PWRET_OK
+06/11/23 10:38:01:142 - TACBrTEFPGWebAPI.AdicionarDadosObrigatorios
+06/11/23 10:38:01:143 - PW_iAddParam( PWINFO_AUTNAME, ACTEF )
+06/11/23 10:38:01:145 -   PWRET_OK
+06/11/23 10:38:01:146 - PW_iAddParam( PWINFO_AUTVER, 1.0 )
+06/11/23 10:38:01:148 -   PWRET_OK
+06/11/23 10:38:01:149 - PW_iAddParam( PWINFO_AUTDEV, VALORARE GESTAO E TI LTDA )
+06/11/23 10:38:01:150 -   PWRET_OK
+06/11/23 10:38:01:151 - PW_iAddParam( PWINFO_AUTCAP, 396 )
+06/11/23 10:38:01:152 -   PWRET_OK
+06/11/23 10:38:01:154 - PW_iAddParam( PWINFO_MERCHADDDATA4, ACBrTEFPGWebAPI 1.0.1 )
+06/11/23 10:38:01:155 -   PWRET_OK
+06/11/23 10:38:01:160 - PW_iAddParam( PWINFO_DSPQRPREF, 1 )
+06/11/23 10:38:01:161 -   PWRET_OK
+06/11/23 10:38:01:162 - TACBrTEFPGWebAPI.ExecutarTransacao
+06/11/23 10:38:01:164 - PW_iGetResult( PWINFO_PROCESSMSG )
+06/11/23 10:38:01:165 -   [CR]   PROCESSANDO...
+06/11/23 10:38:01:166 -   OnExibeMensagem( PROCESSANDO..., tmCliente, -1 )
+06/11/23 10:38:01:167 - PW_iExecTransac()
+06/11/23 10:38:01:168 -   PWRET_MOREDATA, NumParams: 1
+06/11/23 10:38:01:171 - TACBrTEFPGWebAPI.ObterDados( 1 )
+06/11/23 10:38:01:172 -  PW_GetData: 0
+  wIdentificador: PWINFO_LOCALINFO1
+  bTipoDeDado: PWDAT_MENU
+  szPrompt: 
+  bNumOpcoesMenu: 8
+  vszTextoMenu_0: INSTALACAO
+  vszValorMenu_0: INSTALACAO
+  vszTextoMenu_1: CONFIGURACAO
+  vszValorMenu_1: CONFIGURACAO
+  vszTextoMenu_2: MANUTENCAO
+  vszValorMenu_2: MANUTENCAO
+  vszTextoMenu_3: VERSAO
+  vszValorMenu_3: VERSAO
+  vszTextoMenu_4: MOSTRAR IDENTIFICADOR
+  vszValorMenu_4: MOSTRAR IDENTIFICADOR
+  vszTextoMenu_5: TESTE DE CHAVES
+  vszValorMenu_5: TESTE DE CHAVES
+  vszTextoMenu_6: DADOS TERMINAL
+  vszValorMenu_6: DADOS TERMINAL
+  vszTextoMenu_7: EXPORTAR LOGS
+  vszValorMenu_7: EXPORTAR LOGS
+  szMascaraDeCaptura: 
+  bTiposEntradaPermitidos: PWTYP_ReadOnly
+  bTamanhoMinimo: 0
+  bTamanhoMaximo: 0
+  ulValorMinimo: 0
+  ulValorMaximo: 0
+  bOcultarDadosDigitados: 0
+  bValidacaoDado: PWVAL_Nenhuma
+  bAceitaNulo: 0
+  szValorInicial: 
+  bTeclasDeAtalho: 1
+  szMsgValidacao: 
+  szMsgConfirmacao: 
+  szMsgDadoMaior: 
+  szMsgDadoMenor: 
+  bCapturarDataVencCartao: 0
+  ulTipoEntradaCartao: 0
+  bItemInicial: 0
+  bNumeroCapturas: 1
+  szMsgPrevia: 
+  bTipoEntradaCodigoBarras: 0
+  bOmiteMsgAlerta: 0
+  bIniciaPelaEsquerda: 0
+  bNotificarCancelamento: 0
+  bAlinhaPelaDireita: 0
+
+06/11/23 10:38:01:173 -   OnExibeMenu(  )
+06/11/23 10:38:01:207 -     Resposta: 1, Cancelado: False
+06/11/23 10:38:01:208 - PW_iAddParam( PWINFO_LOCALINFO1, CONFIGURACAO )
+06/11/23 10:38:01:211 -   PWRET_OK
+06/11/23 10:38:01:212 - PW_iExecTransac()
+06/11/23 10:38:01:214 -   PWRET_MOREDATA, NumParams: 1
+06/11/23 10:38:01:215 - TACBrTEFPGWebAPI.ObterDados( 1 )
+06/11/23 10:38:01:216 -  PW_GetData: 0
+  wIdentificador: PWINFO_AUTHTECHUSER
+  bTipoDeDado: PWDAT_USERAUTH
+  szPrompt: 
+  bNumOpcoesMenu: 0
+  szMascaraDeCaptura: 
+  bTiposEntradaPermitidos: PWTYP_ReadOnly
+  bTamanhoMinimo: 0
+  bTamanhoMaximo: 0
+  ulValorMinimo: 0
+  ulValorMaximo: 0
+  bOcultarDadosDigitados: 0
+  bValidacaoDado: PWVAL_Nenhuma
+  bAceitaNulo: 0
+  szValorInicial: 
+  bTeclasDeAtalho: 0
+  szMsgValidacao: 
+  szMsgConfirmacao: 
+  szMsgDadoMaior: 
+  szMsgDadoMenor: 
+  bCapturarDataVencCartao: 0
+  ulTipoEntradaCartao: 0
+  bItemInicial: 0
+  bNumeroCapturas: 0
+  szMsgPrevia: 
+  bTipoEntradaCodigoBarras: 0
+  bOmiteMsgAlerta: 0
+  bIniciaPelaEsquerda: 0
+  bNotificarCancelamento: 0
+  bAlinhaPelaDireita: 0
+
+06/11/23 10:38:01:218 -   OnObtemCampo
+06/11/23 10:38:01:238 -     Resposta: 314159, Valido: False, Cancelado: False
+06/11/23 10:38:01:238 - PW_iAddParam( PWINFO_AUTHTECHUSER, 314159 )
+06/11/23 10:38:01:240 -   PWRET_OK
+06/11/23 10:38:01:241 - PW_iExecTransac()
+06/11/23 10:38:01:244 -   PWRET_MOREDATA, NumParams: 3
+06/11/23 10:38:01:245 - TACBrTEFPGWebAPI.ObterDados( 3 )
+06/11/23 10:38:01:247 -  PW_GetData: 0
+  wIdentificador: PWINFO_POSID
+  bTipoDeDado: PWDAT_TYPED
+  szPrompt: ID PONTO DE CAPTURA:
+  bNumOpcoesMenu: 0
+  szMascaraDeCaptura: 
+  bTiposEntradaPermitidos: PWTYP_AlfaNumEsp
+  bTamanhoMinimo: 1
+  bTamanhoMaximo: 14
+  ulValorMinimo: 0
+  ulValorMaximo: 0
+  bOcultarDadosDigitados: 0
+  bValidacaoDado: PWVAL_Nenhuma
+  bAceitaNulo: 0
+  szValorInicial: 
+  bTeclasDeAtalho: 0
+  szMsgValidacao: 
+  szMsgConfirmacao: 
+  szMsgDadoMaior: 
+  szMsgDadoMenor: 
+  bCapturarDataVencCartao: 0
+  ulTipoEntradaCartao: 0
+  bItemInicial: 0
+  bNumeroCapturas: 0
+  szMsgPrevia: 
+  bTipoEntradaCodigoBarras: 0
+  bOmiteMsgAlerta: 0
+  bIniciaPelaEsquerda: 0
+  bNotificarCancelamento: 0
+  bAlinhaPelaDireita: 0
+
+06/11/23 10:38:01:248 -   OnObtemCampo
+06/11/23 10:38:01:269 -     Resposta: 5855085, Valido: False, Cancelado: False
+06/11/23 10:38:01:269 - PW_iAddParam( PWINFO_POSID, 5855085 )
+06/11/23 10:38:01:284 -   PWRET_OK
+06/11/23 10:38:01:285 -  PW_GetData: 1
+  wIdentificador: PWINFO_DESTTCPIP
+  bTipoDeDado: PWDAT_TYPED
+  szPrompt: NOME/IP SERVIDOR:
+  bNumOpcoesMenu: 0
+  szMascaraDeCaptura: 
+  bTiposEntradaPermitidos: PWTYP_AlfaNumEsp
+  bTamanhoMinimo: 5
+  bTamanhoMaximo: 51
+  ulValorMinimo: 0
+  ulValorMaximo: 0
+  bOcultarDadosDigitados: 0
+  bValidacaoDado: PWVAL_Nenhuma
+  bAceitaNulo: 0
+  szValorInicial: 
+  bTeclasDeAtalho: 0
+  szMsgValidacao: 
+  szMsgConfirmacao: 
+  szMsgDadoMaior: 
+  szMsgDadoMenor: 
+  bCapturarDataVencCartao: 0
+  ulTipoEntradaCartao: 0
+  bItemInicial: 0
+  bNumeroCapturas: 0
+  szMsgPrevia: 
+  bTipoEntradaCodigoBarras: 0
+  bOmiteMsgAlerta: 0
+  bIniciaPelaEsquerda: 0
+  bNotificarCancelamento: 0
+  bAlinhaPelaDireita: 0
+
+06/11/23 10:38:01:286 -   OnObtemCampo
+06/11/23 10:38:01:307 -     Resposta: pl03.pgweb.io:17500, Valido: False, Cancelado: False
+06/11/23 10:38:01:309 - PW_iAddParam( PWINFO_DESTTCPIP, pl03.pgweb.io:17500 )
+06/11/23 10:38:01:338 -   PWRET_OK
+06/11/23 10:38:01:339 -  PW_GetData: 2
+  wIdentificador: PWINFO_USINGPINPAD
+  bTipoDeDado: PWDAT_TYPED
+  szPrompt: USAR PINPAD?[CR](1)SIM        (0)NAO
+  bNumOpcoesMenu: 0
+  szMascaraDeCaptura: 
+  bTiposEntradaPermitidos: PWTYP_Numerico
+  bTamanhoMinimo: 1
+  bTamanhoMaximo: 1
+  ulValorMinimo: 0
+  ulValorMaximo: 0
+  bOcultarDadosDigitados: 0
+  bValidacaoDado: PWVAL_Nenhuma
+  bAceitaNulo: 0
+  szValorInicial: 0
+  bTeclasDeAtalho: 0
+  szMsgValidacao: 
+  szMsgConfirmacao: 
+  szMsgDadoMaior: 
+  szMsgDadoMenor: 
+  bCapturarDataVencCartao: 0
+  ulTipoEntradaCartao: 0
+  bItemInicial: 0
+  bNumeroCapturas: 0
+  szMsgPrevia: 
+  bTipoEntradaCodigoBarras: 0
+  bOmiteMsgAlerta: 0
+  bIniciaPelaEsquerda: 0
+  bNotificarCancelamento: 0
+  bAlinhaPelaDireita: 0
+
+06/11/23 10:38:01:340 -   ParametrosAdicionais
+06/11/23 10:38:01:343 - PW_iAddParam( PWINFO_USINGPINPAD, 1 )
+06/11/23 10:38:01:344 -   PWRET_OK
+06/11/23 10:38:01:345 - PW_iExecTransac()
+06/11/23 10:38:01:347 -   PWRET_MOREDATA, NumParams: 1
+06/11/23 10:38:01:348 - TACBrTEFPGWebAPI.ObterDados( 1 )
+06/11/23 10:38:01:349 -  PW_GetData: 0
+  wIdentificador: PWINFO_PPCOMMPORT
+  bTipoDeDado: PWDAT_TYPED
+  szPrompt: PORTA DO PINPAD?[CR](0)BUSCA AUTOMATICA
+  bNumOpcoesMenu: 0
+  szMascaraDeCaptura: 
+  bTiposEntradaPermitidos: PWTYP_Numerico
+  bTamanhoMinimo: 1
+  bTamanhoMaximo: 2
+  ulValorMinimo: 0
+  ulValorMaximo: 0
+  bOcultarDadosDigitados: 0
+  bValidacaoDado: PWVAL_Nenhuma
+  bAceitaNulo: 0
+  szValorInicial: 
+  bTeclasDeAtalho: 0
+  szMsgValidacao: 
+  szMsgConfirmacao: 
+  szMsgDadoMaior: 
+  szMsgDadoMenor: 
+  bCapturarDataVencCartao: 0
+  ulTipoEntradaCartao: 0
+  bItemInicial: 0
+  bNumeroCapturas: 0
+  szMsgPrevia: 
+  bTipoEntradaCodigoBarras: 0
+  bOmiteMsgAlerta: 0
+  bIniciaPelaEsquerda: 0
+  bNotificarCancelamento: 0
+  bAlinhaPelaDireita: 0
+
+06/11/23 10:38:01:350 -   ParametrosAdicionais
+06/11/23 10:38:01:352 - PW_iAddParam( PWINFO_PPCOMMPORT, 0 )
+06/11/23 10:38:01:553 -   PWRET_OK
+06/11/23 10:38:01:554 - PW_iExecTransac()
+06/11/23 10:38:01:577 -   PWRET_OK, NumParams: 10
+06/11/23 10:38:01:578 - TACBrTEFPGWebAPI.ObterDadosDaTransacao
+06/11/23 10:38:01:580 -   PWINFO_OPERATION=253
+06/11/23 10:38:01:581 -   PWINFO_POSID=5855085
+06/11/23 10:38:01:582 -   PWINFO_DESTTCPIP=pl03.pgweb.io:17500
+06/11/23 10:38:01:583 -   PWINFO_CNFREQ=0
+06/11/23 10:38:01:584 -   PWINFO_RCPTFULL=              CONFIGURACAO\x0D\x0DID PONTO CAPTURA: 5855085\x0D\x0DENDERECO DESTINO:\x0Dpl03.pgweb.io:17500\x0D
+06/11/23 10:38:01:586 -   PWINFO_LANGUAGE=0
+06/11/23 10:38:01:587 -   PWINFO_PROCESSMSG=\x0D   PROCESSANDO...
+06/11/23 10:38:01:588 -   PWINFO_CNCDSPMSG=\x0D      OPERACAO\x0D      CANCELADA
+06/11/23 10:38:01:590 -   PWINFO_CNCPPMSG=    OPERACAO        CANCELADA   
+06/11/23 10:38:01:608 -   PWINFO_USINGPINPAD=1
+06/11/23 10:38:01:609 -   PWINFO_PPCOMMPORT=06
+06/11/23 10:38:01:611 -   PWINFO_LIBVERSION=0004.0001.0015.0001
+06/11/23 10:38:01:612 -   PWINFO_OSVERSION=SO:Win 10 , 64bits
+06/11/23 10:38:01:625 - PW_iGetResult( PWINFO_IDLEPROCTIME )
+06/11/23 10:38:01:626 -   PWRET_NODATA
+06/11/23 10:38:01:627 -   OnExibeMensagem( , tmTodas, -1 )
+06/11/23 10:38:01:631 -   QuandoFinalizarOperacao
+06/11/23 10:38:01:635 - FinalizarTransacoes( tefstsSucessoAutomatico )
+06/11/23 10:38:01:636 - Inicializar
+06/11/23 10:38:01:638 - VerificarTransacoesPendentes
+06/11/23 10:38:01:639 - EfetuarAdministrativa( tefopAdministrativo,  )
+06/11/23 10:38:01:641 - ConfirmarTransacoesPendentes
+06/11/23 10:38:01:642 - FinalizarTransacoes( tefstsSucessoAutomatico )
+06/11/23 10:38:01:643 - PW_iNewTransac( PWOPER_ADMIN )
+06/11/23 10:38:02:955 -   PWRET_OK
+06/11/23 10:38:02:955 - TACBrTEFPGWebAPI.AdicionarDadosObrigatorios
+06/11/23 10:38:02:956 - PW_iAddParam( PWINFO_AUTNAME, ACTEF )
+06/11/23 10:38:02:958 -   PWRET_OK
+06/11/23 10:38:02:959 - PW_iAddParam( PWINFO_AUTVER, 1.0 )
+06/11/23 10:38:02:960 -   PWRET_OK
+06/11/23 10:38:02:961 - PW_iAddParam( PWINFO_AUTDEV, VALORARE GESTAO E TI LTDA )
+06/11/23 10:38:02:962 -   PWRET_OK
+06/11/23 10:38:02:964 - PW_iAddParam( PWINFO_AUTCAP, 396 )
+06/11/23 10:38:02:965 -   PWRET_OK
+06/11/23 10:38:02:966 - PW_iAddParam( PWINFO_MERCHADDDATA4, ACBrTEFPGWebAPI 1.0.1 )
+06/11/23 10:38:02:968 -   PWRET_OK
+06/11/23 10:38:02:970 - PW_iAddParam( PWINFO_DSPQRPREF, 1 )
+06/11/23 10:38:02:971 -   PWRET_OK
+06/11/23 10:38:02:972 - TACBrTEFPGWebAPI.ExecutarTransacao
+06/11/23 10:38:02:973 - PW_iGetResult( PWINFO_PROCESSMSG )
+06/11/23 10:38:02:975 -   [CR]   PROCESSANDO...
+06/11/23 10:38:02:985 -   OnExibeMensagem( PROCESSANDO..., tmCliente, -1 )
+06/11/23 10:38:02:986 - PW_iExecTransac()
+06/11/23 10:38:02:990 -   PWRET_MOREDATA, NumParams: 1
+06/11/23 10:38:02:991 - TACBrTEFPGWebAPI.ObterDados( 1 )
+06/11/23 10:38:02:995 -  PW_GetData: 0
+  wIdentificador: PWINFO_LOCALINFO1
+  bTipoDeDado: PWDAT_MENU
+  szPrompt: 
+  bNumOpcoesMenu: 8
+  vszTextoMenu_0: INSTALACAO
+  vszValorMenu_0: INSTALACAO
+  vszTextoMenu_1: CONFIGURACAO
+  vszValorMenu_1: CONFIGURACAO
+  vszTextoMenu_2: MANUTENCAO
+  vszValorMenu_2: MANUTENCAO
+  vszTextoMenu_3: VERSAO
+  vszValorMenu_3: VERSAO
+  vszTextoMenu_4: MOSTRAR IDENTIFICADOR
+  vszValorMenu_4: MOSTRAR IDENTIFICADOR
+  vszTextoMenu_5: TESTE DE CHAVES
+  vszValorMenu_5: TESTE DE CHAVES
+  vszTextoMenu_6: DADOS TERMINAL
+  vszValorMenu_6: DADOS TERMINAL
+  vszTextoMenu_7: EXPORTAR LOGS
+  vszValorMenu_7: EXPORTAR LOGS
+  szMascaraDeCaptura: 
+  bTiposEntradaPermitidos: PWTYP_ReadOnly
+  bTamanhoMinimo: 0
+  bTamanhoMaximo: 0
+  ulValorMinimo: 0
+  ulValorMaximo: 0
+  bOcultarDadosDigitados: 0
+  bValidacaoDado: PWVAL_Nenhuma
+  bAceitaNulo: 0
+  szValorInicial: 
+  bTeclasDeAtalho: 1
+  szMsgValidacao: 
+  szMsgConfirmacao: 
+  szMsgDadoMaior: 
+  szMsgDadoMenor: 
+  bCapturarDataVencCartao: 0
+  ulTipoEntradaCartao: 0
+  bItemInicial: 0
+  bNumeroCapturas: 1
+  szMsgPrevia: 
+  bTipoEntradaCodigoBarras: 0
+  bOmiteMsgAlerta: 0
+  bIniciaPelaEsquerda: 0
+  bNotificarCancelamento: 0
+  bAlinhaPelaDireita: 0
+
+06/11/23 10:38:02:996 -   OnExibeMenu(  )
+06/11/23 10:38:03:014 -     Resposta: 0, Cancelado: False
+06/11/23 10:38:03:014 - PW_iAddParam( PWINFO_LOCALINFO1, INSTALACAO )
+06/11/23 10:38:03:016 -   PWRET_OK
+06/11/23 10:38:03:017 - PW_iExecTransac()
+06/11/23 10:38:03:018 -   PWRET_MOREDATA, NumParams: 1
+06/11/23 10:38:03:020 - TACBrTEFPGWebAPI.ObterDados( 1 )
+06/11/23 10:38:03:021 -  PW_GetData: 0
+  wIdentificador: PWINFO_AUTHTECHUSER
+  bTipoDeDado: PWDAT_USERAUTH
+  szPrompt: 
+  bNumOpcoesMenu: 0
+  szMascaraDeCaptura: 
+  bTiposEntradaPermitidos: PWTYP_ReadOnly
+  bTamanhoMinimo: 0
+  bTamanhoMaximo: 0
+  ulValorMinimo: 0
+  ulValorMaximo: 0
+  bOcultarDadosDigitados: 0
+  bValidacaoDado: PWVAL_Nenhuma
+  bAceitaNulo: 0
+  szValorInicial: 
+  bTeclasDeAtalho: 0
+  szMsgValidacao: 
+  szMsgConfirmacao: 
+  szMsgDadoMaior: 
+  szMsgDadoMenor: 
+  bCapturarDataVencCartao: 0
+  ulTipoEntradaCartao: 0
+  bItemInicial: 0
+  bNumeroCapturas: 0
+  szMsgPrevia: 
+  bTipoEntradaCodigoBarras: 0
+  bOmiteMsgAlerta: 0
+  bIniciaPelaEsquerda: 0
+  bNotificarCancelamento: 0
+  bAlinhaPelaDireita: 0
+
+06/11/23 10:38:03:022 -   OnObtemCampo
+06/11/23 10:38:03:043 -     Resposta: 314159, Valido: False, Cancelado: False
+06/11/23 10:38:03:043 - PW_iAddParam( PWINFO_AUTHTECHUSER, 314159 )
+06/11/23 10:38:03:045 -   PWRET_OK
+06/11/23 10:38:03:046 - PW_iExecTransac()
+06/11/23 10:38:03:047 -   PWRET_MOREDATA, NumParams: 1
+06/11/23 10:38:03:048 - TACBrTEFPGWebAPI.ObterDados( 1 )
+06/11/23 10:38:03:050 -  PW_GetData: 0
+  wIdentificador: PWINFO_MERCHCNPJCPF
+  bTipoDeDado: PWDAT_TYPED
+  szPrompt: CNPJ/CPF:
+  bNumOpcoesMenu: 0
+  szMascaraDeCaptura: 
+  bTiposEntradaPermitidos: PWTYP_AlfaNume
+  bTamanhoMinimo: 3
+  bTamanhoMaximo: 14
+  ulValorMinimo: 0
+  ulValorMaximo: 0
+  bOcultarDadosDigitados: 0
+  bValidacaoDado: PWVAL_Nenhuma
+  bAceitaNulo: 0
+  szValorInicial: 
+  bTeclasDeAtalho: 0
+  szMsgValidacao: 
+  szMsgConfirmacao: 
+  szMsgDadoMaior: 
+  szMsgDadoMenor: 
+  bCapturarDataVencCartao: 0
+  ulTipoEntradaCartao: 0
+  bItemInicial: 0
+  bNumeroCapturas: 0
+  szMsgPrevia: 
+  bTipoEntradaCodigoBarras: 0
+  bOmiteMsgAlerta: 0
+  bIniciaPelaEsquerda: 0
+  bNotificarCancelamento: 0
+  bAlinhaPelaDireita: 0
+
+06/11/23 10:38:03:051 -   OnObtemCampo
+06/11/23 10:38:03:068 -     Resposta: 04979402000130, Valido: False, Cancelado: False
+06/11/23 10:38:03:069 - PW_iAddParam( PWINFO_MERCHCNPJCPF, 04979402000130 )
+06/11/23 10:38:03:070 -   PWRET_OK
+06/11/23 10:38:03:072 - PW_iExecTransac()
+06/11/23 10:38:11:506 -   PWRET_MOREDATA, NumParams: 1
+06/11/23 10:38:11:507 - TACBrTEFPGWebAPI.ObterDados( 1 )
+06/11/23 10:38:11:508 -  PW_GetData: 0
+  wIdentificador: PWINFO_RET
+  bTipoDeDado: PWDAT_PPREMCRD
+  szPrompt: 
+  bNumOpcoesMenu: 0
+  szMascaraDeCaptura: 
+  bTiposEntradaPermitidos: PWTYP_ReadOnly
+  bTamanhoMinimo: 0
+  bTamanhoMaximo: 0
+  ulValorMinimo: 0
+  ulValorMaximo: 0
+  bOcultarDadosDigitados: 0
+  bValidacaoDado: PWVAL_Nenhuma
+  bAceitaNulo: 0
+  szValorInicial: 
+  bTeclasDeAtalho: 0
+  szMsgValidacao: 
+  szMsgConfirmacao: 
+  szMsgDadoMaior: 
+  szMsgDadoMenor: 
+  bCapturarDataVencCartao: 0
+  ulTipoEntradaCartao: 0
+  bItemInicial: 0
+  bNumeroCapturas: 0
+  szMsgPrevia: 
+  bTipoEntradaCodigoBarras: 0
+  bOmiteMsgAlerta: 0
+  bIniciaPelaEsquerda: 0
+  bNotificarCancelamento: 0
+  bAlinhaPelaDireita: 0
+
+06/11/23 10:38:11:509 - PW_iPPRemoveCard
+06/11/23 10:38:11:516 -   PWRET_OK
+06/11/23 10:38:11:518 - PW_iPPEventLoop
+06/11/23 10:38:11:533 -   PWRET_NOTHING
+06/11/23 10:38:11:847 -   OnAguardaPinPad( ppRemoveCard )
+06/11/23 10:38:11:848 -     Cancelado: False
+06/11/23 10:38:11:849 - PW_iPPEventLoop
+06/11/23 10:38:11:862 -   PWRET_DISPLAY
+06/11/23 10:38:11:863 -   OnExibeMensagem( [CR] CNPJ/CPF INCORRETO , tmTodas, -1 )
+06/11/23 10:38:11:864 -   OnAguardaPinPad( ppRemoveCard )
+06/11/23 10:38:11:866 -     Cancelado: False
+06/11/23 10:38:11:867 - PW_iPPEventLoop
+06/11/23 10:38:11:893 -   PWRET_NOTHING
+06/11/23 10:38:12:201 -   OnAguardaPinPad( ppRemoveCard )
+06/11/23 10:38:12:205 -     Cancelado: False
+06/11/23 10:38:12:209 - PW_iPPEventLoop
+06/11/23 10:38:12:231 -   PWRET_NOTHING
+06/11/23 10:38:12:536 -   OnAguardaPinPad( ppRemoveCard )
+06/11/23 10:38:12:537 -     Cancelado: False
+06/11/23 10:38:12:539 - PW_iPPEventLoop
+06/11/23 10:38:12:567 -   PWRET_NOTHING
+06/11/23 10:38:12:879 -   OnAguardaPinPad( ppRemoveCard )
+06/11/23 10:38:12:880 -     Cancelado: False
+06/11/23 10:38:12:881 - PW_iPPEventLoop
+06/11/23 10:38:12:895 -   PWRET_NOTHING
+06/11/23 10:38:13:207 -   OnAguardaPinPad( ppRemoveCard )
+06/11/23 10:38:13:211 -     Cancelado: False
+06/11/23 10:38:13:215 - PW_iPPEventLoop
+06/11/23 10:38:13:239 -   PWRET_NOTHING
+06/11/23 10:38:13:548 -   OnAguardaPinPad( ppRemoveCard )
+06/11/23 10:38:13:550 -     Cancelado: False
+06/11/23 10:38:13:552 - PW_iPPEventLoop
+06/11/23 10:38:13:579 -   PWRET_NOTHING
+06/11/23 10:38:13:889 -   OnAguardaPinPad( ppRemoveCard )
+06/11/23 10:38:13:890 -     Cancelado: False
+06/11/23 10:38:13:891 - PW_iPPEventLoop
+06/11/23 10:38:13:905 -   PWRET_NOTHING
+06/11/23 10:38:14:219 -   OnAguardaPinPad( ppRemoveCard )
+06/11/23 10:38:14:220 -     Cancelado: False
+06/11/23 10:38:14:222 - PW_iPPEventLoop
+06/11/23 10:38:14:251 -   PWRET_OK
+06/11/23 10:38:14:255 - PW_iExecTransac()
+06/11/23 10:38:14:288 -   PWRET_FROMHOSTUSRAUTHERR, NumParams: 10
+06/11/23 10:38:14:290 - PW_iGetResult( PWINFO_RESULTMSG )
+06/11/23 10:38:14:291 -   [CR] CNPJ/CPF INCORRETO 
+06/11/23 10:38:14:292 -   OnExibeMensagem( [CR] CNPJ/CPF INCORRETO , tmOperador, 5000 )
+06/11/23 10:38:14:293 - PW_iGetResult( PWINFO_CNCPPMSG )
+06/11/23 10:38:14:295 -       OPERACAO        CANCELADA   
+06/11/23 10:38:14:296 - xPW_iPPDisplay(     OPERACAO        CANCELADA    )
+06/11/23 10:38:14:298 -   PWRET_OK
+06/11/23 10:38:14:299 - TACBrTEFPGWebAPI.EstornarTransacaoEmAndamento
+06/11/23 10:38:14:300 - PW_iGetResult( PWINFO_CNFREQ )
+06/11/23 10:38:14:301 -   0
+06/11/23 10:38:14:302 - TACBrTEFPGWebAPI.ObterDadosDaTransacao
+06/11/23 10:38:14:304 -   PWINFO_OPERATION=1
+06/11/23 10:38:14:305 -   PWINFO_DESTTCPIP=pl03.pgweb.io:17500
+06/11/23 10:38:14:306 -   PWINFO_DATETIME=20231106103810
+06/11/23 10:38:14:308 -   PWINFO_REQNUM=0000185561
+06/11/23 10:38:14:309 -   PWINFO_RESULTMSG=\x0D CNPJ/CPF INCORRETO 
+06/11/23 10:38:14:310 -   PWINFO_CNFREQ=0
+06/11/23 10:38:14:311 -   PWINFO_LANGUAGE=0
+06/11/23 10:38:14:312 -   PWINFO_PROCESSMSG=\x0D   PROCESSANDO...
+06/11/23 10:38:14:313 -   PWINFO_CNCDSPMSG=\x0D      OPERACAO\x0D      CANCELADA
+06/11/23 10:38:14:314 -   PWINFO_CNCPPMSG=    OPERACAO        CANCELADA   
+06/11/23 10:38:14:334 -   PWINFO_USINGPINPAD=1
+06/11/23 10:38:14:335 -   PWINFO_PPCOMMPORT=06
+06/11/23 10:38:14:338 -   PWINFO_RESULTID=101
+06/11/23 10:38:14:339 -   PWINFO_LIBVERSION=0004.0001.0015.0001
+06/11/23 10:38:14:340 -   PWINFO_OSVERSION=SO:Win 10 , 64bits
+06/11/23 10:38:14:351 -   PWINFO_UNIQUEID=00000000001966548743
+06/11/23 10:38:14:352 - PW_iGetResult( PWINFO_IDLEPROCTIME )
+06/11/23 10:38:14:353 -   PWRET_NODATA
+06/11/23 10:38:14:355 -   OnExibeMensagem( , tmTodas, -1 )
+06/11/23 10:38:14:356 -   QuandoFinalizarOperacao
+06/11/23 14:12:27:612 - Inicializar
+06/11/23 14:12:27:612 - TACBrTEFPGWebAPI.SetDiretorioTrabalho( C:\Projetos\speedfood\ACNFe\tef\PGWeb )
+06/11/23 14:12:27:612 - TACBrTEFPGWebAPI.Inicializar
+06/11/23 14:12:27:628 - TACBrTEFPGWebAPI.LoadDLLFunctions
+06/11/23 14:12:27:628 -    PW_iInit
+06/11/23 14:12:27:643 -    PW_iGetResult
+06/11/23 14:12:27:643 -    PW_iNewTransac
+06/11/23 14:12:27:643 -    PW_iAddParam
+06/11/23 14:12:27:643 -    PW_iExecTransac
+06/11/23 14:12:27:643 -    PW_iConfirmation
+06/11/23 14:12:27:643 -    PW_iIdleProc
+06/11/23 14:12:27:643 -    PW_iGetOperations
+06/11/23 14:12:27:643 -    PW_iPPEventLoop
+06/11/23 14:12:27:643 -    PW_iPPAbort
+06/11/23 14:12:27:643 -    PW_iPPGetCard
+06/11/23 14:12:27:659 -    PW_iPPGetPIN
+06/11/23 14:12:27:659 -    PW_iPPGetData
+06/11/23 14:12:27:659 -    PW_iPPGoOnChip
+06/11/23 14:12:27:659 -    PW_iPPFinishChip
+06/11/23 14:12:27:659 -    PW_iPPConfirmData
+06/11/23 14:12:27:659 -    PW_iPPGenericCMD
+06/11/23 14:12:27:659 -    PW_iPPDisplay
+06/11/23 14:12:27:659 -    PW_iPPGetUserData
+06/11/23 14:12:27:659 -    PW_iPPWaitEvent
+06/11/23 14:12:27:659 -    PW_iPPRemoveCard
+06/11/23 14:12:27:659 -    PW_iPPGetPINBlock
+06/11/23 14:12:27:659 -    PW_iTransactionInquiry
+06/11/23 14:12:27:659 -    PW_iPPDataConfirmation
+06/11/23 14:12:27:659 -      Função não requerida: PW_iPPDataConfirmation não encontrada em: PGWebLib.dll
+06/11/23 14:12:27:659 -    PW_iPPTestKey
+06/11/23 14:12:27:659 -    PW_iWaitConfirmation
+06/11/23 14:12:27:659 -    PW_iGetOperationsEx
+06/11/23 14:12:27:659 - PW_iInit( C:\Projetos\speedfood\ACNFe\tef\PGWeb )
+06/11/23 14:12:29:753 -   PWRET_OK
+06/11/23 14:12:29:753 - PW_iNewTransac( PWOPER_VERSION )
+06/11/23 14:12:31:613 -   PWRET_OK
+06/11/23 14:12:31:613 - TACBrTEFPGWebAPI.AdicionarDadosObrigatorios
+06/11/23 14:12:31:613 - PW_iAddParam( PWINFO_AUTNAME, ACTEF )
+06/11/23 14:12:31:613 -   PWRET_OK
+06/11/23 14:12:31:613 - PW_iAddParam( PWINFO_AUTVER, 1.0 )
+06/11/23 14:12:31:613 -   PWRET_OK
+06/11/23 14:12:31:613 - PW_iAddParam( PWINFO_AUTDEV, VALORARE GESTAO E TI LTDA )
+06/11/23 14:12:31:613 -   PWRET_OK
+06/11/23 14:12:31:613 - PW_iAddParam( PWINFO_AUTCAP, 396 )
+06/11/23 14:12:31:613 -   PWRET_OK
+06/11/23 14:12:31:613 - PW_iAddParam( PWINFO_MERCHADDDATA4, ACBrTEFPGWebAPI 1.0.1 )
+06/11/23 14:12:31:628 -   PWRET_OK
+06/11/23 14:12:31:628 - PW_iAddParam( PWINFO_DSPQRPREF, 1 )
+06/11/23 14:12:31:628 -   PWRET_OK
+06/11/23 14:12:31:628 - TACBrTEFPGWebAPI.ExecutarTransacao
+06/11/23 14:12:31:628 - PW_iGetResult( PWINFO_PROCESSMSG )
+06/11/23 14:12:31:628 -   [CR]   PROCESSANDO...
+06/11/23 14:12:31:628 -   OnExibeMensagem( PROCESSANDO..., tmCliente, -1 )
+06/11/23 14:12:31:628 - PW_iExecTransac()
+06/11/23 14:12:31:628 -   PWRET_OK, NumParams: 10
+06/11/23 14:12:31:628 - TACBrTEFPGWebAPI.ObterDadosDaTransacao
+06/11/23 14:12:31:628 -   PWINFO_OPERATION=252
+06/11/23 14:12:31:628 -   PWINFO_DESTTCPIP=pl03.pgweb.io:17500
+06/11/23 14:12:31:628 -   PWINFO_RESULTMSG=0004.0001.0015.0001
+06/11/23 14:12:31:628 -   PWINFO_CNFREQ=0
+06/11/23 14:12:31:628 -   PWINFO_LANGUAGE=0
+06/11/23 14:12:31:628 -   PWINFO_PROCESSMSG=\x0D   PROCESSANDO...
+06/11/23 14:12:31:628 -   PWINFO_CNCDSPMSG=\x0D      OPERACAO\x0D      CANCELADA
+06/11/23 14:12:31:628 -   PWINFO_CNCPPMSG=    OPERACAO        CANCELADA   
+06/11/23 14:12:31:659 -   PWINFO_USINGPINPAD=1
+06/11/23 14:12:31:659 -   PWINFO_PPCOMMPORT=06
+06/11/23 14:12:31:659 -   PWINFO_LIBVERSION=0004.0001.0015.0001
+06/11/23 14:12:31:659 -   PWINFO_OSVERSION=SO:Win 10 , 64bits
+06/11/23 14:12:31:659 - PW_iGetResult( PWINFO_IDLEPROCTIME )
+06/11/23 14:12:31:659 -   PWRET_NODATA
+06/11/23 14:12:31:659 -   OnExibeMensagem( , tmTodas, -1 )
+06/11/23 14:12:31:675 - VerificarTransacoesPendentes
+06/11/23 14:12:31:675 - EfetuarPagamento( 1.23, 2,00, tefmpCartao, tefmfAVista, [ teftcCredito ], 1 )
+06/11/23 14:12:31:675 - ConfirmarTransacoesPendentes
+06/11/23 14:12:31:675 - FinalizarTransacoes( tefstsSucessoAutomatico )
+06/11/23 14:12:31:675 - PW_iNewTransac( PWOPER_SALE )
+06/11/23 14:12:32:066 -   PWRET_NOTINST
+06/11/23 14:12:32:066 - EACBrTEFPayGoWeb: É necessário efetuar uma transação de Instalação
+06/11/23 14:12:32:066 -   QuandoFinalizarOperacao
+06/11/23 14:29:52:544 - Inicializar
+06/11/23 14:29:52:544 - TACBrTEFPGWebAPI.SetDiretorioTrabalho( C:\Projetos\speedfood\ACNFe\tef\PGWeb )
+06/11/23 14:29:52:560 - TACBrTEFPGWebAPI.Inicializar
+06/11/23 14:29:52:560 - TACBrTEFPGWebAPI.LoadDLLFunctions
+06/11/23 14:29:52:560 -    PW_iInit
+06/11/23 14:29:52:560 -    PW_iGetResult
+06/11/23 14:29:52:560 -    PW_iNewTransac
+06/11/23 14:29:52:560 -    PW_iAddParam
+06/11/23 14:29:52:560 -    PW_iExecTransac
+06/11/23 14:29:52:560 -    PW_iConfirmation
+06/11/23 14:29:52:560 -    PW_iIdleProc
+06/11/23 14:29:52:575 -    PW_iGetOperations
+06/11/23 14:29:52:575 -    PW_iPPEventLoop
+06/11/23 14:29:52:575 -    PW_iPPAbort
+06/11/23 14:29:52:575 -    PW_iPPGetCard
+06/11/23 14:29:52:575 -    PW_iPPGetPIN
+06/11/23 14:29:52:575 -    PW_iPPGetData
+06/11/23 14:29:52:575 -    PW_iPPGoOnChip
+06/11/23 14:29:52:575 -    PW_iPPFinishChip
+06/11/23 14:29:52:575 -    PW_iPPConfirmData
+06/11/23 14:29:52:575 -    PW_iPPGenericCMD
+06/11/23 14:29:52:591 -    PW_iPPDisplay
+06/11/23 14:29:52:591 -    PW_iPPGetUserData
+06/11/23 14:29:52:591 -    PW_iPPWaitEvent
+06/11/23 14:29:52:591 -    PW_iPPRemoveCard
+06/11/23 14:29:52:591 -    PW_iPPGetPINBlock
+06/11/23 14:29:52:591 -    PW_iTransactionInquiry
+06/11/23 14:29:52:591 -    PW_iPPDataConfirmation
+06/11/23 14:29:52:591 -      Função não requerida: PW_iPPDataConfirmation não encontrada em: PGWebLib.dll
+06/11/23 14:29:52:591 -    PW_iPPTestKey
+06/11/23 14:29:52:591 -    PW_iWaitConfirmation
+06/11/23 14:29:52:591 -    PW_iGetOperationsEx
+06/11/23 14:29:52:591 - PW_iInit( C:\Projetos\speedfood\ACNFe\tef\PGWeb )
+06/11/23 14:29:55:294 -   PWRET_OK
+06/11/23 14:29:55:294 - PW_iNewTransac( PWOPER_VERSION )
+06/11/23 14:29:57:048 -   PWRET_OK
+06/11/23 14:29:57:048 - TACBrTEFPGWebAPI.AdicionarDadosObrigatorios
+06/11/23 14:29:57:048 - PW_iAddParam( PWINFO_AUTNAME, ACTEF )
+06/11/23 14:29:57:048 -   PWRET_OK
+06/11/23 14:29:57:048 - PW_iAddParam( PWINFO_AUTVER, 1.0 )
+06/11/23 14:29:57:048 -   PWRET_OK
+06/11/23 14:29:57:048 - PW_iAddParam( PWINFO_AUTDEV, VALORARE GESTAO E TI LTDA )
+06/11/23 14:29:57:048 -   PWRET_OK
+06/11/23 14:29:57:064 - PW_iAddParam( PWINFO_AUTCAP, 396 )
+06/11/23 14:29:57:064 -   PWRET_OK
+06/11/23 14:29:57:064 - PW_iAddParam( PWINFO_MERCHADDDATA4, ACBrTEFPGWebAPI 1.0.1 )
+06/11/23 14:29:57:064 -   PWRET_OK
+06/11/23 14:29:57:079 - PW_iAddParam( PWINFO_DSPQRPREF, 1 )
+06/11/23 14:29:57:079 -   PWRET_OK
+06/11/23 14:29:57:079 - TACBrTEFPGWebAPI.ExecutarTransacao
+06/11/23 14:29:57:079 - PW_iGetResult( PWINFO_PROCESSMSG )
+06/11/23 14:29:57:079 -   [CR]   PROCESSANDO...
+06/11/23 14:29:57:079 -   OnExibeMensagem( PROCESSANDO..., tmCliente, -1 )
+06/11/23 14:29:57:079 - PW_iExecTransac()
+06/11/23 14:29:57:095 -   PWRET_OK, NumParams: 10
+06/11/23 14:29:57:095 - TACBrTEFPGWebAPI.ObterDadosDaTransacao
+06/11/23 14:29:57:095 -   PWINFO_OPERATION=252
+06/11/23 14:29:57:095 -   PWINFO_DESTTCPIP=pl03.pgweb.io:17500
+06/11/23 14:29:57:095 -   PWINFO_RESULTMSG=0004.0001.0015.0001
+06/11/23 14:29:57:095 -   PWINFO_CNFREQ=0
+06/11/23 14:29:57:095 -   PWINFO_LANGUAGE=0
+06/11/23 14:29:57:095 -   PWINFO_PROCESSMSG=\x0D   PROCESSANDO...
+06/11/23 14:29:57:095 -   PWINFO_CNCDSPMSG=\x0D      OPERACAO\x0D      CANCELADA
+06/11/23 14:29:57:095 -   PWINFO_CNCPPMSG=    OPERACAO        CANCELADA   
+06/11/23 14:29:57:126 -   PWINFO_USINGPINPAD=1
+06/11/23 14:29:57:126 -   PWINFO_PPCOMMPORT=06
+06/11/23 14:29:57:126 -   PWINFO_LIBVERSION=0004.0001.0015.0001
+06/11/23 14:29:57:126 -   PWINFO_OSVERSION=SO:Win 10 , 64bits
+06/11/23 14:29:57:142 - PW_iGetResult( PWINFO_IDLEPROCTIME )
+06/11/23 14:29:57:142 -   PWRET_NODATA
+06/11/23 14:29:57:142 -   OnExibeMensagem( , tmTodas, -1 )
+06/11/23 14:29:57:142 - VerificarTransacoesPendentes
+06/11/23 14:29:57:142 - EfetuarPagamento( 1.23, 2,00, tefmpCartao, tefmfAVista, [ teftcCredito ], 1 )
+06/11/23 14:29:57:142 - ConfirmarTransacoesPendentes
+06/11/23 14:29:57:142 - FinalizarTransacoes( tefstsSucessoAutomatico )
+06/11/23 14:29:57:142 - PW_iNewTransac( PWOPER_SALE )
+06/11/23 14:29:57:532 -   PWRET_NOTINST
+06/11/23 14:29:57:532 - EACBrTEFPayGoWeb: É necessário efetuar uma transação de Instalação
+06/11/23 14:29:57:532 -   QuandoFinalizarOperacao
+06/11/23 14:35:32:173 - Inicializar
+06/11/23 14:35:32:173 - TACBrTEFPGWebAPI.SetDiretorioTrabalho( C:\Projetos\speedfood\ACNFe\tef\PGWeb )
+06/11/23 14:35:32:173 - TACBrTEFPGWebAPI.Inicializar
+06/11/23 14:35:32:173 - TACBrTEFPGWebAPI.LoadDLLFunctions
+06/11/23 14:35:32:173 -    PW_iInit
+06/11/23 14:35:32:173 -    PW_iGetResult
+06/11/23 14:35:32:173 -    PW_iNewTransac
+06/11/23 14:35:32:188 -    PW_iAddParam
+06/11/23 14:35:32:188 -    PW_iExecTransac
+06/11/23 14:35:32:188 -    PW_iConfirmation
+06/11/23 14:35:32:188 -    PW_iIdleProc
+06/11/23 14:35:32:188 -    PW_iGetOperations
+06/11/23 14:35:32:188 -    PW_iPPEventLoop
+06/11/23 14:35:32:188 -    PW_iPPAbort
+06/11/23 14:35:32:188 -    PW_iPPGetCard
+06/11/23 14:35:32:188 -    PW_iPPGetPIN
+06/11/23 14:35:32:188 -    PW_iPPGetData
+06/11/23 14:35:32:204 -    PW_iPPGoOnChip
+06/11/23 14:35:32:204 -    PW_iPPFinishChip
+06/11/23 14:35:32:204 -    PW_iPPConfirmData
+06/11/23 14:35:32:204 -    PW_iPPGenericCMD
+06/11/23 14:35:32:204 -    PW_iPPDisplay
+06/11/23 14:35:32:204 -    PW_iPPGetUserData
+06/11/23 14:35:32:204 -    PW_iPPWaitEvent
+06/11/23 14:35:32:204 -    PW_iPPRemoveCard
+06/11/23 14:35:32:204 -    PW_iPPGetPINBlock
+06/11/23 14:35:32:204 -    PW_iTransactionInquiry
+06/11/23 14:35:32:204 -    PW_iPPDataConfirmation
+06/11/23 14:35:32:204 -      Função não requerida: PW_iPPDataConfirmation não encontrada em: PGWebLib.dll
+06/11/23 14:35:32:204 -    PW_iPPTestKey
+06/11/23 14:35:32:204 -    PW_iWaitConfirmation
+06/11/23 14:35:32:220 -    PW_iGetOperationsEx
+06/11/23 14:35:32:220 - PW_iInit( C:\Projetos\speedfood\ACNFe\tef\PGWeb )
+06/11/23 14:35:34:517 -   PWRET_OK
+06/11/23 14:35:34:517 - PW_iNewTransac( PWOPER_VERSION )
+06/11/23 14:35:36:345 -   PWRET_OK
+06/11/23 14:35:36:345 - TACBrTEFPGWebAPI.AdicionarDadosObrigatorios
+06/11/23 14:35:36:345 - PW_iAddParam( PWINFO_AUTNAME, ACTEF )
+06/11/23 14:35:36:345 -   PWRET_OK
+06/11/23 14:35:36:345 - PW_iAddParam( PWINFO_AUTVER, 1.0 )
+06/11/23 14:35:36:345 -   PWRET_OK
+06/11/23 14:35:36:345 - PW_iAddParam( PWINFO_AUTDEV, VALORARE GESTAO E TI LTDA )
+06/11/23 14:35:36:345 -   PWRET_OK
+06/11/23 14:35:36:361 - PW_iAddParam( PWINFO_AUTCAP, 396 )
+06/11/23 14:35:36:361 -   PWRET_OK
+06/11/23 14:35:36:361 - PW_iAddParam( PWINFO_MERCHADDDATA4, ACBrTEFPGWebAPI 1.0.1 )
+06/11/23 14:35:36:361 -   PWRET_OK
+06/11/23 14:35:36:361 - PW_iAddParam( PWINFO_DSPQRPREF, 1 )
+06/11/23 14:35:36:361 -   PWRET_OK
+06/11/23 14:35:36:361 - TACBrTEFPGWebAPI.ExecutarTransacao
+06/11/23 14:35:36:361 - PW_iGetResult( PWINFO_PROCESSMSG )
+06/11/23 14:35:36:361 -   [CR]   PROCESSANDO...
+06/11/23 14:35:36:361 -   OnExibeMensagem( PROCESSANDO..., tmCliente, -1 )
+06/11/23 14:35:36:361 - PW_iExecTransac()
+06/11/23 14:35:36:361 -   PWRET_OK, NumParams: 10
+06/11/23 14:35:36:361 - TACBrTEFPGWebAPI.ObterDadosDaTransacao
+06/11/23 14:35:36:376 -   PWINFO_OPERATION=252
+06/11/23 14:35:36:376 -   PWINFO_DESTTCPIP=pl03.pgweb.io:17500
+06/11/23 14:35:36:376 -   PWINFO_RESULTMSG=0004.0001.0015.0001
+06/11/23 14:35:36:376 -   PWINFO_CNFREQ=0
+06/11/23 14:35:36:376 -   PWINFO_LANGUAGE=0
+06/11/23 14:35:36:376 -   PWINFO_PROCESSMSG=\x0D   PROCESSANDO...
+06/11/23 14:35:36:376 -   PWINFO_CNCDSPMSG=\x0D      OPERACAO\x0D      CANCELADA
+06/11/23 14:35:36:376 -   PWINFO_CNCPPMSG=    OPERACAO        CANCELADA   
+06/11/23 14:35:36:407 -   PWINFO_USINGPINPAD=1
+06/11/23 14:35:36:407 -   PWINFO_PPCOMMPORT=06
+06/11/23 14:35:36:407 -   PWINFO_LIBVERSION=0004.0001.0015.0001
+06/11/23 14:35:36:407 -   PWINFO_OSVERSION=SO:Win 10 , 64bits
+06/11/23 14:35:36:423 - PW_iGetResult( PWINFO_IDLEPROCTIME )
+06/11/23 14:35:36:423 -   PWRET_NODATA
+06/11/23 14:35:36:423 -   OnExibeMensagem( , tmTodas, -1 )
+06/11/23 14:35:36:423 - VerificarTransacoesPendentes
+06/11/23 14:35:36:423 - EfetuarPagamento( 1.23, 1,00, tefmpCartao, tefmfAVista, [ teftcCredito ], 1 )
+06/11/23 14:35:36:423 - ConfirmarTransacoesPendentes
+06/11/23 14:35:36:423 - FinalizarTransacoes( tefstsSucessoAutomatico )
+06/11/23 14:35:36:423 - PW_iNewTransac( PWOPER_SALE )
+06/11/23 14:35:36:814 -   PWRET_NOTINST
+06/11/23 14:35:36:814 - EACBrTEFPayGoWeb: É necessário efetuar uma transação de Instalação
+06/11/23 14:35:36:814 -   QuandoFinalizarOperacao
+06/11/23 14:45:06:260 - Inicializar
+06/11/23 14:45:06:260 - TACBrTEFPGWebAPI.SetDiretorioTrabalho( C:\Projetos\speedfood\ACNFe\tef\PGWeb )
+06/11/23 14:45:06:260 - TACBrTEFPGWebAPI.Inicializar
+06/11/23 14:45:06:260 - TACBrTEFPGWebAPI.LoadDLLFunctions
+06/11/23 14:45:06:260 -    PW_iInit
+06/11/23 14:45:06:276 -    PW_iGetResult
+06/11/23 14:45:06:276 -    PW_iNewTransac
+06/11/23 14:45:06:276 -    PW_iAddParam
+06/11/23 14:45:06:276 -    PW_iExecTransac
+06/11/23 14:45:06:276 -    PW_iConfirmation
+06/11/23 14:45:06:276 -    PW_iIdleProc
+06/11/23 14:45:06:276 -    PW_iGetOperations
+06/11/23 14:45:06:276 -    PW_iPPEventLoop
+06/11/23 14:45:06:292 -    PW_iPPAbort
+06/11/23 14:45:06:292 -    PW_iPPGetCard
+06/11/23 14:45:06:292 -    PW_iPPGetPIN
+06/11/23 14:45:06:292 -    PW_iPPGetData
+06/11/23 14:45:06:292 -    PW_iPPGoOnChip
+06/11/23 14:45:06:292 -    PW_iPPFinishChip
+06/11/23 14:45:06:292 -    PW_iPPConfirmData
+06/11/23 14:45:06:292 -    PW_iPPGenericCMD
+06/11/23 14:45:06:292 -    PW_iPPDisplay
+06/11/23 14:45:06:292 -    PW_iPPGetUserData
+06/11/23 14:45:06:307 -    PW_iPPWaitEvent
+06/11/23 14:45:06:307 -    PW_iPPRemoveCard
+06/11/23 14:45:06:307 -    PW_iPPGetPINBlock
+06/11/23 14:45:06:307 -    PW_iTransactionInquiry
+06/11/23 14:45:06:307 -    PW_iPPDataConfirmation
+06/11/23 14:45:06:307 -      Função não requerida: PW_iPPDataConfirmation não encontrada em: PGWebLib.dll
+06/11/23 14:45:06:307 -    PW_iPPTestKey
+06/11/23 14:45:06:307 -    PW_iWaitConfirmation
+06/11/23 14:45:06:307 -    PW_iGetOperationsEx
+06/11/23 14:45:06:307 - PW_iInit( C:\Projetos\speedfood\ACNFe\tef\PGWeb )
+06/11/23 14:45:08:698 -   PWRET_OK
+06/11/23 14:45:08:698 - PW_iNewTransac( PWOPER_VERSION )
+06/11/23 14:45:10:405 -   PWRET_OK
+06/11/23 14:45:10:405 - TACBrTEFPGWebAPI.AdicionarDadosObrigatorios
+06/11/23 14:45:10:405 - PW_iAddParam( PWINFO_AUTNAME, ACTEF )
+06/11/23 14:45:10:405 -   PWRET_OK
+06/11/23 14:45:10:405 - PW_iAddParam( PWINFO_AUTVER, 1.0 )
+06/11/23 14:45:10:405 -   PWRET_OK
+06/11/23 14:45:10:405 - PW_iAddParam( PWINFO_AUTDEV, VALORARE GESTAO E TI LTDA )
+06/11/23 14:45:10:405 -   PWRET_OK
+06/11/23 14:45:10:405 - PW_iAddParam( PWINFO_AUTCAP, 396 )
+06/11/23 14:45:10:405 -   PWRET_OK
+06/11/23 14:45:10:405 - PW_iAddParam( PWINFO_MERCHADDDATA4, ACBrTEFPGWebAPI 1.0.1 )
+06/11/23 14:45:10:405 -   PWRET_OK
+06/11/23 14:45:10:405 - PW_iAddParam( PWINFO_DSPQRPREF, 1 )
+06/11/23 14:45:10:421 -   PWRET_OK
+06/11/23 14:45:10:421 - TACBrTEFPGWebAPI.ExecutarTransacao
+06/11/23 14:45:10:421 - PW_iGetResult( PWINFO_PROCESSMSG )
+06/11/23 14:45:10:421 -   [CR]   PROCESSANDO...
+06/11/23 14:45:10:421 -   OnExibeMensagem( PROCESSANDO..., tmCliente, -1 )
+06/11/23 14:45:10:421 - PW_iExecTransac()
+06/11/23 14:45:10:421 -   PWRET_OK, NumParams: 10
+06/11/23 14:45:10:421 - TACBrTEFPGWebAPI.ObterDadosDaTransacao
+06/11/23 14:45:10:421 -   PWINFO_OPERATION=252
+06/11/23 14:45:10:421 -   PWINFO_DESTTCPIP=pl03.pgweb.io:17500
+06/11/23 14:45:10:421 -   PWINFO_RESULTMSG=0004.0001.0015.0001
+06/11/23 14:45:10:421 -   PWINFO_CNFREQ=0
+06/11/23 14:45:10:421 -   PWINFO_LANGUAGE=0
+06/11/23 14:45:10:436 -   PWINFO_PROCESSMSG=\x0D   PROCESSANDO...
+06/11/23 14:45:10:436 -   PWINFO_CNCDSPMSG=\x0D      OPERACAO\x0D      CANCELADA
+06/11/23 14:45:10:436 -   PWINFO_CNCPPMSG=    OPERACAO        CANCELADA   
+06/11/23 14:45:10:452 -   PWINFO_USINGPINPAD=1
+06/11/23 14:45:10:452 -   PWINFO_PPCOMMPORT=06
+06/11/23 14:45:10:452 -   PWINFO_LIBVERSION=0004.0001.0015.0001
+06/11/23 14:45:10:452 -   PWINFO_OSVERSION=SO:Win 10 , 64bits
+06/11/23 14:45:10:467 - PW_iGetResult( PWINFO_IDLEPROCTIME )
+06/11/23 14:45:10:467 -   PWRET_NODATA
+06/11/23 14:45:10:467 -   OnExibeMensagem( , tmTodas, -1 )
+06/11/23 14:45:10:467 - VerificarTransacoesPendentes
+06/11/23 14:45:10:467 - EfetuarPagamento( 1.23, 1,00, tefmpCartao, tefmfAVista, [ teftcCredito ], 1 )
+06/11/23 14:45:10:467 - ConfirmarTransacoesPendentes
+06/11/23 14:45:10:467 - FinalizarTransacoes( tefstsSucessoAutomatico )
+06/11/23 14:45:10:467 - PW_iNewTransac( PWOPER_SALE )
+06/11/23 14:45:10:858 -   PWRET_NOTINST
+06/11/23 14:45:10:858 - EACBrTEFPayGoWeb: É necessário efetuar uma transação de Instalação
+06/11/23 14:45:10:858 -   QuandoFinalizarOperacao
+06/11/23 14:49:45:288 - Inicializar
+06/11/23 14:49:45:288 - TACBrTEFPGWebAPI.SetDiretorioTrabalho( C:\Projetos\speedfood\ACNFe\tef\PGWeb )
+06/11/23 14:49:45:288 - TACBrTEFPGWebAPI.Inicializar
+06/11/23 14:49:45:288 - TACBrTEFPGWebAPI.LoadDLLFunctions
+06/11/23 14:49:45:288 -    PW_iInit
+06/11/23 14:49:45:288 -    PW_iGetResult
+06/11/23 14:49:45:288 -    PW_iNewTransac
+06/11/23 14:49:45:288 -    PW_iAddParam
+06/11/23 14:49:45:304 -    PW_iExecTransac
+06/11/23 14:49:45:304 -    PW_iConfirmation
+06/11/23 14:49:45:304 -    PW_iIdleProc
+06/11/23 14:49:45:304 -    PW_iGetOperations
+06/11/23 14:49:45:304 -    PW_iPPEventLoop
+06/11/23 14:49:45:304 -    PW_iPPAbort
+06/11/23 14:49:45:304 -    PW_iPPGetCard
+06/11/23 14:49:45:304 -    PW_iPPGetPIN
+06/11/23 14:49:45:304 -    PW_iPPGetData
+06/11/23 14:49:45:304 -    PW_iPPGoOnChip
+06/11/23 14:49:45:304 -    PW_iPPFinishChip
+06/11/23 14:49:45:304 -    PW_iPPConfirmData
+06/11/23 14:49:45:304 -    PW_iPPGenericCMD
+06/11/23 14:49:45:320 -    PW_iPPDisplay
+06/11/23 14:49:45:320 -    PW_iPPGetUserData
+06/11/23 14:49:45:320 -    PW_iPPWaitEvent
+06/11/23 14:49:45:320 -    PW_iPPRemoveCard
+06/11/23 14:49:45:320 -    PW_iPPGetPINBlock
+06/11/23 14:49:45:320 -    PW_iTransactionInquiry
+06/11/23 14:49:45:320 -    PW_iPPDataConfirmation
+06/11/23 14:49:45:320 -      Função não requerida: PW_iPPDataConfirmation não encontrada em: PGWebLib.dll
+06/11/23 14:49:45:320 -    PW_iPPTestKey
+06/11/23 14:49:45:320 -    PW_iWaitConfirmation
+06/11/23 14:49:45:335 -    PW_iGetOperationsEx
+06/11/23 14:49:45:335 - PW_iInit( C:\Projetos\speedfood\ACNFe\tef\PGWeb )
+06/11/23 14:49:47:726 -   PWRET_OK
+06/11/23 14:49:47:726 - PW_iNewTransac( PWOPER_VERSION )
+06/11/23 14:49:49:460 -   PWRET_OK
+06/11/23 14:49:49:460 - TACBrTEFPGWebAPI.AdicionarDadosObrigatorios
+06/11/23 14:49:49:460 - PW_iAddParam( PWINFO_AUTNAME, ACTEF )
+06/11/23 14:49:49:460 -   PWRET_OK
+06/11/23 14:49:49:460 - PW_iAddParam( PWINFO_AUTVER, 1.0 )
+06/11/23 14:49:49:476 -   PWRET_OK
+06/11/23 14:49:49:476 - PW_iAddParam( PWINFO_AUTDEV, VALORARE GESTAO E TI LTDA )
+06/11/23 14:49:49:476 -   PWRET_OK
+06/11/23 14:49:49:476 - PW_iAddParam( PWINFO_AUTCAP, 396 )
+06/11/23 14:49:49:476 -   PWRET_OK
+06/11/23 14:49:49:476 - PW_iAddParam( PWINFO_MERCHADDDATA4, ACBrTEFPGWebAPI 1.0.1 )
+06/11/23 14:49:49:476 -   PWRET_OK
+06/11/23 14:49:49:476 - PW_iAddParam( PWINFO_DSPQRPREF, 1 )
+06/11/23 14:49:49:476 -   PWRET_OK
+06/11/23 14:49:49:476 - TACBrTEFPGWebAPI.ExecutarTransacao
+06/11/23 14:49:49:476 - PW_iGetResult( PWINFO_PROCESSMSG )
+06/11/23 14:49:49:476 -   [CR]   PROCESSANDO...
+06/11/23 14:49:49:476 -   OnExibeMensagem( PROCESSANDO..., tmCliente, -1 )
+06/11/23 14:49:49:476 - PW_iExecTransac()
+06/11/23 14:49:49:492 -   PWRET_OK, NumParams: 10
+06/11/23 14:49:49:492 - TACBrTEFPGWebAPI.ObterDadosDaTransacao
+06/11/23 14:49:49:492 -   PWINFO_OPERATION=252
+06/11/23 14:49:49:492 -   PWINFO_DESTTCPIP=pl03.pgweb.io:17500
+06/11/23 14:49:49:492 -   PWINFO_RESULTMSG=0004.0001.0015.0001
+06/11/23 14:49:49:492 -   PWINFO_CNFREQ=0
+06/11/23 14:49:49:492 -   PWINFO_LANGUAGE=0
+06/11/23 14:49:49:492 -   PWINFO_PROCESSMSG=\x0D   PROCESSANDO...
+06/11/23 14:49:49:507 -   PWINFO_CNCDSPMSG=\x0D      OPERACAO\x0D      CANCELADA
+06/11/23 14:49:49:507 -   PWINFO_CNCPPMSG=    OPERACAO        CANCELADA   
+06/11/23 14:49:49:523 -   PWINFO_USINGPINPAD=1
+06/11/23 14:49:49:523 -   PWINFO_PPCOMMPORT=06
+06/11/23 14:49:49:523 -   PWINFO_LIBVERSION=0004.0001.0015.0001
+06/11/23 14:49:49:523 -   PWINFO_OSVERSION=SO:Win 10 , 64bits
+06/11/23 14:49:49:539 - PW_iGetResult( PWINFO_IDLEPROCTIME )
+06/11/23 14:49:49:539 -   PWRET_NODATA
+06/11/23 14:49:49:539 -   OnExibeMensagem( , tmTodas, -1 )
+06/11/23 14:49:49:539 - VerificarTransacoesPendentes
+06/11/23 14:49:49:539 - EfetuarPagamento( 1.23, 1,00, tefmpCartao, tefmfAVista, [ teftcCredito ], 1 )
+06/11/23 14:49:49:539 - ConfirmarTransacoesPendentes
+06/11/23 14:49:49:539 - FinalizarTransacoes( tefstsSucessoAutomatico )
+06/11/23 14:49:49:539 - PW_iNewTransac( PWOPER_SALE )
+06/11/23 14:49:49:929 -   PWRET_NOTINST
+06/11/23 14:49:49:929 - EACBrTEFPayGoWeb: É necessário efetuar uma transação de Instalação
+06/11/23 14:49:49:945 -   QuandoFinalizarOperacao
+06/11/23 14:53:21:938 - Inicializar
+06/11/23 14:53:21:938 - TACBrTEFPGWebAPI.SetDiretorioTrabalho( C:\Projetos\speedfood\ACNFe\tef\PGWeb )
+06/11/23 14:53:21:938 - TACBrTEFPGWebAPI.Inicializar
+06/11/23 14:53:21:938 - TACBrTEFPGWebAPI.LoadDLLFunctions
+06/11/23 14:53:21:938 -    PW_iInit
+06/11/23 14:53:21:954 -    PW_iGetResult
+06/11/23 14:53:21:954 -    PW_iNewTransac
+06/11/23 14:53:21:954 -    PW_iAddParam
+06/11/23 14:53:21:954 -    PW_iExecTransac
+06/11/23 14:53:21:954 -    PW_iConfirmation
+06/11/23 14:53:21:954 -    PW_iIdleProc
+06/11/23 14:53:21:954 -    PW_iGetOperations
+06/11/23 14:53:21:954 -    PW_iPPEventLoop
+06/11/23 14:53:21:969 -    PW_iPPAbort
+06/11/23 14:53:21:969 -    PW_iPPGetCard
+06/11/23 14:53:21:969 -    PW_iPPGetPIN
+06/11/23 14:53:21:969 -    PW_iPPGetData
+06/11/23 14:53:21:969 -    PW_iPPGoOnChip
+06/11/23 14:53:21:969 -    PW_iPPFinishChip
+06/11/23 14:53:21:969 -    PW_iPPConfirmData
+06/11/23 14:53:21:969 -    PW_iPPGenericCMD
+06/11/23 14:53:21:969 -    PW_iPPDisplay
+06/11/23 14:53:21:969 -    PW_iPPGetUserData
+06/11/23 14:53:21:969 -    PW_iPPWaitEvent
+06/11/23 14:53:21:969 -    PW_iPPRemoveCard
+06/11/23 14:53:21:969 -    PW_iPPGetPINBlock
+06/11/23 14:53:21:969 -    PW_iTransactionInquiry
+06/11/23 14:53:21:985 -    PW_iPPDataConfirmation
+06/11/23 14:53:21:985 -      Função não requerida: PW_iPPDataConfirmation não encontrada em: PGWebLib.dll
+06/11/23 14:53:21:985 -    PW_iPPTestKey
+06/11/23 14:53:21:985 -    PW_iWaitConfirmation
+06/11/23 14:53:21:985 -    PW_iGetOperationsEx
+06/11/23 14:53:21:985 - PW_iInit( C:\Projetos\speedfood\ACNFe\tef\PGWeb )
+06/11/23 14:53:24:282 -   PWRET_OK
+06/11/23 14:53:24:282 - PW_iNewTransac( PWOPER_VERSION )
+06/11/23 14:53:26:001 -   PWRET_OK
+06/11/23 14:53:26:001 - TACBrTEFPGWebAPI.AdicionarDadosObrigatorios
+06/11/23 14:53:26:001 - PW_iAddParam( PWINFO_AUTNAME, ACTEF )
+06/11/23 14:53:26:001 -   PWRET_OK
+06/11/23 14:53:26:016 - PW_iAddParam( PWINFO_AUTVER, 1.0 )
+06/11/23 14:53:26:016 -   PWRET_OK
+06/11/23 14:53:26:016 - PW_iAddParam( PWINFO_AUTDEV, VALORARE GESTAO E TI LTDA )
+06/11/23 14:53:26:016 -   PWRET_OK
+06/11/23 14:53:26:016 - PW_iAddParam( PWINFO_AUTCAP, 396 )
+06/11/23 14:53:26:016 -   PWRET_OK
+06/11/23 14:53:26:016 - PW_iAddParam( PWINFO_MERCHADDDATA4, ACBrTEFPGWebAPI 1.0.1 )
+06/11/23 14:53:26:016 -   PWRET_OK
+06/11/23 14:53:26:016 - PW_iAddParam( PWINFO_DSPQRPREF, 1 )
+06/11/23 14:53:26:016 -   PWRET_OK
+06/11/23 14:53:26:016 - TACBrTEFPGWebAPI.ExecutarTransacao
+06/11/23 14:53:26:016 - PW_iGetResult( PWINFO_PROCESSMSG )
+06/11/23 14:53:26:016 -   [CR]   PROCESSANDO...
+06/11/23 14:53:26:016 -   OnExibeMensagem( PROCESSANDO..., tmCliente, -1 )
+06/11/23 14:53:26:032 - PW_iExecTransac()
+06/11/23 14:53:26:032 -   PWRET_OK, NumParams: 10
+06/11/23 14:53:26:032 - TACBrTEFPGWebAPI.ObterDadosDaTransacao
+06/11/23 14:53:26:032 -   PWINFO_OPERATION=252
+06/11/23 14:53:26:032 -   PWINFO_DESTTCPIP=pl03.pgweb.io:17500
+06/11/23 14:53:26:032 -   PWINFO_RESULTMSG=0004.0001.0015.0001
+06/11/23 14:53:26:032 -   PWINFO_CNFREQ=0
+06/11/23 14:53:26:032 -   PWINFO_LANGUAGE=0
+06/11/23 14:53:26:032 -   PWINFO_PROCESSMSG=\x0D   PROCESSANDO...
+06/11/23 14:53:26:032 -   PWINFO_CNCDSPMSG=\x0D      OPERACAO\x0D      CANCELADA
+06/11/23 14:53:26:032 -   PWINFO_CNCPPMSG=    OPERACAO        CANCELADA   
+06/11/23 14:53:26:063 -   PWINFO_USINGPINPAD=1
+06/11/23 14:53:26:063 -   PWINFO_PPCOMMPORT=06
+06/11/23 14:53:26:063 -   PWINFO_LIBVERSION=0004.0001.0015.0001
+06/11/23 14:53:26:063 -   PWINFO_OSVERSION=SO:Win 10 , 64bits
+06/11/23 14:53:26:063 - PW_iGetResult( PWINFO_IDLEPROCTIME )
+06/11/23 14:53:26:063 -   PWRET_NODATA
+06/11/23 14:53:26:063 -   OnExibeMensagem( , tmTodas, -1 )
+06/11/23 14:53:26:079 - VerificarTransacoesPendentes
+06/11/23 14:53:26:079 - EfetuarPagamento( 1.23, 1,00, tefmpCartao, tefmfAVista, [ teftcCredito ], 1 )
+06/11/23 14:53:26:079 - ConfirmarTransacoesPendentes
+06/11/23 14:53:26:079 - FinalizarTransacoes( tefstsSucessoAutomatico )
+06/11/23 14:53:26:079 - PW_iNewTransac( PWOPER_SALE )
+06/11/23 14:53:26:472 -   PWRET_NOTINST
+06/11/23 14:53:26:472 - EACBrTEFPayGoWeb: É necessário efetuar uma transação de Instalação
+06/11/23 14:53:26:472 -   QuandoFinalizarOperacao
+06/11/23 14:57:11:148 - Inicializar
+06/11/23 14:57:11:148 - TACBrTEFPGWebAPI.SetDiretorioTrabalho( C:\Projetos\speedfood\ACNFe\tef\PGWeb )
+06/11/23 14:57:11:148 - TACBrTEFPGWebAPI.Inicializar
+06/11/23 14:57:11:163 - TACBrTEFPGWebAPI.LoadDLLFunctions
+06/11/23 14:57:11:163 -    PW_iInit
+06/11/23 14:57:11:163 -    PW_iGetResult
+06/11/23 14:57:11:163 -    PW_iNewTransac
+06/11/23 14:57:11:163 -    PW_iAddParam
+06/11/23 14:57:11:163 -    PW_iExecTransac
+06/11/23 14:57:11:163 -    PW_iConfirmation
+06/11/23 14:57:11:163 -    PW_iIdleProc
+06/11/23 14:57:11:163 -    PW_iGetOperations
+06/11/23 14:57:11:163 -    PW_iPPEventLoop
+06/11/23 14:57:11:163 -    PW_iPPAbort
+06/11/23 14:57:11:179 -    PW_iPPGetCard
+06/11/23 14:57:11:179 -    PW_iPPGetPIN
+06/11/23 14:57:11:179 -    PW_iPPGetData
+06/11/23 14:57:11:179 -    PW_iPPGoOnChip
+06/11/23 14:57:11:179 -    PW_iPPFinishChip
+06/11/23 14:57:11:179 -    PW_iPPConfirmData
+06/11/23 14:57:11:179 -    PW_iPPGenericCMD
+06/11/23 14:57:11:179 -    PW_iPPDisplay
+06/11/23 14:57:11:179 -    PW_iPPGetUserData
+06/11/23 14:57:11:179 -    PW_iPPWaitEvent
+06/11/23 14:57:11:179 -    PW_iPPRemoveCard
+06/11/23 14:57:11:194 -    PW_iPPGetPINBlock
+06/11/23 14:57:11:194 -    PW_iTransactionInquiry
+06/11/23 14:57:11:194 -    PW_iPPDataConfirmation
+06/11/23 14:57:11:194 -      Função não requerida: PW_iPPDataConfirmation não encontrada em: PGWebLib.dll
+06/11/23 14:57:11:194 -    PW_iPPTestKey
+06/11/23 14:57:11:194 -    PW_iWaitConfirmation
+06/11/23 14:57:11:194 -    PW_iGetOperationsEx
+06/11/23 14:57:11:194 - PW_iInit( C:\Projetos\speedfood\ACNFe\tef\PGWeb )
+06/11/23 14:57:13:601 -   PWRET_OK
+06/11/23 14:57:13:601 - PW_iNewTransac( PWOPER_VERSION )
+06/11/23 14:57:15:273 -   PWRET_OK
+06/11/23 14:57:15:273 - TACBrTEFPGWebAPI.AdicionarDadosObrigatorios
+06/11/23 14:57:15:289 - PW_iAddParam( PWINFO_AUTNAME, ACTEF )
+06/11/23 14:57:15:289 -   PWRET_OK
+06/11/23 14:57:15:289 - PW_iAddParam( PWINFO_AUTVER, 1.0 )
+06/11/23 14:57:15:289 -   PWRET_OK
+06/11/23 14:57:15:289 - PW_iAddParam( PWINFO_AUTDEV, VALORARE GESTAO E TI LTDA )
+06/11/23 14:57:15:289 -   PWRET_OK
+06/11/23 14:57:15:289 - PW_iAddParam( PWINFO_AUTCAP, 396 )
+06/11/23 14:57:15:289 -   PWRET_OK
+06/11/23 14:57:15:289 - PW_iAddParam( PWINFO_MERCHADDDATA4, ACBrTEFPGWebAPI 1.0.1 )
+06/11/23 14:57:15:289 -   PWRET_OK
+06/11/23 14:57:15:289 - PW_iAddParam( PWINFO_DSPQRPREF, 1 )
+06/11/23 14:57:15:289 -   PWRET_OK
+06/11/23 14:57:15:289 - TACBrTEFPGWebAPI.ExecutarTransacao
+06/11/23 14:57:15:304 - PW_iGetResult( PWINFO_PROCESSMSG )
+06/11/23 14:57:15:304 -   [CR]   PROCESSANDO...
+06/11/23 14:57:15:304 -   OnExibeMensagem( PROCESSANDO..., tmCliente, -1 )
+06/11/23 14:57:15:304 - PW_iExecTransac()
+06/11/23 14:57:15:304 -   PWRET_OK, NumParams: 10
+06/11/23 14:57:15:304 - TACBrTEFPGWebAPI.ObterDadosDaTransacao
+06/11/23 14:57:15:304 -   PWINFO_OPERATION=252
+06/11/23 14:57:15:304 -   PWINFO_DESTTCPIP=pl03.pgweb.io:17500
+06/11/23 14:57:15:304 -   PWINFO_RESULTMSG=0004.0001.0015.0001
+06/11/23 14:57:15:304 -   PWINFO_CNFREQ=0
+06/11/23 14:57:15:304 -   PWINFO_LANGUAGE=0
+06/11/23 14:57:15:304 -   PWINFO_PROCESSMSG=\x0D   PROCESSANDO...
+06/11/23 14:57:15:320 -   PWINFO_CNCDSPMSG=\x0D      OPERACAO\x0D      CANCELADA
+06/11/23 14:57:15:320 -   PWINFO_CNCPPMSG=    OPERACAO        CANCELADA   
+06/11/23 14:57:15:335 -   PWINFO_USINGPINPAD=1
+06/11/23 14:57:15:335 -   PWINFO_PPCOMMPORT=06
+06/11/23 14:57:15:335 -   PWINFO_LIBVERSION=0004.0001.0015.0001
+06/11/23 14:57:15:335 -   PWINFO_OSVERSION=SO:Win 10 , 64bits
+06/11/23 14:57:15:351 - PW_iGetResult( PWINFO_IDLEPROCTIME )
+06/11/23 14:57:15:351 -   PWRET_NODATA
+06/11/23 14:57:15:351 -   OnExibeMensagem( , tmTodas, -1 )
+06/11/23 14:57:15:351 - VerificarTransacoesPendentes
+06/11/23 14:57:15:351 - EfetuarPagamento( 1.23, 1,00, tefmpCartao, tefmfAVista, [ teftcCredito ], 1 )
+06/11/23 14:57:15:351 - ConfirmarTransacoesPendentes
+06/11/23 14:57:15:351 - FinalizarTransacoes( tefstsSucessoAutomatico )
+06/11/23 14:57:15:351 - PW_iNewTransac( PWOPER_SALE )
+06/11/23 14:57:15:742 -   PWRET_NOTINST
+06/11/23 14:57:15:742 - EACBrTEFPayGoWeb: É necessário efetuar uma transação de Instalação
+06/11/23 14:57:15:742 -   QuandoFinalizarOperacao
