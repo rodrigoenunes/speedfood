@@ -379,12 +379,12 @@ type
     pathImagens: String;
     nExtras: Integer;
     wNroPedido: Integer;
-    wCodExtra: array[1..2,1..12] of integer;
-    wTxtExtra: array[1..2,1..12] of String;
-    wVlrExtra: array[1..2,1..12] of Currency;
-    wCodExtraTab: array[1..24] of Integer;
-    wTxtExtraTab: array[1..24] of String;
-    wVlrExtraTab: array[1..24] of Currency;
+    wCodExtra: array[1..2,1..24] of integer;
+    wTxtExtra: array[1..2,1..24] of String;
+    wVlrExtra: array[1..2,1..24] of Currency;
+    wCodExtraTab: array[1..48] of Integer;
+    wTxtExtraTab: array[1..48] of String;
+    wVlrExtraTab: array[1..48] of Currency;
     usaCorItem: Boolean;
     sysIniFile,sysUser,sysCPUId{,sysVersao,sysLocal}: String;
     sysNumId,sysNrCaixa,sysCaixaSeq: Integer;
@@ -400,6 +400,8 @@ type
     sysTefPosIni,sysTefPos: Integer;
     sysImprimePedido,sysImprimeEtiquetaBebidas,sysImprimeEtiquetaLanches,
     sysImprimeEtiquetaCrepes,sysImprimeEtiquetaHamburgueres,sysImprimeEtiquetaFrituras: Boolean;
+    sysColValor,sysBtnNFCe,sysBtnCancel:Boolean;
+    sysAbreTurnoCaixa:Boolean;
     balLanches,balBebidas,balCrepes,balFrituras,balHamburgueres,balBufDiv: Boolean;
     filGrupoItens: Integer;
     meioPgto: Integer;
@@ -515,7 +517,7 @@ begin
         uDM.wTxtExtra[i,j] := '';
         uDM.wVlrExtra[i,j] := 0;
       end;
-  for k := 1 to 24 do
+  for k := 1 to 48 do
     begin
       uDM.wCodExtraTab[k] := 0;
       uDM.wTxtExtraTab[k] := '';
@@ -828,6 +830,7 @@ begin
     vIniFile.WriteString('DB', 'Port', '');
     vIniFile.WriteString('DB', 'Host2', '');
     vIniFile.WriteString('DB', 'Port2', '');
+    vIniFile.WriteString('DB', 'Pwd', 'speed@123');    // ou speedfood
 
     vIniFile.WriteString('Estacao','Nome','');               // Nome da estação
     vIniFile.WriteInteger('Estacao','Numero',0);             // Nro da estação é o nro do CAIXA
@@ -878,6 +881,7 @@ begin
   idServer[1] := vIniFile.ReadString('DB', 'Host', '127.0.0.1').Trim;
   idServer[2] := vIniFile.ReadString('DB', 'Host2', '255.255.255.1').Trim;
   sPorta := vIniFile.ReadString('DB', 'Port', '').Trim;
+
 {
   sServer := vIniFile.ReadString('DB', 'Host', '').Trim;
   if Not sServer.IsEmpty then
@@ -888,6 +892,7 @@ begin
   sysCPUId := vIniFile.ReadString('Estacao','Nome','');
   sysNumId := vIniFile.ReadInteger('Estacao','Numero',0);
   sysNrCaixa := sysNumId;
+  sysAbreTurnoCaixa := vIniFile.ReadBool('Estacao','AbreTurnoCaixa',False);
 
   sysPedidos := vIniFile.ReadBool('Estacao','Pedidos',True);
   sysIdPedidos := vIniFile.ReadString('Estacao','IdPedidos','Onibus');
@@ -913,6 +918,10 @@ begin
   sysImprimeEtiquetaCrepes := vIniFile.ReadBool('Estacao','ImprimeEtiquetaCrepes',False);
   sysImprimeEtiquetaHamburgueres := vIniFile.ReadBool('Estacao','ImprimeEtiquetaHamburgueres',False);
   sysImprimeEtiquetaFrituras := vIniFile.ReadBool('Estacao','ImprimeEtiquetaFrituras',False);
+  sysColValor := vIniFile.ReadBool('Estacao','ColunaValor',False);
+  sysBtnNFCe := vIniFile.ReadBool('Estacao','ConsNFCe',False);
+  sysBtnCancel := vIniFile.ReadBool('Estacao','ConsCancela',False);
+
   //
   //sysVersao := AnsiUpperCase(vIniFile.ReadString('Estacao','Versao','XXXX'));
   //sysLocal := AnsiUpperCase(vIniFile.ReadString('Estacao','Local','Onibus'));  xx
@@ -928,9 +937,11 @@ begin
   balHamburgueres := vIniFile.ReadBool('AbasDisponiveis','Hamburgueres',False);
   balBufDiv := vIniFile.ReadBool('AbasDisponiveis','BuffetDiversos',False);
   //
+{
   if (not sysPedidos) and (not sysBalcao) and (not sysBuffet) then
      MessageDlg('Verifique os parametros de inicialização, Pedidos/Balcao/Buffet' + #13 +
                 'Arquivo: ' + sysIniFile,mtWarning,[mbOk],0);
+}
 
   sysEtiquetasPrt := vIniFile.ReadString('Impressoras','Etiquetas','');
   sysPedidosPrt := vIniFile.ReadString('Impressoras','Pedidos','');
@@ -969,7 +980,7 @@ begin
     Halt(0);
   End;
   //
-  wOperCartoes := 0;       // COntador de operaçoes com cartões
+  wOperCartoes := 0;       // Contador de operaçoes com cartões
   //
   RegCaixa.Filtered := True;
   LctCaixa.Filtered := True;

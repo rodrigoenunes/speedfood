@@ -87,8 +87,8 @@ type
 
 var
   FuPedidos: TFuPedidos;
-  wCodLanche: array[0..19,0..19] of Integer;
-  wCodBebida: array[0..19,0..19] of Integer;
+  wCodLanche: array[0..39,0..39] of Integer;
+  wCodBebida: array[0..39,0..39] of Integer;
   lrgLanche,altLanche,lrgBebida,altBebida: Integer;
   wColor: TColor;
   nExec,nMaxExtras: Integer;
@@ -117,9 +117,9 @@ begin
   // Monta tela de pedidos (FuPedidos) e tratativa de lanches (FuTrataLanche)
   with FuPedidos
   do begin
-    for i := 0 to 19
+    for i := 0 to 39
     do begin
-       for j := 0 to 19
+       for j := 0 to 39
        do begin
          wCodLanche[i,j] := 0;
          wCodBebida[i,j] := 0;
@@ -364,7 +364,7 @@ begin
     PedWrkQuant.AsInteger     := 1;
     PedWrkVlrUnit.AsCurrency  := wValor;
     PedWrkVlrTotal.AsCurrency := wValor;
-    PedWrkExtras.AsString     := stringFiller('.',24);
+    PedWrkExtras.AsString     := stringFiller('.',48);
     PedWrkAltPreco.AsBoolean  := wAltPr;
     PedWrkCortado.AsBoolean   := False;
     PedWrkPrensado.AsBoolean  := False;
@@ -464,7 +464,7 @@ begin
       PedWrkQuant.AsInteger     := 1;
       PedWrkVlrUnit.AsCurrency  := ItensPreco.AsCurrency;
       PedWrkVlrTotal.AsCurrency := ItensPreco.AsCurrency;
-      PedWrkExtras.AsString     := stringFiller('.',24);
+      PedWrkExtras.AsString     := stringFiller('.',48);
       PedWrk.Post;
     end;
   end;

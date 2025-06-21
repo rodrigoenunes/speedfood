@@ -16,7 +16,7 @@ object FuQueryAdministrativo: TFuQueryAdministrativo
     Left = 0
     Top = 0
     Width = 757
-    Height = 242
+    Height = 271
     Align = alTop
     Caption = 'Sele'#231#227'o de dados'
     Font.Charset = DEFAULT_CHARSET
@@ -26,7 +26,10 @@ object FuQueryAdministrativo: TFuQueryAdministrativo
     Font.Style = []
     ParentFont = False
     TabOrder = 0
-    ExplicitLeft = 2
+    ExplicitLeft = -2
+    DesignSize = (
+      757
+      271)
     object Label1: TLabel
       Left = 8
       Top = 28
@@ -55,9 +58,10 @@ object FuQueryAdministrativo: TFuQueryAdministrativo
     end
     object LabProcess: TLabel
       Left = 8
-      Top = 192
+      Top = 222
       Width = 64
       Height = 16
+      Anchors = [akLeft, akBottom]
       Caption = 'LabProcess'
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
@@ -66,6 +70,7 @@ object FuQueryAdministrativo: TFuQueryAdministrativo
       Font.Style = []
       ParentFont = False
       Visible = False
+      ExplicitTop = 192
     end
     object cbTurnoIni: TComboBox
       Left = 104
@@ -97,35 +102,40 @@ object FuQueryAdministrativo: TFuQueryAdministrativo
     end
     object btProcessar: TBitBtn
       Left = 487
-      Top = 192
+      Top = 223
       Width = 124
       Height = 42
+      Anchors = [akLeft, akBottom]
       Caption = 'Processar'
       TabOrder = 6
       OnClick = btProcessarClick
     end
     object btSair: TBitBtn
       Left = 617
-      Top = 192
+      Top = 222
       Width = 124
       Height = 42
+      Anchors = [akLeft, akBottom]
       Caption = 'Sair/Cancelar'
       TabOrder = 7
       OnClick = btSairClick
+      ExplicitTop = 192
     end
     object PBar1: TProgressBar
       Left = 8
-      Top = 208
+      Top = 238
       Width = 473
       Height = 25
+      Anchors = [akLeft, akBottom]
       TabOrder = 8
       Visible = False
+      ExplicitTop = 208
     end
     object rgCaixas: TRadioGroup
       Left = 8
-      Top = 94
+      Top = 95
       Width = 361
-      Height = 45
+      Height = 54
       Caption = 'Caixa'
       Columns = 4
       Font.Charset = DEFAULT_CHARSET
@@ -143,9 +153,10 @@ object FuQueryAdministrativo: TFuQueryAdministrativo
     end
     object rgMeiosPagto: TRadioGroup
       Left = 8
-      Top = 142
+      Top = 172
       Width = 596
       Height = 45
+      Anchors = [akLeft, akBottom]
       Caption = 'Meios de pagamento'
       Columns = 7
       Items.Strings = (
@@ -157,18 +168,20 @@ object FuQueryAdministrativo: TFuQueryAdministrativo
         'Outros'
         'Misto')
       TabOrder = 4
+      ExplicitTop = 142
     end
     object rgSituacao: TRadioGroup
       Left = 375
       Top = 95
       Width = 229
-      Height = 45
+      Height = 78
       Caption = 'Situa'#231#227'o pedidos'
-      Columns = 3
+      Columns = 2
       Items.Strings = (
         'Todos'
-        'Pend'
-        'Pagos')
+        'Pendentes'
+        'Pagos'
+        'Cancelados')
       TabOrder = 3
     end
     object rgDocumentos: TRadioGroup
@@ -186,19 +199,22 @@ object FuQueryAdministrativo: TFuQueryAdministrativo
   end
   object PanResultado: TPanel
     Left = 0
-    Top = 242
+    Top = 271
     Width = 757
-    Height = 377
+    Height = 348
     Align = alClient
     TabOrder = 1
     Visible = False
+    ExplicitTop = 242
+    ExplicitHeight = 377
     object Panel1: TPanel
       Left = 1
-      Top = 335
+      Top = 306
       Width = 755
       Height = 41
       Align = alBottom
       TabOrder = 0
+      ExplicitTop = 335
       DesignSize = (
         755
         41)
@@ -235,9 +251,10 @@ object FuQueryAdministrativo: TFuQueryAdministrativo
       Left = 1
       Top = 1
       Width = 236
-      Height = 334
+      Height = 305
       Align = alLeft
       TabOrder = 1
+      ExplicitHeight = 334
       object Label3: TLabel
         Left = 38
         Top = 35
@@ -725,9 +742,10 @@ object FuQueryAdministrativo: TFuQueryAdministrativo
       Left = 237
       Top = 1
       Width = 519
-      Height = 334
+      Height = 305
       Align = alClient
       TabOrder = 2
+      ExplicitHeight = 334
       object Panel4: TPanel
         Left = 1
         Top = 1
@@ -759,11 +777,12 @@ object FuQueryAdministrativo: TFuQueryAdministrativo
       end
       object Panel5: TPanel
         Left = 1
-        Top = 292
+        Top = 263
         Width = 517
         Height = 41
         Align = alBottom
         TabOrder = 1
+        ExplicitTop = 292
         object NavResumo: TDBNavigator
           Left = 8
           Top = 6
@@ -778,7 +797,7 @@ object FuQueryAdministrativo: TFuQueryAdministrativo
         Left = 1
         Top = 25
         Width = 517
-        Height = 267
+        Height = 238
         Align = alClient
         DataSource = uDM.SResumoVendas
         DrawingStyle = gdsClassic

@@ -626,6 +626,9 @@ procedure TFuQueryPedidos.FormActivate(Sender: TObject);
 begin
   if not lFTime then Exit;
   lFTime := False;
+  DBGrid1.Columns[4].Visible := uDM.sysColValor;
+  btEmitirNFCe.Visible := uDM.sysBtnNFCe;
+  btCancelar.Visible := uDM.sysBtnCancel;
   rgCaixas.ItemIndex := uDM.sysNrCaixa;
   edTurno.Text := IntToStr(wNrTurno);
   edTurnoExit(nil);
@@ -636,7 +639,10 @@ procedure TFuQueryPedidos.FormResize(Sender: TObject);
 begin
   if FuQueryPedidos.Width < 1024 then FuQueryPedidos.Width := 1024;
   if FuQueryPedidos.Height < 600 then FuQueryPedidos.Height := 600;
-  DBGrid1 := DefineGrid(DBGrid1,[0.05, 0.03, 0.06, 0.04, 0.08, 0.15, 0.09, 0.09, 0.09, 0.33], 9, 0);
+  if DBGrid1.Columns[4].Visible then
+    DBGrid1 := DefineGrid(DBGrid1,[0.05, 0.03, 0.06, 0.04, 0.08, 0.15, 0.09, 0.09, 0.09, 0.33], 9, 0)
+  else
+    DBGrid1 := DefineGrid(DBGrid1,[0.05, 0.03, 0.06, 0.04, 0.00, 0.15, 0.09, 0.09, 0.09, 0.33], 9, 0)
 
 end;
 

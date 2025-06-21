@@ -85,7 +85,7 @@ procedure TFuPrincipal.btAdminClick(Sender: TObject);
 begin
   if ObtemParametro('SistemaUserPwd','N') = 'S'
   then if not ObtemUsuario(uDM.sysUser)
-            then btSairClick(nil);
+            then Exit;
   Administrativo;
 
 end;
@@ -149,19 +149,20 @@ end;
 procedure TFuPrincipal.btSairClick(Sender: TObject);
 var wExec,wParm: String;
 begin
-  if FechaCaixa then
-  begin
-    CaixaMovimentacao(False);     // Somente caixa atual
-    if uDM.wOperCartoes > 0 then
-       if MessageDlg('Executar operação adicional (cartões) ?',
-                      mtConfirmation,[mbYes,mbNo],0,mbNo,['Sim','Não']) = mrYes
-    then begin
-       wExec := ObtemParametro('ACNFE_EXE');
-       wParm := '/TEF /CANCELAR X';
-       ShellExecute(0,'open',pChar(wExec),pChar(wParm),'',1);
+  if uDM.sysAbreTurnoCaixa then
+    if FechaCaixa then
+    begin
+      CaixaMovimentacao(False);     // Somente caixa atual
+      if uDM.wOperCartoes > 0 then
+         if MessageDlg('Executar operação adicional (cartões) ?',
+                        mtConfirmation,[mbYes,mbNo],0,mbNo,['Sim','Não']) = mrYes
+      then begin
+        wExec := ObtemParametro('ACNFE_EXE');
+        wParm := '/TEF /CANCELAR X';
+        ShellExecute(0,'open',pChar(wExec),pChar(wParm),'',1);
+      end;
+      FechaTurno(mdFechaTurno);
     end;
-    FechaTurno(mdFechaTurno);
-  end;
   FuPrincipal.Close;
 
 end;
@@ -176,7 +177,7 @@ procedure TFuPrincipal.btManutencaoClick(Sender: TObject);
 begin
   if ObtemParametro('SistemaUserPwd','N') = 'S'
   then if not ObtemUsuario(uDM.sysUser)
-            then btSairClick(nil);
+            then Exit;
   if ObtemParametro('UsaCorItem','N') = 'S' then uDM.usaCorItem := True
      else uDM.usaCorItem := False;
   ManutencaoProdutos;
@@ -247,12 +248,14 @@ begin
     end;
     if nDias < 31 then
       MessageDlg('A validade do sistema termina em ' + IntToStr(nDias) + ' dias',mtInformation,[mbOk],0);
+    {
     if ObtemParametro('SistemaUserPwd') = 'S' then
       if not ObtemUsuario(uDM.sysUser) then
         begin
           MessageDlg('usuário indefinido/inválido',mtError,[mbOk],0);
           Halt(0);
         end;
+    }
     //
     FFRCtle.RLPreviewSetup1.ZoomFactor := StrToIntDef(ObtemParametro('FortesZoomFactor'),100);
     FGen.lSalvaForm := True;
@@ -271,11 +274,11 @@ begin
     ContaExtras;                  // Obtem qtd de ítens 'extras'
     //
     // Define 'botões' utilizados
-    nBotoes := 2;               // AbrirCaixa e Sair sempre visiveis
+    nBotoes := 3;               // AbrirCaixa e Sair sempre visiveis
     if uDM.sysPedidos then nBotoes := nBotoes + 1;
     if uDM.sysBalcao then nBotoes := nBotoes + 1;
     if uDM.sysBuffet then nBotoes := nBotoes + 1;
-    if uDM.sysPedidos or uDM.sysBalcao then nBotoes := nBotoes + 1;
+    //if uDM.sysPedidos or uDM.sysBalcao then nBotoes := nBotoes + 1;
     if uDM.sysManut then nBotoes := nBotoes + 1;
     if uDM.sysAdmin then nBotoes := nBotoes + 1;
     if uDM.sysUsuar then nBotoes := nBotoes + 1;
@@ -318,14 +321,14 @@ begin
       btBuffet.Left := btCaixa.Left;
       nTop := nTop + nAlt + 2;
     end;
-    if uDM.sysPedidos or uDM.sysBalcao or uDM.sysBuffet then
-    begin
+    //if uDM.sysPedidos or uDM.sysBalcao or uDM.sysBuffet then
+    //begin
       btConsPedidos.Top := nTop;
       btConsPedidos.Height := nAlt;
       btConsPedidos.Visible := True;
       btConsPedidos.Left := btCaixa.Left;
       nTop := nTop + nAlt + 2;
-    end;
+    //end;
     if uDM.sysManut then
     begin
       btManutencao.Top := nTop;
@@ -370,19 +373,25 @@ begin
     btHelpGeral.Visible := uDM.sysHelp;
     btHelpArgox.Visible := uDM.sysHelpArgox;
     //
-    if not AbreTurno then
+    if uDM.sysAbreTurnoCaixa then
     begin
-      MessageDlg('Abertura/Utilização de turno: Processo cancelado',mtInformation,[mbOk],0);
-      Halt(0);
-    end;
-    //
-    //ShowMessage('Turno=' + IntToStr(uDM.turnoCorrente) + '  Caixa='+ IntToStr(uDM.sysNrCaixa));
-    if not AbreCaixa(uDM.turnoCorrente,uDM.sysNrCaixa) then
-    begin
-      MessageDlg('Cancelamento de abertura pelo usuário, ou' + #13 +
-                 'não foi possível criar o registro de caixa.' + #13 +
-                 'Processo cancelado', mtError, [mbOk], 0);
-      Halt(0);
+      if not AbreTurno then
+      begin
+        MessageDlg('Abertura/Utilização de turno: Processo cancelado',mtInformation,[mbOk],0);
+        Halt(0);
+      end;
+      //ShowMessage('Turno=' + IntToStr(uDM.turnoCorrente) + '  Caixa='+ IntToStr(uDM.sysNrCaixa));
+      if not AbreCaixa(uDM.turnoCorrente,uDM.sysNrCaixa) then
+      begin
+        MessageDlg('Cancelamento de abertura pelo usuário, ou' + #13 +
+                   'não foi possível criar o registro de caixa.' + #13 +
+                   'Processo cancelado', mtError, [mbOk], 0);
+        Halt(0);
+      end;
+    end
+    else begin
+      uDM.Turnos.Last;
+      uDM.turnoCorrente := uDM.TurnosNrTurno.AsInteger;
     end;
     //
     LabCaixa.Caption := 'Caixa: ' + IntToStr(uDM.sysNrCaixa);

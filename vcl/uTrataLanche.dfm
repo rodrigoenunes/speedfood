@@ -64,8 +64,8 @@ object FuTrataLanche: TFuTrataLanche
           87
           178)
         object btOkLanche: TBitBtn
-          Left = 4
-          Top = 4
+          Left = 6
+          Top = 0
           Width = 79
           Height = 48
           Anchors = [akLeft, akTop, akRight]
@@ -746,8 +746,8 @@ object FuTrataLanche: TFuTrataLanche
       end
     end
     object GridExtras: TDrawGrid
-      Left = 45
-      Top = 87
+      Left = 44
+      Top = 83
       Width = 609
       Height = 238
       FixedCols = 0

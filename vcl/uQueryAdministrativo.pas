@@ -156,6 +156,7 @@ begin
     rgSituacao.Items.Add('Todos');
     rgSituacao.Items.Add('Pendentes');
     rgSituacao.Items.Add('Pagos');
+    rgSituacao.Items.Add('Cancelados');
     rgSituacao.ItemIndex := 2;
 
     rgMeiosPagto.Items.Clear;
@@ -174,7 +175,7 @@ begin
     rgDocumentos.Items.Add('Outros');
     rgDocumentos.ItemIndex := 0;
 
-    gbSelDados.Height := 242;
+    gbSelDados.Height := 272;
     gbSelDados.Enabled := True;
     btProcessar.Enabled := gbSelDados.Enabled;
     btSair.Enabled := gbSelDados.Enabled;
@@ -190,10 +191,29 @@ end;
 
 Procedure ProcessaPedido(pmtPedido:Integer);
 var iDoc: integer;
+    vlrItens: Currency;
 begin
   // Totaliza pedido, selecionado no "Select"
   with FuQueryAdministrativo
   do begin
+    // Verifica validade do pedido
+    FDQItens.SQL.Text := 'Select * from com_pedidoitem where Numero='+ IntToStr(pmtPedido);
+    FDQItens.Open;
+    FDQItens.First;
+    vlrItens := 0;
+    while not FDQItens.Eof do
+    begin
+      vlrItens := vlrItens + FDQItensVlrTotal.AsCurrency;
+      FDQItens.Next;
+    end;
+    if vlrItens <> FDQPedidosValor.AsCurrency then
+    begin
+      DebugMensagem(uDM.lDebug,'Pedido ' + IntToStr(pmtPedido) +
+                               '  Valor=' + FloatToStrF(FDQPedidosValor.AsCurrency,ffNumber,15,2) +
+                               '  Calc='+ FloatToStrF(vlrItens,ffNumber,15,2));
+      Exit;
+    end;
+    //
     // Totalização por MeioPagto
     qtdMeioPgto[FDQPedidosMeioPagto.AsInteger] := qtdMeioPgto[FDQPedidosMeioPagto.AsInteger] + 1;
     vlrMeioPgto[0] := vlrMeioPgto[0] + FDQPedidosVlrReais.AsCurrency;
@@ -241,8 +261,11 @@ begin
       ttVlr := ttVlr + FDQItensVlrTotal.AsCurrency;
       //
       FDQItens.Next;
+
     end;
   end;
+
+
 
 end;
 
@@ -337,7 +360,14 @@ begin
   if rgCaixas.ItemIndex > 0 then
     wSelText := wSelText + ' and NrEstacao=' + IntToStr(rgCaixas.ItemIndex);
   if rgSituacao.ItemIndex > 0 then
-    wSelText := wSelText + ' and SitPagto=' + IntToStr(rgSituacao.ItemIndex-1);
+  begin
+    wSelText := wSelText + ' and SitPagto=';
+    case rgSituacao.itemIndex of
+      1:wSelText := wSelText + '0';   // Pendentes
+      2:wSelText := wSelText + '1';   // Pagos
+      3:wSeltext := wSelText + '9';   // cancelados
+    end;
+  end;
   if rgMeiosPagto.ItemIndex > 0 then
     wSelText := wSelText + ' and MeioPagto=' + IntToStr(rgMeiosPagto.ItemIndex-1);
   if rgDocumentos.ItemIndex > 0 then

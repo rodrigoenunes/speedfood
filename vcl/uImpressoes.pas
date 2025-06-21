@@ -255,7 +255,7 @@ begin
   FuImpressoes.RLMemoItem.Visible := False;
   if (uDM.PedItensTpProd.AsInteger <> 1) and
      (uDM.PedItensTpProd.AsInteger <> 4) then Exit;
-  if uDM.PedItensExtras.AsString = stringFiller('.',24) then Exit;
+  if uDM.PedItensExtras.AsString = stringFiller('.',48) then Exit;
   xExtra := uDM.PedItensExtras.AsString;
 
   if uDM.PedItensTpProd.AsInteger= 1 then
@@ -433,7 +433,7 @@ begin
     4:PedItensZC_Tp.AsString := 'M';
     6:PedItensZC_Tp.AsString := 'D';
     else PedItensZC_Tp.AsString := '';}
-  if uDM.PedItensExtras.AsString = stringFiller('.',24) then Exit;
+  if uDM.PedItensExtras.AsString = stringFiller('.',48) then Exit;
   //
   xExtra := uDM.PedItensExtras.AsString;
   txtSem := '';

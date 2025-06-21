@@ -312,6 +312,7 @@ var wStrAuxil: String;
 begin
   MontaTelaExtras;
   wStrAuxil := uDM.PedWrkExtras.AsString;
+  DebugMensagem(uDM.lDebug,'Após wStrAuxil=....');
   btOkLanche.SetFocus;
 
 end;
@@ -433,12 +434,12 @@ begin
      Col 2 e 7: Indica SEM
      Col 3 e 8: Indica MENOS
      Col 4: Separador
-     'Extras' (1 a 24)    '.' Sem ação   '+' Mais
+     'Extras' (1 an 48)    '.' Sem ação   '+' Mais
                           '1' ou '2' Mais um ou dois (com valor)
                           '-' Menos   '0' SEM }
   if (nCol = 0) or (nCol = 4) or (nCol = 5) then Exit;      // Colunas sem efeito
   //
-  xExtras := uDM.PedWrkExtras.AsString;            // String de 24 posições (24 extras possíveis)
+  xExtras := uDM.PedWrkExtras.AsString;            // String de 48 posições (48 extras possíveis)
   // Obtem código de extra considerado/lançado
   if nCol < 5 then wCol := 1
               else wCol := 2;
@@ -448,7 +449,7 @@ begin
   nExtVlr := 0;
   lctCods := [99,0,0,0];
   j := 1;
-  for i := 1 to 24
+  for i := 1 to 48
   do if (xExtras[i] = '1') or (xExtras[i] = '2') or (xExtras[i] = '3')
      then begin
        nExtVlr := nExtVlr + 1;         // Extras com valor
@@ -503,7 +504,7 @@ begin
   lctCods := [99,0,0,0];
   lctVlrs := [99,0,0,0];
   j := 1;
-  for i := 1 to 24
+  for i := 1 to 48
   do if (xExtras[i] = '1') or (xExtras[i] = '2')
      then begin
        nVezes := StrToInt(xExtras[i]);
@@ -525,7 +526,7 @@ begin
   wTxtMais := TStringList.Create;
   wTxtSem := TStringList.Create;
   wTxtMenos := TStringList.Create;
-  for i := 1 to 24 do
+  for i := 1 to 48 do
   begin
     if xExtras[i] <> '.'
     then if uDM.Itens.FindKey([2,i])
@@ -561,7 +562,7 @@ end;
 
 procedure TFuTrataLanche.ImgResetMouseDown(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
 begin
-  uDM.PedWrkExtras.AsString  := stringFiller('.',24);
+  uDM.PedWrkExtras.AsString  := stringFiller('.',48);
   uDM.PedWrkCod01.AsInteger  := 0;
   uDM.PedWrkVlr01.AsCurrency := 0;
   uDM.PedWrkCod02.AsInteger  := 0;

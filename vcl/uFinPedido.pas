@@ -124,6 +124,7 @@ var
   tvLeft,tvTop: Integer;
   valorPedido: Currency;
   itensPedido: Integer;
+  lDebugFimPed: Boolean;
 
 implementation
 
@@ -216,7 +217,7 @@ begin
     end;
     uDM.PedidosLanctos.AsInteger := itensPedido;
     uDM.PedidosValor.AsCurrency := valorPedido;
-    uDM.PedidosVlrReais.AsCurrency := valorPedido;
+    uDM.PedidosVlrReais.AsCurrency := 0;       // valorPedido;
     uDM.PedidosVlrCDeb.Clear;
     uDM.PedidosVlrCCred.Clear;
     uDM.PedidosVlrPIX.Clear;
@@ -225,7 +226,7 @@ begin
     uDM.PedidosSrNFCe.Clear;
     uDM.PedidosArqXML.Clear;
     uDM.PedidosEtqImpressas.AsInteger := 0;
-    uDM.PedidosVlrRecebido.AsCurrency := valorPedido;
+    uDM.PedidosVlrRecebido.AsCurrency := 0;    // valorPedido;
     uDM.PedidosVlrTroco.AsCurrency := 0;
     uDM.PedidosCPF_CNPJ.EditMask := '';
     uDM.PedidosTurno.AsInteger := uDM.turnoCorrente;
@@ -238,8 +239,8 @@ begin
     uDM.PedidosMeioPagto.AsInteger := uDM.meioPgto;
     uDM.PedidosNomeCliente.AsString := uDM.nomeClie;
     uDM.PedidosCPF_CNPJ.AsString := uDM.CPFCNPJ;
-    uDM.PedidosSitPagto.AsInteger := 1;                  // := 0;     !!!!NÃO PAGO
-    uDM.PedidosParaLevar.AsInteger := 0;                 // 0= Não levar
+    uDM.PedidosSitPagto.AsInteger := 0;                   // 0:NÃO PAGO   1:PAGO
+    uDM.PedidosParaLevar.AsInteger := 0;                  // 0= Não levar
     //
     pNroPedido := nrPedido;                  // <---- Variavel de retorno, nro do pedido
     //
@@ -481,13 +482,14 @@ procedure TFuFinPedido.btCancelarClick(Sender: TObject);
 begin
   //if MessageDlg('Cancelar pedido ?',mtConfirmation,
   //              [mbYes,mbNo],0,mbNo,['Sim','Não']) <> mrYes then Exit;
-  if MsgInformacao('Confirmação',
-                   'Cancelamento de pedido',
-                   'Realmente cancelar o pedido ?',
-                   ['Sim','Não',''],1) <> 0 then Exit;
-  uDM.Pedidos.Cancel;
-  nRetorno := 2;
-  FuFinPedido.Close;
+  if MsgInformacao(2,'Cancelamento de pedido',
+                     'Confirme cancelamento do pedido.',
+                     ['Sim','Não',''],1) = 1 then
+  begin
+    uDM.Pedidos.Cancel;
+    nRetorno := 2;
+    FuFinPedido.Close;
+  end;
 
 end;
 
@@ -500,26 +502,34 @@ var somaVlr,wSaldo: Currency;
     xEmitirNFCe,xImpressao,wMsg: String;
     wStatus,wAtivarMsg: Boolean;
     wAnswer: Integer;
-    lDebugFimPed: Boolean;
 begin
   if  (ObtemParametro('PedidoPlaca') = 'S') and uDM.sysPedePlaca then
      if StrToIntDef(uDM.PedidosPlaca.AsString,0) = 0 then
      begin
        //MessageDlg('Nro de placa não informado, dado obrigatorio',mtError,[mbOk],0);
-       MsgInformacao('Aviso',
-                     'Placa / Senha',
+       MsgInformacao(1,'Placa / Senha',
                      'Número da placa/senha não informado' + #13 +
                      'Dado obrigatório' + #13 +
                      'Informe',
-                     ['Ok','',''],0);
+                     ['Ok','',''],1);
        dbPlaca.SetFocus;
        Exit;
      end;
 
+  {  if uDM.PedidosMeioPagto.AsInteger < 0 then
+  begin
+    MessageDlg('(Re)informe o meio de pagamento',mtWarning,[mbOk],0);
+    dbMeioPagto.SetFocus;
+    Exit;
+  end;  }
   if uDM.PedidosMeioPagto.AsInteger = 0 then   // Dinheiro
     if uDM.PedidosVlrRecebido.AsCurrency < uDM.PedidosValor.AsCurrency then
     begin
-      MessageDlg('Valor recebido insuficiente, menor que total do pedido',mtError,[mbOk],0);
+      //MessageDlg('Valor recebido insuficiente, menor que total do pedido',mtError,[mbOk],0);
+      MsgInformacao(1,'Valor recebido',
+                    'Valor recebido é insuficiente' + #13 +
+                    'Menor que total do pedido' + #13 +
+                    'Reinforme', ['Ok','',''],1);
       edReceb.SetFocus;
       Exit;
     end;
@@ -528,29 +538,35 @@ begin
              uDM.PedidosVlrOutros.AsCurrency;
   if Abs(uDM.PedidosValor.AsCurrency - somaVlr) > 0.01 then
   begin
-    MessageDlg('Somatório dos valores difere do total do pedido',mtError,[mbOk],0);
+    //MessageDlg('Somatório dos valores difere do total do pedido',mtError,[mbOk],0);
+    MsgInformacao(1,'Valores',
+                    'Somatório dos valores recebidos' + #13 +
+                    'difere do total do pedido' + #13 +
+                    'Reinforme', ['Ok','',''],1);
     dbMeioPagto.SetFocus;
     Exit;
   end;
   //
-  if ObtemParametro('ConfirmaPagto') = 'S'
-  then if MessageDlg('Confirme' + #13 +
+  if ObtemParametro('ConfirmaPagto') = 'S' then
+{  then if MessageDlg('Confirme' + #13 +
                      'Pedido: ' + uDM.PedidosNumero.AsString +
                      '  R$: ' + FloatToStrF(uDM.PedidosValor.AsCurrency,ffNumber,15,2) + #13 +
                      'Meio de pagamento: ' + dbMeioPagto.Items[dbMeioPagto.ItemIndex] + #13 +
                      'Confirme o pedido e meio de pagamento',
                      mtConfirmation,
                      [mbYes,mbNo],
-                     0,mbNo,['Confirmar','Não confirmar']) <> mrYes
-       then begin
-         dbMeioPagto.SetFocus;
-         Exit;
-       end;
+                     0,mbNo,['Confirmar','Não confirmar']) <> mrYes}
+    if MsgInformacao(2,'Confirmação de pagamento',
+                       'Pedido: ' + uDM.PedidosNumero.AsString +
+                       '   Valor: ' + FloatToStrF(uDM.PedidosValor.AsCurrency,ffNumber,15,2) + #13 +
+                       'Meio de pagamento: ' + dbMeioPagto.Items[dbMeioPagto.ItemIndex] + #13#13 +
+                       'Confirma pedido e meio de pagamento?',
+                       ['Sim','Não',''],2) <> 1 then
+    begin
+      dbMeioPagto.SetFocus;
+      Exit;
+    end;
   //
-  if ObtemParametro('DebugFimPedidos_'+IntToStr(uDM.sysNumId),'N') = 'S' then
-    lDebugFimPed := True
-  else
-    lDebugFimPed := False;
   cbImprimeNFCe.Enabled := False;
   btGravar.Enabled := False;
   btCancelar.Enabled := False;
@@ -783,7 +799,6 @@ begin
   wStatus := True;
   if ObtemParametro('NFCe_Emitir') = 'S' then         // Emitir NFCe?
   begin
-    xEmitirNFCe := 'Q';
     case uDM.PedidosMeioPagto.AsInteger of
       0:xEmitirNFCe := ObtemParametro('NFCe_Reais');        // Pagto em Reais (dinheiro)
       1,6:xEmitirNFCe := ObtemParametro('NFCe_CDebito');    // Pagto Cartao de débito/Banricompras
@@ -794,12 +809,14 @@ begin
       else xEmitirNFCe := 'Q';
     end;
     if (xEmitirNFCe = 'Q') or (xEmitirNFCe = '') then
-      if MessageDlg('Geração / Emissão de NFCe' + #13 +
-                    'Pedido: ' + uDM.PedidosNumero.AsString + #13 +
-                    'Valor: ' + FloatToStrF(uDM.PedidosValor.AsCurrency,ffNumber,15,2) + #13 +
-                    'Meio pagamento: ' + uDM.PedidosZC_MPExtenso.AsString,
-                    mtConfirmation,[mbYes,mbNo],0,mbNo,['Sim','Não']) = mrYes
-        then xEmitirNFCe := 'S';
+      if MsgInformacao(2,'Emissão NFCe',
+                         'Geração / Emissão de NFCe' + #13 +
+                         'Pedido: ' + uDM.PedidosNumero.AsString + #13 +
+                         'Valor: ' + FloatToStrF(uDM.PedidosValor.AsCurrency,ffNumber,15,2) + #13 +
+                         'Meio pagamento: ' + uDM.PedidosZC_MPExtenso.AsString,
+                         ['Sim','Não',''],2) = 1 then
+        xEmitirNFCe := 'S';
+    //
     if xEmitirNFCe = 'S' then
     begin
       wStatus := False;
@@ -814,29 +831,24 @@ begin
   DebugMensagem(lDebugFimPed,'5- Após tratativa NFCe');
   if wStatus then
   begin
-     if (uDM.PedidosMeioPagto.AsInteger = 1) or        // Cartão dédito
-        (uDM.PedidosMeioPagto.AsInteger = 2)           // Cartão crédito
-        then uDM.wOperCartoes := uDM.wOperCartoes + 1;
+    if (uDM.PedidosMeioPagto.AsInteger = 1) or        // Cartão dédito
+       (uDM.PedidosMeioPagto.AsInteger = 2) then      // Cartão  crédito
+      uDM.wOperCartoes := uDM.wOperCartoes + 1;       // Contador de operações com cartões
 
-  {
+    // Verificar no cliente............
     newSitPagto := 1;
     if uDM.PedidosMeioPagto.AsInteger = 0 then
-      if MessageDlg('Pagamento em REAIS' + #13 + 'Confirme o pagamento',
-                    mtConfirmation,[mbYes,mbNo],0,mbNo,['Sim','Não']) = mrNo then
-                    newSitPagto := 0;                   // Não pago
-    //ShowMessage('Pgt reais 1   Nr:'+ uDM.PedidosNumero.AsString);
+      if MsgInformacao(2,'Confirmar pagamento',
+                         'Pagamento efetuado em REAIS' + #13 +
+                         'Confirme o pagamento',['Sim','Não',''],1) <> 1 then
+        newSitPagto := 0;    // Não pago
     if uDM.Pedidos.State <> dsEdit then
        uDM.Pedidos.Edit;
-    //ShowMessage('Pgt reais 1.5');
     sleep(500);
     uDM.Pedidos['SitPagto'] := newSitPagto;
-
-    //ShowMessage('Pgt reais 1.6');
-
     uDM.Pedidos.Post;
-    //ShowMessage('Pgt reais 2');
-  }
   end;
+
   if (not wStatus) or
      (uDM.PedidosSitPagto.AsInteger = 0) then
   begin
@@ -1116,7 +1128,7 @@ end;
 procedure TFuFinPedido.btRetornarClick(Sender: TObject);
 begin
   uDM.nroPlaca := uDM.PedidosPlaca.AsString;
-  uDM.meioPgto := uDM.PedidosMeioPagto.AsInteger;
+  uDM.meioPgto := 0;           // uDM.PedidosMeioPagto.AsInteger;
   uDM.nomeClie := uDM.PedidosNomeCliente.AsString;
   uDM.CPFCNPJ := uDM.PedidosCPF_CNPJ.AsString;
   uDM.Pedidos.Cancel;
@@ -1184,7 +1196,8 @@ begin
   uDM.PedidosVlrCCred.AsCurrency := 0;
   uDM.PedidosVlrPIX.AsCurrency := 0;
   uDM.PedidosVlrOutros.AsCurrency := 0;
-  //ShowMessage('MeioPagto'+ uDM.PedidosMeioPagto.AsString);
+  DebugMensagem(lDebugFimPed,'PedidosMeioPagto=' + uDM.PedidosMeioPagto.AsString + #13 +
+                             'dbMeioPagto.ItemIndex=' + IntToStr(dbMeioPagto.ItemIndex));
 
   case dbMeioPagto.ItemIndex of
     0:begin    // Reais
@@ -1199,11 +1212,11 @@ begin
         edReceb.SetFocus;
         Exit;
     end;
-    1,6:uDM.PedidosVlrCDeb.AsCurrency   := valorPedido;           // Débito ou Banricompras
-    2:uDM.PedidosVlrCCred.AsCurrency  := valorPedido;             // Crédito
-    3:uDM.PedidosVlrPIX.AsCurrency    := valorPedido;             // PIX
-    4:uDM.PedidosVlrOutros.AsCurrency := valorPedido;             // Outros
-    5:begin                                                       // Misto
+    1,6:uDM.PedidosVlrCDeb.AsCurrency := valorPedido;           // Débito ou Banricompras
+    2:uDM.PedidosVlrCCred.AsCurrency  := valorPedido;           // Crédito
+    3:uDM.PedidosVlrPIX.AsCurrency    := valorPedido;           // PIX
+    4:uDM.PedidosVlrOutros.AsCurrency := valorPedido;           // Outros
+    5:begin                                                     // Misto
         nTop := FuFinPedido.Top + PanInform.Top;
         nLeft := FuFinPedido.Left + PanInform.Left;
         nHeight := FuFinPedido.Height - (PanInform.Top * 2);
@@ -1223,12 +1236,14 @@ end;
 
 procedure TFuFinPedido.dbMeioPagtoExit(Sender: TObject);
 begin
-{
   if dbMeioPagto.ItemIndex = 0 then
-    edReceb.SetFocus
+  begin
+    uDM.PedidosVlrReais.AsCurrency := valorPedido;
+    edReceb.SetFocus;
+  end
   else
     btGravar.SetFocus;
-}
+
 end;
 
 procedure TFuFinPedido.dbNomeEnter(Sender: TObject);
@@ -1266,6 +1281,18 @@ end;
 procedure TFuFinPedido.dbPlacaExit(Sender: TObject);
 begin
   Teclado.Visible := False;
+  if uDM.PedidosMeioPagto.AsInteger < 0 then
+  begin
+    uDM.PedidosVlrReais.AsCurrency := 0;
+    uDM.PedidosVlrCDeb.AsCurrency := 0;
+    uDM.PedidosVlrCCred.AsCurrency := 0;
+    uDM.PedidosVlrPIX.AsCurrency := 0;
+    uDM.PedidosVlrOutros.AsCurrency := 0;
+    uDM.PedidosVlrRecebido.AsCurrency := 0;
+    uDM.PedidosVlrTroco.AsCurrency := 0;
+    ExibeValorFaltante;
+    dbMeioPagto.SetFocus;
+  end;
 
 end;
 
@@ -1410,8 +1437,8 @@ begin
     uDM.PedidosVlrTroco.AsCurrency := 0;
     Exit;
   end;
-  if uDM.PedidosVlrRecebido.AsCurrency > 0 then
-  begin
+  //if uDM.PedidosVlrRecebido.AsCurrency > 0 then
+  //begin
      if uDM.PedidosVlrRecebido.AsCurrency < uDM.PedidosValor.AsCurrency then
      begin
        MessageDlg('Valor recebido insuficiente, reinforme',mtError,[mbOk],0);
@@ -1419,7 +1446,7 @@ begin
        Exit;
     end;
     uDM.PedidosVlrTroco.AsCurrency := uDM.PedidosVlrRecebido.AsCurrency - uDM.PedidosValor.AsCurrency;
-  end;
+  //end;
 
 end;
 
@@ -1527,6 +1554,10 @@ begin
     imgNoTick.Visible := False;
     imgTick.Visible := True;
   end;
+  if ObtemParametro('DebugFimPedidos_'+IntToStr(uDM.sysNumId),'N') = 'S' then
+    lDebugFimPed := True
+  else
+    lDebugFimPed := False;
 
 end;
 

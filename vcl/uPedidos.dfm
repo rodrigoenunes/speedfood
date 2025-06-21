@@ -753,7 +753,7 @@ object FuPedidos: TFuPedidos
         ParentFont = False
         object GridLanches: TDrawGrid
           Left = 11
-          Top = 3
+          Top = 0
           Width = 320
           Height = 120
           FixedCols = 0

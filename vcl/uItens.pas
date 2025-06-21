@@ -426,9 +426,9 @@ end;
 procedure TFuItens.btOkClick(Sender: TObject);
 begin
   if ((uDM.ItensGrupo.AsInteger = 2) or (uDM.ItensGrupo.AsInteger = 5)) and
-     ((uDM.ItensCodigo.AsInteger < 1) or (uDM.ItensCodigo.AsInteger > 24))
+     ((uDM.ItensCodigo.AsInteger < 1) or (uDM.ItensCodigo.AsInteger > 36))
   then begin
-    MessageDlg('Extras: código do ítem deve ser entre 1 e 24',mtError,[mbOk],0);
+    MessageDlg('Extras: código do ítem deve ser entre 1 e 48',mtError,[mbOk],0);
     dbCodigo.SetFocus;
     Exit;
   end;
@@ -469,7 +469,7 @@ begin
     if uDM.ItensPreco.AsCurrency > 0 then nVals := nVals + 1;
     uDM.Itens.Next;
   end;
-  if nVals > 6 then
+  if nVals > 20 then
   begin
     MessageDlg('Há mais de 6 (seis) ítens "EXTRA" com valor' + #13 +
                'Corrija as informações', mtError, [mbOk], 0);

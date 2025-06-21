@@ -20,17 +20,19 @@ object FuItens: TFuItens
     Left = 0
     Top = 0
     Width = 984
-    Height = 416
+    Height = 408
     Align = alClient
     TabOrder = 0
+    ExplicitHeight = 416
     object PanManut: TPanel
       Left = 1
-      Top = 92
+      Top = 84
       Width = 982
       Height = 323
       Align = alBottom
       Enabled = False
       TabOrder = 0
+      ExplicitTop = 92
       object dbTipo: TDBRadioGroup
         Left = 1
         Top = 1
@@ -66,8 +68,6 @@ object FuItens: TFuItens
         Align = alClient
         BevelOuter = bvNone
         TabOrder = 1
-        ExplicitLeft = 153
-        ExplicitWidth = 834
         object Label2: TLabel
           Left = 20
           Top = 0
@@ -513,7 +513,7 @@ object FuItens: TFuItens
       Left = 1
       Top = 1
       Width = 982
-      Height = 91
+      Height = 83
       Align = alClient
       DataSource = uDM.DSItens
       DrawingStyle = gdsClassic
@@ -613,14 +613,14 @@ object FuItens: TFuItens
   end
   object PanBottom: TPanel
     Left = 0
-    Top = 416
+    Top = 408
     Width = 984
-    Height = 59
+    Height = 67
     Align = alBottom
     TabOrder = 1
     DesignSize = (
       984
-      59)
+      67)
     object LabNRegs: TLabel
       Left = 9
       Top = 37
@@ -650,7 +650,7 @@ object FuItens: TFuItens
       Left = 546
       Top = 12
       Width = 103
-      Height = 25
+      Height = 33
       Anchors = [akTop, akRight]
       Caption = '&Incluir'
       Glyph.Data = {
@@ -675,7 +675,7 @@ object FuItens: TFuItens
       Left = 655
       Top = 12
       Width = 99
-      Height = 25
+      Height = 33
       Anchors = [akTop, akRight]
       Caption = '&Alterar'
       Glyph.Data = {
@@ -699,7 +699,7 @@ object FuItens: TFuItens
       Left = 764
       Top = 12
       Width = 103
-      Height = 25
+      Height = 33
       Anchors = [akTop, akRight]
       Caption = '&Excluir'
       Glyph.Data = {
@@ -723,7 +723,7 @@ object FuItens: TFuItens
       Left = 873
       Top = 12
       Width = 103
-      Height = 25
+      Height = 33
       Anchors = [akTop, akRight]
       Caption = '&Sair'
       Glyph.Data = {
@@ -746,11 +746,11 @@ object FuItens: TFuItens
     object cbSelec: TComboBox
       Left = 146
       Top = 18
-      Width = 225
-      Height = 27
+      Width = 275
+      Height = 43
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
-      Font.Height = -16
+      Font.Height = -29
       Font.Name = 'Tahoma'
       Font.Style = []
       ParentFont = False
@@ -771,7 +771,7 @@ object FuItens: TFuItens
       Left = 437
       Top = 12
       Width = 103
-      Height = 25
+      Height = 33
       Anchors = [akTop, akRight]
       Caption = 'Etiquetas'
       Glyph.Data = {

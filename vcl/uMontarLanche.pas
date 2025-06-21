@@ -42,10 +42,10 @@ type
   public
     { Public declarations }
     nRowBas,nRowExt: Integer;
-    wCodBas: array[0..19] of Integer;
-    wSelBas: array[0..19] of String;
-    wCodExt: array[0..19] of Integer;
-    wSelExt: array[0..19] of String;
+    wCodBas: array[0..39] of Integer;
+    wSelBas: array[0..39] of String;
+    wCodExt: array[0..39] of Integer;
+    wSelExt: array[0..39] of String;
 
   end;
 

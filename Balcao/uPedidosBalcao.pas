@@ -217,8 +217,8 @@ type
 
 var
   FuPedidosBalcao: TFuPedidosBalcao;
-  wCodLanche: array[0..19,0..19] of Integer;
-  wCodBebida: array[0..19,0..19] of Integer;
+  wCodLanche: array[0..39,0..39] of Integer;
+  wCodBebida: array[0..39,0..39] of Integer;
 
   wCodCrepe: array[0..23] of Integer;
   wSelCrepe: array[0..23] of String;
@@ -752,7 +752,7 @@ begin
           wDescr := stringReplace(uDM.ItensDescricao.AsString,'#',' ',[rfIgnoreCase, rfReplaceAll]);
           wValor := uDM.ItensPreco.AsCurrency;
           wAltPr := uDM.ItensAlteraPreco.AsBoolean;
-          wExtra := stringFiller('.',24);
+          wExtra := stringFiller('.',48);
           wTotal := wValor;
           wQuant := 1;
         end;
@@ -769,7 +769,7 @@ begin
           wDescr := 'Montar lanche - ';
           wValor := 0;
           wAltPr := False;
-          wExtra := stringFiller('.',24);
+          wExtra := stringFiller('.',48);
           wObserv := '';
           wTotal := wValor;
           wQuant := 1;
@@ -921,7 +921,7 @@ begin
       PedWrkQuant.AsInteger     := 1;
       PedWrkVlrUnit.AsCurrency  := ItensPreco.AsCurrency;
       PedWrkVlrTotal.AsCurrency := ItensPreco.AsCurrency;
-      PedWrkExtras.AsString     := stringFiller('.',24);
+      PedWrkExtras.AsString     := stringFiller('.',48);
       PedWrk.Post;
     end;
   end;
@@ -1008,7 +1008,7 @@ begin
     PedWrkQuant.AsInteger     := 1;
     PedWrkVlrUnit.AsCurrency  := wValor;
     PedWrkVlrTotal.AsCurrency := wValor;
-    PedWrkExtras.AsString     := stringFiller('.',24);
+    PedWrkExtras.AsString     := stringFiller('.',48);
     PedWrkAltPreco.AsBoolean  := wAltPr;
     PedWrkCortado.AsBoolean   := False;
     PedWrkPrensado.AsBoolean  := False;
@@ -1077,12 +1077,14 @@ var nRet,nroPedido: Integer;
     lstPedido: String;
 begin
   PanAlteraBebida.Visible := False;
-  if FuPedidosBalcao.totalPedido = 0
-    then nRet := 2                              // Pedido sem valor, cancela o pedido
-    else nRet := FinalizaPedido(nroPedido, FuPedidosBalcao.totalPedido, FuPedidosBalcao.itensPedido);     // Finalização do pedido
-  if nRet = 0
-    then begin
-      // Obs.1
+  nRet := 0;
+  if FuPedidosBalcao.totalPedido > 0 then
+  begin            // Pedido COM valor
+    nRet := FinalizaPedido(nroPedido, FuPedidosBalcao.totalPedido, FuPedidosBalcao.itensPedido);
+    {  nRet:1 Retornar à pagina anterior (incluir novos lançamentos)
+       nRet:0 Pedido finalizado    }
+    if nRet = 0 then       // Pedido finalizado
+    begin
       DebugMensagem(uDM.lDebug,'Gravou pedido, atualizou caixa e emitiu NFCe(se for o caso)' + #13 +
                                'Vai imprimir pedido nr: ' + IntToStr(nroPedido));
       if (nroPedido > 0) and uDM.sysImprimePedido then
@@ -1096,18 +1098,18 @@ begin
               lstPedido := 'N';
         if lstPedido = 'S' then
         begin
-           DebugMensagem(uDM.lDebug,'Vai imprimir pedido nro ' + IntToStr(nroPedido));
-           if ObtemParametro('PedidoTipoImpressao') = 'Txt' then
-              ImprimePedidoLst(nroPedido)
-           else
-              ImprimePedido(nroPedido);    // Impressao normal
+          DebugMensagem(uDM.lDebug,'Vai imprimir pedido nro ' + IntToStr(nroPedido));
+          if ObtemParametro('PedidoTipoImpressao') = 'Txt' then
+            ImprimePedidoLst(nroPedido)
+          else
+            ImprimePedido(nroPedido);    // Impressao normal
         end;
       end;
-      nRet := 2;
     end;
+  end;
   //
   // nRet = 3 --> Pedido whatsapp... já foi impresso
-  //
+  // nRet = 1 --> Volta à tela anterior
   if nRet <> 1 then       // Novo pedido ou pedido cancelado
   begin
     PanWork.Visible := False;
