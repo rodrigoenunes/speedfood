@@ -496,6 +496,20 @@ begin
   end;
   //
   // Re-impressão do cupom
+  if uDM.PedidosNrNFCe.AsInteger = 0 then
+  begin
+    MessageDlg('NFCe não emitida anteriormente',mtWarning,[mbOk],0);
+    Exit;
+  end;
+  if uDM.sysNumId <> uDM.PedidosNrEstacao.AsInteger then
+  begin
+    MessageDlg('NFCe gerada em outro caixa' + #13 +
+               'não pode ser re-emitida neste caixa',
+               mtInformation,[mbOk],0);
+    Exit;
+  end;
+
+
   if (uDM.PedidosNrNFCe.AsInteger > 0) and (uDM.PedidosIdArqXML.AsString <> '')
   then begin
     wArqXML := uDM.PedidosIdArqXML.AsString;
