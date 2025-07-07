@@ -41,10 +41,8 @@ type
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure btConsPedidosClick(Sender: TObject);
     procedure btAdminClick(Sender: TObject);
-    procedure btHelpGeralMouseDown(Sender: TObject; Button: TMouseButton;
-      Shift: TShiftState; X, Y: Integer);
-    procedure btHelpArgoxMouseDown(Sender: TObject; Button: TMouseButton;
-      Shift: TShiftState; X, Y: Integer);
+    procedure btHelpGeralMouseDown(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
+    procedure btHelpArgoxMouseDown(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
     procedure btBalcaoClick(Sender: TObject);
     procedure btBuffetClick(Sender: TObject);
     procedure SpeedButton1Click(Sender: TObject);
@@ -113,8 +111,7 @@ begin
 
 end;
 
-procedure TFuPrincipal.btHelpArgoxMouseDown(Sender: TObject;
-  Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
+procedure TFuPrincipal.btHelpArgoxMouseDown(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
 begin
   if Button = mbLeft then
      AjudaSpeedFood(2)
@@ -123,8 +120,7 @@ begin
 
 end;
 
-procedure TFuPrincipal.btHelpGeralMouseDown(Sender: TObject;
-  Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
+procedure TFuPrincipal.btHelpGeralMouseDown(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
 begin
   if Button = mbLeft then
      AjudaSpeedFood(1)
