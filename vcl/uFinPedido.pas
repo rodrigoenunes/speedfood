@@ -821,7 +821,7 @@ begin
     begin
       wStatus := False;
       TimerMsgPinpad.Enabled := wAtivarMsg;
-      EmiteNFCe(nrPedido, cbImprimeNFCe.Checked, wStatus);        //EmiteNFCe(uDM.PedidosNumero.AsInteger, cbImprimeNFCe.Checked, wStatus);
+      EmiteNFCe(nrPedido, cbImprimeNFCe.Checked, wStatus);
       TimerMsgPinPad.Enabled := False;
       PanAguarde.Color := clHighLight;
       wMsg := 'DFe';

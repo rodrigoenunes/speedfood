@@ -411,6 +411,8 @@ object FuFinPedido: TFuFinPedido
         Align = alClient
         Caption = 'Recebimento'
         TabOrder = 2
+        ExplicitLeft = 205
+        ExplicitTop = 65
         object LabReais: TLabel
           Left = 99
           Top = 26

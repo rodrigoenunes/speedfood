@@ -78,7 +78,7 @@ implementation
 
 {$R *.dfm}
 
-uses uDados, uImpressoes, SFEuPrintFortes, uGenericas;
+uses uDados, uImpressoes, SFEuPrintFortes, uGenericas, uMsgInfo;
 
 Procedure QueryPedidos;
 begin
@@ -495,12 +495,31 @@ begin
     Exit;
   end;
   //
-  // Re-impressão do cupom
+  // Geração de NFCe para pagtos em R$
   if uDM.PedidosNrNFCe.AsInteger = 0 then
   begin
-    MessageDlg('NFCe não emitida anteriormente',mtWarning,[mbOk],0);
+    if (uDM.sysNumId <> uDM.PedidosNrEstacao.AsInteger) or
+       (uDM.PedidosMeioPagto.AsInteger <> 0) then
+    begin
+      MsgInformacao(3,'Geração de NFCe',
+                      'Pedido finalizado em outro caixa [' + uDM.PedidosNrEstacao.AsString + '] ou' + #13 +
+                      'Meio de pagamento [' + uDM.PedidosZC_MeioPagto.AsString + '] não é DINHEIRO' + #13 +
+                      'NFCe não pode ser gerada',
+                      ['Sair','',''],1);
+      Exit;
+    end;
+    //MessageDlg('NFCe não emitida anteriormente',mtWarning,[mbOk],0);
+    if MsgInformacao(2,'Emissão NFCe',
+                       'Emitir a NFCe ?' + #13 +
+                       'Pedido: ' + uDM.PedidosNumero.AsString + #13 +
+                       'Valor: ' + FloatToStrF(uDM.PedidosValor.AsCurrency,ffNumber,15,2) + #13 +
+                       'Meio pagamento: ' + uDM.PedidosZC_MPExtenso.AsString,
+                       ['Sim','Não',''],2) = 1 then
+      EmiteNFCe(uDM.PedidosNumero.AsInteger, True, wStatus);
     Exit;
   end;
+
+  // Re-impressão do cupom
   if uDM.sysNumId <> uDM.PedidosNrEstacao.AsInteger then
   begin
     MessageDlg('NFCe gerada em outro caixa' + #13 +
@@ -508,7 +527,6 @@ begin
                mtInformation,[mbOk],0);
     Exit;
   end;
-
 
   if (uDM.PedidosNrNFCe.AsInteger > 0) and (uDM.PedidosIdArqXML.AsString <> '')
   then begin
