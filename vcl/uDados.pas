@@ -422,13 +422,13 @@ var
 const
   xOperacao: array[0..4] of String = ('Saldo','Receb','Suprim','Pagto','Sangria');
   xOperAbrv: array[0..4] of String = ('Sdo',  'Rec',  'Sup',   'Pgt',  'San');
-  xMeioPgto: array[0..6] of String = ('R$', 'CDeb','CCred','PIX','Outros','Misto','Banri');
-  xMeioAbrv: array[0..6] of String = ('R$', 'CDb', 'CCr',  'PIX','Ou',    'Mis',  'Ban');
+  xMeioPgto: array[0..6] of String = ('R$', 'CDeb','CCred','PIX','iFood','Misto','Banri');
+  xMeioAbrv: array[0..6] of String = ('R$', 'CDb', 'CCr',  'PIX','iFo',    'Mis',  'Ban');
   xMPExtenso: array[0..6] of String = ('Dinheiro',
                                        'Cartão débito',
                                        'Cartão crédito',
                                        'PIX',
-                                       'Outros',
+                                       'iFood',
                                        'Misto',
                                        'Banricompras');
 implementation
@@ -474,6 +474,11 @@ begin
   begin
     uDM.xGrupos[31] := 'N';
     uDM.xGrupos[32] := 'N';
+  end;
+  xParm := ObtemParametro('LanctoDrinks');
+  if (xParm = '') or (xParm = 'N') then
+  begin
+    uDM.xGrupos[35] := 'N';
   end;
   //
   for i := 1 to Length(uDM.xGrupos) do
@@ -996,7 +1001,7 @@ begin
     3:uDM.DetpagWrkZC_tPag.AsString := 'C.Crédito';       // '03-C.Crédito';
     4:uDM.DetpagWrkZC_tPag.AsString := 'C.Débito';        // '04-C.Débito';
     17:uDM.DetpagWrkZC_tPag.AsString := 'PIX';            // '17-PIX';
-    99:uDM.DetpagWrkZC_tPag.AsString := 'Outros';         // '99-Outros';
+    99:uDM.DetpagWrkZC_tPag.AsString := 'iFood';          // '99-iFood  Outros';
     else uDM.DetpagWrkZC_tPag.AsString := '---';
   end;
 

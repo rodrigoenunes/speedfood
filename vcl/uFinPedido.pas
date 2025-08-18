@@ -1241,8 +1241,11 @@ begin
     uDM.PedidosVlrReais.AsCurrency := valorPedido;
     edReceb.SetFocus;
   end
-  else
+  else begin
+    if dbMeioPagto.ItemIndex = 4 then
+      cbImprimeNFCe.Checked := True;
     btGravar.SetFocus;
+  end;
 
 end;
 

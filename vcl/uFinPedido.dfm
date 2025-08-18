@@ -322,7 +322,7 @@ object FuFinPedido: TFuFinPedido
           'Cart'#227'o D'#233'bito'
           'Cart'#227'o Cr'#233'dito'
           'PIX'
-          'Outros'
+          'iFood (WEB)'
           '<Misto/Multiplo>'
           'Banricompras')
         ParentBackground = False
@@ -411,8 +411,6 @@ object FuFinPedido: TFuFinPedido
         Align = alClient
         Caption = 'Recebimento'
         TabOrder = 2
-        ExplicitLeft = 205
-        ExplicitTop = 65
         object LabReais: TLabel
           Left = 99
           Top = 26
@@ -468,6 +466,7 @@ object FuFinPedido: TFuFinPedido
           Height = 19
           Alignment = taRightJustify
           Caption = 'Outros:'
+          Visible = False
         end
         object edReais: TDBEdit
           Left = 128
@@ -559,6 +558,7 @@ object FuFinPedido: TFuFinPedido
           DataSource = uDM.DSPedidos
           Enabled = False
           TabOrder = 6
+          Visible = False
           OnEnter = edOutrosEnter
           OnExit = edOutrosExit
           OnKeyDown = edOutrosKeyDown

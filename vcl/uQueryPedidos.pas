@@ -636,7 +636,7 @@ begin
     1:FDQPedidosZC_MeioPagto.AsString := 'C.Débito';
     2:FDQPedidosZC_MeioPagto.AsString := 'C.Crédito';
     3:FDQPedidosZC_MeioPagto.AsString := 'PIX';
-    4:FDQPedidosZC_MeioPagto.AsString := 'Outros';
+    4:FDQPedidosZC_MeioPagto.AsString := 'iFood/WEB';
     5:FDQPedidosZC_MeioPagto.AsString := 'Misto';
     else FDQPedidosZC_MeioPagto.AsString := '***';
   end;
