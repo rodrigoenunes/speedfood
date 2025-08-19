@@ -355,6 +355,7 @@ type
     PedDetpagtpPagTela: TIntegerField;
     PedidosParaLevar: TShortintField;
     PedidosLctHamburgueres: TIntegerField;
+    PedidosLctDrinks: TIntegerField;
     procedure ItensCalcFields(DataSet: TDataSet);
     procedure LctCaixaCalcFields(DataSet: TDataSet);
     procedure PedWrkCalcFields(DataSet: TDataSet);
@@ -399,10 +400,11 @@ type
     sysPedePlaca: Boolean;
     sysTefPosIni,sysTefPos: Integer;
     sysImprimePedido,sysImprimeEtiquetaBebidas,sysImprimeEtiquetaLanches,
-    sysImprimeEtiquetaCrepes,sysImprimeEtiquetaHamburgueres,sysImprimeEtiquetaFrituras: Boolean;
+    sysImprimeEtiquetaCrepes,sysImprimeEtiquetaHamburgueres,
+    sysImprimeEtiquetaFrituras,sysImprimeEtiquetaDrinks: Boolean;
     sysColValor,sysBtnNFCe,sysBtnCancel:Boolean;
     sysAbreTurnoCaixa:Boolean;
-    balLanches,balBebidas,balCrepes,balFrituras,balHamburgueres,balBufDiv: Boolean;
+    balLanches,balBebidas,balCrepes,balFrituras,balHamburgueres,balBufDiv,balDrinks: Boolean;
     filGrupoItens: Integer;
     meioPgto: Integer;
     nomeClie,CPFCNPJ,nroPlaca: String;
@@ -479,6 +481,12 @@ begin
   if (xParm = '') or (xParm = 'N') then
   begin
     uDM.xGrupos[35] := 'N';
+  end;
+  xParm := ObtemParametro('LanctoShakes');
+  if (xParm = '') or (xParm = 'N') then
+  begin
+    uDM.xGrupos[41] := 'N';
+    uDM.xGrupos[42] := 'N';
   end;
   //
   for i := 1 to Length(uDM.xGrupos) do
@@ -873,7 +881,7 @@ begin
     vIniFile.WriteBool('AbasDisponiveis','Hamburgueres',False);
     vIniFile.WriteBool('AbasDisponiveis','Buffet',False);
     vIniFile.WriteBool('AbasDisponiveis','Diversos',True);
-    vIniFile.WriteBool('AbasDisponiveis','Shake',False);
+    vIniFile.WriteBool('AbasDisponiveis','Drinks',False);
 
     vIniFile.WriteInteger('AbasPedidos','Fonte',12);
     vIniFile.WriteBool('AbasPedidos','Multiline',False);
@@ -923,6 +931,7 @@ begin
   sysImprimeEtiquetaCrepes := vIniFile.ReadBool('Estacao','ImprimeEtiquetaCrepes',False);
   sysImprimeEtiquetaHamburgueres := vIniFile.ReadBool('Estacao','ImprimeEtiquetaHamburgueres',False);
   sysImprimeEtiquetaFrituras := vIniFile.ReadBool('Estacao','ImprimeEtiquetaFrituras',False);
+  sysImprimeEtiquetaDrinks := vIniFile.ReadBool('Estacao','ImprimeEtiquetaDrinks',False);
   sysColValor := vIniFile.ReadBool('Estacao','ColunaValor',False);
   sysBtnNFCe := vIniFile.ReadBool('Estacao','ConsNFCe',False);
   sysBtnCancel := vIniFile.ReadBool('Estacao','ConsCancela',False);
@@ -941,6 +950,7 @@ begin
   balFrituras := vIniFile.ReadBool('AbasDisponiveis','Frituras',False);
   balHamburgueres := vIniFile.ReadBool('AbasDisponiveis','Hamburgueres',False);
   balBufDiv := vIniFile.ReadBool('AbasDisponiveis','BuffetDiversos',False);
+  balDrinks := vIniFile.ReadBool('AbasDisponiveis','Drinks',False);
   //
 {
   if (not sysPedidos) and (not sysBalcao) and (not sysBuffet) then
@@ -1222,6 +1232,11 @@ begin
        PedItensZC_Tipo.AsString := 'Ham';
        PedItensZC_Tp.AsString := 'H';
        PedItensZC_TpEtiq.AsString := 'HAMBURGUER';
+    end;
+    35:begin
+       PedItensZC_Tipo.AsString := 'Drk';
+       PedItensZC_Tp.AsString := 'K';
+       PedItensZC_TpEtiq.AsString := 'DRINKS';
     end
     else begin
       PedItensZC_Tipo.AsString := '';

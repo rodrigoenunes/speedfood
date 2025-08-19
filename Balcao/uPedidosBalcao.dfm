@@ -710,7 +710,7 @@ object FuPedidosBalcao: TFuPedidosBalcao
         Top = 1
         Width = 740
         Height = 516
-        ActivePage = TSLanches
+        ActivePage = TSBufDiv
         Align = alClient
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clWindowText
@@ -764,6 +764,23 @@ object FuPedidosBalcao: TFuPedidosBalcao
             TabOrder = 0
             OnDrawCell = GridBebidasDrawCell
             OnMouseDown = GridBebidasMouseDown
+          end
+        end
+        object TSDrinks: TTabSheet
+          Caption = 'Drinks'
+          ImageIndex = 6
+          object GridDrinks: TDrawGrid
+            Left = 21
+            Top = 33
+            Width = 320
+            Height = 120
+            FixedCols = 0
+            FixedRows = 0
+            Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goFixedRowDefAlign]
+            ScrollBars = ssVertical
+            TabOrder = 0
+            OnDrawCell = GridDrinksDrawCell
+            OnMouseDown = GridDrinksMouseDown
           end
         end
         object TSCrepes: TTabSheet

@@ -684,6 +684,11 @@ object uDM: TuDM
       FieldName = 'LctHamburgueres'
       Origin = 'LctHamburgueres'
     end
+    object PedidosLctDrinks: TIntegerField
+      AutoGenerateValue = arDefault
+      FieldName = 'LctDrinks'
+      Origin = 'LctDrinks'
+    end
     object PedidosParaLevar: TShortintField
       AutoGenerateValue = arDefault
       FieldName = 'ParaLevar'
@@ -1748,7 +1753,7 @@ object uDM: TuDM
     Connection = FDC
     ResourceOptions.AssignedValues = [rvEscapeExpand]
     TableName = 'speedfood.com_turnos'
-    Left = 24
+    Left = 28
     Top = 232
     object TurnosNrTurno: TIntegerField
       FieldName = 'NrTurno'

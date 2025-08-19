@@ -201,16 +201,15 @@ begin
   uDM.Itens.First;
   while not uDM.Itens.Eof do
   begin
-    newEtq := False;
-    if (uDM.ItensGrupo.AsInteger = 1)
-       or (uDM.ItensGrupo.AsInteger = 11)
-       or (uDM.ItensGrupo.AsInteger = 21)
-       or (uDM.ItensGrupo.AsInteger = 31)
-       or (uDM.ItensGrupo.AsInteger = 41)
-    then newEtq := True
-    else if uDM.ItensEtiqueta.AsBoolean
-         then newEtq := True
-         else newEtq := False;
+    if (uDM.ItensGrupo.AsInteger = 1)             // Lanches
+       or (uDM.ItensGrupo.AsInteger = 11)         // Crepes
+       or (uDM.ItensGrupo.AsInteger = 21)         // Frituras
+       or (uDM.ItensGrupo.AsInteger = 31)         // Hamburgueres
+       or (uDM.ItensGrupo.AsInteger = 35)         // Drinks
+       or (uDM.ItensGrupo.AsInteger = 41) then    // Shakes
+       newEtq := True
+    else
+       newEtq := False;
     uDM.Itens.Edit;
     uDM.ItensEtiqueta.AsBoolean := newEtq;
     uDM.Itens.Post;
@@ -598,6 +597,7 @@ begin
      or (uDM.ItensGrupo.AsInteger = 15)     // Buffet
      or (uDM.ItensGrupo.AsInteger = 21)     // Frituras
      or (uDM.ItensGrupo.AsInteger = 31)     // Hamburgueres
+     or (uDM.ItensGrupo.AsInteger = 35)     // Drinks
      or (uDM.ItensGrupo.AsInteger = 41)     // Shakes
      then gbFiscais.Visible := True;
 
@@ -608,6 +608,7 @@ begin
      or (uDM.ItensGrupo.AsInteger = 15)
      or (uDM.ItensGrupo.AsInteger = 21)
      or (uDM.ItensGrupo.AsInteger = 31)
+     or (uDM.ItensGrupo.AsInteger = 35)
      or (uDM.ItensGrupo.AsInteger = 41)
      then cbAlteraPreco.Visible := True;
 
@@ -616,6 +617,7 @@ begin
      or (uDM.ItensGrupo.AsInteger = 11)     // Crepes
      or (uDM.ItensGrupo.AsInteger = 21)     // Frituras
      or (uDM.ItensGrupo.AsInteger = 31)     // Hamburgueres
+     or (uDM.ItensGrupo.AsInteger = 35)     // Drinks
      or (uDM.ItensGrupo.AsInteger = 41)     // Shakes
      then cbEtiqueta.Visible := True;
 
@@ -630,6 +632,7 @@ begin
           or (uDM.ItensGrupo.AsInteger = 22)
           or (uDM.ItensGrupo.AsInteger = 31)
           or (uDM.ItensGrupo.AsInteger = 32)
+          or (uDM.ItensGrupo.AsInteger = 35)
           or (uDM.ItensGrupo.AsInteger = 41)
           or (uDM.ItensGrupo.AsInteger = 42)
        then begin

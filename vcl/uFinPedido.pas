@@ -495,7 +495,7 @@ end;
 
 procedure TFuFinPedido.btGravarClick(Sender: TObject);
 var somaVlr,wSaldo: Currency;
-    newSeq,lanSeq,bebSeq,crpSeq,friSeq,hamSeq,divSeq,outSeq,bufSeq: Integer;
+    newSeq,lanSeq,bebSeq,crpSeq,friSeq,hamSeq,divSeq,outSeq,bufSeq,drkSeq: Integer;
     newSitPagto,wrkSeq,nConf: Integer;
     pedSeq: Integer;
     vlrEntradas,vlrSaidas: Currency;
@@ -574,8 +574,8 @@ begin
   btRemoto.Enabled := False;
   LabInstrucao.Caption := 'Aguarde o final do processo';   // R$(*0) ou Outros(4)
   wAtivarMsg := False;
-  if uDM.PedidosMeioPagto.AsInteger <> 0            // Não é dinheiro 1-CDeb 2-CCred 3-PIX 4-Outro 5-Misto 6-Banricompras
-  then begin
+  if uDM.PedidosMeioPagto.AsInteger <> 0 then           // Não é dinheiro 1-CDeb 2-CCred 3-PIX 4-Outro 5-Misto 6-Banricompras
+  begin
     if uDM.sysTefPos = 1 then
        LabInstrucao.Caption := 'Siga as instruções do PINPAD !!!';
     wAtivarMsg := True;
@@ -605,6 +605,7 @@ begin
   hamSeq := 0;     // Hamburgueres
   bufSeq := 0;     // buffet
   divSeq := 0;     // diversos
+  drkSeq := 0;     // Drinks
   outSeq := 0;     // outros
   uDM.PedWrk.First;
   while not uDM.PedWrk.Eof do
@@ -617,7 +618,8 @@ begin
        15:bufSeq := bufSeq + 1;              // Qtd buffets     Ok
        21:friSeq := friSeq + 1;              // Qtd frituras    Ok
        31:hamSeq := hamSeq + 1;              // Qtd hamburgueresOk
-       else outSeq := outSeq + 1;            // Qtd outros      Ok
+       35:drkSeq := drkSeq + 1;              // Qtd drinks
+       else outSeq := outSeq + 1;            // Qtd outros      Ok  (Diversos e Drinks)
     end;
     uDM.PedWrk.Next;
   end;
@@ -631,6 +633,7 @@ begin
   uDM.PedidosLctDiversos.AsInteger := divSeq;
   uDM.PedidosLctFrituras.AsInteger := friSeq;
   uDM.PedidosLctHamburgueres.AsInteger := hamSeq;
+  uDM.PedidosLctDrinks.AsInteger := drkSeq;
   uDM.PedidosLctOutros.AsInteger := outSeq;
 
   uDM.Pedidos.Post;
@@ -644,11 +647,13 @@ begin
   end;
   //
   uDM.PedWrk.First;
-  lanSeq := 0;
-  bebSeq := 100;
-  crpSeq := 200;
-  friSeq := 300;
-  hamSeq := 400;
+  lanSeq := 0;            // Lanches
+  bebSeq := 100;          // Bebidas
+  crpSeq := 200;          // Crepes
+  friSeq := 300;          // Frituras
+  hamSeq := 400;          // Hamburgueres
+  bufSeq := 500;          // Buffet
+  drkSeq := 600;          // Drinks
   newSeq := 900;
   pedSeq := 0;                   // Sequencia geral no pedido
   while not uDM.PedWrk.Eof do
@@ -658,13 +663,17 @@ begin
             lanSeq := lanSeq + 1;
             wrkSeq := lanSeq;
           end;
-        3:begin     // Bebidas e outros
+        3:begin     // Bebidas
             bebSeq := bebSeq + 1;
             wrkSeq := bebSeq;
-        end;
+          end;
        11:begin    // Crepes
             crpSeq := crpSeq + 1;
             wrkSeq := crpSeq;
+          end;
+       15:begin   // Buffet
+            bufSeq := bufSeq + 1;
+            wrkSeq := bufSeq;
           end;
        21:begin   // Frituras
             friSeq := friSeq + 1;
@@ -674,7 +683,11 @@ begin
             hamSeq := hamSeq + 1;
             wrkSeq := hamSeq;
           end;
-        else begin  // Diveros(6) e Buffet(15)
+       35:begin   // Drinks
+            drkSeq := drkSeq + 1;
+            wrkSeq := drkseq;
+       end
+        else begin  // Diveros(6), Drinks(35)
             newSeq := newSeq + 1;
             wrkSeq := newSeq;
         end;
@@ -949,7 +962,8 @@ begin
      uDM.sysImprimeEtiquetaCrepes or
      uDM.sysImprimeEtiquetaBebidas or
      uDM.sysImprimeEtiquetaHamburgueres or
-     uDM.sysImprimeEtiquetaFrituras
+     uDM.sysImprimeEtiquetaFrituras or
+     uDM.sysImprimeEtiquetaDrinks
   then begin
     xImpressao := ObtemParametro('EtiquetaFinalPedido');
     if xImpressao = 'Q' then
@@ -964,6 +978,7 @@ begin
      and ((uDM.PedidosLctCrepes.AsInteger = 0) or (not uDM.sysImprimeEtiquetaCrepes))       // Não tem Crepes ou não imprime
      and ((uDM.PedidosLctFrituras.AsInteger = 0) or (not uDM.sysImprimeEtiquetaFrituras))   // Não tem Crepes ou não imprime
      and ((uDM.PedidosLctHamburgueres.AsInteger = 0) or (not uDM.sysImprimeEtiquetaHamburgueres))     // Não tem Hamburgueres ou não imprime
+     and ((uDM.PedidosLctDrinks.AsInteger = 0) or (not uDM.sysImprimeEtiquetaDrinks))       // Não tem Drinks ou não imprime
      and (not uDM.sysImprimeEtiquetaBebidas) then                                           // e não imprime bebidas
      xImpressao := 'N';
   DebugMensagem(lDebugFimPed,'8-Imprimir etiquetas' + #13 +
@@ -980,7 +995,7 @@ begin
   //
   if (xImpressao = 'S') then
   begin
-    EmiteEtiquetas(nrPedido,0,True,uDM.sysImprimeEtiquetaBebidas,lDebugFimPed);
+    EmiteEtiquetas(nrPedido,0,True,uDM.sysImprimeEtiquetaBebidas,lDebugFimPed);  // xxx
     uDM.PedItens.Filtered := False;
     uDM.PedItens.Refresh;
     uDM.PedItens.First;

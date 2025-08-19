@@ -109,6 +109,19 @@ type
     RLDBText31: TRLDBText;
     RLLabTirar: TRLAngleLabel;
     RLImage1: TRLImage;
+    RLEtiq_Drinks: TRLReport;
+    RLBand11: TRLBand;
+    RLDraw7: TRLDraw;
+    RLDBText32: TRLDBText;
+    RLBand12: TRLBand;
+    RLDBText33: TRLDBText;
+    RLDBText34: TRLDBText;
+    RLLabel10: TRLLabel;
+    RLDBText35: TRLDBText;
+    RLDBText36: TRLDBText;
+    RLBand13: TRLBand;
+    RLDBText37: TRLDBText;
+    RLDBText38: TRLDBText;
     procedure RLEtiqBebidaBeforePrint(Sender: TObject; var PrintIt: Boolean);
     procedure RLDetLancheBeforePrint(Sender: TObject; var PrintIt: Boolean);
   private
@@ -153,10 +166,16 @@ begin
           FSFEuPrintFortes.RLEtiq_Fritura.RecordRange := rrAllRecords
        else
           FSFEuPrintFortes.RLEtiq_Fritura.RecordRange := rrCurrentOnly;
-    else if pModo = 1 then
-            FSFEuPrintFortes.RLEtiq_Hamburguer.RecordRange := rrAllRecords
-         else
-            FSFEuPrintFortes.RLEtiq_Hamburguer.RecordRange := rrCurrentOnly;
+    31:if pModo = 1 then
+          FSFEuPrintFortes.RLEtiq_Hamburguer.RecordRange := rrAllRecords
+       else
+          FSFEuPrintFortes.RLEtiq_Hamburguer.RecordRange := rrCurrentOnly;
+    35:if pModo = 1 then
+          FSFEuPrintFortes.RLEtiq_Drinks.RecordRange := rrAllRecords
+       else
+          FSFEuPrintFortes.RLEtiq_Drinks.RecordRange := rrCurrentOnly;
+    else MessageDlg('Tipo inválido (' + IntToStr(pTipo) + #13 +
+                    'Válidos: 11, 21, 31 ou 35',mtError,[mbOk],0);
   end;
 
 
@@ -242,7 +261,7 @@ var filAnt: Boolean;
     filTxtAnt: String;
     i: Integer;
 const
-    tpProds: array[1..3] of String = ('11','21','31');
+    tpProds: array[1..4] of String = ('11','21','31','35');
 begin
   if not uDM.Pedidos.FindKey([pmtPedido]) then
   begin
@@ -383,6 +402,23 @@ begin
                 else
                    FSFEuPrintFortes.RLEtiq_Hamburguer.Print;
               end;
+          35:if idPrtEtqCFS <> '' then
+              begin
+                if not DefineImpressora(True,idPrtEtqCFS,portaPrt,driverPrt,indexPrt) then
+                begin
+                  lPreview := True;
+                  lDialog := True;
+                end;
+                SetRecordRange_CFS(35,0);
+                DebugMensagem(pmtDebug,'IT CFS 1-PrinterName=' + RLPrinters.RLPrinter.PrinterName);
+                RLPrinters.RLPrinter.PrinterName := idPrtEtqCFS;
+                DebugMensagem(pmtDebug,'IT CFS 2-PrinterName='+ RLPrinters.RLPrinter.PrinterName + '  id=' + idPrtEtqCFS);
+                if lPreview then
+                   FSFEuPrintFortes.RLEtiq_Drinks.Preview
+                else
+                   FSFEuPrintFortes.RLEtiq_Drinks.Print;
+              end;
+
      end;
     end
     else MessageDlg('Item não encontrado' + #13 +
@@ -443,7 +479,7 @@ begin
           FSFEuPrintFortes.RLEtiqBebida.Print;
       end;
     end;
-    // Crepes(11), Frituras(21), Hamburgueres(31)
+    // Crepes(11), Frituras(21), Hamburgueres(31), Drinks(35)
     //ShowMessage('Impressora CFS=[' + idPrtEtqCFS + ']');
     if idPrtEtqCFS <> '' then
     begin
@@ -455,7 +491,7 @@ begin
       end;
       RLPrinters.RLPrinter.PrinterName := idPrtEtqCFS;
       DebugMensagem(pmtDebug,'Todos CFS 2-PrinterName='+ RLPrinters.RLPrinter.PrinterName + '  id=' + idPrtEtqCFS);
-      for i := 1 to 3 do     // Array "tpProds"  (11,21,31)
+      for i := 1 to 4 do     // Array "tpProds"  (11,21,31,35)
       begin
         uDM.PedItens.Filtered := False;
         uDM.PedItens.Filter := 'TpProd=' + tpProds[i];
@@ -492,6 +528,14 @@ begin
               FSFEuPrintFortes.RLEtiq_Hamburguer.Preview
             else
               FSFEuPrintFortes.RLEtiq_Hamburguer.Print;
+          end;
+          if tpProds[i] = '35' then
+          begin
+            SetRecordRange_CFS(35,1);      // rrAllRecords;
+            if lPreview then
+              FSFEuPrintFortes.RLEtiq_Drinks.Preview
+            else
+              FSFEuPrintFortes.RLEtiq_Drinks.Print;
           end;
         end;
       end;

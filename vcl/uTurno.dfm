@@ -41,7 +41,6 @@ object FuTurno: TFuTurno
     Height = 271
     Align = alClient
     TabOrder = 0
-    ExplicitHeight = 161
     DesignSize = (
       384
       271)
@@ -124,7 +123,6 @@ object FuTurno: TFuTurno
     Height = 75
     Align = alBottom
     TabOrder = 1
-    ExplicitTop = 186
     object btOk: TBitBtn
       Left = 14
       Top = 8

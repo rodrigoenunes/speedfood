@@ -502,6 +502,7 @@ begin
 
 end;
 
+
 procedure AjustaFonteGridLanches;
 begin
   with FuPedidos

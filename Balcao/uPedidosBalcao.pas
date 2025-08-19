@@ -111,6 +111,8 @@ type
     cbTVBuffet: TCheckBox;
     cbBalConectada: TCheckBox;
     LabBal: TLabel;
+    TSDrinks: TTabSheet;
+    GridDrinks: TDrawGrid;
     procedure btAbrirPedidoClick(Sender: TObject);
     procedure btFinalizarClick(Sender: TObject);
     procedure GridLanchesDrawCell(Sender: TObject; ACol, ARow: Integer;
@@ -202,6 +204,10 @@ type
     procedure edCodBarrasDblClick(Sender: TObject);
     procedure edCodBarrasMouseDown(Sender: TObject; Button: TMouseButton;
       Shift: TShiftState; X, Y: Integer);
+    procedure GridDrinksDrawCell(Sender: TObject; ACol, ARow: LongInt;
+      Rect: TRect; State: TGridDrawState);
+    procedure GridDrinksMouseDown(Sender: TObject; Button: TMouseButton;
+      Shift: TShiftState; X, Y: Integer);
   private
     { Private declarations }
     FApdComPort: TApdComPort;
@@ -217,8 +223,9 @@ type
 
 var
   FuPedidosBalcao: TFuPedidosBalcao;
-  wCodLanche: array[0..39,0..39] of Integer;
+  wCodLanche: array[0..39,0..39] of Integer;    // 0..39, 0..39
   wCodBebida: array[0..39,0..39] of Integer;
+  wCodDrinks: array[0..39,0..39] of Integer;
 
   wCodCrepe: array[0..23] of Integer;
   wSelCrepe: array[0..23] of String;
@@ -234,13 +241,14 @@ var
   wCodFrituraCompl: array[0..23] of Integer;
   wSelFrituraCompl: array[0..23] of String;
 
-  wKeyGelado: Integer;
-  wCodGelado: array[0..23] of Integer;
-  wSelGelado: array[0..23] of String;
-  wCodGeladoCompl: array[0..23] of Integer;
-  wSelGeladoCompl: array[0..23] of String;
+  wKeyHambur: Integer;
+  wCodHambur: array[0..23] of Integer;
+  wSelHambur: array[0..23] of String;
+  wCodHamburCompl: array[0..23] of Integer;
+  wSelHamburCompl: array[0..23] of String;
 
   lrgLanche,altLanche,lrgBebida,altBebida: Integer;
+  lrgDrinks,altDrinks: Integer;
   wColor: TColor;
   nMaxExtras: Integer;
   tvTop,tvLeft: Integer;
@@ -258,6 +266,9 @@ Procedure PedidosBalcao(pmtCaption:String);
 begin
   nMaxExtras := StrToIntDef(ObtemParametro('PedidoMaxExtras'),5);
   CarregaItensCodBarra;
+  FuPedidosBalcao.btEditar.Visible := False;
+  if ObtemParametro('PedidoBalcaoAlteraItem') = 'S' then
+     FuPedidosBalcao.btEditar.Visible := True;
   FuPedidosBalcao.ShowModal;
 
 end;
@@ -294,10 +305,11 @@ var i,j: Integer;
     nCol,nRow,nColBeb,nRowBeb: Integer;
     nRowCrepe,nRowCrepeSabor: Integer;
     nRowFritura,nRowFrituraCompl: Integer;
-    nRowGelado,nRowGeladoCompl: Integer;
+    nRowHamb,nRowHambCompl: Integer;
+    nRowDrink,nColDrink: Integer;
     nAltura,nLargura: Integer;
     nLanches,nExtras,nBebidas,nBasicos,nBasExtra,nDiversos,nCrepes,nCrepesSabores:Integer;
-    nFrituras,nFriturasCompl,nHamburgueres,nHamburgueresCompl,nBuffet: Integer;
+    nFrituras,nFriturasCompl,nHamb,nHambCompl,nBuffet,nDrinks: Integer;
     wAlturaUtil: Integer;
 begin
   with FuPedidosBalcao
@@ -308,6 +320,7 @@ begin
       begin
         wCodLanche[i,j] := 0;
         wCodBebida[i,j] := 0;
+        wCodDrinks[i,j] := 0;
       end;
       FuMontarLanche.wCodBas[i] := 0;
       FuMontarLanche.wSelBas[i] := '';
@@ -328,10 +341,10 @@ begin
        wCodFrituraCompl[i] := 0;
        wSelFrituraCompl[i] := '';
        //
-       wCodGelado[i] := 0;
-       wSelGelado[i] := '';
-       wCodGeladoCompl[i] := 0;
-       wSelGeladoCompl[i] := '';
+       wCodHambur[i] := 0;
+       wSelHambur[i] := '';
+       wCodHamburCompl[i] := 0;
+       wSelHamburCompl[i] := '';
      end;
     //
     //Align := alClient;
@@ -357,9 +370,10 @@ begin
     nCrepesSabores  := 0;
     nFrituras := 0;
     nFriturasCompl := 0;
-    nHamburgueres  := 0;
-    nHamburgueresCompl := 0;
+    nHamb     := 0;
+    nHambCompl := 0;
     nBuffet := 0;
+    nDrinks := 0;
     uDM.Itens.First;
     while not uDM.Itens.Eof do
     begin
@@ -374,8 +388,9 @@ begin
         12:nCrepesSabores := nCrepesSabores + 1;
         21:nFrituras := nFrituras + 1;
         22:nFriturasCompl := nFriturasCompl + 1;
-        31:nHamburgueres := nHamburgueres + 1;
-        32:nHamburgueresCompl := nHamburgueresCompl + 1;
+        31:nHamb := nHamb + 1;
+        32:nHambCompl := nHambCompl + 1;
+        35:nDrinks := nDrinks + 1;
       end;
       uDM.Itens.Next;
     end;
@@ -518,32 +533,33 @@ begin
     end;
     //
     TSHamburgueres.TabVisible := uDM.balHamburgueres;
-    if TSHamburgueres.TabVisible and (nHamburgueres > 0) then                  // Aba Gelados & Shakes
+    if TSHamburgueres.TabVisible and (nHamb > 0) then                  // Aba Hamburgueres
     begin
       TSHamburgueres.Caption := ObtemParametro('LanctoHamburgueres');
-      if TSHamburgueres.Caption = '' then TSHamburgueres.Caption := '< Hamburgueres >';
+      if TSHamburgueres.Caption = '' then
+         TSHamburgueres.Caption := '< Hamburgueres >';
       wAlturaUtil := TSHamburgueres.Height - (PanHamburgueresTopo.Height + PanHamburgueresRodape.Height + 12);
       GridHamburgueres.ColCount := 4;
-      GridHamburgueres.RowCount := nHamburgueres;
+      GridHamburgueres.RowCount := nHamb;
       GridHamburgueres.Width := Trunc(TSHamburgueres.Width * 0.45);
       GridHamburgueres.ColWidths[0] := Trunc(GridHamburgueres.Width * 0.07);     // Codigo
       GridHamburgueres.ColWidths[1] := Trunc(GridHamburgueres.Width * 0.59);     // Descricao
       GridHamburgueres.ColWidths[2] := Trunc(GridHamburgueres.Width * 0.21);     // Preco
       GridHamburgueres.ColWidths[3] := Trunc(GridHamburgueres.Width * 0.11);     // X ou branco           .
-      GridHamburgueres.RowCount := nHamburgueres;
-      GridHamburgueres.RowHeights[0] := wAlturaUtil div nHamburgueres;
+      GridHamburgueres.RowHeights[0] := wAlturaUtil div nHamb;
       for i := 1 to GridHamburgueres.RowCount-1 do
         GridHamburgueres.RowHeights[i] := GridHamburgueres.RowHeights[0];
+
       GridHamburgueresCompl.Left := GridHamburgueres.Left + GridHamburgueres.Width + 1;
       GridHamburgueresCompl.Width := TSHamburgueres.Width - (GridHamburgueres.Width + 2);
       GridHamburgueresCompl.Top := GridHamburgueres.Top;
       GridHamburgueresCompl.Height := GridHamburgueres.Height;
       GridHamburgueresCompl.ColCount := 3;
+      GridHamburgueresCompl.RowCount := nHambCompl;
       GridHamburgueresCompl.ColWidths[0] := Trunc(GridHamburgueresCompl.Width * 0.67);   // Descricao
       GridHamburgueresCompl.ColWidths[1] := Trunc(GridHamburgueresCompl.Width * 0.21);   // Valor, se houver
       GridHamburgueresCompl.ColWidths[2] := Trunc(GridHamburgueresCompl.Width * 0.10);   // X ou branco
-      GridHamburgueresCompl.RowCount := nHamburgueresCompl;
-      GridHamburgueresCompl.RowHeights[0] := wAlturaUtil div nHamburgueresCompl;
+      GridHamburgueresCompl.RowHeights[0] := wAlturaUtil div nHambCompl;
       for i := 0 to GridHamburgueresCompl.RowCount-1 do
         GridHamburgueresCompl.RowHeights[i] := GridHamburgueresCompl.RowHeights[0];
     end;
@@ -555,6 +571,41 @@ begin
       if TSBufDiv.Caption = '' then TSBufDiv.Caption := '< Sorvetes && Diversos >';
     end;
     //
+    TSDrinks.TabVisible := uDM.balDrinks;         // Aba Drinks
+    if TSDrinks.TabVisible then
+    begin
+      TSDrinks.Caption := ObtemParametro('LanctoDrinks');
+      if TSDrinks.Caption = '' then
+         TSDrinks.Caption := '< Drinks >';
+      if TSDrinks.Width > 1000 then
+        nCol := 5
+      else if TSDrinks.Width > 800 then
+             nCol := 4
+           else if TSDrinks.Width > 600 then
+                  nCol := 3
+                else
+                  nCol := 2;
+      nLargura := (TSDrinks.Width div nCol) - 2;          // Largura da célula
+      nRow := nDrinks div nCol;                           // Qtd necessária de linhas
+      if nRow < 1 then
+        nRow := 1
+      else if (nDrinks mod nCol) > 0 then
+             nRow := nRow + 1;
+      nAltura := (TSDrinks.Height-8) div nRow;      // Altura da célula
+      if nAltura > 220 then
+        nAltura := 220
+      else if nAltura < 80 then
+             nAltura := 80;
+      GridDrinks.ColCount := nCol;
+      GridDrinks.RowCount := nRow;
+      for i := 0 to nCol-1 do
+        GridDrinks.ColWidths[i]  := nLargura;
+      for i := 0 to nRow-1 do
+        GridDrinks.RowHeights[i] := nAltura;
+      GridDrinks.Align := alClient;
+      lrgDrinks := nLargura - 12;
+      altDrinks := nAltura - 6;
+    end;
     //
     // Montagem Lanches, Bebidas e Montar lanche
     nRow := 0;
@@ -567,8 +618,10 @@ begin
     nRowCrepeSabor := 0;
     nRowFritura := 0;
     nRowFrituraCompl := 0;
-    nRowGelado := 0;
-    nRowGeladoCompl := 0;
+    nRowHamb := 0;
+    nRowHambCompl := 0;
+    nRowDrink := 0;
+    nColDrink := 0;
     uDM.Itens.First;
     while not uDM.Itens.Eof do
     begin
@@ -620,16 +673,26 @@ begin
             wSelFrituraCompl[nRowFrituraCompl] := '';
             nRowFrituraCompl := nRowFrituraCompl + 1;
         end;
-        31:begin   // Gelados & Shakes
-            wCodGelado[nRowGelado] := uDM.ItensCodigo.AsInteger;
-            wSelGelado[nRowGelado] := '';
-            nRowGelado := nRowGelado + 1;
+        31:begin   // Hamburgueres
+            wCodHambur[nRowHamb] := uDM.ItensCodigo.AsInteger;
+            wSelHambur[nRowHamb] := '';
+            nRowHamb := nRowHamb + 1;
         end;
-        32:begin   // Gelados & Shakes - complemento
-            wCodGeladoCompl[nRowGeladoCompl] := uDM.ItensCodigo.AsInteger;
-            wSelGeladoCompl[nRowGeladoCompl] := '';
-            nRowGeladoCompl := nRowGeladoCompl + 1;
+        32:begin   // Hamburgueres - complemento
+            wCodHamburCompl[nRowHambCompl] := uDM.ItensCodigo.AsInteger;
+            wSelHamburCompl[nRowHambCompl] := '';
+            nRowHambCompl := nRowHambCompl + 1;
         end;
+        35:begin   // Drinks
+            wCodDrinks[nColDrink,nRowDrink] := uDM.ItensCodigo.AsInteger;
+            nColDrink := nColDrink + 1;
+            if nColDrink = GridDrinks.ColCount
+            then begin
+              nRowDrink := nRowDrink + 1;
+              nColDrink := 0;
+            end;
+        end;
+
       end;
       uDM.Itens.Next;
     end;
@@ -720,11 +783,11 @@ begin
 end;
 
 
-Procedure InclueLancheBalcao(pTipo:Integer;
-                             pCodLanche:Integer;
-                             pExtras:String;
-                             pObserv:String;
-                             pValor:Currency=0);
+Procedure InclueProdutoBalcao(pTipo:Integer;
+                              pCodProd:Integer;
+                              pExtras:String;
+                              pObserv:String;
+                              pValor:Currency=0);
 var nLct: Integer;
     wDescr,wExtra,wObserv: String;
     wValor,wTotal: Currency;
@@ -733,7 +796,7 @@ var nLct: Integer;
     wKg: Real;
 {
  pTipo:      Cachorro-quente, Montado, Crepe, Fritura...
- pCodLanche: Código do ítem
+ pCodProd:   Código do ítem
  pExtras:    Indicação extra de complementos (Cachorro-quente)  Sabores(Crepe)
  pObserv:    Observações (Crepe=Sabores por extenso)
  pValor:     Valor a ser considerado
@@ -748,7 +811,7 @@ begin
     wPeso := 0;                // Utilizado somente em buffet de sorvete
     case pTipo  of
       1:begin        // Lanche (Cachorro quente)
-          if not uDM.Itens.FindKey([1,pCodLanche]) then Exit;
+          if not uDM.Itens.FindKey([1,pCodProd]) then Exit;
           wDescr := stringReplace(uDM.ItensDescricao.AsString,'#',' ',[rfIgnoreCase, rfReplaceAll]);
           wValor := uDM.ItensPreco.AsCurrency;
           wAltPr := uDM.ItensAlteraPreco.AsBoolean;
@@ -756,7 +819,7 @@ begin
           wTotal := wValor;
           wQuant := 1;
         end;
-      3,6:begin        // Diversos
+      3,6:begin        // Bebidas, Diversos
           wDescr := uDM.CDDiversosDescr.AsString;
           wValor := uDM.CDDiversosVlrUnit.AsCurrency;
           wAltPr := False;
@@ -775,7 +838,7 @@ begin
           wQuant := 1;
         end;
       11:begin       // Crepe
-          if not uDM.Itens.FindKey([11,pCodLanche]) then Exit;
+          if not uDM.Itens.FindKey([11,pCodProd]) then Exit;
           wDescr := stringReplace(uDM.ItensDescricao.AsString,'#',' ',[rfIgnoreCase, rfReplaceAll]);
           wValor := uDM.ItensPreco.AsCurrency;
           wAltPr := uDM.ItensAlteraPreco.AsBoolean;
@@ -795,14 +858,21 @@ begin
           wQuant := 1;
         end;
       21:begin      // Frituras
-          if not uDM.Itens.FindKey([21,pCodLanche]) then Exit;
+          if not uDM.Itens.FindKey([21,pCodProd]) then Exit;
           wDescr := stringReplace(uDM.ItensDescricao.AsString,'#',' ',[rfIgnoreCase, rfReplaceAll]);
           wAltPr := uDM.ItensAlteraPreco.AsBoolean;
           wTotal := wValor;
           wQuant := 1;
         end;
-      31:begin      // Gelados & Frituras
-          if not uDM.Itens.FindKey([31,pCodLanche]) then Exit;
+      31:begin      // Hamburgueres
+          if not uDM.Itens.FindKey([31,pCodProd]) then Exit;
+          wDescr := stringReplace(uDM.ItensDescricao.AsString,'#',' ',[rfIgnoreCase, rfReplaceAll]);
+          wAltPr := uDM.ItensAlteraPreco.AsBoolean;
+          wTotal := wValor;
+          wQuant := 1;
+        end;
+      35:begin      // Drinks
+          if not uDM.Itens.FindKey([35,pCodProd]) then Exit;
           wDescr := stringReplace(uDM.ItensDescricao.AsString,'#',' ',[rfIgnoreCase, rfReplaceAll]);
           wAltPr := uDM.ItensAlteraPreco.AsBoolean;
           wTotal := wValor;
@@ -816,7 +886,7 @@ begin
     PedWrk.Append;
     PedWrkNrLcto.AsInteger    := nLct;
     PedWrkTpProd.AsInteger    := pTipo;            // 1-Lanche, 2-Bebida, 4-Lanche montado, 11-Crepe  .....
-    PedWrkCodProd.AsInteger   := pCodLanche;
+    PedWrkCodProd.AsInteger   := pCodProd;
     PedWrkDescricao.AsString  := wDescr;
     PedWrkQuant.AsInteger     := wQuant;
     PedWrkVlrUnit.AsCurrency  := wValor;
@@ -833,7 +903,7 @@ begin
 
     if pTipo = 1 then
     begin     // Lanche
-      TratativaLanche(pCodLanche,True,nMaxExtras);
+      TratativaLanche(pCodProd,True,nMaxExtras);
       if PedWrk.State = dsEdit then
          PedWrk.Post;
       TotalizaPedidoBalcao;
@@ -959,6 +1029,57 @@ begin
 
 end;
 
+
+Procedure InclueDrink(pNrDrink:Integer);
+var nSeq: Integer;
+    lExiste,lProcura: Boolean;
+begin
+  if not uDM.Itens.FindKey([35,pNrDrink]) then Exit;
+  with uDM
+  do begin
+    lExiste := False;
+    lProcura := True;
+    PedWrk.First;
+    // Verifica se a bebida já existe no pedido
+    while lProcura
+    do begin
+      if (PedWrkTpProd.AsInteger = 35) and (PedWrkCodProd.AsInteger = pNrDrink)
+      then begin
+        lExiste := True;
+        lProcura := False;
+      end
+      else PedWrk.Next;
+      if PedWrk.Eof then lProcura := False;
+    end;
+    //
+    if lExiste then
+    begin          // Altera qtd do drink;
+      nSeq := PedWrkNrLcto.AsInteger;
+      PedWrk.Edit;
+      PedWrkQuant.AsInteger := PedWrkQuant.AsInteger + 1;
+      PedWrkVlrTotal.AsCurrency := PedWrkVlrUnit.AsCurrency * PedWrkQuant.AsInteger;
+      PedWrk.Post;
+    end
+    else begin     // Inclue drink
+      PedWrk.Last;
+      nSeq := PedWrkNrLcto.AsInteger + 1;
+      PedWrk.Append;
+      PedWrkNrLcto.AsInteger    := nSeq;
+      PedWrkTpProd.AsInteger    := 35;
+      PedWrkCodProd.AsInteger   := pNrDrink;
+      PedWrkDescricao.AsString  := stringReplace(ItensDescricao.AsString,'#',' ',[rfIgnoreCase, rfReplaceAll]);
+      PedWrkQuant.AsInteger     := 1;
+      PedWrkVlrUnit.AsCurrency  := ItensPreco.AsCurrency;
+      PedWrkVlrTotal.AsCurrency := ItensPreco.AsCurrency;
+      PedWrkExtras.AsString     := stringFiller('.',48);
+      PedWrk.Post;
+    end;
+  end;
+  TotalizaPedidoBalcao;
+
+end;
+
+
 procedure AjustaFonteGridLanches;
 begin
   with FuPedidosBalcao
@@ -984,6 +1105,21 @@ begin
   end;
 
 end;
+
+
+procedure AjustaFonteGridDrinks;
+begin
+  with FuPedidosBalcao
+  do begin
+    GridDrinks.Canvas.Font.Name := LabAux1.Font.Name;
+    GridDrinks.Canvas.Font.Size := LabAux1.Font.Size;
+    GridDrinks.Canvas.Font.Style := LabAux1.Font.Style;
+    GridDrinks.Canvas.Font.Color := LabAux1.Font.Color;
+
+  end;
+
+end;
+
 
 {
 Procedure InclueCrepe(pCodCrepe:Integer);
@@ -1056,6 +1192,11 @@ begin
     1:AlteraLanche;
     3:AlteraBebida;
     4:AlteraMontagem;
+    6:ShowMessage('AlteraDiversos');
+    11:ShowMessage('AlteraCrepe');
+    21:ShowMessage('AlteraFritura');
+    31:ShowMessage('AlteraHamburguer');
+    35:SHowMessage('AlteraDrink');
   end;
 
 end;
@@ -1171,7 +1312,7 @@ end;
 
 procedure TFuPedidosBalcao.btMontarLancheClick(Sender: TObject);
 begin
-  InclueLancheBalcao(4,0,'','');
+  InclueProdutoBalcao(4,0,'','');           // Lanche 'montado'
   MontagemDoLanche(True);
   TotalizaPedidoBalcao;
 
@@ -1282,7 +1423,7 @@ begin
     Exit;
   end;
   uDM.CDBuffet.Post;
-  InclueLancheBalcao(15,1,'','');
+  InclueProdutoBalcao(15,1,'','');             // Sorvete
   uDM.PedWrk.Post;
   TotalizaPedidoBalcao;
   FuPedidosBalcao.FormResize(nil);
@@ -1335,7 +1476,7 @@ begin
   wrkSabores := '';
   for i := 1 to 100 do
     wrkSabores := wrkSabores + xSabores[i];
-  InclueLancheBalcao(11,wKey,wrkSabores,lstSabores);
+  InclueProdutoBalcao(11,wKey,wrkSabores,lstSabores);          // Crepe
   TotalizaPedidoBalcao;
   FuPedidosBalcao.FormResize(nil);
   btCancelaCrepeClick(nil);       // Limpa as informações de crepe
@@ -1352,7 +1493,7 @@ begin
     Exit;
   end;
   uDM.CDDiversos.Post;
-  InclueLancheBalcao(uDM.CDDiversosCodGrupo.AsInteger,
+  InclueProdutoBalcao(uDM.CDDiversosCodGrupo.AsInteger,            // Diversos
                      uDM.CDDiversosCodItem.AsInteger,
                      '','');
   uDM.PedWrk.Post;
@@ -1392,7 +1533,7 @@ begin
       end;
     end;
   end;
-  InclueLancheBalcao(21,wKey,'',lstComplementos,wValor);
+  InclueProdutoBalcao(21,wKey,'',lstComplementos,wValor);         // Frituras
   TotalizaPedidoBalcao;
   FuPedidosBalcao.FormResize(nil);
   btCancelaFrituraClick(nil);       // Limpa as informações da fritura
@@ -1417,8 +1558,8 @@ var i: Integer;
 begin
   for i := 0 to 23 do
   begin
-    wSelGelado[i] := '';
-    wSelGeladoCompl[i] := '';
+    wSelHambur[i] := '';
+    wSelHamburCompl[i] := '';
   end;
   GridHamburgueres.Refresh;
   GridHamburgueresCompl.Refresh;
@@ -1434,9 +1575,9 @@ begin
   lstComplementos := '';
   for i := 0 to GridHamburgueres.RowCount-1 do
   begin
-    if wSelGelado[i] <> ''
+    if wSelHambur[i] <> ''
     then begin
-      wKey := wCodGelado[i];
+      wKey := wCodHambur[i];
       if uDM.Itens.FindKey([31,wKey]) then
         wValor := uDM.ItensPreco.AsCurrency;
       Break;
@@ -1444,9 +1585,9 @@ begin
   end;
   for i := 0 to GridHamburgueresCompl.RowCount-1 do
   begin
-    if wSelGeladoCompl[i] <> '' then
+    if wSelHamburCompl[i] <> '' then
     begin
-      wKCompl := wCodGeladoCompl[i];
+      wKCompl := wCodHamburCompl[i];
       if uDM.Itens.FindKey([32,wKCompl]) then
       begin
         wValor := wValor + uDM.ItensPreco.AsCurrency;
@@ -1454,10 +1595,10 @@ begin
       end;
     end;
   end;
-  InclueLancheBalcao(31,wKey,'',lstComplementos,wValor);
+  InclueProdutoBalcao(31,wKey,'',lstComplementos,wValor);        // Hamburgueres
   TotalizaPedidoBalcao;
   FuPedidosBalcao.FormResize(nil);
-  btCancelaHamburguerClick(nil);       // Limpa as informações do Gelado
+  btCancelaHamburguerClick(nil);       // Limpa as informações do hamburguer
 
 end;
 
@@ -1578,20 +1719,28 @@ begin
 end;
 
 procedure TFuPedidosBalcao.edCodBarrasExit(Sender: TObject);
-var wCdBar: String;
+var wCdGrp,wCdBar: String;
 begin
   Teclado.Visible := False;
   wCdBar := uDM.CDDiversosCodBarras.AsString;
   if wCdBar = '' then
     Exit;
+  wCdGrp := edCodBarras.Text;
+  while Length(Trim(wCdGrp)) < 3 do
+    wCdGrp := '0' + wCdGrp;
+  wCdGrp := '06' + wCdGrp;
   //
-  uDM.CDItens.IndexName := 'CODIGOBARRAS';
-  if not uDM.CDItens.FindKey([wCdBar]) then
+  uDM.CDItens.IndexName := '';
+  if not uDM.CDItens.FindKey([wCdGrp]) then
   begin
-    MessageDlg('Código informado não existe no cadastro, reinforme',mtError,[mbOk],0);
-    uDM.CDDiversosCodBarras.AsString := '';
-    edCodBarras.SetFocus;
-    Exit;
+    uDM.CDItens.IndexName := 'CODIGOBARRAS';
+    if not uDM.CDItens.FindKey([wCdBar]) then
+    begin
+      MessageDlg('Código informado não existe no cadastro, reinforme',mtError,[mbOk],0);
+      uDM.CDDiversosCodBarras.AsString := '';
+      edCodBarras.SetFocus;
+      Exit;
+    end;
   end;
   uDM.CDDiversosQuant.AsInteger := 1;
   uDM.CDDiversosVlrUnit.AsCurrency := uDM.CDItensPreco.AsCurrency;
@@ -1885,7 +2034,7 @@ procedure TFuPedidosBalcao.GridBebidasMouseDown(Sender: TObject;
 var nCol,nLin: Integer;
     wKey: Integer;
 begin
-  if PanAlteraBebida.Visible then PanAlteraBebida.Visible := False;  
+  if PanAlteraBebida.Visible then PanAlteraBebida.Visible := False;
   GridBebidas.MouseToCell(X,Y,nCol,nLin);
   wKey := wCodBebida[nCol,nLin];
   if wKey = 0 then Exit;
@@ -2072,6 +2221,99 @@ begin
 end;
 
 
+procedure TFuPedidosBalcao.GridDrinksDrawCell(Sender: TObject; ACol,
+  ARow: LongInt; Rect: TRect; State: TGridDrawState);
+var wTxt: String;
+    wKey,nTop,nPos: Integer;
+    wImagem: TImage;
+begin
+  // Identifica a bebida na célula
+  wKey := wCodDrinks[ACol,ARow];
+  if wKey = 0 then Exit;   // Não há bebida na célula
+  if not uDM.Itens.FindKey([35,wKey]) then Exit;   // Bebida não encontrada
+  GridDrinks.Canvas.Brush.Style := bsClear;
+  GridDrinks.Canvas.FillRect(Rect);
+  GridDrinks.Color := clWhite;
+  //
+  if FileExists(uDM.ItensImagem.AsString) and (not uDM.usaCorItem) then
+  begin
+    wImagem := TImage.Create(nil);
+    wImagem.Picture.LoadFromFile(uDM.ItensImagem.AsString);
+    GridDrinks.Canvas.StretchDraw(Rect,wImagem.Picture.Graphic);
+    wImagem.Free;
+  end
+  else begin
+    LabAux1.Font.Name := 'Tahoma';
+    LabAux1.Font.Size := 28;
+    LabAux1.Font.Style := [fsBold];
+    LabAux1.Caption := '00';
+    nTop := LabAux1.Height+16; // Obtem 'top' para descrição
+    if uDM.ItensCorItem.AsString <> '' then
+      wColor := StringToColor(uDM.ItensCorItem.AsString)
+    else wColor := clAqua;
+    GridDrinks.Canvas.Brush.Color := wColor;
+    GridDrinks.Canvas.FillRect(Rect);
+    //
+    wTxt := uDM.ItensDescricao.AsString;
+    LabAux1.Caption := '';
+    LabAux2.Caption := '';
+    nPos := Pos('#',wTxt);
+    if nPos = 0 then
+    begin
+      LabAux1.Caption := wTxt;
+      nTop := Trunc(nTop * 1.4);
+    end
+    else begin
+      LabAux1.Caption := Copy(wTxt,1,nPos-1);
+      LabAux2.Caption := Copy(wTxt,nPos+1,Length(wTxt)-nPos);
+    end;
+    LabAux1.Font.Name := 'Tahoma';
+    LabAux1.Font.Size := 18;
+    LabAux1.Font.Style := [fsBold];
+    LabAux1.Font.Color := clBlack;
+    LabAux2.Font := LabAux1.Font;
+    AjustaFonteGridDrinks;
+    GridDrinks.Canvas.TextOut(Rect.Left+16,Rect.Top+nTop, LabAux1.Caption);
+    if LabAux2.Caption <> '' then
+    begin
+      nTop := nTop + LabAux1.Height + 6;
+      GridDrinks.Canvas.TextOut(Rect.Left+16,Rect.Top+nTop, LabAux2.Caption);
+    end;
+  end;
+  LabAux1.Font.Name := 'Tahoma';
+  LabAux1.Font.Size := 28;
+  LabAux1.Font.Style := [fsBold];
+  LabAux1.Font.Color := clBlack;
+  wTxt := IntToStr(wKey);
+  if wKey < 10 then wTxt := '0' + wTxt;
+  LabAux1.Caption := wTxt;
+  AjustaFonteGridDrinks;
+  GridDrinks.Canvas.TextOut(Rect.Left+6, Rect.Top+4, wTxt);
+  //
+  GridDrinks.Canvas.Pen.Color := clBlack;
+  GridDrinks.canvas.Pen.Width := 2;
+  GridDrinks.Canvas.MoveTo(Rect.Left+3, Rect.Top+3);
+  GridDrinks.Canvas.LineTo(Rect.Left+LabAux1.Width+10, Rect.Top+3);
+  GridDrinks.Canvas.LineTo(Rect.Left+LabAux1.Width+10, Rect.Top+LabAux1.Height+6);
+  GridDrinks.Canvas.LineTo(Rect.Left+3, Rect.Top+LabAux1.Height+6);
+  GridDrinks.Canvas.LineTo(Rect.Left+3, Rect.Top+2);
+
+end;
+
+procedure TFuPedidosBalcao.GridDrinksMouseDown(Sender: TObject;
+  Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
+var nCol,nLin: Integer;
+    wKey: Integer;
+begin
+  //if PanAlteraBebida.Visible then PanAlteraBebida.Visible := False;
+  GridDrinks.MouseToCell(X,Y,nCol,nLin);
+  wKey := wCodDrinks[nCol,nLin];
+  if wKey = 0 then Exit;
+  InclueDrink(wKey);
+  FormResize(nil);
+
+end;
+
 procedure TFuPedidosBalcao.GridFriturasComplDrawCell(Sender: TObject; ACol,ARow: Integer; Rect: TRect; State: TGridDrawState);
 var wKey,nTop,nLeft: Integer;
 begin
@@ -2213,7 +2455,7 @@ procedure TFuPedidosBalcao.GridHamburgueresComplDrawCell(Sender: TObject; ACol,
 var wKey,nTop,nLeft: Integer;
 begin
   // Identifica o complemento do gelado na linha
-  wKey := wCodGeladoCompl[ARow];
+  wKey := wCodHamburCompl[ARow];
   if wKey = 0 then Exit;     // Não há complemento na linha
   if not uDM.Itens.FindKey([32,wKey]) then Exit;   // Complemento não encontrado
   GridHamburgueresCompl.Canvas.Brush.Style := bsClear;
@@ -2235,7 +2477,7 @@ begin
   case ACol of
     0:LabAux1.Caption := uDM.ItensDescricao.AsString;
     1:LabAux1.Caption := FloatToStrF(uDM.ItensPreco.AsCurrency,ffNumber,15,2);
-    2:LabAux1.Caption := wSelGeladoCompl[ARow];
+    2:LabAux1.Caption := wSelHamburCompl[ARow];
   end;
   case ACol of
     0:nLeft := 5;
@@ -2264,21 +2506,21 @@ var nCol,nLin,nUltimo,i,qtdCompl: Integer;
 begin
   GridHamburgueresCompl.MouseToCell(X,Y,nCol,nLin);
   nUltimo := nLin;
-  if wSelGeladoCompl[nLin] = '' then
-    wSelGeladoCompl[nLin] := 'X'
+  if wSelHamburCompl[nLin] = '' then
+    wSelHamburCompl[nLin] := 'X'
   else
-    wSelGeladoCompl[nLin] := '';
+    wSelHamburCompl[nLin] := '';
   GridHamburgueresCompl.Refresh;
   qtdCompl := 0;
   for i := 0 to 23 do
-    if wSelGeladoCompl[i] <> '' then
+    if wSelHamburCompl[i] <> '' then
       qtdCompl := qtdCompl + 1;
   if qtdCompl > nMaxExtras then
   begin
     MessageDlg('Excesso de indicações de complementos/sabores' + #13 +
                'Máximo permitido=' + IntToStr(nMaxExtras) + #13 +
                'Última indicação será desconsiderada',mtWarning,[mbOk],0);
-    wSelGeladoCompl[nUltimo] := '';
+    wSelHamburCompl[nUltimo] := '';
     GridHamburgueresCompl.Refresh;
   end;
 
@@ -2289,7 +2531,7 @@ procedure TFuPedidosBalcao.GridHamburgueresDrawCell(Sender: TObject; ACol,
 var wKey,nTop,nLeft: Integer;
 begin
   // Identifica o Gelado/Shake na linha
-  wKey := wCodGelado[ARow];
+  wKey := wCodHambur[ARow];
   if wKey = 0 then Exit;     // Não há Gelado na linha
   if not uDM.Itens.FindKey([31,wKey]) then Exit;   // Gelado não encontrado
   GridHamburgueres.Canvas.Brush.Style := bsClear;
@@ -2314,7 +2556,7 @@ begin
     0:LabAux1.Caption := uDM.ItensCodigo.AsString;
     1:LabAux1.Caption := uDM.ItensDescricao.AsString;
     2:LabAux1.Caption := FloatToStrF(uDM.ItensPreco.AsCurrency,ffNumber,15,2);
-    3:LabAux1.Caption := wSelGelado[ARow];
+    3:LabAux1.Caption := wSelHambur[ARow];
   end;
   case ACol of
     0,3:nLeft := (GridHamburgueres.ColWidths[ACol] - LabAux1.Width) div 2;
@@ -2342,15 +2584,15 @@ procedure TFuPedidosBalcao.GridHamburgueresMouseDown(Sender: TObject;
 var nCol,nLin,i: Integer;
 begin
   GridHamburgueres.MouseToCell(X,Y,nCol,nLin);
-  wKeyGelado := wCodGelado[nLin];
-  if wKeyGelado = 0 then Exit;
+  wKeyHambur := wCodHambur[nLin];
+  if wKeyHambur = 0 then Exit;
   for i := 0 to 23
-  do if wCodGelado[i] <> wKeyGelado
-     then wSelGelado[i] := ''
-     else wSelGelado[i] := 'X';
+  do if wCodHambur[i] <> wKeyHambur
+     then wSelHambur[i] := ''
+     else wSelHambur[i] := 'X';
   GridHamburgueres.Refresh;
   for i := 0 to 23 do
-    wSelGeladoCompl[i] := '';
+    wSelHamburCompl[i] := '';
   GridHamburgueresCompl.Refresh;
 
 end;
@@ -2442,7 +2684,7 @@ begin
   GridLanches.MouseToCell(X,Y,nCol,nLin);
   wKey := wCodLanche[nCol,nLin];
   if wKey = 0 then Exit;
-  InclueLancheBalcao(1,wKey,'','');
+  InclueProdutoBalcao(1,wKey,'','');             // Cachorro quente
   FormResize(nil);
 
 end;

@@ -23,7 +23,6 @@ object FuItens: TFuItens
     Height = 408
     Align = alClient
     TabOrder = 0
-    ExplicitHeight = 416
     object PanManut: TPanel
       Left = 1
       Top = 84
@@ -32,11 +31,10 @@ object FuItens: TFuItens
       Align = alBottom
       Enabled = False
       TabOrder = 0
-      ExplicitTop = 92
       object dbTipo: TDBRadioGroup
         Left = 1
         Top = 1
-        Width = 190
+        Width = 152
         Height = 321
         Align = alLeft
         Caption = 'Tipo'
@@ -61,13 +59,15 @@ object FuItens: TFuItens
         OnExit = edZC_KeyChange
       end
       object PanDetalhe: TPanel
-        Left = 191
+        Left = 153
         Top = 1
-        Width = 790
+        Width = 828
         Height = 321
         Align = alClient
         BevelOuter = bvNone
         TabOrder = 1
+        ExplicitLeft = 191
+        ExplicitWidth = 790
         object Label2: TLabel
           Left = 20
           Top = 0
@@ -639,7 +639,7 @@ object FuItens: TFuItens
       Left = 9
       Top = 6
       Width = 124
-      Height = 25
+      Height = 29
       DataSource = uDM.DSItens
       VisibleButtons = [nbFirst, nbPrior, nbNext, nbLast]
       Ctl3D = True

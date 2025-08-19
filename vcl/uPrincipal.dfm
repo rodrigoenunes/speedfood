@@ -122,7 +122,7 @@ object FuPrincipal: TFuPrincipal
   end
   object btSair: TBitBtn
     Left = 8
-    Top = 336
+    Top = 340
     Width = 257
     Height = 48
     Caption = 'Finalizar/Sair'
