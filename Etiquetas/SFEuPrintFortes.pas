@@ -252,6 +252,13 @@ begin
     RLEtiq_Hamburguer.Margins.TopMargin := etqTop;
     RLEtiq_Hamburguer.Margins.BottomMargin := etqBot;
 
+    RLEtiq_Drinks.PrintDialog := lDialog;
+    RLEtiq_Drinks.PageSetup.PaperHeight := etqAlt;
+    RLEtiq_Drinks.Margins.LeftMargin := etqEsq;
+    RLEtiq_Drinks.Margins.RightMargin := etqDir;
+    RLEtiq_Drinks.Margins.TopMargin := etqTop;
+    RLEtiq_Drinks.Margins.BottomMargin := etqBot;
+
   end;
 end;
 
