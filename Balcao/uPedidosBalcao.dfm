@@ -767,7 +767,7 @@ object FuPedidosBalcao: TFuPedidosBalcao
           end
         end
         object TSDrinks: TTabSheet
-          Caption = 'Drinks'
+          Caption = '   Drinks'
           ImageIndex = 6
           object GridDrinks: TDrawGrid
             Left = 21
@@ -784,7 +784,7 @@ object FuPedidosBalcao: TFuPedidosBalcao
           end
         end
         object TSCrepes: TTabSheet
-          Caption = 'TSCrepes'
+          Caption = '   Crepes'
           ImageIndex = 2
           object PanCrepesRodape: TPanel
             Left = 0
@@ -960,7 +960,7 @@ object FuPedidosBalcao: TFuPedidosBalcao
           end
         end
         object TSFrituras: TTabSheet
-          Caption = 'TSFrituras'
+          Caption = '   Frituras'
           ImageIndex = 3
           object GridFrituras: TDrawGrid
             Left = 0
@@ -976,6 +976,8 @@ object FuPedidosBalcao: TFuPedidosBalcao
             TabOrder = 0
             OnDrawCell = GridFriturasDrawCell
             OnMouseDown = GridFriturasMouseDown
+            ExplicitLeft = -6
+            ExplicitTop = 28
           end
           object GridFriturasCompl: TDrawGrid
             Left = 328
@@ -1136,7 +1138,7 @@ object FuPedidosBalcao: TFuPedidosBalcao
           end
         end
         object TSHamburgueres: TTabSheet
-          Caption = 'TSHamburgueres'
+          Caption = '   Hamburgueres'
           ImageIndex = 6
           object GridHamburgueres: TDrawGrid
             Left = 0
@@ -1312,7 +1314,7 @@ object FuPedidosBalcao: TFuPedidosBalcao
           end
         end
         object TSBufDiv: TTabSheet
-          Caption = 'TSBufDiv'
+          Caption = '   Buffet'
           ImageIndex = 4
           object PanDiversos: TPanel
             Left = 0
@@ -2274,6 +2276,7 @@ object FuPedidosBalcao: TFuPedidosBalcao
       ParentBackground = False
       ParentFont = False
       TabOrder = 3
+      ExplicitLeft = 0
     end
     object btNrOk: TBitBtn
       Left = 8

@@ -2713,11 +2713,16 @@ procedure TFuPedidosBalcao.pgControleBalcaoChange(Sender: TObject);
 begin
   btMontarLanche.Enabled := False;
   tBalanca.Enabled := False;
-  if pgControleBalcao.ActivePageIndex = 0 then
+  if pgControleBalcao.ActivePage = TSLanches then
     btMontarLanche.Enabled := True;
-  if pgControleBalcao.ActivePageIndex = 5 then
+  if pgControleBalcao.ActivePage = TSBufDiv then
     tBalanca.Enabled := True;
-
+  {
+  if pgControleBalcao.ActivePageIndex = 0 then      xxxx
+    btMontarLanche.Enabled := True;
+  if pgControleBalcao.ActivePageIndex = 5 then     xxx
+    tBalanca.Enabled := True;
+  }
 end;
 
 procedure TFuPedidosBalcao.pgControleBalcaoChanging(Sender: TObject;
