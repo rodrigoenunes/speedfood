@@ -10,6 +10,7 @@ object uDM: TuDM
       'Server=127.0.0.1'
       'DriverID=MySQL')
     ConnectedStoredUsage = []
+    Connected = True
     LoginPrompt = False
     Left = 28
     Top = 8
@@ -694,6 +695,11 @@ object uDM: TuDM
       FieldName = 'ParaLevar'
       Origin = 'ParaLevar'
     end
+    object PedidosSetor: TIntegerField
+      AutoGenerateValue = arDefault
+      FieldName = 'Setor'
+      Origin = 'Setor'
+    end
     object PedidosZC_Impresso: TStringField
       FieldKind = fkCalculated
       FieldName = 'ZC_Impresso'
@@ -745,6 +751,12 @@ object uDM: TuDM
     object PedidosZC_Origem: TStringField
       FieldKind = fkCalculated
       FieldName = 'ZC_Origem'
+      Calculated = True
+    end
+    object PedidosZC_Setor: TStringField
+      FieldKind = fkCalculated
+      FieldName = 'ZC_Setor'
+      Size = 1
       Calculated = True
     end
   end

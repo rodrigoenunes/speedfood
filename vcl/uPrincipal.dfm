@@ -683,7 +683,7 @@ object FuPrincipal: TFuPrincipal
   end
   object btBuffet: TBitBtn
     Left = 271
-    Top = 346
+    Top = 340
     Width = 257
     Height = 48
     Caption = 'Buffet'

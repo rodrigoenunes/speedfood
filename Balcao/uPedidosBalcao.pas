@@ -1669,7 +1669,7 @@ begin
   Sleep(200);
   pgControleBalcao.ActivePageIndex := uDM.sysIniBalcao;
   uDM.sysAtivo := 'BALCAO';
-  uDM.sysPedePlaca := False;
+  uDM.sysPedePlaca := True;      //False;
   if CriaAbrePedidoWrk(0) <> 0 then Exit;
   itensPedido := 0;
   edItens.Text := IntToStr(itensPedido);

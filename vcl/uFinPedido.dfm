@@ -310,7 +310,7 @@ object FuFinPedido: TFuFinPedido
       object dbMeioPagto: TDBRadioGroup
         Left = 1
         Top = 1
-        Width = 208
+        Width = 164
         Height = 239
         Align = alLeft
         BiDiMode = bdLeftToRight
@@ -363,7 +363,7 @@ object FuFinPedido: TFuFinPedido
         end
         object ImgNoTick: TImage
           Left = 4
-          Top = 2
+          Top = -1
           Width = 36
           Height = 36
           Picture.Data = {
@@ -384,7 +384,7 @@ object FuFinPedido: TFuFinPedido
         end
         object ImgTick: TImage
           Left = 22
-          Top = 2
+          Top = 6
           Width = 36
           Height = 36
           Picture.Data = {
@@ -404,11 +404,11 @@ object FuFinPedido: TFuFinPedido
         end
       end
       object gbDetPgto: TGroupBox
-        Left = 209
+        Left = 165
         Top = 1
-        Width = 327
+        Width = 263
         Height = 239
-        Align = alClient
+        Align = alLeft
         Caption = 'Recebimento'
         TabOrder = 2
         object LabReais: TLabel
@@ -564,6 +564,41 @@ object FuFinPedido: TFuFinPedido
           OnKeyDown = edOutrosKeyDown
           OnKeyPress = MudaPontoVirgula
         end
+      end
+      object dbRdSetor: TDBRadioGroup
+        Left = 464
+        Top = 1
+        Width = 72
+        Height = 239
+        Align = alRight
+        Caption = 'Setor'
+        DataField = 'Setor'
+        DataSource = uDM.DSPedidos
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -24
+        Font.Name = 'Tahoma'
+        Font.Style = []
+        Items.Strings = (
+          '1'
+          '2'
+          '3')
+        ParentFont = False
+        TabOrder = 3
+        TabStop = True
+        Values.Strings = (
+          '1'
+          '2'
+          '3')
+      end
+      object Panel1: TPanel
+        Left = 428
+        Top = 1
+        Width = 36
+        Height = 239
+        Align = alClient
+        BevelOuter = bvNone
+        TabOrder = 4
       end
     end
     object PanPlaca: TPanel

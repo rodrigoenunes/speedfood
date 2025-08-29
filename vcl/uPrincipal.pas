@@ -64,7 +64,8 @@ implementation
 
 uses uItens, uDados, uGenericas, uCaixa, uPedidos, uImpressoes, uUsuario,
   FortesReportCtle, uUserPwd, uHelpSpeedFood,
-  uCaixaMovto, uQueryPedidos, uQueryAdministrativo, uPedidosBalcao, uTurno;
+  uCaixaMovto, uQueryPedidos, uQueryAdministrativo, uPedidosBalcao, uTurno,
+  uFinPedido;
 
 
 procedure TFuPrincipal.btCaixaClick(Sender: TObject);
@@ -89,12 +90,30 @@ begin
 end;
 
 procedure TFuPrincipal.btBalcaoClick(Sender: TObject);
+var nSetores,i: Integer;
 begin
   if ObtemParametro('UsaCorItem','N') = 'S' then
      uDM.usaCorItem := True
   else
      uDM.usaCorItem := False;
   uDM.sysTefPos := uDM.sysTefPosIni;      // SisPessoaTefPos.AsInteger;
+  FuFinPedido.dbRdSetor.Items.Clear;
+  FuFinPedido.dbRdSetor.Values.Clear;
+  nSetores := StrToIntDef(ObtemParametro('Setores','0'),0);
+  if nSetores = 0 then
+  begin
+   FuFinPedido.dbRdSetor.Items.Add('0');
+   FuFinPedido.dbRdSetor.Values.Add('0');
+   FuFinPedido.dbRdSetor.Visible := False;
+  end
+  else begin
+    for i := 1 to nSetores do
+    begin
+      FuFinPedido.dbRdSetor.Items.Add(IntToStr(i));
+      FuFinPedido.dbRdSetor.Values.Add(IntToStr(i));
+    end;
+    FuFinPedido.dbRdSetor.Visible := True;
+  end;
   PedidosBalcao(btBalcao.Caption);
 
 end;

@@ -30,7 +30,6 @@ type
     RLDBText3: TRLDBText;
     RLLabel3: TRLLabel;
     RLPanDescr: TRLPanel;
-    RLDbDescfr: TRLDBText;
     RLLabel2: TRLLabel;
     RLLabel5: TRLLabel;
     RLDBText1: TRLDBText;
@@ -40,7 +39,6 @@ type
     RLRodapeLanche: TRLBand;
     RLDbCliente: TRLDBText;
     RLDBText9: TRLDBText;
-    RLDbPrensCort: TRLDBText;
     RLPanMaisSemMenos: TRLPanel;
     RLBand1: TRLBand;
     RLDbClienteBeb: TRLDBText;
@@ -54,7 +52,6 @@ type
     RLLabSem: TRLLabel;
     RLLabMais: TRLLabel;
     RLLabMenos: TRLLabel;
-    RLDbObserv: TRLDBText;
     RLSem: TRLMemo;
     RLMenos: TRLMemo;
     RLMais: TRLMemo;
@@ -78,7 +75,6 @@ type
     RLEtiq_Fritura: TRLReport;
     RLBand5: TRLBand;
     RLDraw1: TRLDraw;
-    RLDBText14: TRLDBText;
     RLDraw2: TRLDraw;
     RLDBMemo1: TRLDBMemo;
     RLLabParaLevarFritura: TRLLabel;
@@ -94,7 +90,6 @@ type
     RLEtiq_Hamburguer: TRLReport;
     RLBand8: TRLBand;
     RLDraw5: TRLDraw;
-    RLDBText25: TRLDBText;
     RLDraw6: TRLDraw;
     RLDBMemo3: TRLDBMemo;
     RLLabParaLevarHamburguer: TRLLabel;
@@ -122,8 +117,23 @@ type
     RLBand13: TRLBand;
     RLDBText37: TRLDBText;
     RLDBText38: TRLDBText;
+    RLDBText39: TRLDBText;
+    RLPanel1: TRLPanel;
+    RLDbSetorLanche: TRLDBText;
+    RLPanel2: TRLPanel;
+    RLDbDescr: TRLDBText;
+    RLDbPrensCort: TRLDBText;
+    RLDbObserv: TRLDBText;
+    RLDbSetorBebs: TRLDBText;
+    RLDbSetorCrepe: TRLDBText;
+    RLDbSetorFritas: TRLDBText;
+    RLDBText43: TRLDBText;
+    RLDbSetorHamb: TRLDBText;
+    RLDBText25: TRLDBText;
+    RLDbSetorDrink: TRLDBText;
     procedure RLEtiqBebidaBeforePrint(Sender: TObject; var PrintIt: Boolean);
     procedure RLDetLancheBeforePrint(Sender: TObject; var PrintIt: Boolean);
+    procedure FormCreate(Sender: TObject);
   private
     { Private declarations }
   public
@@ -557,6 +567,43 @@ begin
 end;
 
 
+
+procedure TFSFEuPrintFortes.FormCreate(Sender: TObject);
+begin
+  if AnsiUpperCase(ObtemParametro('SetoresBorda','N')) = 'S' then
+    RLDbSetorLanche.Borders.DrawTop := True
+  else
+    RLDBSetorLanche.Borders.DrawTop := False;
+  RLDbSetorLanche.Borders.DrawBottom := RLDbSetorLanche.Borders.DrawTop;
+  RLDbSetorLanche.Borders.DrawLeft := RLDbSetorLanche.Borders.DrawTop;
+  RLDbSetorLanche.Borders.DrawRight := RLDbSetorLanche.Borders.DrawTop;
+
+  RLDbSetorBebs.Borders.DrawTop := RLDbSetorLanche.Borders.DrawTop;
+  RLDbSetorBebs.Borders.DrawBottom := RLDbSetorLanche.Borders.DrawTop;
+  RLDbSetorBebs.Borders.DrawLeft := RLDbSetorLanche.Borders.DrawTop;
+  RLDbSetorBebs.Borders.DrawRight := RLDbSetorLanche.Borders.DrawTop;
+
+  RLDbSetorFritas.Borders.DrawTop := RLDbSetorLanche.Borders.DrawTop;
+  RLDbSetorFritas.Borders.DrawBottom := RLDbSetorLanche.Borders.DrawTop;
+  RLDbSetorFritas.Borders.DrawLeft := RLDbSetorLanche.Borders.DrawTop;
+  RLDbSetorFritas.Borders.DrawRight := RLDbSetorLanche.Borders.DrawTop;
+
+  RLDbSetorCrepe.Borders.DrawTop := RLDbSetorLanche.Borders.DrawTop;
+  RLDbSetorCrepe.Borders.DrawBottom := RLDbSetorLanche.Borders.DrawTop;
+  RLDbSetorCrepe.Borders.DrawLeft := RLDbSetorLanche.Borders.DrawTop;
+  RLDbSetorCrepe.Borders.DrawRight := RLDbSetorLanche.Borders.DrawTop;
+
+  RLDbSetorDrink.Borders.DrawTop := RLDbSetorLanche.Borders.DrawTop;
+  RLDbSetorDrink.Borders.DrawBottom := RLDbSetorLanche.Borders.DrawTop;
+  RLDbSetorDrink.Borders.DrawLeft := RLDbSetorLanche.Borders.DrawTop;
+  RLDbSetorDrink.Borders.DrawRight := RLDbSetorLanche.Borders.DrawTop;
+
+  RLDbSetorHamb.Borders.DrawTop := RLDbSetorLanche.Borders.DrawTop;
+  RLDbSetorHamb.Borders.DrawBottom := RLDbSetorLanche.Borders.DrawTop;
+  RLDbSetorHamb.Borders.DrawLeft := RLDbSetorLanche.Borders.DrawTop;
+  RLDbSetorHamb.Borders.DrawRight := RLDbSetorLanche.Borders.DrawTop;
+
+end;
 
 procedure TFSFEuPrintFortes.RLDetLancheBeforePrint(Sender: TObject; var PrintIt: Boolean);
 var i: Integer;

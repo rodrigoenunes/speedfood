@@ -209,6 +209,8 @@ type
     CDPedParaLevar: TStringField;
     RLLabCxSit: TRLLabel;
     RLLabMPDocs: TRLLabel;
+    RLDBText8: TRLDBText;
+    CDPedSetor: TStringField;
     procedure RLCaixaBeforePrint(Sender: TObject; var PrintIt: Boolean);
     procedure RLPedDetalBeforePrint(Sender: TObject; var PrintIt: Boolean);
     procedure RLPedidoBeforePrint(Sender: TObject; var PrintIt: Boolean);
@@ -508,6 +510,7 @@ begin
     CDPed.FieldDefs.Add('Total', ftString, 15);
     CDPed.FieldDefs.Add('MeioPagto', ftString, 20);
     CDPed.FieldDefs.Add('ParaLevar', ftString, 20);
+    CDPed.FieldDefs.Add('Setor', ftString, 1);
     CDPed.IndexDefs.Clear;
     CDPed.CreateDataSet;
     Try
@@ -729,6 +732,10 @@ begin
       CDPedParaLevar.AsString := ''
     else
       CDPedParaLevar.AsString := ObtemParametro('PedidoTxtParaLevarPrint','-- Para levar --');
+    if uDM.PedidosSetor.AsInteger > 0 then
+      CDPedSetor.AsString := uDM.PedidosSetor.AsString
+    else
+      CdPedSetor.AsString := '';
     CDPed.Post;
     uDM.PedItens.First;
     while not uDM.PedItens.Eof
@@ -799,7 +806,7 @@ begin
       CDDet.Next;
     end;
     //
-    nAltura := nAltura + (CDDet.RecordCount * 10);         //  120;     // XXXXXXXXXX
+    nAltura := nAltura + (CDDet.RecordCount * 10);         //  120;
     tmPagina := Trunc(nAltura / 3.7795) + 1;
     if tmPagina < 80 then tmPagina := 80
     else if tmPagina > tmMax then tmPagina := tmMax;

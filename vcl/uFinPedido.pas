@@ -68,6 +68,8 @@ type
     LabOutros: TLabel;
     edOutros: TDBEdit;
     ImgNoTick: TImage;
+    dbRdSetor: TDBRadioGroup;
+    Panel1: TPanel;
     procedure btGravarClick(Sender: TObject);
     procedure btRetornarClick(Sender: TObject);
     procedure btCancelarClick(Sender: TObject);
@@ -125,6 +127,7 @@ var
   valorPedido: Currency;
   itensPedido: Integer;
   lDebugFimPed: Boolean;
+  lSetor: Boolean;
 
 implementation
 
@@ -278,15 +281,23 @@ begin
     posX := wrkImag.Width-2;
     wrkImag.Canvas.LineTo(posX,posY);
     //
-    if uDM.sysAtivo = 'BALCAO' then
-       uDM.sysPedePlaca := False
-    else
-       uDM.sysPedePlaca := True;
+    uDM.sysPedePlaca := False;
+    lSetor := False;
     uDM.PedWrk.First;
     while not uDM.PedWrk.Eof
     do begin
-      if uDM.PedWrkTpProd.AsInteger in [1, 4, 11, 21]  then
-         uDM.sysPedePlaca := True;
+      if (uDM.PedWrkTpProd.AsInteger = 1) or
+         (uDM.PedWrkTpProd.AsInteger = 4) or
+         (uDM.PedWrkTpProd.AsInteger = 11) or
+         (uDM.PedWrkTpProd.AsInteger = 21) or
+         (uDM.PedWrkTpProd.AsInteger = 31) or
+         (uDM.PedWrkTpProd.AsInteger = 35) or
+         (uDM.PedWrkTpProd.AsInteger = 41) then
+      begin
+        uDM.sysPedePlaca := True;
+        lSetor := True;
+      end;
+
       posX := 2;
       posY := posY + 2;
       LabTaman.Font.Size := 11;
@@ -1259,7 +1270,10 @@ begin
   else begin
     if dbMeioPagto.ItemIndex = 4 then
       cbImprimeNFCe.Checked := True;
-    btGravar.SetFocus;
+    if lSetor and dbRdSetor.Visible then
+      dbRdSetor.SetFocus
+    else
+      btGravar.SetFocus;
   end;
 
 end;
@@ -1287,7 +1301,8 @@ end;
 
 procedure TFuFinPedido.dbPlacaEnter(Sender: TObject);
 begin
-  if not uDM.sysPedePlaca then Exit;
+  if not uDM.sysPedePlaca then
+    Exit;
   tvLeft := PanInform.Left + dbPlaca.Left - 8;
   if (tvLeft + 300) >= FuFinPedido.Width
      then tvLeft := FuFinPedido.Width - 328;
@@ -1586,6 +1601,8 @@ begin
     uDM.PedidosParaLevar.AsInteger := 1;      // Levar
     imgNoTick.Visible := False;
     imgTick.Visible := True;
+    uDM.PedidosSetor.AsInteger := 0;
+    btGravar.SetFocus;
   end
   else begin
     uDM.PedidosParaLevar.AsInteger := 0;      // Não levar

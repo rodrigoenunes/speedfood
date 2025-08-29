@@ -1136,7 +1136,7 @@ object FuImpressoes: TFuImpressoes
       Borders.DrawBottom = True
       object RLDbTotalPed: TRLDBText
         Left = 188
-        Top = 1
+        Top = -1
         Width = 76
         Height = 16
         Alignment = taRightJustify
@@ -1180,6 +1180,28 @@ object FuImpressoes: TFuImpressoes
         Height = 16
         Alignment = taRightJustify
         DataField = 'ParaLevar'
+        DataSource = SCDPed
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clBlack
+        Font.Height = -13
+        Font.Name = 'Arial'
+        Font.Style = [fsBold]
+        ParentFont = False
+        Text = ''
+      end
+      object RLDBText8: TRLDBText
+        Left = 131
+        Top = 21
+        Width = 20
+        Height = 16
+        Alignment = taCenter
+        AutoSize = False
+        Borders.Sides = sdCustom
+        Borders.DrawLeft = True
+        Borders.DrawTop = True
+        Borders.DrawRight = True
+        Borders.DrawBottom = True
+        DataField = 'Setor'
         DataSource = SCDPed
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clBlack
@@ -1917,6 +1939,10 @@ object FuImpressoes: TFuImpressoes
     end
     object CDPedParaLevar: TStringField
       FieldName = 'ParaLevar'
+    end
+    object CDPedSetor: TStringField
+      FieldName = 'Setor'
+      Size = 1
     end
   end
   object CDDet: TClientDataSet

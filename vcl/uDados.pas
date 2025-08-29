@@ -356,6 +356,8 @@ type
     PedidosParaLevar: TShortintField;
     PedidosLctHamburgueres: TIntegerField;
     PedidosLctDrinks: TIntegerField;
+    PedidosSetor: TIntegerField;
+    PedidosZC_Setor: TStringField;
     procedure ItensCalcFields(DataSet: TDataSet);
     procedure LctCaixaCalcFields(DataSet: TDataSet);
     procedure PedWrkCalcFields(DataSet: TDataSet);
@@ -1161,6 +1163,10 @@ begin
     else PedidosZC_Origem.AsString := '';
   end;
 
+  PedidosZC_Setor.AsString := '';
+  if PedidosSetor.AsInteger > 0 then
+    PedidosZC_Setor.AsString := PedidosSetor.AsString;
+
 end;
 
 procedure TuDM.PedidosFilterRecord(DataSet: TDataSet; var Accept: Boolean);
@@ -1257,10 +1263,11 @@ begin
     PedItensZC_Descricao.AsString := stringReplace(ItensDescricao.AsString,'#',' ',[rfIgnoreCase, rfReplaceAll])
   else
     PedItensZC_Descricao.AsString := 'Indefinido (' + PedItensCodProd.AsString + ')';
-  if PedItensTpProd.AsInteger = 4 then
-    PedItensZC_Descricao.AsString := '* * * ' + PedItensZC_Descricao.AsString + ' * * *';
 
   PedItensZC_CodDescr.AsString := '[ ' + PedItensCodProd.AsString + ' ] ' + PedItensZC_Descricao.AsString;
+
+  if PedItensTpProd.AsInteger = 4 then
+    PedItensZC_Descricao.AsString := '* * * ' + PedItensZC_Descricao.AsString + ' * * *';
 
   if PedItensEtqImpressa.AsInteger <> 0 then
     PedItensZC_Impresso.ASString := 'P'                          // Fontname no grid=Wingdings 2
