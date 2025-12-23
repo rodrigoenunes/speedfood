@@ -305,9 +305,14 @@ begin
   end;
   if uDM.PedidosOrigem.AsInteger = 1 then
   begin
-    if FSFEuPrintFortes.RLLabParaLevar.Caption <> '' then
-       FSFEuPrintFortes.RLLabParaLevar.Caption := FSFEuPrintFortes.RLLabParaLevar.Caption + '    ';
-    FSFEuPrintFortes.RLLabParaLevar.Caption := FSFEuPrintFortes.RLLabParaLevar.Caption + 'WhatsApp'
+    if Pos('What',FSFEuPrintFortes.RLLabParaLevar.Caption) = 0 then
+      FSFEuPrintFortes.RLLabParaLevar.Caption := FSFEuPrintFortes.RLLabParaLevar.Caption + '   WhatsApp';
+    if Pos('What',FSFEuPrintFortes.RLLabParaLevarCrepe.Caption) = 0 then
+      FSFEuPrintFortes.RLLabParaLevarCrepe.Caption := FSFEuPrintFortes.RLLabParaLevarCrepe.Caption + '   WhatsApp';
+    if Pos('What',FSFEuPrintFortes.RLLabParaLevarFritura.Caption) = 0 then
+      FSFEuPrintFortes.RLLabParaLevarFritura.Caption := FSFEuPrintFortes.RLLabParaLevarFritura.Caption + '   WhatsApp';
+    if Pos('What',FSFEuPrintFortes.RLLabParaLevarHamburguer.Caption) = 0 then
+      FSFEuPrintFortes.RLLabParaLevarHamburguer.Caption := FSFEuPrintFortes.RLLabParaLevarHamburguer.Caption + '   WhatsApp';
   end;
   if FSFEuPrintFortes.RLLabParaLevar.Caption <> '' then
     FSFEuPrintFortes.RLLabParaLevar.Visible := True;

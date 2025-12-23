@@ -853,6 +853,11 @@ begin
   end;
   //
   DebugMensagem(lDebugFimPed,'5- Após tratativa NFCe');
+  if not wStatus then
+    if ObtemParametro('ValidarPedido','N') = 'S' then
+      if MessageDlg('Validar pedido ?',mtConfirmation,[mbYes,mbNo],0,mbYes,['Sim','Não']) = mrYes then
+        wStatus := True;
+  //
   if wStatus then
   begin
     if (uDM.PedidosMeioPagto.AsInteger = 1) or        // Cartão dédito

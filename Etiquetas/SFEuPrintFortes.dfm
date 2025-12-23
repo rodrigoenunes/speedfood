@@ -977,8 +977,8 @@ object FSFEuPrintFortes: TFSFEuPrintFortes
     end
   end
   object RLEtiq_Fritura: TRLReport
-    Left = 439
-    Top = 193
+    Left = 431
+    Top = 186
     Width = 397
     Height = 272
     Margins.LeftMargin = 6.000000000000000000
@@ -1539,7 +1539,7 @@ object FSFEuPrintFortes: TFSFEuPrintFortes
   end
   object RLEtiq_Drinks: TRLReport
     Left = 2
-    Top = 471
+    Top = 499
     Width = 397
     Height = 272
     Margins.LeftMargin = 6.000000000000000000
