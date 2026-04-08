@@ -417,7 +417,6 @@ begin
     LabEstacao.Caption := 'Estação: ' + uDM.sysCPUId + '   [ ' + IntToStr(uDM.sysNumId) + ' ]';
     LabTurno.Caption := 'Turno: '+ IntToStr(uDM.turnoCorrente);
     PanIdCaixa.Visible := uDM.sysCaixaDisp;     //  True;
-    //
 
   end;
 

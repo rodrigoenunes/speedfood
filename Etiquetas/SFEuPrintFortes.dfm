@@ -1,10 +1,9 @@
 object FSFEuPrintFortes: TFSFEuPrintFortes
   Left = 0
   Top = 0
-  AutoSize = True
   Caption = 'FSFEuPrintFortes'
-  ClientHeight = 743
-  ClientWidth = 836
+  ClientHeight = 1031
+  ClientWidth = 801
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -437,8 +436,8 @@ object FSFEuPrintFortes: TFSFEuPrintFortes
     end
   end
   object RLEtiqBebida: TRLReport
-    Left = 403
-    Top = 10
+    Left = 404
+    Top = 0
     Width = 397
     Height = 272
     Margins.LeftMargin = 6.000000000000000000
@@ -720,8 +719,8 @@ object FSFEuPrintFortes: TFSFEuPrintFortes
     end
   end
   object RLEtiq_Crepe: TRLReport
-    Left = 2
-    Top = 263
+    Left = 0
+    Top = 280
     Width = 397
     Height = 272
     Margins.LeftMargin = 6.000000000000000000
@@ -977,8 +976,8 @@ object FSFEuPrintFortes: TFSFEuPrintFortes
     end
   end
   object RLEtiq_Fritura: TRLReport
-    Left = 431
-    Top = 186
+    Left = 404
+    Top = 280
     Width = 397
     Height = 272
     Margins.LeftMargin = 6.000000000000000000
@@ -1234,8 +1233,8 @@ object FSFEuPrintFortes: TFSFEuPrintFortes
     end
   end
   object RLEtiq_Hamburguer: TRLReport
-    Left = 413
-    Top = 471
+    Left = 403
+    Top = 560
     Width = 397
     Height = 272
     Margins.LeftMargin = 6.000000000000000000
@@ -1245,8 +1244,9 @@ object FSFEuPrintFortes: TFSFEuPrintFortes
     Borders.Sides = sdCustom
     Borders.DrawLeft = False
     Borders.DrawTop = False
-    Borders.DrawRight = True
+    Borders.DrawRight = False
     Borders.DrawBottom = False
+    Borders.Width = 2
     DataSource = uDM.DSPedItens
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clBlack
@@ -1258,10 +1258,11 @@ object FSFEuPrintFortes: TFSFEuPrintFortes
     PageSetup.PaperHeight = 72.000000000000000000
     PrintEmpty = False
     RecordRange = rrCurrentOnly
+    BeforePrint = RLEtiq_HamburguerBeforePrint
     object RLBand8: TRLBand
       Left = 23
       Top = 47
-      Width = 365
+      Width = 366
       Height = 195
       AutoExpand = False
       Borders.Sides = sdCustom
@@ -1282,22 +1283,23 @@ object FSFEuPrintFortes: TFSFEuPrintFortes
         Height = 114
       end
       object RLDBMemo3: TRLDBMemo
-        Left = 100
+        Left = 92
         Top = 57
-        Width = 249
+        Width = 259
         Height = 108
         AutoSize = False
         Behavior = [beSiteExpander]
         Borders.Sides = sdCustom
-        Borders.DrawLeft = False
+        Borders.DrawLeft = True
         Borders.DrawTop = False
         Borders.DrawRight = False
         Borders.DrawBottom = False
+        Borders.Width = 3
         DataField = 'Observacao'
         DataSource = uDM.DSPedItens
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clBlack
-        Font.Height = -21
+        Font.Height = -19
         Font.Name = 'Arial'
         Font.Style = []
         ParentFont = False
@@ -1314,44 +1316,6 @@ object FSFEuPrintFortes: TFSFEuPrintFortes
         Font.Name = 'Arial'
         Font.Style = [fsBold]
         ParentFont = False
-      end
-      object RLLabTirar: TRLAngleLabel
-        Left = 20
-        Top = 98
-        Width = 63
-        Height = 32
-        Caption = 'Sem'
-      end
-      object RLImage1: TRLImage
-        Left = 80
-        Top = 58
-        Width = 15
-        Height = 106
-        Picture.Data = {
-          07544269746D6170B6020000424DB60200000000000036000000280000000500
-          0000280000000100180000000000800200000000000000000000000000000000
-          0000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFF00FFFFFF000000000000000000FFFF
-          FF00FFFFFF000000FFFFFFFFFFFFFFFFFF00FFFFFF000000FFFFFFFFFFFFFFFF
-          FF00FFFFFF000000FFFFFFFFFFFFFFFFFF00FFFFFF000000FFFFFFFFFFFFFFFF
-          FF00FFFFFF000000FFFFFFFFFFFFFFFFFF00FFFFFF000000FFFFFFFFFFFFFFFF
-          FF00FFFFFF000000FFFFFFFFFFFFFFFFFF00FFFFFF000000FFFFFFFFFFFFFFFF
-          FF00FFFFFF000000FFFFFFFFFFFFFFFFFF00FFFFFF000000FFFFFFFFFFFFFFFF
-          FF00FFFFFF000000FFFFFFFFFFFFFFFFFF00FFFFFF000000FFFFFFFFFFFFFFFF
-          FF00FFFFFF000000FFFFFFFFFFFFFFFFFF00FFFFFF000000FFFFFFFFFFFFFFFF
-          FF00FFFFFF000000FFFFFFFFFFFFFFFFFF00FFFFFF000000FFFFFFFFFFFFFFFF
-          FF00000000000000FFFFFFFFFFFFFFFFFF00FFFFFF000000FFFFFFFFFFFFFFFF
-          FF00FFFFFF000000FFFFFFFFFFFFFFFFFF00FFFFFF000000FFFFFFFFFFFFFFFF
-          FF00FFFFFF000000FFFFFFFFFFFFFFFFFF00FFFFFF000000FFFFFFFFFFFFFFFF
-          FF00FFFFFF000000FFFFFFFFFFFFFFFFFF00FFFFFF000000FFFFFFFFFFFFFFFF
-          FF00FFFFFF000000FFFFFFFFFFFFFFFFFF00FFFFFF000000FFFFFFFFFFFFFFFF
-          FF00FFFFFF000000FFFFFFFFFFFFFFFFFF00FFFFFF000000FFFFFFFFFFFFFFFF
-          FF00FFFFFF000000FFFFFFFFFFFFFFFFFF00FFFFFF000000FFFFFFFFFFFFFFFF
-          FF00FFFFFF000000FFFFFFFFFFFFFFFFFF00FFFFFF000000FFFFFFFFFFFFFFFF
-          FF00FFFFFF000000FFFFFFFFFFFFFFFFFF00FFFFFF000000FFFFFFFFFFFFFFFF
-          FF00FFFFFF000000FFFFFFFFFFFFFFFFFF00FFFFFF000000000000000000FFFF
-          FF00FFFFFFFFFFFFFFFFFFFFFFFFFFFFFF00FFFFFFFFFFFFFFFFFFFFFFFFFFFF
-          FF00}
-        Stretch = True
       end
       object RLDbSetorHamb: TRLDBText
         Left = 8
@@ -1392,11 +1356,18 @@ object FSFEuPrintFortes: TFSFEuPrintFortes
         ParentFont = False
         Text = ''
       end
+      object LabTirar: TRLLabel
+        Left = 20
+        Top = 98
+        Width = 63
+        Height = 32
+        Caption = 'Sem'
+      end
     end
     object RLBand9: TRLBand
       Left = 23
       Top = 15
-      Width = 365
+      Width = 366
       Height = 32
       BandType = btHeader
       Borders.Sides = sdCustom
@@ -1411,7 +1382,7 @@ object FSFEuPrintFortes: TFSFEuPrintFortes
       Font.Style = []
       ParentFont = False
       object RLDBText26: TRLDBText
-        Left = 297
+        Left = 298
         Top = 17
         Width = 68
         Height = 14
@@ -1428,7 +1399,7 @@ object FSFEuPrintFortes: TFSFEuPrintFortes
         Text = ''
       end
       object RLDBText27: TRLDBText
-        Left = 325
+        Left = 326
         Top = 0
         Width = 40
         Height = 16
@@ -1495,7 +1466,7 @@ object FSFEuPrintFortes: TFSFEuPrintFortes
     object RLBand10: TRLBand
       Left = 23
       Top = 242
-      Width = 365
+      Width = 366
       Height = 18
       BandType = btFooter
       Borders.Sides = sdCustom
@@ -1538,8 +1509,8 @@ object FSFEuPrintFortes: TFSFEuPrintFortes
     end
   end
   object RLEtiq_Drinks: TRLReport
-    Left = 2
-    Top = 499
+    Left = 0
+    Top = 560
     Width = 397
     Height = 272
     Margins.LeftMargin = 6.000000000000000000

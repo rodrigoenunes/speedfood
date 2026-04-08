@@ -1011,7 +1011,7 @@ begin
   //
   if (xImpressao = 'S') then
   begin
-    EmiteEtiquetas(nrPedido,0,True,uDM.sysImprimeEtiquetaBebidas,lDebugFimPed);  // xxx
+    EmiteEtiquetas(nrPedido,0,True,uDM.sysImprimeEtiquetaBebidas,lDebugFimPed);
     uDM.PedItens.Filtered := False;
     uDM.PedItens.Refresh;
     uDM.PedItens.First;

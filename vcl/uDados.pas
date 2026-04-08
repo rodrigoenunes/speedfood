@@ -405,7 +405,9 @@ type
     sysImprimeEtiquetaCrepes,sysImprimeEtiquetaHamburgueres,
     sysImprimeEtiquetaFrituras,sysImprimeEtiquetaDrinks: Boolean;
     sysColValor,sysBtnNFCe,sysBtnCancel:Boolean;
-    sysAbreTurnoCaixa:Boolean;
+    sysAbreTurnoCaixa: Boolean;
+    sysSalvaForm: Boolean;
+    sysPathForm: String;
     balLanches,balBebidas,balCrepes,balFrituras,balHamburgueres,balBufDiv,balDrinks: Boolean;
     filGrupoItens: Integer;
     meioPgto: Integer;
@@ -838,6 +840,10 @@ Var
 begin
   FDC.Connected := False;
   sysIniFile := ChangeFileExt(ParamStr(0), '.ini');
+
+  if ExtractFileName(sysIniFile) <> 'SpeedFood.ini' then
+    sysIniFile := ExtractFilePath(sysIniFile) + 'SpeedFood.ini';
+
   vIniFile := TIniFile.Create(sysIniFile);
   if not FileExists(sysIniFile) then
   Begin
@@ -890,6 +896,8 @@ begin
 
     vIniFile.WriteBool('Controle','Caixas',False);
     vIniFile.WriteBool('Controle','Turnos',False);
+    vIniFile.WriteBool('Controle','SalvaForm',False);
+    vIniFile.WriteString('Controle','PathForm','');
 
   End;
 
@@ -970,6 +978,11 @@ begin
 
   sysCtleCaixas := vIniFile.ReadBool('Controle','Caixas',False);
   sysCtleTurnos := vIniFile.ReadBool('Controle','Turnos',False);
+  sysSalvaForm := vIniFile.ReadBool('Controle','SalvaForm',False);
+  if sysSalvaForm then
+    sysPathForm := vIniFile.ReadString('Controle','PathForm','');
+  if not DirectoryExists(sysPathForm) then
+    sysSalvaForm := False;
 
   vIniFile.Free;
   //
@@ -1171,14 +1184,19 @@ end;
 
 procedure TuDM.PedidosFilterRecord(DataSet: TDataSet; var Accept: Boolean);
 begin
+// Filtros:
+//    uDM.turnoIni  : Nr. do turno inicial
+//    uDM.TurnoFin  : Nr. do turno final
+//    uDM.etqImpress: 0-Não impressa  1-Impressa  2-Todas (sem selecão)
+//    uDM.sitPagto:   0-Pagto pendente  1-Pago  2-Pendentes e Pagos  3-Cancelados  9-Todos (Pend,Pago,Cancelado)
   Accept := False;
-  if PedidosTurno.AsInteger < uDM.turnoIni then Exit;
-  if PedidosTurno.AsInteger > uDM.TurnoFin then Exit;
-  // uDM.etqImpress 0-Não impressa  1-Impressa  2-Todas (sem selecão)
+  if PedidosTurno.AsInteger < uDM.turnoIni then
+    Exit;
+  if PedidosTurno.AsInteger > uDM.TurnoFin then
+    Exit;
   if uDM.etqImpress <> 2 then
-     if uDM.PedidosEtqImpressas.AsInteger <> uDM.etqImpress then Exit;
-  // Filtro para a situação de pagamento   uDM.sitPagto
-  //     0-Pagto pendente  1-Pago  2-Pendentes e Pagos  3-Cancelados  9-Todos (Pend,Pago,Cancelado)
+     if uDM.PedidosEtqImpressas.AsInteger <> uDM.etqImpress then
+       Exit;
   case uDM.sitPagto of
     0:if PedidosSitPagto.AsInteger <> 0 then              // Somente pendentes
          Exit;
@@ -1275,8 +1293,9 @@ begin
     PedItensZC_Impresso.AsString := '';
 
   nrAux := Copy(FormatFloat('000000',PedItensNumero.AsInteger),4,3);
-  if (PedItensTpProd.AsInteger = 1) or (PedItensTpProd.AsInteger = 4)
-  then begin
+
+  if (PedItensTpProd.AsInteger = 1) or (PedItensTpProd.AsInteger = 4) then
+  begin
     PedItensZC_PedLcto.AsString := nrAux + ' / ' + PedItensNrLcto.AsString +
                                    ' de ' + uDM.PedidosLctLanches.AsString;
     PedItensZC_PlacaLcto.AsString := PedidosPlaca.AsString +  ' / ' + PedItensNrLcto.AsString +
@@ -1286,6 +1305,7 @@ begin
     PedItensZC_PedLcto.AsString := nrAux;
     PedItensZC_PlacaLcto.AsString := PedidosPlaca.AsString
   end;
+
   if PedItensSeqLcto.AsInteger > 0 then
     PedItensZC_SeqLcto.AsString := PedItensSeqLcto.AsString
   else
