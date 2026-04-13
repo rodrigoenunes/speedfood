@@ -992,7 +992,7 @@ begin
   //ShowMessage('1)xImpressao=' + xImpressao);
   if ((uDM.PedidosLctLanches.AsInteger = 0) or  (not uDM.sysImprimeEtiquetaLanches))        // Não tem lanches ou não imprime
      and ((uDM.PedidosLctCrepes.AsInteger = 0) or (not uDM.sysImprimeEtiquetaCrepes))       // Não tem Crepes ou não imprime
-     and ((uDM.PedidosLctFrituras.AsInteger = 0) or (not uDM.sysImprimeEtiquetaFrituras))   // Não tem Crepes ou não imprime
+     and ((uDM.PedidosLctFrituras.AsInteger = 0) or (not uDM.sysImprimeEtiquetaFrituras))   // Não tem Frituras ou não imprime
      and ((uDM.PedidosLctHamburgueres.AsInteger = 0) or (not uDM.sysImprimeEtiquetaHamburgueres))     // Não tem Hamburgueres ou não imprime
      and ((uDM.PedidosLctDrinks.AsInteger = 0) or (not uDM.sysImprimeEtiquetaDrinks))       // Não tem Drinks ou não imprime
      and (not uDM.sysImprimeEtiquetaBebidas) then                                           // e não imprime bebidas

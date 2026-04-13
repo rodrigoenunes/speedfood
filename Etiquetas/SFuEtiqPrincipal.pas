@@ -155,9 +155,17 @@ end;
 
 procedure TFuEtiqPrincipal.btSelPadraoClick(Sender: TObject);
 begin
-  rgEtiqs.ItemIndex := wOpcEtq;
-  rgSenha.ItemIndex := wOpcSen;
-  rgPagto.ItemIndex := wOpcPgt;
+  if lAtlzDados then
+  begin
+    rgEtiqs.ItemIndex := 0;            // Etiquetas não impressas
+    rgSenha.ItemIndex := 2;            // Todos
+    rgPagto.ItemIndex := 1;            // Somente pedidos pagos
+  end
+  else begin
+    rgEtiqs.ItemIndex := wOpcEtq;      // Cfe .ini
+    rgSenha.ItemIndex := wOpcSen;      // Cfe .ini
+    rgPagto.ItemIndex := wOpcPgt;      // Cfe .ini
+  end;
   btSelecionarClick(nil);
 
 end;
@@ -223,16 +231,21 @@ begin
     Exit;
   end;
   wNrTurno := StrToIntDef(Copy(cbTurnos.Text,1,nPos-1),0);
-  btSelecionar.Caption := 'Selecionar';
-  lAtlzDados := False;
   if Pos('ABERTO',AnsiUpperCase(cbTurnos.Text)) > 0 then
   begin
-    btSelecionar.Caption := btSelecionar.Caption + #13 + 'Atualizar';
     lAtlzDados := True;
+    btSelecionar.Caption := 'Selecionar' + #13 + 'Atualizar';
+    rgEtiqs.ItemIndex := 0;            // Etiquetas não impressas
+    rgSenha.ItemIndex := 2;            // Todos
+    rgPagto.ItemIndex := 1;            // Somente pedidos pagos
+  end
+  else begin
+    lAtlzDados := False;
+    btSelecionar.Caption := 'Selecionar';
+    rgEtiqs.ItemIndex := wOpcEtq;      // Cfe .ini
+    rgSenha.ItemIndex := wOpcSen;      // Cfe .ini
+    rgPagto.ItemIndex := wOpcPgt;      // Cfe .ini
   end;
-  rgEtiqs.ItemIndex := wOpcEtq;            // Etiquetas não impressas
-  rgSenha.ItemIndex := wOpcSen;            // Todos
-  rgPagto.ItemIndex := wOpcPgt;            // Somente pedidos pagos
   btSelecionarClick(nil);
   FormResize(nil);
   Timer1.Enabled := lAtlzDados;

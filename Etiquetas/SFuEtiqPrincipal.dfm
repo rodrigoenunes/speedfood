@@ -23,7 +23,6 @@ object FuEtiqPrincipal: TFuEtiqPrincipal
     Width = 1128
     Height = 45
     Align = alTop
-    Caption = 'Impress'#227'o de etiquetas'
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
     Font.Height = -27
