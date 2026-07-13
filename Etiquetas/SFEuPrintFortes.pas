@@ -352,6 +352,7 @@ begin
         end;
       3:if idPrtEtqBebidas <> '' then           // Todas as bebidas em uma unica etiqueta (rrAllRecords)
         begin
+          DebugMensagem(pmtDebug,'idPrtEtqBebidas=' + idPrtEtqBebidas);
           if not DefineImpressora(True,idPrtEtqBebidas,portaPrt,driverPrt,indexPrt) then
           begin
             lPreview := True;

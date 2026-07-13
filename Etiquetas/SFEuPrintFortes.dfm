@@ -2,7 +2,7 @@ object FSFEuPrintFortes: TFSFEuPrintFortes
   Left = 0
   Top = 0
   Caption = 'FSFEuPrintFortes'
-  ClientHeight = 1031
+  ClientHeight = 749
   ClientWidth = 801
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
