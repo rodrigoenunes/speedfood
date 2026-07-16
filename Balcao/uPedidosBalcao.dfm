@@ -661,8 +661,7 @@ object FuPedidosBalcao: TFuPedidosBalcao
           Font.Name = 'Tahoma'
           Font.Style = [fsUnderline]
           ParentFont = False
-          ExplicitLeft = 5
-          ExplicitTop = 30
+          ExplicitWidth = 103
         end
         object edItens: TEdit
           Left = 34
@@ -711,7 +710,7 @@ object FuPedidosBalcao: TFuPedidosBalcao
         Top = 1
         Width = 740
         Height = 516
-        ActivePage = TSHamburgueres
+        ActivePage = TSCrepes
         Align = alClient
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clWindowText

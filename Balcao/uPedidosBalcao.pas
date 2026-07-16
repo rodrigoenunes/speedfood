@@ -1655,19 +1655,25 @@ begin
 end;
 
 procedure TFuPedidosBalcao.btAbrirPedidoClick(Sender: TObject);
-var wPgIni: Integer;
+//var wPgIni: Integer;
 begin
-  if uDM.sysIniBalcao = 5 then
-    wPgIni := 0
-  else
-    wPgIni := 1;
+  //if uDM.sysIniBalcao = 5 then
+  //  wPgIni := 0
+  //else
+  //  wPgIni := 1;
+  //Try
+  //  pgControleBalcao.ActivePageIndex := wPgIni;
+  //Except
+  //  pgControleBalcao.ActivePageIndex := uDM.sysIniBalcao;
+  //End;
+
   Try
-    pgControleBalcao.ActivePageIndex := wPgIni;
-  Except
     pgControleBalcao.ActivePageIndex := uDM.sysIniBalcao;
+  Except
+    pgControleBalcao.ActivePageIndex := 0;
   End;
   Sleep(200);
-  pgControleBalcao.ActivePageIndex := uDM.sysIniBalcao;
+  //pgControleBalcao.ActivePageIndex := uDM.sysIniBalcao;
   uDM.sysAtivo := 'BALCAO';
   uDM.sysPedePlaca := True;      //False;
   if CriaAbrePedidoWrk(0) <> 0 then Exit;
