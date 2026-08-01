@@ -3,7 +3,7 @@ object FSFEuPrintFortes: TFSFEuPrintFortes
   Top = 0
   Caption = 'FSFEuPrintFortes'
   ClientHeight = 749
-  ClientWidth = 801
+  ClientWidth = 838
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -13,8 +13,8 @@ object FSFEuPrintFortes: TFSFEuPrintFortes
   OnCreate = FormCreate
   TextHeight = 13
   object RLEtiqLanche: TRLReport
-    Left = 0
-    Top = 0
+    Left = 1
+    Top = 2
     Width = 397
     Height = 272
     Margins.LeftMargin = 6.000000000000000000

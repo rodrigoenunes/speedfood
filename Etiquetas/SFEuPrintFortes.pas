@@ -632,7 +632,7 @@ begin
     RLLabSem.Caption := '';
     RLLabMenos.Caption := '';
   end;
-  for i := 1 to 24 do
+  for i := 1 to 36 do
     if AllExtras[i] <> '.' then
       if uDM.Itens.FindKey([wTp,i])
       then begin
