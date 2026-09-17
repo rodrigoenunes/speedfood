@@ -151,8 +151,10 @@ end;
 
 procedure TFuPrincipal.btPedidosClick(Sender: TObject);
 begin
-  if ObtemParametro('UsaCorItem','N') = 'S' then uDM.usaCorItem := True
-     else uDM.usaCorItem := False;
+  if ObtemParametro('UsaCorItem','N') = 'S' then
+    uDM.usaCorItem := True
+  else
+    uDM.usaCorItem := False;
   uDM.sysAtivo := 'ONIBUS';
   uDM.sysPedePlaca := True;
   uDM.SisPessoa.First;
@@ -415,7 +417,6 @@ begin
     LabEstacao.Caption := 'Estação: ' + uDM.sysCPUId + '   [ ' + IntToStr(uDM.sysNumId) + ' ]';
     LabTurno.Caption := 'Turno: '+ IntToStr(uDM.turnoCorrente);
     PanIdCaixa.Visible := uDM.sysCaixaDisp;     //  True;
-    //
 
   end;
 

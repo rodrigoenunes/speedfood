@@ -228,7 +228,7 @@ object FuPrincipal: TFuPrincipal
   end
   object btPedidos: TBitBtn
     Left = 8
-    Top = 66
+    Top = 62
     Width = 257
     Height = 48
     Caption = 'Pedidos'

@@ -710,7 +710,7 @@ object FuPedidosBalcao: TFuPedidosBalcao
         Top = 1
         Width = 740
         Height = 516
-        ActivePage = TSBufDiv
+        ActivePage = TSLanches
         Align = alClient
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clWindowText
@@ -976,8 +976,6 @@ object FuPedidosBalcao: TFuPedidosBalcao
             TabOrder = 0
             OnDrawCell = GridFriturasDrawCell
             OnMouseDown = GridFriturasMouseDown
-            ExplicitLeft = -6
-            ExplicitTop = 28
           end
           object GridFriturasCompl: TDrawGrid
             Left = 328
@@ -2276,7 +2274,6 @@ object FuPedidosBalcao: TFuPedidosBalcao
       ParentBackground = False
       ParentFont = False
       TabOrder = 3
-      ExplicitLeft = 0
     end
     object btNrOk: TBitBtn
       Left = 8
