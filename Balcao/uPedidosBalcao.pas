@@ -223,9 +223,9 @@ type
 
 var
   FuPedidosBalcao: TFuPedidosBalcao;
-  wCodLanche: array[0..39,0..39] of Integer;    // 0..39, 0..39
-  wCodBebida: array[0..39,0..39] of Integer;
-  wCodDrinks: array[0..39,0..39] of Integer;
+  wCodLanche: array[0..19,0..19] of Integer;    // 0..19, 0..19
+  wCodBebida: array[0..19,0..19] of Integer;
+  wCodDrinks: array[0..19,0..19] of Integer;
 
   wCodCrepe: array[0..23] of Integer;
   wSelCrepe: array[0..23] of String;
@@ -950,7 +950,7 @@ begin
 end;
 
 
-Procedure InclueBebida(pNrBebida:Integer);
+Procedure InclueBebidaBalcao(pNrBebida:Integer);
 var nSeq: Integer;
     lExiste,lProcura: Boolean;
 begin
@@ -2044,7 +2044,7 @@ begin
   GridBebidas.MouseToCell(X,Y,nCol,nLin);
   wKey := wCodBebida[nCol,nLin];
   if wKey = 0 then Exit;
-  InclueBebida(wKey);
+  InclueBebidaBalcao(wKey);
   FormResize(nil);
 
 end;

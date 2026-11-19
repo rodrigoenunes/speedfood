@@ -14,6 +14,7 @@ object FuItens: TFuItens
   ShowHint = True
   OnActivate = FormActivate
   OnClose = FormClose
+  OnCreate = FormCreate
   OnResize = FormResize
   TextHeight = 16
   object PanDados: TPanel
@@ -66,8 +67,6 @@ object FuItens: TFuItens
         Align = alClient
         BevelOuter = bvNone
         TabOrder = 1
-        ExplicitLeft = 191
-        ExplicitWidth = 790
         object Label2: TLabel
           Left = 20
           Top = 0
@@ -650,7 +649,7 @@ object FuItens: TFuItens
       Left = 546
       Top = 12
       Width = 103
-      Height = 33
+      Height = 41
       Anchors = [akTop, akRight]
       Caption = '&Incluir'
       Glyph.Data = {
@@ -675,7 +674,7 @@ object FuItens: TFuItens
       Left = 655
       Top = 12
       Width = 99
-      Height = 33
+      Height = 41
       Anchors = [akTop, akRight]
       Caption = '&Alterar'
       Glyph.Data = {
@@ -699,7 +698,7 @@ object FuItens: TFuItens
       Left = 764
       Top = 12
       Width = 103
-      Height = 33
+      Height = 41
       Anchors = [akTop, akRight]
       Caption = '&Excluir'
       Glyph.Data = {
@@ -723,7 +722,7 @@ object FuItens: TFuItens
       Left = 873
       Top = 12
       Width = 103
-      Height = 33
+      Height = 41
       Anchors = [akTop, akRight]
       Caption = '&Sair'
       Glyph.Data = {
@@ -771,7 +770,7 @@ object FuItens: TFuItens
       Left = 437
       Top = 12
       Width = 103
-      Height = 33
+      Height = 41
       Anchors = [akTop, akRight]
       Caption = 'Etiquetas'
       Glyph.Data = {

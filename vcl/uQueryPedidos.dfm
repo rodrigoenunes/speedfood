@@ -672,6 +672,6 @@ object FuQueryPedidos: TFuQueryPedidos
   object DSPedidos: TDataSource
     DataSet = FDQPedidos
     Left = 536
-    Top = 288
+    Top = 284
   end
 end

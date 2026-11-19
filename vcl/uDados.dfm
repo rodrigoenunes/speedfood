@@ -30,7 +30,7 @@ object uDM: TuDM
     Connection = FDC
     ResourceOptions.AssignedValues = [rvEscapeExpand]
     TableName = 'speedfood.com_itens'
-    Left = 24
+    Left = 20
     Top = 144
     object ItensGrupo: TIntegerField
       FieldName = 'Grupo'
@@ -698,6 +698,21 @@ object uDM: TuDM
       AutoGenerateValue = arDefault
       FieldName = 'Setor'
       Origin = 'Setor'
+    end
+    object PedidosCopos: TIntegerField
+      AutoGenerateValue = arDefault
+      FieldName = 'Copos'
+      Origin = 'Copos'
+    end
+    object PedidosGelo: TShortintField
+      AutoGenerateValue = arDefault
+      FieldName = 'Gelo'
+      Origin = 'Gelo'
+    end
+    object PedidosLimao: TShortintField
+      AutoGenerateValue = arDefault
+      FieldName = 'Limao'
+      Origin = 'Limao'
     end
     object PedidosZC_Impresso: TStringField
       FieldKind = fkCalculated
@@ -1912,7 +1927,7 @@ object uDM: TuDM
   object CDDiversos: TClientDataSet
     Aggregates = <>
     Params = <>
-    Left = 648
+    Left = 644
     Top = 168
     object CDDiversosCodBarras: TStringField
       FieldName = 'CodBarras'
@@ -1986,5 +2001,14 @@ object uDM: TuDM
     object CDItensPreco: TCurrencyField
       FieldName = 'Preco'
     end
+  end
+  object FDQueryAux: TFDQuery
+    Connection = FDC
+    Left = 416
+    Top = 332
+  end
+  object SFDQItens: TDataSource
+    Left = 476
+    Top = 360
   end
 end

@@ -4,7 +4,7 @@
         <ProjectVersion>20.1</ProjectVersion>
         <FrameworkType>VCL</FrameworkType>
         <Base>True</Base>
-        <Config Condition="'$(Config)'==''">Release</Config>
+        <Config Condition="'$(Config)'==''">Debug</Config>
         <Platform Condition="'$(Platform)'==''">Win32</Platform>
         <TargetedPlatforms>1</TargetedPlatforms>
         <AppType>Application</AppType>
@@ -127,10 +127,6 @@
             <Form>FGen</Form>
             <FormType>dfm</FormType>
         </DCCReference>
-        <DCCReference Include="uTrataLanche.pas">
-            <Form>FuTrataLanche</Form>
-            <FormType>dfm</FormType>
-        </DCCReference>
         <DCCReference Include="uFinPedido.pas">
             <Form>FuFinPedido</Form>
             <FormType>dfm</FormType>
@@ -181,28 +177,38 @@
             <Form>FuQueryAdministrativo</Form>
             <FormType>dfm</FormType>
         </DCCReference>
-        <DCCReference Include="uMontarLanche.pas">
-            <Form>FuMontarLanche</Form>
-            <FormType>dfm</FormType>
-        </DCCReference>
-        <DCCReference Include="uPedidos.pas">
-            <Form>FuPedidos</Form>
-            <FormType>dfm</FormType>
-        </DCCReference>
         <DCCReference Include="..\Balcao\uPedidosBalcao.pas">
             <Form>FuPedidosBalcao</Form>
+        </DCCReference>
+        <DCCReference Include="uTrataLanche.pas">
+            <Form>FuTrataLanche</Form>
             <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="uMontarLanche.pas">
+            <Form>FuMontarLanche</Form>
         </DCCReference>
         <DCCReference Include="uCaixa.pas">
             <Form>FuCaixa</Form>
-            <FormType>dfm</FormType>
         </DCCReference>
         <DCCReference Include="uTurno.pas">
             <Form>FuTurno</Form>
-            <FormType>dfm</FormType>
         </DCCReference>
         <DCCReference Include="..\..\UsoGeral\uMsgInfo.pas">
             <Form>FuMsgInfo</Form>
+        </DCCReference>
+        <DCCReference Include="..\BalcaoV2\uPedBalcaoV2.pas">
+            <Form>FuPedBalcaoV2</Form>
+        </DCCReference>
+        <DCCReference Include="uPedidosOnibus.pas">
+            <Form>FuPedidosOnibus</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="..\BalcaoV2\uTrataExtrasV2.pas">
+            <Form>FuTrataExtrasV2</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="..\BalcaoV2\uSaboresV2.pas">
+            <Form>FuSaboresV2</Form>
             <FormType>dfm</FormType>
         </DCCReference>
         <BuildConfiguration Include="Base">

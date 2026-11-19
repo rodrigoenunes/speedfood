@@ -24,13 +24,13 @@ type
     btHelpArgox: TBitBtn;
     btVerifSefaz: TBitBtn;
     btBalcao: TBitBtn;
-    btBuffet: TBitBtn;
     LabConexao: TLabel;
     LabEstacao: TLabel;
     LabSeqCaixa: TLabel;
     LabTurno: TLabel;
     btCtleCaixas: TBitBtn;
     btCtleTurnos: TBitBtn;
+    Label1: TLabel;
     procedure btSairClick(Sender: TObject);
     procedure btManutencaoClick(Sender: TObject);
     procedure FormActivate(Sender: TObject);
@@ -44,28 +44,32 @@ type
     procedure btHelpGeralMouseDown(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
     procedure btHelpArgoxMouseDown(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
     procedure btBalcaoClick(Sender: TObject);
-    procedure btBuffetClick(Sender: TObject);
     procedure SpeedButton1Click(Sender: TObject);
     procedure btCtleTurnosClick(Sender: TObject);
     procedure btCtleCaixasClick(Sender: TObject);
+    procedure FormDestroy(Sender: TObject);
   private
     { Private declarations }
   public
     { Public declarations }
+    appScrollbarLargura: Integer;
   end;
 
 var
   FuPrincipal: TFuPrincipal;
   mdFechaTurno: Integer;
 
+  winScrollbarLargura: Integer;
+  lTemp: TNonClientMetrics;
+
 implementation
 
 {$R *.dfm}
 
-uses uItens, uDados, uGenericas, uCaixa, uPedidos, uImpressoes, uUsuario,
+uses uItens, uDados, uGenericas, uCaixa, uPedidosOnibus, uImpressoes, uUsuario,
   FortesReportCtle, uUserPwd, uHelpSpeedFood,
   uCaixaMovto, uQueryPedidos, uQueryAdministrativo, uPedidosBalcao, uTurno,
-  uFinPedido;
+  uFinPedido, uPedBalcaoV2;
 
 
 procedure TFuPrincipal.btCaixaClick(Sender: TObject);
@@ -107,6 +111,8 @@ begin
    FuFinPedido.dbRdSetor.Visible := False;
   end
   else begin
+    if nSetores > 19 then
+      nSetores := 19;
     for i := 1 to nSetores do
     begin
       FuFinPedido.dbRdSetor.Items.Add(IntToStr(i));
@@ -114,13 +120,10 @@ begin
     end;
     FuFinPedido.dbRdSetor.Visible := True;
   end;
-  PedidosBalcao(btBalcao.Caption);
-
-end;
-
-procedure TFuPrincipal.btBuffetClick(Sender: TObject);
-begin
-  ShowMessage('??? ');
+  if ObtemParametro('VersaoBalcao','1') = '1' then
+    PedidosBalcao(btBalcao.Caption)                   // Versão original
+  else
+    V2PedidosBalcao(btBalcao.Caption + ' V2');
 
 end;
 
@@ -159,7 +162,7 @@ begin
   uDM.sysPedePlaca := True;
   uDM.SisPessoa.First;
   uDM.sysTefPos := uDM.SisPessoaTefPos.AsInteger;
-  LancamentoPedidos;
+  LancamentoPedidosOnibus;
 
 end;
 
@@ -195,8 +198,10 @@ begin
   if ObtemParametro('SistemaUserPwd','N') = 'S'
   then if not ObtemUsuario(uDM.sysUser)
             then Exit;
-  if ObtemParametro('UsaCorItem','N') = 'S' then uDM.usaCorItem := True
-     else uDM.usaCorItem := False;
+  if ObtemParametro('UsaCorItem','N') = 'S' then
+    uDM.usaCorItem := True
+  else
+    uDM.usaCorItem := False;
   ManutencaoProdutos;
   ContaExtras;
 
@@ -249,7 +254,8 @@ begin
     uDM.etqImpress := 2;        // Compatibilização com "Etiquetas" (Todas)
     uDM.sitPagto := 3;          // Todas as situações
     uDM.lDebug := False;
-    if ObtemParametro('DEBUG') = 'S' then uDM.lDebug := True;
+    if ObtemParametro('DEBUG') = 'S' then
+      uDM.lDebug := True;
     //
     dtHoje := DateOf(Date);
     xValidade := ObtemParametro('SistemaValidade');    // AAAAMMDD
@@ -264,7 +270,8 @@ begin
       Halt(0);
     end;
     if nDias < 31 then
-      MessageDlg('A validade do sistema termina em ' + IntToStr(nDias) + ' dias',mtInformation,[mbOk],0);
+      MessageDlg('A validade do sistema termina em ' + IntToStr(nDias) + ' dias',
+                 mtInformation,[mbOk],0);
     {
     if ObtemParametro('SistemaUserPwd') = 'S' then
       if not ObtemUsuario(uDM.sysUser) then
@@ -292,10 +299,8 @@ begin
     //
     // Define 'botões' utilizados
     nBotoes := 3;               // AbrirCaixa e Sair sempre visiveis
-    if uDM.sysPedidos then nBotoes := nBotoes + 1;
+    if uDM.sysPedidos then nBotoes := nBotoes + 1;           //
     if uDM.sysBalcao then nBotoes := nBotoes + 1;
-    if uDM.sysBuffet then nBotoes := nBotoes + 1;
-    //if uDM.sysPedidos or uDM.sysBalcao then nBotoes := nBotoes + 1;
     if uDM.sysManut then nBotoes := nBotoes + 1;
     if uDM.sysAdmin then nBotoes := nBotoes + 1;
     if uDM.sysUsuar then nBotoes := nBotoes + 1;
@@ -321,31 +326,21 @@ begin
     if uDM.sysBalcao then
     begin
       xIdBalcao := ObtemParametro('IdCaixaBalcao');
-      if xIdBalcao = '' then xIdBalcao := 'Nro';
-      btBalcao.Caption := xIdBalcao + ' ' + uDM.sysIdBalcao;
+      if xIdBalcao = '' then xIdBalcao := 'Balcão';
+      btBalcao.Caption := xIdBalcao + ' (' + uDM.sysIdBalcao + ')';
       btBalcao.Top := nTop;
       btBalcao.Height := nAlt;
       btBalcao.Visible := True;
       btBalcao.Left := btCaixa.Left;
       nTop := nTop + nAlt + 2;
     end;
-    if uDM.sysBuffet then
-    begin
-      btBuffet.Caption := uDM.sysIdBuffet;
-      btBuffet.Top := nTop;
-      btBuffet.Height := nAlt;
-      btBuffet.Visible := True;
-      btBuffet.Left := btCaixa.Left;
-      nTop := nTop + nAlt + 2;
-    end;
-    //if uDM.sysPedidos or uDM.sysBalcao or uDM.sysBuffet then
-    //begin
-      btConsPedidos.Top := nTop;
-      btConsPedidos.Height := nAlt;
-      btConsPedidos.Visible := True;
-      btConsPedidos.Left := btCaixa.Left;
-      nTop := nTop + nAlt + 2;
-    //end;
+    //
+    btConsPedidos.Top := nTop;
+    btConsPedidos.Height := nAlt;
+    btConsPedidos.Visible := True;
+    btConsPedidos.Left := btCaixa.Left;
+    nTop := nTop + nAlt + 2;
+    //
     if uDM.sysManut then
     begin
       btManutencao.Top := nTop;
@@ -378,6 +373,7 @@ begin
       btVerifSefaz.Left := btCaixa.Left;
       nTop := nTop + nAlt + 2;
     end;
+    //
     btSair.Top := nTop;
     btSair.Height := nAlt;
     btSair.Visible := True;
@@ -417,6 +413,22 @@ begin
     LabEstacao.Caption := 'Estação: ' + uDM.sysCPUId + '   [ ' + IntToStr(uDM.sysNumId) + ' ]';
     LabTurno.Caption := 'Turno: '+ IntToStr(uDM.turnoCorrente);
     PanIdCaixa.Visible := uDM.sysCaixaDisp;     //  True;
+    //
+    // Altera infos de scrollbar
+    appScrollbarLargura := StrToInt(ObtemParametro('ScrollbarLargura','0'));
+    if appScrollbarLargura > 0 then
+    begin
+      // Obtem largura original das scrollbars
+      FillChar(LTemp, sizeof(LTemp), 0);
+      LTemp.cbSize := sizeof(LTemp);
+      // Captura as métricas atuais do Windows
+      if SystemParametersInfo(SPI_GETNONCLIENTMETRICS, sizeof(LTemp), @LTemp, 0) then
+      begin
+        winScrollbarLargura := lTemp.iScrollWidth;              // Salva o tamanho antigo
+        lTemp.iScrollWidth := appScrollbarLargura;              // Define a nova largura desejada
+        SystemParametersInfo(SPI_SETNONCLIENTMETRICS, sizeof(LTemp), @LTemp, SPIF_SENDCHANGE);
+      end;
+    end
 
   end;
 
@@ -446,6 +458,22 @@ begin
   FuPrincipal.Left   := 40;
   FuPrincipal.Image1.Visible := False;
   mdFechaTurno := 0;     // 0=Questionar ao sair se fecha o turno  1=Fecha o turno
+
+end;
+
+procedure TFuPrincipal.FormDestroy(Sender: TObject);
+begin
+  if appScrollbarLargura > 0 then
+  begin
+    // Restaurar padrão de scrollbar (e outros)
+    FillChar(LTemp, sizeof(LTemp), 0);
+    LTemp.cbSize := sizeof(LTemp);
+    if SystemParametersInfo(SPI_GETNONCLIENTMETRICS, sizeof(LTemp), @LTemp, 0) then
+    begin
+      LTemp.iScrollWidth := winScrollbarLargura;
+      SystemParametersInfo(SPI_SETNONCLIENTMETRICS, sizeof(LTemp), @LTemp, SPIF_SENDCHANGE);
+    end;
+  end;
 
 end;
 

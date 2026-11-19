@@ -787,6 +787,8 @@ object FuTrataLanche: TFuTrataLanche
       ParentBackground = False
       ParentFont = False
       TabOrder = 3
+      ExplicitLeft = 296
+      ExplicitTop = -16
       DesignSize = (
         797
         65)

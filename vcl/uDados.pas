@@ -13,6 +13,7 @@ uses
   Procedure CarregaGrupos;
   Procedure ContaExtras;
   Procedure CarregaExtras(pCols,pLins: Integer);
+  Procedure CarregaExtrasV2(pTipo,pLins: Integer);
   Function CriaAbrePedidoWrk(pNro:Integer): Integer;
   Function CriaResumoVendas: Boolean;
   Function ObtemParametro(idParam:String; retDefault:String = ''): String;
@@ -358,6 +359,11 @@ type
     PedidosLctDrinks: TIntegerField;
     PedidosSetor: TIntegerField;
     PedidosZC_Setor: TStringField;
+    FDQueryAux: TFDQuery;
+    SFDQItens: TDataSource;
+    PedidosCopos: TIntegerField;
+    PedidosGelo: TShortintField;
+    PedidosLimao: TShortintField;
     procedure ItensCalcFields(DataSet: TDataSet);
     procedure LctCaixaCalcFields(DataSet: TDataSet);
     procedure PedWrkCalcFields(DataSet: TDataSet);
@@ -382,18 +388,20 @@ type
     pathImagens: String;
     nExtras: Integer;
     wNroPedido: Integer;
-    wCodExtra: array[1..2,1..24] of integer;
+
+    wCodExtra: array[1..2,1..24] of integer;          // 2 colunas X 24 linha
     wTxtExtra: array[1..2,1..24] of String;
     wVlrExtra: array[1..2,1..24] of Currency;
-    wCodExtraTab: array[1..48] of Integer;
-    wTxtExtraTab: array[1..48] of String;
-    wVlrExtraTab: array[1..48] of Currency;
+    wCodExtraTab: array[1..100] of Integer;           // Pos corresponde ao código do extra
+    wTxtExtraTab: array[1..100] of String;
+    wVlrExtraTab: array[1..100] of Currency;
+
     usaCorItem: Boolean;
     sysIniFile,sysUser,sysCPUId{,sysVersao,sysLocal}: String;
     sysNumId,sysNrCaixa,sysCaixaSeq: Integer;
-    sysPedidos,sysBalcao,sysWhats,sysManut,sysAdmin,sysBuffet: Boolean;
+    sysPedidos,sysBalcao,sysWhats,sysManut,sysAdmin: Boolean;
     sysUsuar,sysSefaz,sysHelp,sysHelpArgox,sysAltLctos,sysCaixaDisp: Boolean;
-    sysIdPedidos,sysIdBalcao,sysIdBuffet: String;
+    sysIdPedidos,sysIdBalcao: String;
     sysEtiquetasPrt,sysPedidosPrt,sysCaixaPrt,sysResumoPrt: String;
     sysIniBalcao,sysAbasFonte: Integer;
     sysAbasMultiline: Boolean;
@@ -408,7 +416,8 @@ type
     sysAbreTurnoCaixa: Boolean;
     sysSalvaForm: Boolean;
     sysPathForm: String;
-    balLanches,balBebidas,balCrepes,balFrituras,balHamburgueres,balBufDiv,balDrinks: Boolean;
+    balLanches,balBebidas,balCrepes,balFrituras,balHamburgueres,
+    balBufDiv,balDrinks,balMontagem,balShakes: Boolean;
     filGrupoItens: Integer;
     meioPgto: Integer;
     nomeClie,CPFCNPJ,nroPlaca: String;
@@ -558,6 +567,51 @@ begin
     uDM.wCodExtraTab[k] := uDM.ItensCodigo.AsInteger;
     uDM.wTxtExtraTab[k] := stringReplace(uDM.ItensDescricao.AsString,'#',' ',[rfIgnoreCase, rfReplaceAll]);
     uDM.wVlrExtraTab[k] := uDM.ItensPreco.AsCurrency;
+    uDM.Itens.Next;
+  end;
+
+end;
+
+
+Procedure CarregaExtrasV2(pTipo,pLins: Integer);
+var nCol,nLin,maxLin,i: Integer;
+    wTxt: String;
+begin
+  for nCol := 1 to 2 do
+    for nLin := 1 to 24 do     // pLins
+      begin
+        uDM.wCodExtra[nCol,nLin] := 0;
+        uDM.wTxtExtra[nCol,nLin] := '';
+        uDM.wVlrExtra[nCol,nLin] := 0;
+      end;
+  for i := 1 to 100 do
+    begin
+      uDM.wCodExtraTab[i] := 0;
+      uDM.wTxtExtraTab[i] := '';
+      uDM.wVlrExtraTab[i] := 0;
+    end;
+  //
+  maxLin := pLins;
+  nCol := 1;
+  nLin := 1;
+  uDM.Itens.FindNearest([pTipo,1]);
+  while (uDM.ItensGrupo.AsInteger = pTipo) and (not uDM.Itens.Eof)
+  do begin
+    uDM.wCodExtra[nCol,nLin] := uDM.ItensCodigo.AsInteger;
+    wTxt := AnsiLowerCase(Trim(uDM.ItensDescricao.AsString));
+    wTxt := AnsiUpperCase(Copy(wTxt,1,1)) + Copy(wTxt,2,Length(wTxt)-1);
+    uDM.wTxtExtra[nCol,nLin] := wTxt;
+    uDM.wVlrExtra[nCol,nLin] := uDM.ItensPreco.AsCurrency;
+    nLin := nLin + 1;
+    if nLin > maxLin
+    then begin
+      nCol := nCol + 1;
+      nLin := 1;
+    end;
+    i := uDM.ItensCodigo.AsInteger;
+    uDM.wCodExtraTab[i] := uDM.ItensCodigo.AsInteger;
+    uDM.wTxtExtraTab[i] := stringReplace(wTxt,' #',' ',[rfIgnoreCase, rfReplaceAll]);
+    uDM.wVlrExtraTab[i] := uDM.ItensPreco.AsCurrency;
     uDM.Itens.Next;
   end;
 
@@ -762,7 +816,7 @@ end;
 Function CarregaItensCodBarra: Boolean;
 var i: Integer;
     wGrp: array[1..2] of Integer;
-    kGrp: Integer;
+    keyGrp: Integer;
 begin
   Result := False;
   with uDM
@@ -787,32 +841,29 @@ begin
       Exit;
     End;
     //
-    wGrp[1] := 3;
-    wGrp[2] := 6;
-    for i := 1 to Length(wGrp) do
+    Itens.First;
+    while not Itens.Eof do
     begin
-      kGrp := wGrp[i];
-      Itens.FindNearest([kGrp,0]);
-      while ItensGrupo.AsInteger = kGrp do
+      if (ItensGrupo.AsInteger <> 0) and
+         (ItensCodigo.AsInteger <> 0) and
+         (ItensCodBarras.AsString <> '') then
       begin
         CDItens.Append;
-        CDItensCodGrpItem.AsString := stringCompleta(ItensGrupo.AsString,'E','0',2) +
-                                      stringCompleta(ItensCodigo.AsString,'E','0',3);
-        CDItensCodBarras.AsString := ItensCodBarras.AsString;
-        CDItensGrupo.AsInteger := ItensGrupo.AsInteger;
-        CDItensCodigo.AsInteger := ItensCodigo.AsInteger;
-        CDItensDescricao.AsString := stringReplace(uDM.ItensDescricao.AsString,'#',' ',[rfIgnoreCase, rfReplaceAll]);
-        ItensDescricao.AsString;
-        CDItensUnidade.AsString := ItensUnidade.AsString;
-        CDItensPreco.AsCurrency := ItensPreco.AsCurrency;
+        CDItensCodGrpItem.AsString := stringCompleta(ItensGrupo.AsString,'E','0',2) + stringCompleta(ItensCodigo.AsString,'E','0',3);
+        CDItensCodBarras.AsString  := ItensCodBarras.AsString;
+        CDItensGrupo.AsInteger     := ItensGrupo.AsInteger;
+        CDItensCodigo.AsInteger    := ItensCodigo.AsInteger;
+        CDItensDescricao.AsString  := stringReplace(ItensDescricao.AsString,'#',' ',[rfIgnoreCase, rfReplaceAll]);
+        CDItensUnidade.AsString    := ItensUnidade.AsString;
+        CDItensPreco.AsCurrency    := ItensPreco.AsCurrency;
         Try
           CDItens.Post;
         Except
           ShowMessage('Chave=' + CDItensCodGrpItem.AsString);
           CDItens.Cancel;
         End;
-        Itens.Next;
       end;
+      Itens.Next;
     end;
   end;
   Result := True;
@@ -857,8 +908,6 @@ begin
     vIniFile.WriteInteger('Estacao','Numero',0);             // Nro da estação é o nro do CAIXA
     vIniFile.WriteBool('Estacao','Pedidos',True);            // Pedidos de cachorro quente ? (Onibus)
     vIniFile.WriteString('Estacao','IdPedidos','Onibus');
-    vIniFile.WriteBool('Estacao','Buffet',False);
-    vIniFile.WriteString('Estacao','IdBuffet','Buffet');
     vIniFile.WriteBool('Estacao','Balcao',False);
     vIniFile.WriteString('Estacao','IdBalcao','Balcão 1');
     vIniFile.WriteInteger('Estacao','IniBalcao',0);          // Pag. inicial (0, 1, 2....)
@@ -919,10 +968,8 @@ begin
 
   sysPedidos := vIniFile.ReadBool('Estacao','Pedidos',True);
   sysIdPedidos := vIniFile.ReadString('Estacao','IdPedidos','Onibus');
-  sysBuffet := vIniFile.ReadBool('Estacao','Buffet',True);
-  sysIdBuffet := vIniFile.ReadString('Estacao','IdBuffet','Buffet');
   sysBalcao := vIniFile.ReadBool('Estacao','Balcao',False);
-  sysIdBalcao := vIniFile.ReadString('Estacao','IdBalcao','Balcão 1');
+  sysIdBalcao := vIniFile.ReadString('Estacao','IdBalcao','X');
   sysIniBalcao := vIniFile.ReadInteger('Estacao','IniBalcao',0);
 
   sysWhats := vIniFile.ReadBool('Estacao','WhatsApp',False);
@@ -956,14 +1003,16 @@ begin
   //
   balLanches := vIniFile.ReadBool('AbasDisponiveis','Lanches',True);
   balBebidas := vIniFile.ReadBool('AbasDisponiveis','Bebidas',True);
-  balCrepes := vIniFile.ReadBool('AbasDisponiveis','Crepes',False);
+  balDrinks := vIniFile.ReadBool('AbasDisponiveis','Drinks',False);
   balFrituras := vIniFile.ReadBool('AbasDisponiveis','Frituras',False);
   balHamburgueres := vIniFile.ReadBool('AbasDisponiveis','Hamburgueres',False);
+  balMontagem := vIniFile.ReadBool('AbasDisponiveis','Montagem',False);
   balBufDiv := vIniFile.ReadBool('AbasDisponiveis','BuffetDiversos',False);
-  balDrinks := vIniFile.ReadBool('AbasDisponiveis','Drinks',False);
+  balShakes := vIniFile.ReadBool('AbasDisponiveis','Shakes',False);
+  balCrepes := vIniFile.ReadBool('AbasDisponiveis','Crepes',False);
   //
 {
-  if (not sysPedidos) and (not sysBalcao) and (not sysBuffet) then
+  if (not sysPedidos) and (not sysBalcao) then
      MessageDlg('Verifique os parametros de inicialização, Pedidos/Balcao/Buffet' + #13 +
                 'Arquivo: ' + sysIniFile,mtWarning,[mbOk],0);
 }
@@ -1320,10 +1369,13 @@ end;
 
 procedure TuDM.PedWrkCalcFields(DataSet: TDataSet);
 begin
-  if not PedWrk.Active then Exit;
+  if not PedWrk.Active then
+    Exit;
   PedWrkZC_Aviso.AsString := '';
-  if (Pos('1',PedWrkExtras.AsString) > 0)
-     or (Pos('2',PedWrkExtras.AsString) > 0) then PedWrkZC_Aviso.AsString := 'P';
+  if (Pos('1',PedWrkExtras.AsString) > 0) or
+     (Pos('2',PedWrkExtras.AsString) > 0) or
+     (Pos('3',PedWrkExtras.AsString) > 0) then
+    PedWrkZC_Aviso.AsString := 'P';
   PedWrkZC_Extras.AsCurrency := PedWrkVlr01.AsCurrency + PedWrkVlr02.AsCurrency + PedWrkVlr03.AsCurrency;
 
 end;

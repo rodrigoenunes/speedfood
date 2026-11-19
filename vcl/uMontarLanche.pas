@@ -59,7 +59,7 @@ implementation
 
 {$R *.dfm}
 
-uses uGenericas, uDados, uPedidos;
+uses uGenericas, uDados, uPedidosOnibus;
 
 Procedure MontagemDoLanche(pInclus:Boolean);
 var posBarra: String;

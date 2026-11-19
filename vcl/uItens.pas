@@ -94,6 +94,7 @@ type
     procedure btIncluirMouseDown(Sender: TObject; Button: TMouseButton;
       Shift: TShiftState; X, Y: Integer);
     procedure btAjustaEtqClick(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
   private
     { Private declarations }
   public
@@ -133,7 +134,7 @@ begin
         nPos := Pos('&',wTxt);
         if nPos > 0 then
           wTxt := Copy(wTxt,1,nPos) + '&' + Copy(wTxt,nPos+1,Length(wTxt)-nPos);
-        dbTipo.Items.Add(wTxt);     //uDM.xGrupos[i]
+        dbTipo.Items.Add(wTxt);
         dbTipo.Values.Add(IntToStr(i));
         cbSelec.Items.Add(uDM.xGrupos[i]);
         cbSelCod.Items.Add(IntToStr(i));
@@ -185,7 +186,7 @@ end;
 
 
 Procedure AjustaIndicadorEtiquetas;
-var newEtq: Boolean;
+var wDescricao: String;
 begin
   if FuItens.cbSelec.ItemIndex <> 0 then
   begin
@@ -193,25 +194,37 @@ begin
                FuItens.cbSelec.Items[0] + '" e tente novamente',mtWarning,[mbOk],0);
     Exit;
   end;
-  if MessageDlg('Ajustar o indicador de "etiquetas" ?',mtConfirmation,
-                [mbYes,mbNo],0,mbNo,['Sim','Não']) <> mrYes then Exit;
-  //
+  if MessageDlg('Ajustar o indicador de "etiquetas"  e ' + #13 +
+                'padronizar a descrição dos ítens ?' + #13#13 +
+                'Etiquetas: Lanches, Fruturas, Hamburgueres, Drinks,... e' + #13 +
+                'Descrição: Exemplo de descrição de ítem',
+                mtConfirmation,[mbYes,mbNo],0,mbNo,['Sim','Não']) <> mrYes then
+    Exit;
+   //
   FuItens.PanDados.Visible := False;
   FuItens.PanBottom.Visible := False;
   uDM.Itens.First;
   while not uDM.Itens.Eof do
   begin
-    if (uDM.ItensGrupo.AsInteger = 1)             // Lanches
-       or (uDM.ItensGrupo.AsInteger = 11)         // Crepes
-       or (uDM.ItensGrupo.AsInteger = 21)         // Frituras
-       or (uDM.ItensGrupo.AsInteger = 31)         // Hamburgueres
-       or (uDM.ItensGrupo.AsInteger = 35)         // Drinks
-       or (uDM.ItensGrupo.AsInteger = 41) then    // Shakes
-       newEtq := True
-    else
-       newEtq := False;
     uDM.Itens.Edit;
-    uDM.ItensEtiqueta.AsBoolean := newEtq;
+    {
+    if (uDM.ItensGrupo.AsInteger = 1) or       // Lanches
+       (uDM.ItensGrupo.AsInteger = 4) or       // Montagem
+       (uDM.ItensGrupo.AsInteger = 11) or      // Crepes
+       (uDM.ItensGrupo.AsInteger = 21) or      // Frituras
+       (uDM.ItensGrupo.AsInteger = 31) or      // Hamburgueres
+       (uDM.ItensGrupo.AsInteger = 35) or      // Drinks
+       (uDM.ItensGrupo.AsInteger = 41) then    // Shakes
+    }
+    if uDM.ItensGrupo.AsInteger in [1,4,11,21,31,35,41] then
+      uDM.ItensEtiqueta.AsBoolean := True
+    else
+      uDM.ItensEtiqueta.AsBoolean := False;
+    //
+    wDescricao := AnsiLowerCase(Trim(uDM.ItensDescricao.AsString));
+    wDescricao := AnsiUpperCase(Copy(wDescricao,1,1)) + Copy(wDescricao,2,Length(wDescricao)-1);
+    uDM.ItensDescricao.AsString := wDescricao;
+    //
     uDM.Itens.Post;
     uDM.Itens.Next;
   end;
@@ -234,6 +247,12 @@ end;
 procedure TFuItens.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
   Form_Salva(FuItens);
+
+end;
+
+procedure TFuItens.FormCreate(Sender: TObject);
+begin
+  btAjustaEtq.Caption := 'Etiquetas' + #13 + 'Descríção';
 
 end;
 
