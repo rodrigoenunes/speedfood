@@ -416,8 +416,12 @@ type
     sysAbreTurnoCaixa: Boolean;
     sysSalvaForm: Boolean;
     sysPathForm: String;
+<<<<<<< HEAD
     balLanches,balBebidas,balCrepes,balFrituras,balHamburgueres,
     balBufDiv,balDrinks,balMontagem,balShakes: Boolean;
+=======
+    balLanches,balBebidas,balCrepes,balFrituras,balHamburgueres,balBufDiv,balDrinks: Boolean;
+>>>>>>> e7908c5a1dc0deb6e4ea2f82ee25b01644f22efe
     filGrupoItens: Integer;
     meioPgto: Integer;
     nomeClie,CPFCNPJ,nroPlaca: String;

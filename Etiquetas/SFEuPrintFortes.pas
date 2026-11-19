@@ -130,17 +130,23 @@ type
     RLDBText25: TRLDBText;
     RLDbSetorDrink: TRLDBText;
     LabTirar: TRLLabel;
+<<<<<<< HEAD
     RLDBMemo4: TRLDBMemo;
+=======
+>>>>>>> e7908c5a1dc0deb6e4ea2f82ee25b01644f22efe
     procedure RLEtiqBebidaBeforePrint(Sender: TObject; var PrintIt: Boolean);
     procedure RLDetLancheBeforePrint(Sender: TObject; var PrintIt: Boolean);
     procedure FormCreate(Sender: TObject);
     procedure RLEtiq_HamburguerBeforePrint(Sender: TObject;
       var PrintIt: Boolean);
+<<<<<<< HEAD
     procedure RLBand11BeforePrint(Sender: TObject; var PrintIt: Boolean);
     procedure RLEtiqLancheBeforePrint(Sender: TObject; var PrintIt: Boolean);
     procedure RLEtiq_CrepeBeforePrint(Sender: TObject; var PrintIt: Boolean);
     procedure RLEtiq_DrinksBeforePrint(Sender: TObject; var PrintIt: Boolean);
     procedure RLEtiq_FrituraBeforePrint(Sender: TObject; var PrintIt: Boolean);
+=======
+>>>>>>> e7908c5a1dc0deb6e4ea2f82ee25b01644f22efe
   private
     { Private declarations }
   public
@@ -642,7 +648,11 @@ begin
     RLLabSem.Caption := '';
     RLLabMenos.Caption := '';
   end;
+<<<<<<< HEAD
   for i := 1 to Length(AllExtras) do
+=======
+  for i := 1 to 36 do
+>>>>>>> e7908c5a1dc0deb6e4ea2f82ee25b01644f22efe
     if AllExtras[i] <> '.' then
       if uDM.Itens.FindKey([wTp,i]) then
       begin
@@ -764,6 +774,26 @@ begin
   RLDbSetorHamb.Visible := False;
   if uDM.PedidosSetor.AsInteger <> 0 then
     RLDbSetorHamb.Visible := True;
+
+end;
+
+procedure TFSFEuPrintFortes.RLEtiq_HamburguerBeforePrint(Sender: TObject; var PrintIt: Boolean);
+var nOcorr,nPos: Integer;
+    wTexto: String;
+begin
+  wTexto := uDM.PedItensObservacao.AsString;
+  nOcorr := 0;
+  nPos := Pos(#13,wTexto);
+  while nPos > 0 do
+  begin
+    nOcorr := nOcorr + 1;
+    wTexto := Copy(wTexto,nPos+1,Length(wTexto));
+    nPos := Pos(#13,wTexto);
+  end;
+  if nOcorr <= 5 then
+    RLDbMemo3.Font.Size := 14
+  else
+    RLDbMemo3.Font.Size := 12;
 
 end;
 

@@ -2,7 +2,11 @@ object FSFEuPrintFortes: TFSFEuPrintFortes
   Left = 0
   Top = 0
   Caption = 'FSFEuPrintFortes'
+<<<<<<< HEAD
   ClientHeight = 961
+=======
+  ClientHeight = 749
+>>>>>>> e7908c5a1dc0deb6e4ea2f82ee25b01644f22efe
   ClientWidth = 838
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -720,7 +724,11 @@ object FSFEuPrintFortes: TFSFEuPrintFortes
     end
   end
   object RLEtiq_Crepe: TRLReport
+<<<<<<< HEAD
     Left = 1
+=======
+    Left = 0
+>>>>>>> e7908c5a1dc0deb6e4ea2f82ee25b01644f22efe
     Top = 280
     Width = 397
     Height = 272
@@ -1513,7 +1521,11 @@ object FSFEuPrintFortes: TFSFEuPrintFortes
   end
   object RLEtiq_Drinks: TRLReport
     Left = 0
+<<<<<<< HEAD
     Top = 558
+=======
+    Top = 560
+>>>>>>> e7908c5a1dc0deb6e4ea2f82ee25b01644f22efe
     Width = 397
     Height = 272
     Margins.LeftMargin = 6.000000000000000000

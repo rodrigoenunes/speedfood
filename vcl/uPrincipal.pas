@@ -413,6 +413,7 @@ begin
     LabEstacao.Caption := 'Estação: ' + uDM.sysCPUId + '   [ ' + IntToStr(uDM.sysNumId) + ' ]';
     LabTurno.Caption := 'Turno: '+ IntToStr(uDM.turnoCorrente);
     PanIdCaixa.Visible := uDM.sysCaixaDisp;     //  True;
+<<<<<<< HEAD
     //
     // Altera infos de scrollbar
     appScrollbarLargura := StrToInt(ObtemParametro('ScrollbarLargura','0'));
@@ -429,6 +430,8 @@ begin
         SystemParametersInfo(SPI_SETNONCLIENTMETRICS, sizeof(LTemp), @LTemp, SPIF_SENDCHANGE);
       end;
     end
+=======
+>>>>>>> e7908c5a1dc0deb6e4ea2f82ee25b01644f22efe
 
   end;
 
