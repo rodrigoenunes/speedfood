@@ -67,7 +67,7 @@ type
     RLLabel8: TRLLabel;
     RLDBText19: TRLDBText;
     RLBand4: TRLBand;
-    RLDbClienteCrepe: TRLDBText;
+    RLDBText20: TRLDBText;
     RLDBText21: TRLDBText;
     RLDBText22: TRLDBText;
     RLLabParaLevar: TRLLabel;
@@ -85,7 +85,7 @@ type
     RLDBText17: TRLDBText;
     RLDBText18: TRLDBText;
     RLBand7: TRLBand;
-    RLDbClienteFritas: TRLDBText;
+    RLDBText23: TRLDBText;
     RLDBText24: TRLDBText;
     RLEtiq_Hamburguer: TRLReport;
     RLBand8: TRLBand;
@@ -100,7 +100,7 @@ type
     RLDBText28: TRLDBText;
     RLDBText29: TRLDBText;
     RLBand10: TRLBand;
-    RLDbClienteHamb: TRLDBText;
+    RLDBText30: TRLDBText;
     RLDBText31: TRLDBText;
     RLEtiq_Drinks: TRLReport;
     RLBand11: TRLBand;
@@ -113,7 +113,7 @@ type
     RLDBText35: TRLDBText;
     RLDBText36: TRLDBText;
     RLBand13: TRLBand;
-    RLDbClienteDrink: TRLDBText;
+    RLDBText37: TRLDBText;
     RLDBText38: TRLDBText;
     RLDBText39: TRLDBText;
     RLPanel1: TRLPanel;
@@ -130,23 +130,11 @@ type
     RLDBText25: TRLDBText;
     RLDbSetorDrink: TRLDBText;
     LabTirar: TRLLabel;
-<<<<<<< HEAD
-    RLDBMemo4: TRLDBMemo;
-=======
->>>>>>> e7908c5a1dc0deb6e4ea2f82ee25b01644f22efe
     procedure RLEtiqBebidaBeforePrint(Sender: TObject; var PrintIt: Boolean);
     procedure RLDetLancheBeforePrint(Sender: TObject; var PrintIt: Boolean);
     procedure FormCreate(Sender: TObject);
     procedure RLEtiq_HamburguerBeforePrint(Sender: TObject;
       var PrintIt: Boolean);
-<<<<<<< HEAD
-    procedure RLBand11BeforePrint(Sender: TObject; var PrintIt: Boolean);
-    procedure RLEtiqLancheBeforePrint(Sender: TObject; var PrintIt: Boolean);
-    procedure RLEtiq_CrepeBeforePrint(Sender: TObject; var PrintIt: Boolean);
-    procedure RLEtiq_DrinksBeforePrint(Sender: TObject; var PrintIt: Boolean);
-    procedure RLEtiq_FrituraBeforePrint(Sender: TObject; var PrintIt: Boolean);
-=======
->>>>>>> e7908c5a1dc0deb6e4ea2f82ee25b01644f22efe
   private
     { Private declarations }
   public
@@ -612,23 +600,19 @@ begin
 
 end;
 
-procedure TFSFEuPrintFortes.RLBand11BeforePrint(Sender: TObject;
-  var PrintIt: Boolean);
-begin
-  RLDBMemo4.Visible := False;
-  if uDM.PedItensObservacao.AsString <> '' then
-    RLDBMemo4.Visible := True;
-
-end;
-
 procedure TFSFEuPrintFortes.RLDetLancheBeforePrint(Sender: TObject; var PrintIt: Boolean);
 var i: Integer;
     AllExtras,xExtra: String;
     wTamFonte,wLargura: Integer;
     wTp: Integer;
+    //linMais,linSem,linMenos: Integer;
 begin
-  //wTamFonte := 10;
-  wTamFonte := StrToIntDef(ObtemParametro('Etiq_TamFonte_MSM','10'),9);
+  if uDM.PedidosNomeCliente.AsString <> '' then
+    RLDbCliente.Visible := True
+  else
+    RLDbCliente.Visible := False;
+  //
+  wTamFonte := 10;
   wLargura := 122;
   AllExtras := uDM.PedItensExtras.AsString;
   RLMais.Lines.Clear;
@@ -648,22 +632,15 @@ begin
     RLLabSem.Caption := '';
     RLLabMenos.Caption := '';
   end;
-<<<<<<< HEAD
-  for i := 1 to Length(AllExtras) do
-=======
   for i := 1 to 36 do
->>>>>>> e7908c5a1dc0deb6e4ea2f82ee25b01644f22efe
     if AllExtras[i] <> '.' then
-      if uDM.Itens.FindKey([wTp,i]) then
-      begin
+      if uDM.Itens.FindKey([wTp,i])
+      then begin
         xExtra := Trim(uDM.ItensDescricao.AsString);
-        if AllExtras[i] = '0' then
-          RLSem.Lines.Add(xExtra)
-        else if AllExtras[i] = '-' then
-               RLMenos.Lines.Add(xExtra)
+        if AllExtras[i] = '0' then RLSem.Lines.Add(xExtra)
+        else if AllExtras[i] = '-' then RLMenos.Lines.Add(xExtra)
              else begin
-               if AllExtras[i] <> '1' then
-                 xExtra := xExtra + '(' + AllExtras[i] + ')';
+               if AllExtras[i] <> '1' then xExtra := xExtra + ' (' + AllExtras[i] + ')';
                RLMais.Lines.Add(xExtra);
              end;
       end;
@@ -672,20 +649,20 @@ begin
   RLPanMais.Visible := True;
   RLMais.Font.Size := wTamFonte;
   if RLMais.Lines.Count > 7 then
-     RLMais.Font.Size := wTamFonte - 2;
+     RLMais.Font.Size := 9;
 
   RLPanSem.Width := wLargura;
   RLPanSem.Borders.DrawRight := True;
   RLPanSem.Visible := True;
   RLSem.Font.Size := wTamFonte;
   if RLSem.Lines.Count > 7 then
-     RLSem.Font.Size := wTamFonte - 2;
+     RLSem.Font.Size := 9;
 
   RLPanMenos.Width := wLargura;
   RLPanMenos.Visible := True;
   RLMenos.Font.Size := wTamFonte;
   if RLMenos.Lines.Count > 7 then
-     RLMenos.Font.Size := wTamFonte - 2;
+     RLMenos.Font.Size := 9;
 
   RLPanMaisSemMenos.Height := 152;
 
@@ -693,87 +670,13 @@ end;
 
 procedure TFSFEuPrintFortes.RLEtiqBebidaBeforePrint(Sender: TObject; var PrintIt: Boolean);
 begin
-  RLDbClienteBeb.Visible := False;
-  if uDM.PedidosNomeCliente.AsString <> '' then
-    RLDbClienteBeb.Visible := True;
-  RLDbSetorBebs.Visible := False;
-  if uDM.PedidosSetor.AsInteger > 0 then
-    RLDbSetorBebs.Visible := True;
-
-end;
-
-procedure TFSFEuPrintFortes.RLEtiqLancheBeforePrint(Sender: TObject;
-  var PrintIt: Boolean);
-begin
-  RLDbCliente.Visible := False;
-  if uDM.PedidosNomeCliente.AsString <> '' then
-    RLDbCliente.Visible := True;
-  RLDbSetorLanche.Visible := False;
-  if uDM.PedidosSetor.AsInteger > 0 then
-    RLDbSetorLanche.Visible := True;
-
-end;
-
-procedure TFSFEuPrintFortes.RLEtiq_CrepeBeforePrint(Sender: TObject;
-  var PrintIt: Boolean);
-begin
-  RLDbClienteCrepe.Visible := False;
-  if uDM.PedidosNomeCliente.AsString <> '' then
-    RLDbClienteCrepe.Visible := True;
-  RLDbSetorCrepe.Visible := False;
-  if uDM.PedidosSetor.AsInteger > 0 then
-    RLDbSetorCrepe.Visible := True;
-
-end;
-
-procedure TFSFEuPrintFortes.RLEtiq_DrinksBeforePrint(Sender: TObject;
-  var PrintIt: Boolean);
-begin
-  RLDbClienteDrink.Visible := False;
-  if uDM.PedidosNomeCliente.AsString <> '' then
-    RLDbClienteDrink.Visible := True;
-  RLDbSetorDrink.Visible := False;
-  if uDM.PedidosSetor.AsInteger <> 0 then
-    RLDbSetorDrink.Visible := True;
-
-end;
-
-procedure TFSFEuPrintFortes.RLEtiq_FrituraBeforePrint(Sender: TObject;
-  var PrintIt: Boolean);
-begin
-  RLDbClienteFritas.Visible := False;
-  if uDM.PedidosNomeCliente.AsString <> '' then
-    RLDbClienteFritas.Visible := True;
-  RLDbSetorFritas.Visible := False;
-  if uDM.PedidosSetor.AsInteger <> 0 then
-    RLDbSetorFritas.Visible := True;
-
-end;
-
-procedure TFSFEuPrintFortes.RLEtiq_HamburguerBeforePrint(Sender: TObject; var PrintIt: Boolean);
-var nOcorr,nPos: Integer;
-    wTexto: String;
-begin
-  wTexto := uDM.PedItensObservacao.AsString;
-  nOcorr := 0;
-  nPos := Pos(#13,wTexto);
-  while nPos > 0 do
-  begin
-    nOcorr := nOcorr + 1;
-    wTexto := Copy(wTexto,nPos+1,Length(wTexto));
-    nPos := Pos(#13,wTexto);
+  with FSFEuPrintFortes
+  do begin
+    if uDM.PedidosNomeCliente.AsString <> '' then
+      RLDbClienteBeb.Visible := True
+    else
+      RLDbClienteBeb.Visible := False;
   end;
-  if nOcorr <= 5 then
-    RLDbMemo3.Font.Size := 14
-  else
-    RLDbMemo3.Font.Size := 12;
-
-  RLDbClienteHamb.Visible := False;
-  if uDM.PedidosNomeCliente.AsString <> '' then
-    RLDbClienteHamb.Visible := True;
-  RLDbSetorHamb.Visible := False;
-  if uDM.PedidosSetor.AsInteger <> 0 then
-    RLDbSetorHamb.Visible := True;
 
 end;
 

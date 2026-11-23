@@ -2,11 +2,7 @@ object FSFEuPrintFortes: TFSFEuPrintFortes
   Left = 0
   Top = 0
   Caption = 'FSFEuPrintFortes'
-<<<<<<< HEAD
-  ClientHeight = 961
-=======
   ClientHeight = 749
->>>>>>> e7908c5a1dc0deb6e4ea2f82ee25b01644f22efe
   ClientWidth = 838
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -36,7 +32,6 @@ object FSFEuPrintFortes: TFSFEuPrintFortes
     PageSetup.PaperHeight = 72.000000000000000000
     PrintEmpty = False
     RecordRange = rrCurrentOnly
-    BeforePrint = RLEtiqLancheBeforePrint
     object RLDetLanche: TRLBand
       Left = 23
       Top = 47
@@ -75,7 +70,7 @@ object FSFEuPrintFortes: TFSFEuPrintFortes
           Borders.DrawBottom = False
           object RLDbSetorLanche: TRLDBText
             Left = 3
-            Top = 16
+            Top = 15
             Width = 26
             Height = 24
             Alignment = taCenter
@@ -724,11 +719,7 @@ object FSFEuPrintFortes: TFSFEuPrintFortes
     end
   end
   object RLEtiq_Crepe: TRLReport
-<<<<<<< HEAD
-    Left = 1
-=======
     Left = 0
->>>>>>> e7908c5a1dc0deb6e4ea2f82ee25b01644f22efe
     Top = 280
     Width = 397
     Height = 272
@@ -747,7 +738,6 @@ object FSFEuPrintFortes: TFSFEuPrintFortes
     PageSetup.PaperHeight = 72.000000000000000000
     PrintEmpty = False
     RecordRange = rrCurrentOnly
-    BeforePrint = RLEtiq_CrepeBeforePrint
     object RLBand2: TRLBand
       Left = 23
       Top = 47
@@ -951,7 +941,7 @@ object FSFEuPrintFortes: TFSFEuPrintFortes
       Borders.DrawTop = False
       Borders.DrawRight = False
       Borders.DrawBottom = False
-      object RLDbClienteCrepe: TRLDBText
+      object RLDBText20: TRLDBText
         Left = 3
         Top = 1
         Width = 95
@@ -1005,7 +995,6 @@ object FSFEuPrintFortes: TFSFEuPrintFortes
     PageSetup.PaperHeight = 72.000000000000000000
     PrintEmpty = False
     RecordRange = rrCurrentOnly
-    BeforePrint = RLEtiq_FrituraBeforePrint
     object RLBand5: TRLBand
       Left = 23
       Top = 47
@@ -1061,7 +1050,7 @@ object FSFEuPrintFortes: TFSFEuPrintFortes
       end
       object RLDbSetorFritas: TRLDBText
         Left = 8
-        Top = 16
+        Top = 19
         Width = 26
         Height = 24
         Alignment = taCenter
@@ -1209,7 +1198,7 @@ object FSFEuPrintFortes: TFSFEuPrintFortes
       Borders.DrawTop = False
       Borders.DrawRight = False
       Borders.DrawBottom = False
-      object RLDbClienteFritas: TRLDBText
+      object RLDBText23: TRLDBText
         Left = 3
         Top = 1
         Width = 95
@@ -1485,7 +1474,7 @@ object FSFEuPrintFortes: TFSFEuPrintFortes
       Borders.DrawTop = False
       Borders.DrawRight = False
       Borders.DrawBottom = False
-      object RLDbClienteHamb: TRLDBText
+      object RLDBText30: TRLDBText
         Left = 3
         Top = 1
         Width = 95
@@ -1521,11 +1510,7 @@ object FSFEuPrintFortes: TFSFEuPrintFortes
   end
   object RLEtiq_Drinks: TRLReport
     Left = 0
-<<<<<<< HEAD
-    Top = 558
-=======
     Top = 560
->>>>>>> e7908c5a1dc0deb6e4ea2f82ee25b01644f22efe
     Width = 397
     Height = 272
     Margins.LeftMargin = 6.000000000000000000
@@ -1543,7 +1528,6 @@ object FSFEuPrintFortes: TFSFEuPrintFortes
     PageSetup.PaperHeight = 72.000000000000000000
     PrintEmpty = False
     RecordRange = rrCurrentOnly
-    BeforePrint = RLEtiq_DrinksBeforePrint
     object RLBand11: TRLBand
       Left = 23
       Top = 47
@@ -1555,16 +1539,15 @@ object FSFEuPrintFortes: TFSFEuPrintFortes
       Borders.DrawTop = False
       Borders.DrawRight = False
       Borders.DrawBottom = True
-      BeforePrint = RLBand11BeforePrint
       object RLDraw7: TRLDraw
         Left = 6
-        Top = 48
+        Top = 40
         Width = 354
         Height = 116
       end
       object RLDBText32: TRLDBText
         Left = 69
-        Top = 68
+        Top = 78
         Width = 283
         Height = 33
         AutoSize = False
@@ -1580,7 +1563,7 @@ object FSFEuPrintFortes: TFSFEuPrintFortes
       end
       object RLDBText39: TRLDBText
         Left = 27
-        Top = 68
+        Top = 78
         Width = 36
         Height = 32
         Alignment = taRightJustify
@@ -1596,8 +1579,8 @@ object FSFEuPrintFortes: TFSFEuPrintFortes
         Text = ''
       end
       object RLDbSetorDrink: TRLDBText
-        Left = 3
-        Top = 16
+        Left = 316
+        Top = 11
         Width = 28
         Height = 24
         Alignment = taCenter
@@ -1616,23 +1599,6 @@ object FSFEuPrintFortes: TFSFEuPrintFortes
         Font.Style = [fsBold]
         ParentFont = False
         Text = ''
-      end
-      object RLDBMemo4: TRLDBMemo
-        Left = 27
-        Top = 108
-        Width = 322
-        Height = 30
-        Alignment = taCenter
-        AutoSize = False
-        Behavior = [beSiteExpander]
-        DataField = 'Observacao'
-        DataSource = uDM.DSPedItens
-        Font.Charset = DEFAULT_CHARSET
-        Font.Color = clBlack
-        Font.Height = -21
-        Font.Name = 'Arial'
-        Font.Style = []
-        ParentFont = False
       end
     end
     object RLBand12: TRLBand
@@ -1745,7 +1711,7 @@ object FSFEuPrintFortes: TFSFEuPrintFortes
       Borders.DrawTop = False
       Borders.DrawRight = False
       Borders.DrawBottom = False
-      object RLDbClienteDrink: TRLDBText
+      object RLDBText37: TRLDBText
         Left = 3
         Top = 1
         Width = 95
